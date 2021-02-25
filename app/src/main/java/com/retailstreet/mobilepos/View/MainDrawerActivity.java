@@ -1,5 +1,6 @@
 package com.retailstreet.mobilepos.View;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -44,14 +45,27 @@ public class MainDrawerActivity extends AppCompatActivity {
             int id=menuItem.getItemId();
             //it's possible to do more actions on several items, if there is a large amount of items I prefer switch(){case} instead of if()
             if (id==R.id.nav_logout){
-                SharedPreferences sharedPreferences = getSharedPreferences("com.retailstreet.mobilepos", MODE_PRIVATE);
-                SharedPreferences.Editor myEdit = sharedPreferences.edit();
-                myEdit.remove("username");
-                myEdit.remove("password");
-                myEdit.apply();
-                Intent loginIntent = new Intent(MainDrawerActivity.this, LoginActivity.class);
-                startActivity(loginIntent);
-                finish();
+
+                new AlertDialog.Builder(MainDrawerActivity.this)
+                        .setTitle("Logout")
+                        .setMessage("Confirm Logout?")
+                        .setPositiveButton(android.R.string.yes, (dialog, which) -> {
+
+                            SharedPreferences sharedPreferences = getSharedPreferences("com.retailstreet.mobilepos", MODE_PRIVATE);
+                            SharedPreferences.Editor myEdit = sharedPreferences.edit();
+                            myEdit.remove("username");
+                            myEdit.remove("password");
+                            myEdit.apply();
+                            Intent loginIntent = new Intent(MainDrawerActivity.this, LoginActivity.class);
+                            startActivity(loginIntent);
+                            finish();
+                        })
+
+                        // A null listener allows the button to dismiss the dialog and take no further action.
+                        .setNegativeButton(android.R.string.no, null)
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .show();
+
                 return true;
             }
             //This is for maintaining the behavior of the Navigation view
