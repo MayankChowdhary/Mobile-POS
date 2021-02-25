@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">DatabaseStructure</string>
+    <string name="app_name">MobilePOS</string>
     <string name="header_image">header image</string>
     <string name="email_address">📨 Email Address</string>
     <string name="password">🔒 Password</string>
