@@ -84,6 +84,4 @@ public class MainDrawerActivity extends AppCompatActivity {
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
     }
-
-
 }
