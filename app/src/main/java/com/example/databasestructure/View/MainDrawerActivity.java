@@ -42,28 +42,25 @@ public class MainDrawerActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                int id=menuItem.getItemId();
-                //it's possible to do more actions on several items, if there is a large amount of items I prefer switch(){case} instead of if()
-                if (id==R.id.nav_logout){
-                    SharedPreferences sharedPreferences = getSharedPreferences("com.retailstreet.mobilepos", MODE_PRIVATE);
-                    SharedPreferences.Editor myEdit = sharedPreferences.edit();
-                    myEdit.remove("username");
-                    myEdit.remove("password");
-                    myEdit.apply();
-                    Intent loginIntent = new Intent(MainDrawerActivity.this, LoginActivity.class);
-                    startActivity(loginIntent);
-                    finish();
-                    return true;
-                }
-                //This is for maintaining the behavior of the Navigation view
-               NavigationUI.onNavDestinationSelected(menuItem,navController);
-                //This is for closing the drawer after acting on it
-                drawer.closeDrawer(GravityCompat.START);
+        navigationView.setNavigationItemSelectedListener(menuItem -> {
+            int id=menuItem.getItemId();
+            //it's possible to do more actions on several items, if there is a large amount of items I prefer switch(){case} instead of if()
+            if (id==R.id.nav_logout){
+                SharedPreferences sharedPreferences = getSharedPreferences("com.retailstreet.mobilepos", MODE_PRIVATE);
+                SharedPreferences.Editor myEdit = sharedPreferences.edit();
+                myEdit.remove("username");
+                myEdit.remove("password");
+                myEdit.apply();
+                Intent loginIntent = new Intent(MainDrawerActivity.this, LoginActivity.class);
+                startActivity(loginIntent);
+                finish();
                 return true;
             }
+            //This is for maintaining the behavior of the Navigation view
+           NavigationUI.onNavDestinationSelected(menuItem,navController);
+            //This is for closing the drawer after acting on it
+            drawer.closeDrawer(GravityCompat.START);
+            return true;
         });
 
 
