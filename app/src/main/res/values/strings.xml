@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">DatabaseStructure</string>
+    <string name="header_image">header image</string>
+    <string name="email_address">📨 Email Address</string>
+    <string name="password">🔒 Password</string>
+    <string name="title_activity_sales_product">SalesProductActivity</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Mobile: Point Of Sales</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="menu_sales">Sales</string>
+    <string name="menu_gallery">Empty Item</string>
+    <string name="menu_slideshow">Empty Item</string>
+</resources>
