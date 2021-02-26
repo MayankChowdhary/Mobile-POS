@@ -26,7 +26,7 @@ public abstract class CustomRecyclerViewAdapter<VH extends RecyclerView.ViewHold
         mContext = context;
         mCursor = cursor;
         mDataValid = cursor != null;
-        mRowIdColumn = mDataValid ? mCursor.getColumnIndex("PROD_NM") : -1;
+        mRowIdColumn = mDataValid ? mCursor.getColumnIndex("STOCK_ID") : -1;
         mDataSetObserver = new NotifyingDataSetObserver();
         if (mCursor != null) {
             mCursor.registerDataSetObserver(mDataSetObserver);
@@ -100,7 +100,7 @@ public abstract class CustomRecyclerViewAdapter<VH extends RecyclerView.ViewHold
             if (mDataSetObserver != null) {
                 mCursor.registerDataSetObserver(mDataSetObserver);
             }
-            mRowIdColumn = newCursor.getColumnIndexOrThrow("PROD_NM");
+            mRowIdColumn = newCursor.getColumnIndexOrThrow("STOCK_ID");
             mDataValid = true;
             notifyDataSetChanged();
         } else {

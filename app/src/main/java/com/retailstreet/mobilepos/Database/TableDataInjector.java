@@ -13,6 +13,7 @@ import com.retailstreet.mobilepos.Model.BillMaster;
 import com.retailstreet.mobilepos.Model.GroupUserMaster;
 import com.retailstreet.mobilepos.Model.CustomerMaster;
 import com.retailstreet.mobilepos.Model.ProductMaster;
+import com.retailstreet.mobilepos.Model.RetailStore;
 import com.retailstreet.mobilepos.Model.StockMaster;
 import com.retailstreet.mobilepos.View.ApplicationContextProvider;
 import com.retailstreet.mobilepos.View.LoadingDialog;
@@ -38,8 +39,10 @@ public class TableDataInjector {
     private List<StockMaster> stockMasterList = null;
     private List<BillDetail> billDetailList = null;
     private List<BillMaster> billMasterList = null;
+    private List<RetailStore> retailStoreList = null;
 
     public static int status =0;
+    private final int tableConstant=7;
 
     public TableDataInjector(Context context, String storeid,DBReadyCallback callback) {
 
@@ -53,6 +56,7 @@ public class TableDataInjector {
         getStockMasterList();
         getBillDetails();
         getBillMaster();
+        getRetailStore();
     }
 
     private Retrofit getRetroInstance(String url) {
@@ -218,6 +222,92 @@ public class TableDataInjector {
         }
     }
 
+    public void getRetailStore() {
+        try {
+            Retrofit retrofit = getRetroInstance(baseUrl);
+            ApiInterface service = retrofit.create(ApiInterface.class);
+            Call<List<RetailStore>> call = service.getRetail_store(generateTableUrl("retail_store",storeId));
+            call.enqueue(new Callback<List<RetailStore>>() {
+                @Override
+                public void onResponse(Call<List<RetailStore>> call, Response<List<RetailStore>> response) {
+                    retailStoreList = response.body();
+                    Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
+                  InsertRetailStore(retailStoreList);
+                }
+
+                @Override
+                public void onFailure(Call<List<RetailStore>> call, Throwable t) {
+                    Log.i("autolog", t.getMessage());
+                }
+            });
+        } catch (Exception e) {
+            Log.i("autolog", "Exception");
+        }
+    }
+
+    public void InsertRetailStore(List<RetailStore> list) {
+        if (list == null) {
+            return;
+        }
+        myDataBase = context.openOrCreateDatabase(dbname, Context.MODE_PRIVATE, null);
+        myDataBase.delete("retail_store", null, null);
+        for (RetailStore prod : list) {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put("BUSINESSTYPE", prod.getBUSINESSTYPE());
+            contentValues.put("MASTERORG_GUID", prod.getMASTERORGGUID());
+            contentValues.put("STORE_ID", prod.getSTOREID());
+            contentValues.put("STATUS", prod.getSTATUS());
+            contentValues.put("STORE_GUID", prod.getSTOREGUID());
+            contentValues.put("STORE_NUMBER", prod.getSTORENUMBER());
+            contentValues.put("ORGID", prod.getORGID());
+            contentValues.put("ENTID", prod.getENTID());
+            contentValues.put("STR_NM", prod.getSTRNM());
+            contentValues.put("ADD_1", prod.getADD1());
+            contentValues.put("CTY", prod.getCTY());
+            contentValues.put("StoreStateID", prod.getStoreStateID());
+            contentValues.put("STR_CTR", prod.getSTRCTR());
+            contentValues.put("StoreTaxID", prod.getStoreTaxID());
+            contentValues.put("E_MAIL", prod.getEMAIL());
+            contentValues.put("TELE", prod.getTELE());
+            contentValues.put("NoOfRegisters", prod.getNoOfRegisters());
+            contentValues.put("FOOTER", prod.getFOOTER());
+            contentValues.put("Store_Street", prod.getStoreStreet());
+            contentValues.put("GSTIN_NUMBER", prod.getGSTINNUMBER());
+            contentValues.put("ZIP", prod.getZIP());
+            contentValues.put("PANCARD_NUMBER", prod.getPANCARDNUMBER());
+            contentValues.put("SALESPERSON_ID", prod.getSALESPERSONID());
+            contentValues.put("POS_USER", prod.getISSYNCED());
+            contentValues.put("CREATION_DATE", prod.getPOSUSER());
+            contentValues.put("LastUpdatedBy", prod.getLastUpdatedBy());
+            contentValues.put("LastUpdatedOn", prod.getLastUpdatedOn());
+            contentValues.put("FLAG", prod.getFLAG());
+            contentValues.put("STORE_SECONDARYEMAIL", prod.getSTORESECONDARYEMAIL());
+            contentValues.put("TELE_1", prod.getTELE1());
+            contentValues.put("STR_CNTCT_NM", prod.getSTRCNTCTNM());
+            contentValues.put("STORE_STATE", prod.getSTORESTATE());
+            contentValues.put("IS_STOREENABLEDFORECOMMERCE", prod.getISSTOREENABLEDFORECOMMERCE());
+            contentValues.put("ECOMMERCESTOREID", prod.getECOMMERCESTOREID());
+            contentValues.put("FSSAINUMBER", prod.getFSSAINUMBER());
+            contentValues.put("VERSIONINDENTITY", prod.getVERSIONINDENTITY());
+            contentValues.put("ASSEMBLYINFO", prod.getASSEMBLYINFO());
+            contentValues.put("VERSION_NAME", prod.getVERSIONNAME());
+            contentValues.put("VERSION_BUILD", prod.getVERSIONBUILD());
+            contentValues.put("DESCRIPTION", prod.getDESCRIPTION());
+            contentValues.put("CULTUREINFO", prod.getCULTUREINFO());
+            contentValues.put("ISSYNCED", prod.getISSYNCED());
+            contentValues.put("ISINTRAIL", prod.getISINTRAIL());
+
+            myDataBase.insert("retail_store", null, contentValues);
+            status+=1;
+            if(status==tableConstant){
+                LoadingDialog.cancelDialog();
+                dbReadyCallback.onDBReady();
+            }
+           // SQLiteDbInspector.PrintTableData(myDataBase, "retail_store");
+            // myDataBase.close(); // Closing database connection
+        }
+    }
+
     public void InsertBillMaster(List<BillMaster> list) {
         if (list == null) {
             return;
@@ -254,7 +344,7 @@ public class TableDataInjector {
 
             myDataBase.insert("retail_str_sales_master", null, contentValues);
             status+=1;
-            if(status==6){
+            if(status==tableConstant){
                 LoadingDialog.cancelDialog();
                 dbReadyCallback.onDBReady();
             }
@@ -301,7 +391,7 @@ public class TableDataInjector {
 
             myDataBase.insert("retail_str_sales_detail ", null, contentValues);
             status+=1;
-            if(status==6){
+            if(status==tableConstant){
                 LoadingDialog.cancelDialog();
                 dbReadyCallback.onDBReady();
             }
@@ -359,7 +449,9 @@ public class TableDataInjector {
 
             myDataBase.insert("retail_str_stock_master", null, values);
             status+=1;
-            if(status==6){
+           // SQLiteDbInspector.PrintTableData(myDataBase, "retail_str_stock_master");
+
+            if(status==tableConstant){
                 LoadingDialog.cancelDialog();
                 dbReadyCallback.onDBReady();
             }
@@ -410,7 +502,7 @@ public class TableDataInjector {
 
             myDataBase.insert("retail_store_prod_com", null, contentValues);
             status+=1;
-            if(status==6){
+            if(status==tableConstant){
                 LoadingDialog.cancelDialog();
                 dbReadyCallback.onDBReady();
             }
@@ -439,8 +531,7 @@ public class TableDataInjector {
 
             myDataBase.insert("group_user_master", null, contentValues);
             status+=1;
-            SQLiteDbInspector.PrintTableData(myDataBase, "group_user_master");
-            if(status==6){
+            if(status==tableConstant){
                 LoadingDialog.cancelDialog();
                 dbReadyCallback.onDBReady();
             }
@@ -498,7 +589,7 @@ public class TableDataInjector {
 
             myDataBase.insert("retail_cust", null, contentValues);
             status+=1;
-            if(status==6){
+            if(status==tableConstant){
                 LoadingDialog.cancelDialog();
                 dbReadyCallback.onDBReady();
             }
@@ -536,6 +627,9 @@ public class TableDataInjector {
 
             case "BillMaster":
                 return "ApiTest/BillMaster?STORE_ID="+storeid;
+
+            case "retail_store":
+                return "ApiTest/TestData?STORE_ID="+storeid;
 
             default:
                 return "";

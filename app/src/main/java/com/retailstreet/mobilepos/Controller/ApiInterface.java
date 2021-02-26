@@ -7,6 +7,7 @@ import com.retailstreet.mobilepos.Model.BillMaster;
 import com.retailstreet.mobilepos.Model.GroupUserMaster;
 import com.retailstreet.mobilepos.Model.CustomerMaster;
 import com.retailstreet.mobilepos.Model.ProductMaster;
+import com.retailstreet.mobilepos.Model.RetailStore;
 import com.retailstreet.mobilepos.Model.StockMaster;
 
 import java.util.List;
@@ -34,6 +35,9 @@ public interface ApiInterface {
 
     @GET
     Call<List<BillMaster>> getBill_Mater(@Url String url);
+
+    @GET
+    Call<List<RetailStore>> getRetail_store(@Url String url);
 
     /*  @GET("ApiTest/BillMaster?STORE_ID="+storeid)
     Call<List<BillMaster>> getBill_Mater();*/

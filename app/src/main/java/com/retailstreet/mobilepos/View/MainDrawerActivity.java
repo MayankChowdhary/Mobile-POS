@@ -3,13 +3,16 @@ package com.retailstreet.mobilepos.View;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.view.MenuItem;
 import android.view.Menu;
 
+import com.retailstreet.mobilepos.Database.SQLiteDbInspector;
 import com.retailstreet.mobilepos.R;
 import com.google.android.material.navigation.NavigationView;
 
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.core.view.GravityCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -35,10 +38,11 @@ public class MainDrawerActivity extends AppCompatActivity {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow, R.id.nav_logout)
+                R.id.nav_sales, R.id.nav_cart, R.id.nav_slideshow, R.id.nav_logout)
                 .setDrawerLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
         navigationView.setNavigationItemSelectedListener(menuItem -> {
@@ -82,8 +86,11 @@ public class MainDrawerActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.sales_product, menu);
-        MenuItem mSearch = menu.findItem(R.id.appSearchBar);
+        getMenuInflater().inflate(R.menu.tool_menu, menu);
+        Drawable drawable = menu.findItem(R.id.appCart).getIcon();
+        drawable = DrawableCompat.wrap(drawable);
+        DrawableCompat.setTint(drawable, ContextCompat.getColor(this,R.color.white));
+        menu.findItem(R.id.appCart).setIcon(drawable);
         return true;
     }
 

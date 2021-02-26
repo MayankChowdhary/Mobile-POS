@@ -14,11 +14,13 @@ import android.widget.SearchView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.retailstreet.mobilepos.Controller.ControllerStockMaster;
 import com.retailstreet.mobilepos.R;
+import com.retailstreet.mobilepos.View.ApplicationContextProvider;
 import com.retailstreet.mobilepos.View.SalesRecyclerView.SalesListAdapter;
 
 public class SalesFragment extends Fragment {
@@ -34,14 +36,13 @@ public class SalesFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
             ViewGroup container, Bundle savedInstanceState) {
         homeViewModel = new ViewModelProvider(this).get(SalesViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_home, container, false);
+        View root = inflater.inflate(R.layout.fragment_sales, container, false);
             setHasOptionsMenu(true); // Add this!
         //((AppCompatActivity) getActivity()).getSupportActionBar().hide();
        // final TextView textView = root.findViewById(R.id.text_home);
-        
         Cursor cursor = new ControllerStockMaster(getContext()).getStockMasterCursor();
         recyclerView = (RecyclerView) root.findViewById(R.id.sales_recycler_view);
-        salesListAdapter = new SalesListAdapter(getContext(),cursor);
+        salesListAdapter = new SalesListAdapter(ApplicationContextProvider.getContext(),cursor);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(salesListAdapter);
@@ -61,6 +62,8 @@ public class SalesFragment extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
         MenuItem mSearch = menu.findItem(R.id.appSearchBar);
         mSearch.setVisible(true);
+        MenuItem mCart = menu.findItem(R.id.appCart);
+        mCart.setVisible(true);
        mSearchView = (SearchView) mSearch.getActionView();
         mSearchView.setQueryHint("Search");
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -102,6 +105,16 @@ public class SalesFragment extends Fragment {
         });
 
         }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        if (item.getItemId() == R.id.appCart) {
+            Navigation.findNavController(getActivity(),R.id.nav_host_fragment).navigate(R.id.nav_cart);
+            return true;
+        }else {
+            return super.onOptionsItemSelected(item);
+        }
+    }
 
     final Runnable queryLatencyRunnable = new Runnable() {
         @Override

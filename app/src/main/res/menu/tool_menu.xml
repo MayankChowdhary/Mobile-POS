@@ -4,8 +4,8 @@
     <item android:id="@+id/action_settings"
         android:title="@string/action_settings"
         android:orderInCategory="100"
+        android:visible="false"
         app:showAsAction="never" />
-
     <item
         android:id="@+id/appSearchBar"
         android:icon="@android:drawable/ic_menu_search"
@@ -13,4 +13,11 @@
         app:showAsAction="ifRoom|withText"
         android:visible="false"
         app:actionViewClass="android.widget.SearchView"/>
+
+    <item
+        android:id="@+id/appCart"
+        android:icon="@drawable/cart"
+        android:title="Cart"
+        app:showAsAction="ifRoom|withText"
+        android:visible="false" />
 </menu>

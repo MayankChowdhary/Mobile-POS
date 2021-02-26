@@ -63,5 +63,6 @@ public class ControllerStockMaster extends SQLiteOpenHelper {
         return cursor;
     }
 
+
     
 }

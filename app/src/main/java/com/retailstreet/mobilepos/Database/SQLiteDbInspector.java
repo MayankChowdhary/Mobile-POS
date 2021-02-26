@@ -50,6 +50,7 @@ public class SQLiteDbInspector {
 
         }
 
+        //PrintTableData(myDataBase,"retail_str_stock_master");
     }
     public static void PrintTableData(SQLiteDatabase db, String tableName) {
         Log.d(TAG, "getTableAsString called");
@@ -70,23 +71,6 @@ public class SQLiteDbInspector {
         Log.d("PrintingTable", "TableName: "+tableName+" : " +tableString);
     }
 
-    private static boolean checkDataBase(Context context) {
-        String DB_PATH = "/data/data/" + LoginActivity.class.getPackage().getName() + "/databases/";
-        final String DATABASE_NAME = "Db";
-        String myPath = DB_PATH + DATABASE_NAME;
-        File db = new File(context.getDatabasePath(myPath).getPath()); //Get the file name of the database
-        Log.d("DBPATH", "DB Path is " + db.getPath());
-        if (db.exists()) return true; // If it exists then return doing nothing
-        // Get the parent (directory in which the database file would be)
-        File dbdir = db.getParentFile();
-        // If the directory does not exist then make the directory (and higher level directories)
-        if (!dbdir.exists()) {
-            db.getParentFile().mkdirs();
-            dbdir.mkdirs();
-        }
-
-        return false;
-    }
 
     public static boolean isDbOk(Context context){
 

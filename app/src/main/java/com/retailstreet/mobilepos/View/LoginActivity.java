@@ -34,7 +34,7 @@ public class LoginActivity extends AppCompatActivity implements DBReadyCallback 
 
         if (!SQLiteDbInspector.doesDatabaseExist(getApplicationContext(), "MasterDB")) {
             LoadingDialog.showDialog(LoginActivity.this, "Please Wait", "Preparing Database...");
-            new SQLiteDbBuilder(LoginActivity.this);
+            new SQLiteDbBuilder(ApplicationContextProvider.getContext());
             Log.d("DatabaseCheck", "onCreate: Database Not exists! ");
         } else {
             SQLiteDbBuilder.dbOk = true;
@@ -57,7 +57,7 @@ public class LoginActivity extends AppCompatActivity implements DBReadyCallback 
                 if (SQLiteDbBuilder.dbOk && !SQLiteDbInspector.isTableNotEmpty("group_user_master", getApplicationContext(), "MasterDB")) {
                     LoadingDialog.showDialog(LoginActivity.this, "Please Wait", "Downloading Database...");
                     Log.d("TableNotYetCreated", "onCreate: Creating Table..");
-                    new TableDataInjector(getApplicationContext(), user_id, LoginActivity.this);
+                    new TableDataInjector(ApplicationContextProvider.getContext(), user_id, LoginActivity.this);
 
                 } else if (SQLiteDbInspector.isDbOk(getApplicationContext())) {
                     Log.d("TableisReady", "onCreate: Proceeding next..");
