@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -36,6 +37,7 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
         //SQLiteDbInspector.PrintTableSchema(ApplicationContextProvider.getContext(),"MasterDB");
        // EmptyCart();
        initMap();
+        Log.d("SalesRecyclerInvoked", "SalesListAdapter: ");
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -46,6 +48,7 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
         public ImageButton add_order;
         public  ImageButton remove_order;
         public  TextView order_count;
+        public Button add_to_cart;
 
 
 
@@ -58,6 +61,7 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
             add_order=view.findViewById(R.id.btn_order_add);
             remove_order=view.findViewById(R.id.btn_order_remove);
             order_count = view.findViewById(R.id.textview_order_count);
+            add_to_cart = view.findViewById(R.id.add_cart_botton);
 
 
         }
@@ -88,9 +92,11 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
         String oc = orderList.get(myListItem.getPrimary());
         if(oc ==null) {
             viewHolder.order_count.setText("0");
+            viewHolder.add_to_cart.setVisibility(View.VISIBLE);
         }
       else {
             viewHolder.order_count.setText(orderList.get(myListItem.getPrimary()));
+            viewHolder.add_to_cart.setVisibility(View.GONE);
         }
 
         viewHolder.add_order.setOnClickListener(new View.OnClickListener() {
@@ -137,16 +143,35 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
                     countText = String.valueOf(count-1);
                     countorder.setText(countText);
                     deletefromCart(primary);
+                    viewHolder.add_to_cart.setVisibility(View.VISIBLE);
                 }else {
                     countorder.setText("0");
                     orderList.remove(primary);
                     deletefromCart(primary);
+                    viewHolder.add_to_cart.setVisibility(View.VISIBLE);
                 }
 
                /* for (String i : orderList.keySet()) {
                     System.out.println("key: " + i + " value: " + orderList.get(i));
                      System.out.println("Size: "+orderList.size());
                 }*/
+            }
+        });
+
+        viewHolder.add_to_cart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TextView countorder =viewHolder.order_count;
+                String countText=countorder.getText().toString();
+                String primary= myListItem.getPrimary();
+                int count= Integer.parseInt(countText);
+                countText = String.valueOf(count+1);
+
+                countorder.setText(countText);
+                orderList.put(primary, countText);
+                putCartData(primary,myListItem.getName(),countText,myListItem.getProduct_detail_2(),myListItem.getProduct_detail_4(),myListItem.getProduct_detail_3());
+                v.setVisibility(View.GONE);
+
             }
         });
     }
@@ -177,6 +202,7 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
     }
 
     private void initMap(){
+        orderList.clear();
         Cursor cursor  = mydb.rawQuery("SELECT * FROM cart", null);
         if (cursor.moveToFirst()) {
             while (!cursor.isAfterLast()) {

@@ -19,6 +19,7 @@ public abstract class CustomRecyclerViewAdapter<VH extends RecyclerView.ViewHold
     private boolean mDataValid;
 
     private int mRowIdColumn;
+     RecyclerView mRecyclerView;
 
     private DataSetObserver mDataSetObserver;
 
@@ -33,10 +34,19 @@ public abstract class CustomRecyclerViewAdapter<VH extends RecyclerView.ViewHold
         }
     }
 
+    @Override
+    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        mRecyclerView = recyclerView;
+    }
+
     public Cursor getCursor() {
         return mCursor;
     }
 
+    public RecyclerView getmRecyclerView() {
+        return mRecyclerView;
+    }
     @Override
     public int getItemCount() {
         if (mDataValid && mCursor != null) {

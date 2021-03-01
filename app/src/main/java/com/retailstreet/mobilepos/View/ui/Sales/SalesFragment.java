@@ -3,6 +3,8 @@ package com.retailstreet.mobilepos.View.ui.Sales;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -10,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -26,11 +29,12 @@ import com.retailstreet.mobilepos.View.SalesRecyclerView.SalesListAdapter;
 public class SalesFragment extends Fragment {
 
     private SalesViewModel homeViewModel;
-
+    private long pressedTime;
     SearchView mSearchView;
     RecyclerView recyclerView;
     SalesListAdapter salesListAdapter;
     static  String handlerData;
+    private boolean doubleBackToExitPressedOnce;
     private final Handler queryLatencyHandler =new Handler();
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -47,12 +51,38 @@ public class SalesFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(salesListAdapter);
 
-       /* homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
+        root.setFocusableInTouchMode(true);
+        root.requestFocus();
+        root.setOnKeyListener( new View.OnKeyListener()
+        {
             @Override
-            public void onChanged(@Nullable String s) {
-                textView.setText(s);
+            public boolean onKey( View v, int keyCode, KeyEvent event )
+            {
+                if( keyCode == KeyEvent.KEYCODE_BACK && event.getAction()== KeyEvent.ACTION_DOWN)
+                {
+                    if (doubleBackToExitPressedOnce) {
+                       getActivity().finish();
+
+                    }else {
+
+                        Toast.makeText(getContext(), "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
+
+                    }
+
+                  doubleBackToExitPressedOnce = true;
+
+                    new Handler().postDelayed(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            doubleBackToExitPressedOnce=false;
+                        }
+                    }, 2000);
+                    return true;
+                }
+                return true;
             }
-        });*/
+        } );
         return root;
     }
 
@@ -144,4 +174,5 @@ public class SalesFragment extends Fragment {
         salesListAdapter.swapCursor(cursor);
 
     }
+
 }

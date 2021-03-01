@@ -60,51 +60,68 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <LinearLayout
-        android:id="@+id/addremovewrapper"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/broderplusminus"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:paddingStart="8dp"
-        android:paddingEnd="8dp"
+    <FrameLayout
+        android:layout_width="91dp"
+        android:layout_height="36dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <ImageButton
-            android:id="@+id/btn_order_remove"
-            android:layout_width="@dimen/_15sdp"
-            android:layout_height="@dimen/_15sdp"
-            android:layout_weight="1"
-            android:background="#FFFFFF"
-            android:scaleType="centerInside"
-            android:tint="@color/colorPrimary"
-            app:srcCompat="@drawable/remove_order" />
+        <LinearLayout
+            android:id="@+id/addremovewrapper"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/broderplusminus"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp">
 
-        <TextView
-            android:id="@+id/textview_order_count"
-            android:layout_width="@dimen/_25sdp"
-            android:layout_height="@dimen/_25sdp"
-            android:layout_marginStart="@dimen/_6sdp"
-            android:layout_marginEnd="@dimen/_6sdp"
-            android:layout_weight="2"
-            android:background="@color/colorPrimary"
-            android:backgroundTint="@color/colorPrimary"
-            android:text="0"
-            android:textAlignment="center"
-            android:textColor="#FFFFFF"
-            android:textSize="@dimen/_16ssp" />
+            <ImageButton
+                android:id="@+id/btn_order_remove"
+                android:layout_width="@dimen/_15sdp"
+                android:layout_height="@dimen/_15sdp"
+                android:layout_weight="1"
+                android:background="#FFFFFF"
+                android:scaleType="centerInside"
+                android:tint="@color/colorPrimary"
+                app:srcCompat="@drawable/remove_order" />
 
-        <ImageButton
-            android:id="@+id/btn_order_add"
-            android:layout_width="@dimen/_15sdp"
-            android:layout_height="@dimen/_15sdp"
-            android:layout_weight="1"
-            android:background="#FFFFFF"
-            android:scaleType="centerInside"
-            android:tint="@color/colorPrimary"
-            app:srcCompat="@drawable/add_order" />
-    </LinearLayout>
+            <TextView
+                android:id="@+id/textview_order_count"
+                android:layout_width="@dimen/_25sdp"
+                android:layout_height="@dimen/_25sdp"
+                android:layout_marginStart="@dimen/_6sdp"
+                android:layout_marginEnd="@dimen/_6sdp"
+                android:layout_weight="2"
+                android:background="@color/colorPrimary"
+                android:backgroundTint="@color/colorPrimary"
+                android:text="0"
+                android:textAlignment="center"
+                android:textColor="#FFFFFF"
+                android:textSize="@dimen/_16ssp" />
+
+            <ImageButton
+                android:id="@+id/btn_order_add"
+                android:layout_width="@dimen/_15sdp"
+                android:layout_height="@dimen/_15sdp"
+                android:layout_weight="1"
+                android:background="#FFFFFF"
+                android:scaleType="centerInside"
+                android:tint="@color/colorPrimary"
+                app:srcCompat="@drawable/add_order" />
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/add_cart_botton"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:gravity="center_horizontal|center_vertical"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            app:cornerRadius="0dp"
+            android:text="Add"
+            android:textSize="@dimen/_12ssp" />
+    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

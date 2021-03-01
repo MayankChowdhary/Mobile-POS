@@ -1,4 +1,4 @@
-package com.retailstreet.mobilepos.View.ui.gallery;
+package com.retailstreet.mobilepos.View.ui.Cart;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
