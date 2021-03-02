@@ -1,5 +1,6 @@
 package com.retailstreet.mobilepos.View.SalesRecyclerView;
 
+import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -7,40 +8,54 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteTransactionListener;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.mikepenz.actionitembadge.library.ActionItemBadge;
+import com.mikepenz.iconics.typeface.library.fontawesome.FontAwesome;
 import com.retailstreet.mobilepos.Controller.ControllerCart;
 import com.retailstreet.mobilepos.Database.SQLiteDbInspector;
 import com.retailstreet.mobilepos.R;
 import com.retailstreet.mobilepos.View.ApplicationContextProvider;
+import com.retailstreet.mobilepos.View.ui.Sales.SalesFragment;
 
 import java.util.HashMap;
 
 /**
  * Created by skyfishjy on 10/31/14.
  */
-public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter.ViewHolder> {
+public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter.ViewHolder>  {
 
     static SQLiteDatabase mydb;
+    Activity myParentActivity;
     static HashMap<String, String> orderList = new HashMap<>();
+    public static Menu optionsMenu;
+     Context context;
 
-    public SalesListAdapter(Context context, Cursor cursor){
+
+    public SalesListAdapter(Context context, Cursor cursor, Activity myParentActivity){
         super(context,cursor);
         mydb = ApplicationContextProvider.getContext().openOrCreateDatabase("MasterDB", Context.MODE_PRIVATE, null);
+        this.myParentActivity = myParentActivity;
+        this.context=context;
         //SQLiteDbInspector.PrintTableSchema(ApplicationContextProvider.getContext(),"MasterDB");
        // EmptyCart();
        initMap();
+
         Log.d("SalesRecyclerInvoked", "SalesListAdapter: ");
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder implements Animation.AnimationListener {
         public TextView productTitle;
         public TextView product_detail_2;
         public TextView product_detail_3;
@@ -49,6 +64,8 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
         public  ImageButton remove_order;
         public  TextView order_count;
         public Button add_to_cart;
+        LinearLayout addRemoveWrapper;
+        Animation  FadeIn, FadeOut,FadeInX, FadeOutX;
 
 
 
@@ -62,9 +79,41 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
             remove_order=view.findViewById(R.id.btn_order_remove);
             order_count = view.findViewById(R.id.textview_order_count);
             add_to_cart = view.findViewById(R.id.add_cart_botton);
-
+            addRemoveWrapper = view.findViewById(R.id.addremovewrapper);
+            FadeIn = AnimationUtils.loadAnimation(view.getContext(),
+                    R.anim.slide_in_left);
+            FadeOut = AnimationUtils.loadAnimation(view.getContext(),
+                    R.anim.slide_out_right);
+            FadeInX = AnimationUtils.loadAnimation(view.getContext(),
+                    R.anim.slide_in_right);
+            FadeOutX = AnimationUtils.loadAnimation(view.getContext(),
+                    R.anim.slide_out_left);
+            FadeIn.setAnimationListener(this);
+            FadeOut.setAnimationListener(this);
+            FadeInX.setAnimationListener(this);
+            FadeOutX.setAnimationListener(this);
 
         }
+
+        @Override
+        public void onAnimationEnd(Animation animation) {
+            if (animation == FadeOut) {
+                add_to_cart.setVisibility(View.GONE);
+            }else if(animation == FadeIn){
+                addRemoveWrapper.setVisibility(View.VISIBLE);
+            }else if(animation == FadeInX){
+                add_to_cart.setVisibility(View.VISIBLE);
+            }else if(animation == FadeOutX){
+                addRemoveWrapper.setVisibility(View.GONE);
+            }
+        }
+        @Override
+        public void onAnimationRepeat(Animation animation) {
+        }
+        @Override
+        public void onAnimationStart(Animation animation) {
+        }
+
     }
 
     @NonNull
@@ -118,11 +167,13 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
                 countorder.setText(countText);
                 orderList.put(primary, countText);
                 putCartData(primary,myListItem.getName(),countText,myListItem.getProduct_detail_2(),myListItem.getProduct_detail_4(),myListItem.getProduct_detail_3());
+                updateCountIndicator(optionsMenu);
+//                for (String i : orderList.keySet()) {
+//                    System.out.println("key: " + i + " value: " + orderList.get(i));
+//                    System.out.println("Size: "+orderList.size());
+//                }
 
-                for (String i : orderList.keySet()) {
-                    System.out.println("key: " + i + " value: " + orderList.get(i));
-                    System.out.println("Size: "+orderList.size());
-                }
+
             }
         });
 
@@ -149,12 +200,19 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
                     countorder.setText(countText);
                     deletefromCart(primary);
                     viewHolder.add_to_cart.setVisibility(View.VISIBLE);
+                    viewHolder.add_to_cart.startAnimation(viewHolder.FadeInX);
+                    viewHolder.addRemoveWrapper.startAnimation(viewHolder.FadeOutX);
+
                 }else {
                     countorder.setText("0");
                     orderList.remove(primary);
                     deletefromCart(primary);
                     viewHolder.add_to_cart.setVisibility(View.VISIBLE);
+                    viewHolder.add_to_cart.startAnimation(viewHolder.FadeInX);
+                    viewHolder.addRemoveWrapper.startAnimation(viewHolder.FadeOutX);
+
                 }
+                updateCountIndicator(optionsMenu);
 
                /* for (String i : orderList.keySet()) {
                     System.out.println("key: " + i + " value: " + orderList.get(i));
@@ -175,8 +233,11 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
                 countorder.setText(countText);
                 orderList.put(primary, countText);
                 putCartData(primary,myListItem.getName(),countText,myListItem.getProduct_detail_2(),myListItem.getProduct_detail_4(),myListItem.getProduct_detail_3());
-                v.setVisibility(View.GONE);
+               // v.setVisibility(View.GONE);
+                updateCountIndicator(optionsMenu);
 
+                viewHolder.addRemoveWrapper.startAnimation(viewHolder.FadeIn);
+                viewHolder.add_to_cart.startAnimation(viewHolder.FadeOut);
             }
         });
     }
@@ -199,13 +260,6 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
         }
     }
 
-
-
-    private void EmptyCart(){
-
-        mydb.execSQL("delete from cart");
-    }
-
     private void initMap(){
         orderList.clear();
         Cursor cursor  = mydb.rawQuery("SELECT * FROM cart", null);
@@ -218,4 +272,15 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
             }
         }
     }
+    public void updateCountIndicator(Menu myMenu){
+        optionsMenu = myMenu;
+        int badgeCount = orderList.size();
+        if (badgeCount >0 ) {
+            ActionItemBadge.update(myParentActivity, optionsMenu.findItem(R.id.appCart), FontAwesome.Icon.faw_shopping_cart, ActionItemBadge.BadgeStyles.RED, badgeCount);
+        }else {
+            ActionItemBadge.update(myParentActivity, optionsMenu.findItem(R.id.appCart), FontAwesome.Icon.faw_shopping_cart, ActionItemBadge.BadgeStyles.RED, Integer.MIN_VALUE);
+        }
+    }
+
+
 }

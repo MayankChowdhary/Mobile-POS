@@ -5,15 +5,15 @@
     android:id="@+id/main_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#FFFFFF"
     android:padding="12dp"
     tools:context=".View.LoginActivity">
 
     <FrameLayout
         android:id="@+id/header_back"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:background="@drawable/header_background"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -26,79 +26,65 @@
             android:layout_gravity="center_vertical"
             android:contentDescription="@string/header_image"
             android:scaleType="fitCenter"
-            app:srcCompat="@drawable/header_image" />
+            app:srcCompat="@drawable/company_logo" />
     </FrameLayout>
 
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/layout_back_shape"
+        android:layout_margin="@dimen/_20sdp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <EditText
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/name_mail_input"
+            style="@style/AppTextField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            >
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/email_input"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_40sdp"
-            android:layout_marginStart="18dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="18dp"
-            android:layout_marginBottom="4dp"
+            android:layout_height="wrap_content"
             android:autofillHints="username"
-            android:background="@drawable/textinputborder"
-            android:ems="10"
-            android:hint="📨     Email Address"
-            android:inputType="textEmailAddress"
-            android:paddingStart="@dimen/_18sdp"
-            android:paddingEnd="0dp" />
+            android:hint="Email Address"
+            android:inputType="textEmailAddress" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <EditText
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/name_pass_input"
+            style="@style/AppTextField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            >
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/password_input"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_40sdp"
-            android:layout_marginStart="18dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="18dp"
-            android:layout_marginBottom="4dp"
+            android:layout_height="wrap_content"
             android:autofillHints="password"
-            android:background="@drawable/textinputborder"
-            android:ems="10"
-            android:hint="🔒    Password"
-            android:inputType="textPassword"
-            android:paddingStart="@dimen/_18sdp"
-            android:paddingEnd="0dp" />
+            android:hint="Password"
+            android:inputType="textPassword" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <ImageButton
+        <Button
             android:id="@+id/login_btn"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_40sdp"
-            android:layout_margin="4dp"
-            android:scaleType="centerCrop"
-            app:srcCompat="@drawable/submit_button" />
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginBottom="0dp"
+            android:backgroundTint="?colorPrimaryDark"
+            android:gravity="center"
+            android:text="LOGIN"
+            android:textAlignment="center"
+            android:textSize="@dimen/_14ssp" />
 
-        <ImageView
-            android:id="@+id/or_image"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_25sdp"
-            app:srcCompat="@drawable/or" />
-
-        <ImageButton
-            android:id="@+id/fb_login_btn"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_40sdp"
-            android:layout_margin="4dp"
-            android:scaleType="centerCrop"
-            app:srcCompat="@drawable/facebook_button" />
-
-        <ImageButton
-            android:id="@+id/google_login_btn"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_40sdp"
-            android:layout_margin="4dp"
-            android:scaleType="centerCrop"
-            app:srcCompat="@drawable/gmail_button" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

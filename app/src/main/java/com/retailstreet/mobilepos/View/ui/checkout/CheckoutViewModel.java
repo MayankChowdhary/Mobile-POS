@@ -1,16 +1,16 @@
-package com.retailstreet.mobilepos.View.ui.slideshow;
+package com.retailstreet.mobilepos.View.ui.checkout;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class SlideshowViewModel extends ViewModel {
+public class CheckoutViewModel extends ViewModel {
 
     private MutableLiveData<String> mText;
 
-    public SlideshowViewModel() {
+    public CheckoutViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("This is Empty fragment");
+        mText.setValue("Feature Coming Soon!");
     }
 
     public LiveData<String> getText() {

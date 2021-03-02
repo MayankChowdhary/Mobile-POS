@@ -18,6 +18,7 @@
         android:id="@+id/appCart"
         android:icon="@drawable/cart"
         android:title="Cart"
+        app:actionLayout="@layout/menu_action_item_badge"
         app:showAsAction="always"
         android:visible="false" />
 
@@ -33,6 +34,4 @@
         app:showAsAction="always"
         android:visible="false"
         />
-
-
 </menu>

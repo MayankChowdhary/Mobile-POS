@@ -59,7 +59,7 @@ public class CartFragment extends Fragment {
         Cursor cursor = new ControllerCart(ApplicationContextProvider.getContext()).getCartCursor();
         recyclerView = (RecyclerView) root.findViewById(R.id.cart_recycler_view);
         checkout_lyt = root.findViewById(R.id.checkout_layout);
-        cartListAdapter = new CartListAdapter(getContext(),cursor,root);
+        cartListAdapter = new CartListAdapter(getContext(),cursor,root,getActivity());
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(cartListAdapter);
@@ -69,23 +69,6 @@ public class CartFragment extends Fragment {
             root.findViewById(R.id.empty_cart_text).setVisibility(View.VISIBLE);
         }
 
-        root.setFocusableInTouchMode(true);
-        root.requestFocus();
-        root.setOnKeyListener( new View.OnKeyListener()
-        {
-            @Override
-            public boolean onKey( View v, int keyCode, KeyEvent event )
-            {
-                if( keyCode == KeyEvent.KEYCODE_BACK )
-                {
-
-                    Navigation.findNavController(getActivity(),R.id.nav_host_fragment).popBackStack();
-
-                    return true;
-                }
-                return false;
-            }
-        } );
         return root;
     }
 

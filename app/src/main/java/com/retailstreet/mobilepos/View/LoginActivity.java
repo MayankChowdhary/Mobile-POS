@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -22,7 +23,7 @@ public class LoginActivity extends AppCompatActivity implements DBReadyCallback 
 
     EditText userName;
     EditText passWord;
-    ImageButton login;
+    Button login;
     static String user_id;
     static String pass;
 
@@ -31,6 +32,7 @@ public class LoginActivity extends AppCompatActivity implements DBReadyCallback 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         getSupportActionBar().hide();
+        getWindow().setBackgroundDrawable(null);
 
         if (!SQLiteDbInspector.doesDatabaseExist(getApplicationContext(), "MasterDB")) {
             LoadingDialog.showDialog(LoginActivity.this, "Please Wait", "Preparing Database...");

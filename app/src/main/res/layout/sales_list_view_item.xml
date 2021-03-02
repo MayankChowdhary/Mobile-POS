@@ -61,40 +61,42 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <FrameLayout
-        android:layout_width="91dp"
-        android:layout_height="36dp"
+        android:layout_width="@dimen/_74sdp"
+        android:layout_height="@dimen/_26sdp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
         <LinearLayout
             android:id="@+id/addremovewrapper"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
             android:background="@drawable/broderplusminus"
             android:gravity="center"
             android:orientation="horizontal"
             android:paddingStart="8dp"
-            android:paddingEnd="8dp">
+            android:paddingEnd="8dp"
+            android:visibility="visible">
 
             <ImageButton
                 android:id="@+id/btn_order_remove"
-                android:layout_width="@dimen/_15sdp"
-                android:layout_height="@dimen/_15sdp"
+                android:layout_width="@dimen/_17sdp"
+                android:layout_height="@dimen/_17sdp"
                 android:layout_weight="1"
                 android:background="#FFFFFF"
                 android:scaleType="centerInside"
-                android:tint="@color/colorPrimary"
+                android:tint="?colorPrimary"
                 app:srcCompat="@drawable/remove_order" />
 
             <TextView
                 android:id="@+id/textview_order_count"
-                android:layout_width="@dimen/_25sdp"
-                android:layout_height="@dimen/_25sdp"
+                android:layout_width="@dimen/_27sdp"
+                android:layout_height="match_parent"
                 android:layout_marginStart="@dimen/_6sdp"
                 android:layout_marginEnd="@dimen/_6sdp"
                 android:layout_weight="2"
-                android:background="@color/colorPrimary"
-                android:backgroundTint="@color/colorPrimary"
+                android:background="?colorPrimary"
+                android:backgroundTint="?colorPrimary"
+                android:gravity="center"
                 android:text="0"
                 android:textAlignment="center"
                 android:textColor="#FFFFFF"
@@ -102,12 +104,12 @@
 
             <ImageButton
                 android:id="@+id/btn_order_add"
-                android:layout_width="@dimen/_15sdp"
+                android:layout_width="@dimen/_17sdp"
                 android:layout_height="@dimen/_15sdp"
                 android:layout_weight="1"
                 android:background="#FFFFFF"
                 android:scaleType="centerInside"
-                android:tint="@color/colorPrimary"
+                android:tint="?colorPrimary"
                 app:srcCompat="@drawable/add_order" />
 
         </LinearLayout>
@@ -119,9 +121,9 @@
             android:gravity="center_horizontal|center_vertical"
             android:insetTop="0dp"
             android:insetBottom="0dp"
-            app:cornerRadius="0dp"
             android:text="Add"
-            android:textSize="@dimen/_12ssp" />
+            android:textSize="@dimen/_12ssp"
+            app:cornerRadius="0dp" />
     </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
