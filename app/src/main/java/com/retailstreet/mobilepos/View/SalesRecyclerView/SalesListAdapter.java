@@ -82,11 +82,16 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
         SalesListItem myListItem = SalesListItem.fromCursor(cursor);
         String mrp ="MRP: "+myListItem.getProduct_detail_2()+" ₹";
         String sp ="Price: "+myListItem.getProduct_detail_4()+" ₹";
-        String discount = "Discount: "+myListItem.getProduct_detail_3()+" ₹";
+        double discount = Double.parseDouble(myListItem.getProduct_detail_3());
+        String discountString = "Discount: "+myListItem.getProduct_detail_3()+" ₹";
+        if(discount==0){
+            viewHolder.product_detail_3.setVisibility(View.GONE);
+        }else {
+            viewHolder.product_detail_3.setText(discountString);
+        }
 
         viewHolder.productTitle.setText(myListItem.getName());
         viewHolder.product_detail_2.setText(mrp);
-        viewHolder.product_detail_3.setText(discount);
         viewHolder.product_detail_4.setText(sp);
 
         String oc = orderList.get(myListItem.getPrimary());

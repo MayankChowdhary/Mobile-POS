@@ -87,10 +87,10 @@ public class MainDrawerActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.tool_menu, menu);
-        Drawable drawable = menu.findItem(R.id.appCart).getIcon();
-        drawable = DrawableCompat.wrap(drawable);
-        DrawableCompat.setTint(drawable, ContextCompat.getColor(this,R.color.white));
-        menu.findItem(R.id.appCart).setIcon(drawable);
+        Drawable cartdrawable = menu.findItem(R.id.appCart).getIcon();
+        cartdrawable = DrawableCompat.wrap(cartdrawable);
+        DrawableCompat.setTint(cartdrawable, ContextCompat.getColor(this,R.color.white));
+        menu.findItem(R.id.appCart).setIcon(cartdrawable);
         return true;
     }
 

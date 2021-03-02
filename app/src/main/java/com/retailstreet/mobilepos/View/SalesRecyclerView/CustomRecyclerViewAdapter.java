@@ -1,5 +1,6 @@
 package com.retailstreet.mobilepos.View.SalesRecyclerView;
 
+import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.DataSetObserver;
@@ -20,7 +21,6 @@ public abstract class CustomRecyclerViewAdapter<VH extends RecyclerView.ViewHold
 
     private int mRowIdColumn;
      RecyclerView mRecyclerView;
-
     private DataSetObserver mDataSetObserver;
 
     public CustomRecyclerViewAdapter(Context context, Cursor cursor) {

@@ -10,7 +10,7 @@
         android:id="@+id/appSearchBar"
         android:icon="@android:drawable/ic_menu_search"
         android:title="Search"
-        app:showAsAction="ifRoom|withText"
+        app:showAsAction="always|withText"
         android:visible="false"
         app:actionViewClass="android.widget.SearchView"/>
 
@@ -18,6 +18,21 @@
         android:id="@+id/appCart"
         android:icon="@drawable/cart"
         android:title="Cart"
-        app:showAsAction="ifRoom|withText"
+        app:showAsAction="always"
         android:visible="false" />
+
+    <item
+        android:id="@+id/appEmptyCart"
+        android:title="Empty Cart"
+        app:showAsAction="never"
+        android:visible="false" />
+    <item
+        android:id="@+id/actionBarSpinner"
+        android:title="Customer Name"
+        app:actionViewClass="com.toptoche.searchablespinnerlibrary.SearchableSpinner"
+        app:showAsAction="always"
+        android:visible="false"
+        />
+
+
 </menu>
