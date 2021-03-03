@@ -60,6 +60,7 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
         public TextView product_detail_2;
         public TextView product_detail_3;
         public TextView product_detail_4;
+        public TextView product_detail_V;
         public ImageButton add_order;
         public  ImageButton remove_order;
         public  TextView order_count;
@@ -75,6 +76,7 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
             product_detail_2=view.findViewById(R.id.product_detail_II);
             product_detail_3=view.findViewById(R.id.product_detail_III);
             product_detail_4=view.findViewById(R.id.product_detail_IV);
+            product_detail_V=view.findViewById(R.id.product_detail_V);
             add_order=view.findViewById(R.id.btn_order_add);
             remove_order=view.findViewById(R.id.btn_order_remove);
             order_count = view.findViewById(R.id.textview_order_count);
@@ -142,6 +144,7 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
         viewHolder.productTitle.setText(myListItem.getName());
         viewHolder.product_detail_2.setText(mrp);
         viewHolder.product_detail_4.setText(sp);
+        viewHolder.product_detail_V.setText(myListItem.getProduct_detail_v());
 
         String oc = orderList.get(myListItem.getPrimary());
         if(oc ==null) {
@@ -166,7 +169,7 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
 
                 countorder.setText(countText);
                 orderList.put(primary, countText);
-                putCartData(primary,myListItem.getName(),countText,myListItem.getProduct_detail_2(),myListItem.getProduct_detail_4(),myListItem.getProduct_detail_3());
+                putCartData(primary,myListItem.getName(),countText,myListItem.getProduct_detail_2(),myListItem.getProduct_detail_4(),myListItem.getProduct_detail_3(),myListItem.getGst(),myListItem.getSgst(),myListItem.getCgst());
                 updateCountIndicator(optionsMenu);
 //                for (String i : orderList.keySet()) {
 //                    System.out.println("key: " + i + " value: " + orderList.get(i));
@@ -192,7 +195,7 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
                     countText = String.valueOf(count-1);
                     countorder.setText(countText);
                     orderList.put(primary, countText);
-                    putCartData(primary,myListItem.getName(),countText,myListItem.getProduct_detail_2(),myListItem.getProduct_detail_4(),myListItem.getProduct_detail_3());
+                    putCartData(primary,myListItem.getName(),countText,myListItem.getProduct_detail_2(),myListItem.getProduct_detail_4(),myListItem.getProduct_detail_3(),myListItem.getGst(),myListItem.getSgst(),myListItem.getCgst());
 
                 }else if(count==1) {
                     orderList.remove(primary);
@@ -232,7 +235,7 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
 
                 countorder.setText(countText);
                 orderList.put(primary, countText);
-                putCartData(primary,myListItem.getName(),countText,myListItem.getProduct_detail_2(),myListItem.getProduct_detail_4(),myListItem.getProduct_detail_3());
+                putCartData(primary,myListItem.getName(),countText,myListItem.getProduct_detail_2(),myListItem.getProduct_detail_4(),myListItem.getProduct_detail_3(),myListItem.getGst(),myListItem.getSgst(),myListItem.getCgst());
                // v.setVisibility(View.GONE);
                 updateCountIndicator(optionsMenu);
 
@@ -242,9 +245,9 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
         });
     }
 
-    public  void putCartData(String id,String PROD_NM,String count,String MRP, String S_PRICE,String SALESDISCOUNTBYAMOUNT){
+    public  void putCartData(String id,String PROD_NM,String count,String MRP, String S_PRICE,String SALESDISCOUNTBYAMOUNT,String GST, String SGST, String CGST){
         try {
-            String query = "INSERT INTO cart (STOCK_ID,PROD_NM,count,MRP,S_PRICE,SALESDISCOUNTBYAMOUNT ) VALUES('"+id+"', '"+PROD_NM+"','"+count+"','"+MRP+"', '"+S_PRICE+"','"+SALESDISCOUNTBYAMOUNT+"');";
+            String query = "INSERT INTO cart (STOCK_ID,PROD_NM,count,MRP,S_PRICE,SALESDISCOUNTBYAMOUNT,GST,SGST,CGST ) VALUES('"+id+"', '"+PROD_NM+"','"+count+"','"+MRP+"', '"+S_PRICE+"','"+SALESDISCOUNTBYAMOUNT+"','"+GST+"','"+SGST+"','"+CGST+"');";
 
             mydb.execSQL(query);
         } catch (SQLException e) {

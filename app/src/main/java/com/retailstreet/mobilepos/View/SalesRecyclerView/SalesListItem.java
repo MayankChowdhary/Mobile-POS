@@ -8,7 +8,47 @@ public class SalesListItem {
     private String product_detail_3;
     private String product_detail_4;
     private String primary;
+    private String gst;
+    private String sgst;
+    private String cgst;
+    private String product_detail_v;
 
+
+    public String getGst() {
+        return gst;
+    }
+
+    public void setGst(String gst) {
+        this.gst = gst;
+    }
+
+    public String getSgst() {
+        return sgst;
+    }
+
+    public void setSgst(String sgst) {
+        this.sgst = sgst;
+    }
+
+    public String getCgst() {
+        return cgst;
+    }
+
+    public void setCgst(String cgst) {
+        this.cgst = cgst;
+    }
+
+
+
+
+
+    public String getProduct_detail_v() {
+        return product_detail_v;
+    }
+
+    public void setProduct_detail_v(String product_detail_v) {
+        this.product_detail_v = product_detail_v;
+    }
 
     public String getPrimary() {
         return primary;
@@ -61,6 +101,10 @@ public class SalesListItem {
         salesListItem.setProduct_detail_3(cursor.getString(32));
         salesListItem.setProduct_detail_4(cursor.getString(10));
         salesListItem.setPrimary(cursor.getString(0));
+        salesListItem.setProduct_detail_v("GST: "+cursor.getString(18)+"  SGST: "+cursor.getString(19)+"  CGST: "+cursor.getString(20));
+        salesListItem.setGst(cursor.getString(18));
+        salesListItem.setSgst(cursor.getString(19));
+        salesListItem.setCgst(cursor.getString(20));
         return salesListItem;
     }
 }

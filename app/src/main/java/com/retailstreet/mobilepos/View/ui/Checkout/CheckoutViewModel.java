@@ -1,4 +1,4 @@
-package com.retailstreet.mobilepos.View.ui.checkout;
+package com.retailstreet.mobilepos.View.ui.Checkout;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;

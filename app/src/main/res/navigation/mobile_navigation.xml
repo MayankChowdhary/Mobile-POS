@@ -34,8 +34,8 @@
     </fragment>
     <fragment
         android:id="@+id/checkoutFragment"
-        android:name="com.retailstreet.mobilepos.View.ui.checkout.CheckoutFragment"
-        android:label="Order Summery"
+        android:name="com.retailstreet.mobilepos.View.ui.Checkout.CheckoutFragment"
+        android:label="Delivery Options"
         tools:layout="@layout/fragment_checkout" />
 
 

@@ -2,8 +2,14 @@ package com.retailstreet.mobilepos.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ActivityManager;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -26,6 +32,7 @@ public class LoginActivity extends AppCompatActivity implements DBReadyCallback 
     Button login;
     static String user_id;
     static String pass;
+    int versionCode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +40,16 @@ public class LoginActivity extends AppCompatActivity implements DBReadyCallback 
         setContentView(R.layout.activity_login);
         getSupportActionBar().hide();
         getWindow().setBackgroundDrawable(null);
+
+        versionCode=getVersionCode();
+
+        if(versionCode == 0){
+            Log.d("NewInstall", "onCreate: Invoked");
+           clearAppData();
+        }else if(versionCode!=getCurrentVersion()){
+            Log.d("AppUpdateFound", "onCreate: Invoked");
+                clearAppData();
+        }
 
         if (!SQLiteDbInspector.doesDatabaseExist(getApplicationContext(), "MasterDB")) {
             LoadingDialog.showDialog(LoginActivity.this, "Please Wait", "Preparing Database...");
@@ -109,6 +126,57 @@ public class LoginActivity extends AppCompatActivity implements DBReadyCallback 
         myEdit.putString("password", password);
         myEdit.apply();
     }
+    private int getVersionCode(){
+        SharedPreferences sharedPreferences = getSharedPreferences("com.retailstreet.mobilepos", MODE_PRIVATE);
+        return   sharedPreferences.getInt("version", 0);
+
+    }
+
+    private void setVersionCode(){
+        PackageInfo packageInfo = null;
+        try {
+            packageInfo = LoginActivity.this.getPackageManager()
+                    .getPackageInfo(LoginActivity.this.getPackageName(), 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        int myVersion = packageInfo.versionCode;
+
+        SharedPreferences sharedPreferences = getSharedPreferences("com.retailstreet.mobilepos", MODE_PRIVATE);
+        SharedPreferences.Editor myEdit = sharedPreferences.edit();
+        myEdit.putInt("version", myVersion);
+        myEdit.apply();
+
+    }
+
+    private  int getCurrentVersion(){
+        PackageInfo packageInfo = null;
+        try {
+            packageInfo = LoginActivity.this.getPackageManager()
+                    .getPackageInfo(LoginActivity.this.getPackageName(), 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return packageInfo.versionCode;
+    }
+    private void clearAppData(){
+        Log.d("ClearAppData", "clearAppData:Invoked ");
+        try {
+            ApplicationContextProvider.getContext().deleteDatabase("MasterDB");
+            SharedPreferences sharedPreferences = getSharedPreferences("com.retailstreet.mobilepos", MODE_PRIVATE);
+            SharedPreferences.Editor myEdit = sharedPreferences.edit();
+            myEdit.clear();
+            myEdit.commit();
+            setVersionCode();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        /*Log.d("ClearAppData", "clearAppData:Invoked ");
+            ((ActivityManager)LoginActivity.this.getSystemService(ACTIVITY_SERVICE))
+                    .clearApplicationUserData(); // note: it has a return value!*/
+    }
+
 
     @Override
     protected void onResume() {

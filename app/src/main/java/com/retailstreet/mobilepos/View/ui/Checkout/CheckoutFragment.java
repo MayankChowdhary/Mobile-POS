@@ -1,4 +1,4 @@
-package com.retailstreet.mobilepos.View.ui.checkout;
+package com.retailstreet.mobilepos.View.ui.Checkout;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -20,13 +20,15 @@ public class CheckoutFragment extends Fragment {
         checkoutViewModel =
                 new ViewModelProvider(this).get(CheckoutViewModel.class);
         View root = inflater.inflate(R.layout.fragment_checkout, container, false);
-        final TextView textView = root.findViewById(R.id.text_slideshow);
+
+        /*final TextView textView = root.findViewById(R.id.text_slideshow);
         checkoutViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
                 textView.setText(s);
             }
-        });
+        });*/
+
 
         return root;
 

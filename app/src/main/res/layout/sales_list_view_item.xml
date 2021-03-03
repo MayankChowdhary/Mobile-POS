@@ -10,6 +10,20 @@
     android:padding="@dimen/_15sdp">
 
     <TextView
+        android:id="@+id/product_detail_V"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="listItemsV"
+        android:textAlignment="viewStart"
+        android:textSize="@dimen/_10ssp"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.157"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/product_detail_IV" />
+
+    <TextView
         android:id="@+id/product_detail_IV"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

@@ -43,6 +43,9 @@ public class SQLiteDbBuilder {
     private final ArrayList<String> cartList_Pk;
     private final ArrayList<String> retail_store;
     private final ArrayList<String> retail_store_pk;
+    private final ArrayList<String> retail_cust_address;
+    private final ArrayList<String> retail_cust_address_pk;
+
 
 
 
@@ -70,9 +73,11 @@ public class SQLiteDbBuilder {
         retail_str_sales_master_return_pk= new ArrayList<>();
         retail_str_sales_detail_return= new ArrayList<>();
         retail_str_sales_detail_return_pk= new ArrayList<>();
+        retail_cust_address= new ArrayList<>();
+        retail_cust_address_pk= new ArrayList<>();
         retail_store = new ArrayList<>();
         retail_store_pk = new ArrayList<>();
-        cartList= new ArrayList<>(Arrays.asList("STOCK_ID","PROD_NM","count","MRP","S_PRICE","SALESDISCOUNTBYAMOUNT" ));
+        cartList= new ArrayList<>(Arrays.asList("STOCK_ID","PROD_NM","count","MRP","S_PRICE","SALESDISCOUNTBYAMOUNT","GST","SGST","CGST" ));
         cartList_Pk= new ArrayList<>(Collections.singletonList("STOCK_ID"));
         getJSON();
 
@@ -271,6 +276,22 @@ public class SQLiteDbBuilder {
                 retail_store_pk.add(constraint);
                 //Log.d("retail_store_pk", "constraint:" + constraint);
             }
+            JSONArray custAddr_JSON = jsonObject.getJSONArray("retail_cust_address");
+            for (int i = 0; i < custAddr_JSON.length(); i++) {
+                JSONObject obj = (JSONObject) custAddr_JSON.get(i);
+                String id = obj.getString("Field");
+                retail_cust_address.add(id);
+                // Log.d("retail_store", "id:" + id);
+
+            }
+
+            JSONArray custAddr_pk_JSON = jsonObject.getJSONArray("retail_cust_address_pk");
+            for (int i = 0; i < custAddr_pk_JSON.length(); i++) {
+                JSONObject obj = (JSONObject) custAddr_pk_JSON.get(i);
+                String constraint = obj.getString("Constraint");
+                retail_cust_address_pk.add(constraint);
+                //Log.d("retail_store_pk", "constraint:" + constraint);
+            }
 
             createDynamicDatabase(context, "group_user_master", user_master, user_master_pk);
             createDynamicDatabase(context, "retail_cust", retail_cust, retail_cust_pk);
@@ -282,11 +303,12 @@ public class SQLiteDbBuilder {
             createDynamicDatabase(context, "retail_str_sales_detail_return", retail_str_sales_detail_return, retail_str_sales_detail_return_pk);
             createDynamicDatabase(context, "cart", cartList, cartList_Pk);
             createDynamicDatabase(context, "retail_store", retail_store, retail_store_pk);
+            createDynamicDatabase(context, "retail_cust_address", retail_cust_address, retail_cust_address_pk);
 
             dbOk=true;
             LoadingDialog.cancelDialog();
             Toast.makeText(context, "Tables Created", Toast.LENGTH_LONG).show();
-         // SQLiteDbInspector.PrintTableSchema(context,dbname);
+         SQLiteDbInspector.PrintTableSchema(context,dbname);
 
         } catch (Exception e) {
             Log.e("exception", e.toString());
