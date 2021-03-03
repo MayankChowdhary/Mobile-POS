@@ -2,10 +2,6 @@ package com.retailstreet.mobilepos.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.ActivityManager;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
@@ -14,7 +10,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.retailstreet.mobilepos.Controller.ControllerUserMaster;
@@ -62,7 +57,7 @@ public class LoginActivity extends AppCompatActivity implements DBReadyCallback 
 
         userName = findViewById(R.id.email_input);
         passWord = findViewById(R.id.password_input);
-        login = findViewById(R.id.login_btn);
+        login = findViewById(R.id.payment_btn);
 
         login.setOnClickListener(v -> {
 

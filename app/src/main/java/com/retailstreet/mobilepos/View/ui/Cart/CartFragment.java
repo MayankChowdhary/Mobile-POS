@@ -48,11 +48,11 @@ public class CartFragment extends Fragment {
     RecyclerView recyclerView;
     CartListAdapter cartListAdapter;
       ConstraintLayout checkout_lyt;
-      static StringWithTag spinnerSelected;
+
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         setHasOptionsMenu(true);
-        spinnerSelected = new StringWithTag("","");
+
 
         cartViewModel = new ViewModelProvider(this).get(CartViewModel.class);
         View root = inflater.inflate(R.layout.fragment_cart, container, false);
@@ -78,30 +78,7 @@ public class CartFragment extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
         MenuItem emptyCart = menu.findItem(R.id.appEmptyCart);
         emptyCart.setVisible(true);
-        MenuItem item = menu.findItem(R.id.actionBarSpinner);
-        item.setVisible(true);
-        SearchableSpinner spinner = (SearchableSpinner) item.getActionView();
 
-        ArrayAdapter<StringWithTag> adap = new ArrayAdapter<StringWithTag> (getActivity(), R.layout.spinner_item, getSpinnerItems());
-        adap.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adap);
-        spinner.setTitle("Select Customer");
-        spinner.setPositiveButton("OK");
-        spinner.setGravity(Gravity.END);
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
-        {
-            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id)
-            {
-                spinnerSelected = (StringWithTag) parent.getItemAtPosition(pos);
-                String tag = spinnerSelected.tag;
-                Log.d("SpinnerSelected", "onItemSelected: Tag= "+tag);
-
-            }
-            public void onNothingSelected(AdapterView<?> parent)
-            {
-
-            }
-        });
     }
 
     @Override
@@ -127,27 +104,6 @@ public class CartFragment extends Fragment {
 
     }
 
-    private  List<StringWithTag> getSpinnerItems(){
-        List<StringWithTag> list = new ArrayList<StringWithTag>();
-        list.add(new StringWithTag("No Customer", ""));
 
-        SQLiteDatabase mydb = getActivity().openOrCreateDatabase("MasterDB", Context.MODE_PRIVATE,null);
-        Cursor cursor = mydb.rawQuery("select CUST_ID, NAME from retail_cust",null);
-        if (cursor.moveToFirst()) {
-            while (!cursor.isAfterLast()) {
-                String id = cursor.getString(1);
-                String name = cursor.getString(0);
-                list.add(new StringWithTag(id, name));
-                cursor.moveToNext();
-            }
-        }
-        cursor.close();
-        return  list;
-
-    }
-    public static StringWithTag getSpinnerSelect(){
-
-        return spinnerSelected;
-    }
 }
 

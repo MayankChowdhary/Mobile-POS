@@ -1,0 +1,12 @@
+
+<TextView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/_30sdp"
+    android:textSize="@dimen/_13ssp"
+    android:gravity="start"
+    android:background="@drawable/sales_list_item_border"
+    android:text="Test"
+    android:textColor="#000000"
+    android:padding="5dp"
+    />
