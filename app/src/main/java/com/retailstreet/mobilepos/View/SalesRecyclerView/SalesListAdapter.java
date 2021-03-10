@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -36,21 +37,21 @@ import java.util.HashMap;
  */
 public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter.ViewHolder>  {
 
-    static SQLiteDatabase mydb;
     Activity myParentActivity;
-    static HashMap<String, String> orderList = new HashMap<>();
-    public static Menu optionsMenu;
+     static HashMap<String, String> orderList = new HashMap<>();
      Context context;
+     public static UpdateRecyclerView updateRecyclerView;
 
 
-    public SalesListAdapter(Context context, Cursor cursor, Activity myParentActivity){
+    public SalesListAdapter(Context context, Cursor cursor, Activity myParentActivity, UpdateRecyclerView updateRecyclerViews){
         super(context,cursor);
-        mydb = ApplicationContextProvider.getContext().openOrCreateDatabase("MasterDB", Context.MODE_PRIVATE, null);
         this.myParentActivity = myParentActivity;
         this.context=context;
+        updateRecyclerView = updateRecyclerViews;
         //SQLiteDbInspector.PrintTableSchema(ApplicationContextProvider.getContext(),"MasterDB");
        // EmptyCart();
        initMap();
+
 
         Log.d("SalesRecyclerInvoked", "SalesListAdapter: ");
     }
@@ -65,9 +66,46 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
         public  ImageButton remove_order;
         public  TextView order_count;
         public Button add_to_cart;
+        public TextView sales_qty;
         LinearLayout addRemoveWrapper;
         Animation  FadeIn, FadeOut,FadeInX, FadeOutX;
+        SalesListItem myListItem;
 
+        public void setMyListItem(Cursor cursor) {
+            this.myListItem = SalesListItem.fromCursor(cursor);
+
+            String mrp ="MRP: "+myListItem.getProduct_detail_2()+" ₹";
+            String sp ="Price: "+myListItem.getProduct_detail_4()+" ₹";
+            double discount = Double.parseDouble(myListItem.getProduct_detail_3());
+            String discountString = "Discount: "+myListItem.getProduct_detail_3()+" ₹";
+            int qty = (int)Double.parseDouble(myListItem.getQty());
+            if(discount==0){
+               product_detail_3.setVisibility(View.GONE);
+            }else {
+                product_detail_3.setText(discountString);
+                product_detail_3.setVisibility(View.VISIBLE);
+            }
+
+            productTitle.setText(myListItem.getName());
+            product_detail_2.setText(mrp);
+            product_detail_4.setText(sp);
+            product_detail_V.setText(myListItem.getProduct_detail_v());
+            sales_qty.setText("Avail: "+qty);
+
+
+            String oc = orderList.get(myListItem.getPrimary());
+            if(oc ==null) {
+                order_count.setText("0");
+                add_to_cart.setVisibility(View.VISIBLE);
+                sales_qty.setVisibility(View.INVISIBLE);
+            }
+            else {
+                sales_qty.setVisibility(View.VISIBLE);
+                order_count.setText(orderList.get(myListItem.getPrimary()));
+                add_to_cart.setVisibility(View.GONE);
+
+            }
+        }
 
 
         public ViewHolder(View view) {
@@ -77,6 +115,7 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
             product_detail_3=view.findViewById(R.id.product_detail_III);
             product_detail_4=view.findViewById(R.id.product_detail_IV);
             product_detail_V=view.findViewById(R.id.product_detail_V);
+            sales_qty = view.findViewById(R.id.sales_qty);
             add_order=view.findViewById(R.id.btn_order_add);
             remove_order=view.findViewById(R.id.btn_order_remove);
             order_count = view.findViewById(R.id.textview_order_count);
@@ -95,6 +134,103 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
             FadeInX.setAnimationListener(this);
             FadeOutX.setAnimationListener(this);
 
+          add_order.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.d("Cursorclick", "onClick: "+myListItem.getPrimary());
+                    int qty = (int)Double.parseDouble(myListItem.getQty());
+                    TextView countorder =order_count;
+                    String countText=countorder.getText().toString();
+                    String primary= myListItem.getPrimary();
+                    int count= Integer.parseInt(countText);
+
+                    if(count==qty) {
+                        if(count==1)
+                            Toast.makeText(ApplicationContextProvider.getContext(),"Sorry only "+qty+" quantity is available!",Toast.LENGTH_LONG).show();
+                        else
+                            Toast.makeText(ApplicationContextProvider.getContext(),"Sorry only "+qty+" quantities are available!",Toast.LENGTH_LONG).show();
+                        return;
+                    }
+
+                    countText = String.valueOf(count+1);
+                    countorder.setText(countText);
+                    orderList.put(primary, countText);
+                    putCartData(primary,myListItem.getName(),countText,myListItem.getProduct_detail_2(),myListItem.getProduct_detail_4(),myListItem.getProduct_detail_3(),myListItem.getGst(),myListItem.getSgst(),myListItem.getCgst(),myListItem.getQty());
+                    updateRecyclerView.updateIndicator(orderList.size());
+//                for (String i : orderList.keySet()) {
+//                    System.out.println("key: " + i + " value: " + orderList.get(i));
+//                    System.out.println("Size: "+orderList.size());
+//                }
+
+
+                }
+            });
+
+           remove_order.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    TextView countorder =order_count;
+                    String countText=countorder.getText().toString();
+                    String primary= myListItem.getPrimary();
+                    int count= Integer.parseInt(countText);
+
+                    Log.d("Cursorclick", "onClick: "+myListItem.getPrimary());
+
+                    if (count>1) {
+                        countText = String.valueOf(count-1);
+                        countorder.setText(countText);
+                        orderList.put(primary, countText);
+                        putCartData(primary,myListItem.getName(),countText,myListItem.getProduct_detail_2(),myListItem.getProduct_detail_4(),myListItem.getProduct_detail_3(),myListItem.getGst(),myListItem.getSgst(),myListItem.getCgst(),myListItem.getQty());
+
+                    }else if(count==1) {
+                        orderList.remove(primary);
+                        countText = String.valueOf(count-1);
+                        countorder.setText(countText);
+                        deletefromCart(primary);
+                      sales_qty.setVisibility(View.INVISIBLE);
+                        add_to_cart.setVisibility(View.VISIBLE);
+                        add_to_cart.startAnimation(FadeInX);
+                        addRemoveWrapper.startAnimation(FadeOutX);
+
+                    }else {
+                        countorder.setText("0");
+                        orderList.remove(primary);
+                        deletefromCart(primary);
+                        sales_qty.setVisibility(View.INVISIBLE);
+                        add_to_cart.setVisibility(View.VISIBLE);
+                        add_to_cart.startAnimation(FadeInX);
+                        addRemoveWrapper.startAnimation(FadeOutX);
+
+                    }
+                    updateRecyclerView.updateIndicator(orderList.size());
+
+               /* for (String i : orderList.keySet()) {
+                    System.out.println("key: " + i + " value: " + orderList.get(i));
+                     System.out.println("Size: "+orderList.size());
+                }*/
+                }
+            });
+
+            add_to_cart.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    TextView countorder =order_count;
+                    String countText=countorder.getText().toString();
+                    String primary= myListItem.getPrimary();
+                    int count= Integer.parseInt(countText);
+                    countText = String.valueOf(count+1);
+
+                    countorder.setText(countText);
+                    orderList.put(primary, countText);
+                    putCartData(primary,myListItem.getName(),countText,myListItem.getProduct_detail_2(),myListItem.getProduct_detail_4(),myListItem.getProduct_detail_3(),myListItem.getGst(),myListItem.getSgst(),myListItem.getCgst(),myListItem.getQty());
+                    // v.setVisibility(View.GONE);
+                    updateRecyclerView.updateIndicator(orderList.size());
+                    sales_qty.setVisibility(View.VISIBLE);
+                    addRemoveWrapper.startAnimation(FadeIn);
+                    add_to_cart.startAnimation(FadeOut);
+                }
+            });
         }
 
         @Override
@@ -130,158 +266,60 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, Cursor cursor) {
 
-        SalesListItem myListItem = SalesListItem.fromCursor(cursor);
-        String mrp ="MRP: "+myListItem.getProduct_detail_2()+" ₹";
-        String sp ="Price: "+myListItem.getProduct_detail_4()+" ₹";
-        double discount = Double.parseDouble(myListItem.getProduct_detail_3());
-        String discountString = "Discount: "+myListItem.getProduct_detail_3()+" ₹";
-        if(discount==0){
-            viewHolder.product_detail_3.setVisibility(View.GONE);
-        }else {
-            viewHolder.product_detail_3.setText(discountString);
-        }
+        viewHolder.setMyListItem(cursor);
 
-        viewHolder.productTitle.setText(myListItem.getName());
-        viewHolder.product_detail_2.setText(mrp);
-        viewHolder.product_detail_4.setText(sp);
-        viewHolder.product_detail_V.setText(myListItem.getProduct_detail_v());
-
-        String oc = orderList.get(myListItem.getPrimary());
-        if(oc ==null) {
-            viewHolder.order_count.setText("0");
-            viewHolder.add_to_cart.setVisibility(View.VISIBLE);
-        }
-      else {
-            viewHolder.order_count.setText(orderList.get(myListItem.getPrimary()));
-            viewHolder.add_to_cart.setVisibility(View.GONE);
-        }
-
-        viewHolder.add_order.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d("Cursorclick", "onClick: "+myListItem.getPrimary());
-
-                TextView countorder =viewHolder.order_count;
-                String countText=countorder.getText().toString();
-                String primary= myListItem.getPrimary();
-                int count= Integer.parseInt(countText);
-                countText = String.valueOf(count+1);
-
-                countorder.setText(countText);
-                orderList.put(primary, countText);
-                putCartData(primary,myListItem.getName(),countText,myListItem.getProduct_detail_2(),myListItem.getProduct_detail_4(),myListItem.getProduct_detail_3(),myListItem.getGst(),myListItem.getSgst(),myListItem.getCgst());
-                updateCountIndicator(optionsMenu);
-//                for (String i : orderList.keySet()) {
-//                    System.out.println("key: " + i + " value: " + orderList.get(i));
-//                    System.out.println("Size: "+orderList.size());
-//                }
-
-
-            }
-        });
-
-        viewHolder.remove_order.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                TextView countorder =viewHolder.order_count;
-                String countText=countorder.getText().toString();
-                String primary= myListItem.getPrimary();
-                int count= Integer.parseInt(countText);
-
-                Log.d("Cursorclick", "onClick: "+myListItem.getPrimary());
-
-                if (count>1) {
-                    countText = String.valueOf(count-1);
-                    countorder.setText(countText);
-                    orderList.put(primary, countText);
-                    putCartData(primary,myListItem.getName(),countText,myListItem.getProduct_detail_2(),myListItem.getProduct_detail_4(),myListItem.getProduct_detail_3(),myListItem.getGst(),myListItem.getSgst(),myListItem.getCgst());
-
-                }else if(count==1) {
-                    orderList.remove(primary);
-                    countText = String.valueOf(count-1);
-                    countorder.setText(countText);
-                    deletefromCart(primary);
-                    viewHolder.add_to_cart.setVisibility(View.VISIBLE);
-                    viewHolder.add_to_cart.startAnimation(viewHolder.FadeInX);
-                    viewHolder.addRemoveWrapper.startAnimation(viewHolder.FadeOutX);
-
-                }else {
-                    countorder.setText("0");
-                    orderList.remove(primary);
-                    deletefromCart(primary);
-                    viewHolder.add_to_cart.setVisibility(View.VISIBLE);
-                    viewHolder.add_to_cart.startAnimation(viewHolder.FadeInX);
-                    viewHolder.addRemoveWrapper.startAnimation(viewHolder.FadeOutX);
-
-                }
-                updateCountIndicator(optionsMenu);
-
-               /* for (String i : orderList.keySet()) {
-                    System.out.println("key: " + i + " value: " + orderList.get(i));
-                     System.out.println("Size: "+orderList.size());
-                }*/
-            }
-        });
-
-        viewHolder.add_to_cart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                TextView countorder =viewHolder.order_count;
-                String countText=countorder.getText().toString();
-                String primary= myListItem.getPrimary();
-                int count= Integer.parseInt(countText);
-                countText = String.valueOf(count+1);
-
-                countorder.setText(countText);
-                orderList.put(primary, countText);
-                putCartData(primary,myListItem.getName(),countText,myListItem.getProduct_detail_2(),myListItem.getProduct_detail_4(),myListItem.getProduct_detail_3(),myListItem.getGst(),myListItem.getSgst(),myListItem.getCgst());
-               // v.setVisibility(View.GONE);
-                updateCountIndicator(optionsMenu);
-
-                viewHolder.addRemoveWrapper.startAnimation(viewHolder.FadeIn);
-                viewHolder.add_to_cart.startAnimation(viewHolder.FadeOut);
-            }
-        });
     }
 
-    public  void putCartData(String id,String PROD_NM,String count,String MRP, String S_PRICE,String SALESDISCOUNTBYAMOUNT,String GST, String SGST, String CGST){
+    public static void putCartData(String id,String PROD_NM,String count,String MRP, String S_PRICE,String SALESDISCOUNTBYAMOUNT,String GST, String SGST, String CGST,String Qty){
         try {
-            String query = "INSERT INTO cart (STOCK_ID,PROD_NM,count,MRP,S_PRICE,SALESDISCOUNTBYAMOUNT,GST,SGST,CGST ) VALUES('"+id+"', '"+PROD_NM+"','"+count+"','"+MRP+"', '"+S_PRICE+"','"+SALESDISCOUNTBYAMOUNT+"','"+GST+"','"+SGST+"','"+CGST+"');";
-
-            mydb.execSQL(query);
+            String query = "INSERT INTO cart (STOCK_ID,PROD_NM,count,MRP,S_PRICE,SALESDISCOUNTBYAMOUNT,GST,SGST,CGST,QTY ) VALUES('"+id+"', '"+PROD_NM+"','"+count+"','"+MRP+"', '"+S_PRICE+"','"+SALESDISCOUNTBYAMOUNT+"','"+GST+"','"+SGST+"','"+CGST+"','"+Qty+"');";
+            SQLiteDatabase db = ApplicationContextProvider.getContext().openOrCreateDatabase("MasterDB", Context.MODE_PRIVATE, null);
+            db.execSQL(query);
+            db.close();
         } catch (SQLException e) {
-            String strSQL = "UPDATE cart SET count = "+count+" WHERE STOCK_ID = "+ id;
-            mydb.execSQL(strSQL);
+            try {
+                SQLiteDatabase db = ApplicationContextProvider.getContext().openOrCreateDatabase("MasterDB", Context.MODE_PRIVATE, null);
+                String strSQL = "UPDATE cart SET count = "+count+" WHERE STOCK_ID = "+ id;
+                db.execSQL(strSQL);
+                db.close();
+            } catch (SQLException sqlException) {
+                sqlException.printStackTrace();
+            }
         }
     }
-    public void deletefromCart(String key){
+    public static void deletefromCart(String key){
         try {
-            mydb.delete("cart", "STOCK_ID" + "=" + key, null);
+            SQLiteDatabase  db = ApplicationContextProvider.getContext().openOrCreateDatabase("MasterDB", Context.MODE_PRIVATE, null);
+            db.delete("cart", "STOCK_ID" + "=" + key, null);
+            db.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     private void initMap(){
-        orderList.clear();
-        Cursor cursor  = mydb.rawQuery("SELECT * FROM cart", null);
-        if (cursor.moveToFirst()) {
-            while (!cursor.isAfterLast()) {
-                String id = cursor.getString(0);
-                String cnt = cursor.getString(2);
-                orderList.put(id,cnt);
-                cursor.moveToNext();
+        try {
+            orderList.clear();
+            SQLiteDatabase  db = ApplicationContextProvider.getContext().openOrCreateDatabase("MasterDB", Context.MODE_PRIVATE, null);
+            Cursor cursor  = db.rawQuery("SELECT * FROM cart", null);
+            if (cursor.moveToFirst()) {
+                while (!cursor.isAfterLast()) {
+                    String id = cursor.getString(0);
+                    String cnt = cursor.getString(2);
+                    orderList.put(id,cnt);
+                    cursor.moveToNext();
+                }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
-    public void updateCountIndicator(Menu myMenu){
-        optionsMenu = myMenu;
+    public  void updateCountIndicator(Menu myMenu){
         int badgeCount = orderList.size();
         if (badgeCount >0 ) {
-            ActionItemBadge.update(myParentActivity, optionsMenu.findItem(R.id.appCart), FontAwesome.Icon.faw_shopping_cart, ActionItemBadge.BadgeStyles.RED, badgeCount);
+            ActionItemBadge.update(myParentActivity, myMenu.findItem(R.id.appCart), FontAwesome.Icon.faw_shopping_cart, ActionItemBadge.BadgeStyles.RED, badgeCount);
         }else {
-            ActionItemBadge.update(myParentActivity, optionsMenu.findItem(R.id.appCart), FontAwesome.Icon.faw_shopping_cart, ActionItemBadge.BadgeStyles.RED, Integer.MIN_VALUE);
+            ActionItemBadge.update(myParentActivity, myMenu.findItem(R.id.appCart), FontAwesome.Icon.faw_shopping_cart, ActionItemBadge.BadgeStyles.RED, Integer.MIN_VALUE);
         }
     }
 

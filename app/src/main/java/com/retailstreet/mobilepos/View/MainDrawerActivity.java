@@ -30,9 +30,10 @@ import androidx.appcompat.widget.Toolbar;
 
 import java.util.Currency;
 
-public class MainDrawerActivity extends AppCompatActivity {
+public class MainDrawerActivity extends AppCompatActivity  {
 
     private AppBarConfiguration mAppBarConfiguration;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,19 +43,19 @@ public class MainDrawerActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getWindow().setBackgroundDrawable(null);
 
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        DrawerLayout  drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_sales, R.id.nav_cart, R.id.nav_checkout, R.id.nav_logout)
+               R.id.nav_sales)
                 .setDrawerLayout(drawer)
                 .build();
 
-
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-        NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
+        NavigationUI.setupActionBarWithNavController(this, navController,mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+
         navigationView.setNavigationItemSelectedListener(menuItem -> {
             int id=menuItem.getItemId();
             //it's possible to do more actions on several items, if there is a large amount of items I prefer switch(){case} instead of if()
@@ -77,13 +78,17 @@ public class MainDrawerActivity extends AppCompatActivity {
 
                         // A null listener allows the button to dismiss the dialog and take no further action.
                         .setNegativeButton(android.R.string.no, null)
-                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setIconAttribute(android.R.attr.alertDialogIcon)
                         .show();
 
                 return true;
 
             } if (id==R.id.nav_cart) {
                 Navigation.findNavController(this,R.id.nav_host_fragment).navigate(R.id.action_nav_sales_to_nav_cart);
+                drawer.closeDrawer(GravityCompat.START);
+                return true;
+            }if(id==R.id.nav_sales){
+                Navigation.findNavController(this,R.id.nav_host_fragment).navigate(R.id.nav_sales);
                 drawer.closeDrawer(GravityCompat.START);
                 return true;
             }
@@ -104,10 +109,6 @@ public class MainDrawerActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.tool_menu, menu);
-       /* Drawable cartdrawable = menu.findItem(R.id.appCart).getIcon();
-        cartdrawable = DrawableCompat.wrap(cartdrawable);
-        DrawableCompat.setTint(cartdrawable, ContextCompat.getColor(this,R.color.white));
-        menu.findItem(R.id.appCart).setIcon(cartdrawable);*/
         return true;
     }
 
@@ -126,13 +127,18 @@ public class MainDrawerActivity extends AppCompatActivity {
         SharedPreferences sh = getSharedPreferences("com.retailstreet.mobilepos", MODE_PRIVATE);
         String  user_id = sh.getString("username", "");
 
-        SQLiteDatabase mydb = openOrCreateDatabase("MasterDB",MODE_PRIVATE,null);
-        Cursor cursor = mydb.rawQuery("Select DESCRIPTION, E_MAIL from retail_store where STORE_NUMBER = "+user_id,null);
-        if(cursor.moveToFirst()){
+        try {
+            SQLiteDatabase mydb = openOrCreateDatabase("MasterDB",MODE_PRIVATE,null);
+            Cursor cursor = mydb.rawQuery("Select STR_NM, E_MAIL from retail_store",null);
+            if(cursor.moveToFirst()){
 
-            title = cursor.getString(0);
-            subtitle= cursor.getString(1);
+                title = cursor.getString(0);
+                subtitle= cursor.getString(1);
 
+            }
+        } catch (Exception e) {
+
+            e.printStackTrace();
         }
         NavigationView navigationView = findViewById(R.id.nav_view);
         View hView =  navigationView.getHeaderView(0);

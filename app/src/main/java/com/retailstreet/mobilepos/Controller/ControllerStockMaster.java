@@ -15,6 +15,7 @@ public class ControllerStockMaster extends SQLiteOpenHelper {
     public ControllerStockMaster(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         this.context =context;
+
     }
 
     @Override
@@ -36,10 +37,11 @@ public class ControllerStockMaster extends SQLiteOpenHelper {
     }
 
 
+
     public Cursor getStockMasterCursor() {
 
         String query = "SELECT  * FROM " + TABLE_NAME;
-        SQLiteDatabase db = context.openOrCreateDatabase(DATABASE_NAME,Context.MODE_PRIVATE, null);          //Opens database in writable mode.
+        SQLiteDatabase db = getReadableDatabase();          //Opens database in writable mode.
         Cursor cursor = db.rawQuery(query, null);
         cursor.moveToFirst();
         return cursor;
@@ -47,7 +49,7 @@ public class ControllerStockMaster extends SQLiteOpenHelper {
     public Cursor searchStockMasterCursor(String pattern, String column) {
 
         String query = "SELECT  * FROM " + TABLE_NAME+" WHERE "+ column+" LIKE "+"'%"+pattern+"%'";
-        SQLiteDatabase db = context.openOrCreateDatabase(DATABASE_NAME,Context.MODE_PRIVATE, null);          //Opens database in writable mode.
+        SQLiteDatabase db = getReadableDatabase();          //Opens database in writable mode.
         Cursor cursor = db.rawQuery(query, null);
         cursor.moveToFirst();
         return cursor;

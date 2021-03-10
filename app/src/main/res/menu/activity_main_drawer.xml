@@ -8,16 +8,11 @@
             android:id="@+id/nav_sales"
             android:icon="@drawable/product"
             android:title="@string/menu_sales" />
-        <item
+       <item
             android:id="@+id/nav_cart"
             android:icon="@drawable/cart"
             android:visible="true"
             android:title="@string/menu_cart" />
-        <item
-            android:id="@+id/nav_checkout"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:visible="false"
-            android:title="@string/menu_checkout" />
 
         <item
             android:id="@+id/nav_logout"

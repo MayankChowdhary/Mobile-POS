@@ -103,10 +103,7 @@ public class BillMaster {
     @Expose
     private String NETDISCOUNT;
     
-    
-    public BillMaster(){
-        
-    }
+
     
     public  BillMaster(String BILLMASTERID,String BILLNO,String SALEDATETIME,String SALEDATE,String SALETIME,String MASTERCUSTOMERGUID,String MASTERSTOREGUID,String MASTERTERMINALGUID,String MASTERSHIFTGUID,String USER_GUID,String CUST_MOBILENO,String NETVALUE,String TAXVALUE,String TOTAL_AMOUNT,String DELIVERY_TYPE_GUID,String BILL_PRINT,String TOTAL_BILL_AMOUNT,String NO_OF_ITEMS,String BILLSTATUS,String ISSYNCED,String RECEIVED_CASH,String BALANCE_CASH,String ROUND_OFF,String NETDISCOUNT){
 

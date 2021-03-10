@@ -14,6 +14,8 @@ import android.widget.SearchView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -25,8 +27,9 @@ import com.retailstreet.mobilepos.Controller.ControllerStockMaster;
 import com.retailstreet.mobilepos.R;
 import com.retailstreet.mobilepos.View.ApplicationContextProvider;
 import com.retailstreet.mobilepos.View.SalesRecyclerView.SalesListAdapter;
+import com.retailstreet.mobilepos.View.SalesRecyclerView.UpdateRecyclerView;
 
-public class SalesFragment extends Fragment {
+public class SalesFragment extends Fragment implements UpdateRecyclerView {
 
     //private SalesViewModel homeViewModel;
     SearchView mSearchView;
@@ -35,18 +38,23 @@ public class SalesFragment extends Fragment {
     static  String handlerData;
     private boolean doubleBackToExitPressedOnce;
     private final Handler queryLatencyHandler =new Handler();
-
+    public static Menu optionsMenu;
+    static Cursor cursor;
+     ControllerStockMaster controllerStockMaster;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
             ViewGroup container, Bundle savedInstanceState) {
         //homeViewModel = new ViewModelProvider(this).get(SalesViewModel.class);
         View root = inflater.inflate(R.layout.fragment_sales, container, false);
             setHasOptionsMenu(true); // Add this!
+
         //((AppCompatActivity) getActivity()).getSupportActionBar().hide();
        // final TextView textView = root.findViewById(R.id.text_home);
-        Cursor cursor = new ControllerStockMaster(getContext()).getStockMasterCursor();
+        controllerStockMaster= new ControllerStockMaster(getContext());
+
         recyclerView = root.findViewById(R.id.sales_recycler_view);
-        salesListAdapter = new SalesListAdapter(ApplicationContextProvider.getContext(),cursor,getActivity());
+         cursor = controllerStockMaster.getStockMasterCursor();
+        salesListAdapter = new SalesListAdapter(ApplicationContextProvider.getContext(),cursor,getActivity(),this);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(salesListAdapter);
@@ -70,9 +78,27 @@ public class SalesFragment extends Fragment {
                 new Handler().postDelayed(() -> doubleBackToExitPressedOnce=false, 2000);
                 return true;
             }
-            return true;
+            return false;
         });
         return root;
+    }
+
+    @Override
+    public void updateIndicator(int size) {
+
+        if (size >0 ) {
+            ActionItemBadge.update(getActivity(), optionsMenu.findItem(R.id.appCart), FontAwesome.Icon.faw_shopping_cart, ActionItemBadge.BadgeStyles.RED, size);
+        }else {
+            ActionItemBadge.update(getActivity(), optionsMenu.findItem(R.id.appCart), FontAwesome.Icon.faw_shopping_cart, ActionItemBadge.BadgeStyles.RED, Integer.MIN_VALUE);
+        }
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+
     }
 
     @Override
@@ -121,7 +147,10 @@ public class SalesFragment extends Fragment {
         });
 
         ActionItemBadge.update(getActivity(), menu.findItem(R.id.appCart), FontAwesome.Icon.faw_shopping_cart, ActionItemBadge.BadgeStyles.RED, Integer.MIN_VALUE);
+        optionsMenu=menu;
         salesListAdapter.updateCountIndicator(menu);
+
+
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -151,18 +180,35 @@ public class SalesFragment extends Fragment {
         }};
 
     private  void processQuery(String pattern){
+        if(cursor != null && !cursor.isClosed())
+        cursor.close();
 
-        Cursor cursor = new ControllerStockMaster(getContext()).searchStockMasterCursor(pattern,"PROD_NM");
+         cursor = controllerStockMaster.searchStockMasterCursor(pattern,"PROD_NM");
         salesListAdapter.swapCursor(cursor);
 
     }
     private  void restoreData(){
+        if(cursor != null && !cursor.isClosed())
+        cursor.close();
 
-        Cursor cursor = new ControllerStockMaster(getContext()).getStockMasterCursor();
+         cursor = controllerStockMaster.getStockMasterCursor();
         salesListAdapter.swapCursor(cursor);
 
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        try {
+            salesListAdapter = null;
+            if(cursor != null && !cursor.isClosed())
+                cursor.close();
+            controllerStockMaster.close();
+            controllerStockMaster=null;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
 
+    }
 }

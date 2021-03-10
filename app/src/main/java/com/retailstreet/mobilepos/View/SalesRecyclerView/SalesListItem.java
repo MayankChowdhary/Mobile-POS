@@ -12,7 +12,25 @@ public class SalesListItem {
     private String sgst;
     private String cgst;
     private String product_detail_v;
+    private String Qty;
 
+    private String itemGuid;
+
+    public String getItemGuid() {
+        return itemGuid;
+    }
+
+    public void setItemGuid(String itemGuid) {
+        this.itemGuid = itemGuid;
+    }
+
+    public String getQty() {
+        return Qty;
+    }
+
+    public void setQty(String qty) {
+        Qty = qty;
+    }
 
     public String getGst() {
         return gst;
@@ -37,9 +55,6 @@ public class SalesListItem {
     public void setCgst(String cgst) {
         this.cgst = cgst;
     }
-
-
-
 
 
     public String getProduct_detail_v() {
@@ -105,6 +120,8 @@ public class SalesListItem {
         salesListItem.setGst(cursor.getString(18));
         salesListItem.setSgst(cursor.getString(19));
         salesListItem.setCgst(cursor.getString(20));
+        salesListItem.setQty(cursor.getString(3));
+        salesListItem.setItemGuid(cursor.getString(3));
         return salesListItem;
     }
 }

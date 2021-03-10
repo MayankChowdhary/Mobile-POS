@@ -3,28 +3,45 @@ package com.retailstreet.mobilepos.Controller;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.retailstreet.mobilepos.View.ApplicationContextProvider;
 
-public class ControllerCart {
+public class ControllerCart extends SQLiteOpenHelper {
     Context context;
-    static SQLiteDatabase mydb;
+    private static final int DATABASE_VERSION = 1;
+    private static final String DATABASE_NAME = "MasterDB";
+    private static final String TABLE_NAME = "cart";
+
+
    public ControllerCart(Context context){
-       this.context = context;
-       mydb = ApplicationContextProvider.getContext().openOrCreateDatabase("MasterDB", Context.MODE_PRIVATE, null);
+       super(context, DATABASE_NAME, null, DATABASE_VERSION);
+       this.context =context;
    }
 
+    @Override
+    public void onCreate(SQLiteDatabase db) {
+
+    }
+
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+
+    }
+
     public Cursor getCartCursor() {
-        Cursor cursor = mydb.rawQuery("SELECT * FROM cart", null);
+       SQLiteDatabase sqLiteDatabase = getReadableDatabase();
+        Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM cart", null);
         if (cursor.moveToFirst()) {
             return cursor;
         } else {
             return null;
         }
     }
-    public static void printCart(){
+    public  void printCart(){
         Log.d("Printing Cart", "CartPrint called");
+        SQLiteDatabase mydb = getReadableDatabase();
         String tableString = String.format("Table %s:\n", "cart");
         Cursor allRows  = mydb.rawQuery("SELECT * FROM " + "cart", null);
         if (allRows.moveToFirst() ){

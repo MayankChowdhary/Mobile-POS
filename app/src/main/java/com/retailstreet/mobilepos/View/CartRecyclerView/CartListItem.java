@@ -12,6 +12,15 @@ public class CartListItem {
     private String sgst;
     private String cgst;
     private String primary;
+    private String Qty;
+
+    public String getQty() {
+        return Qty;
+    }
+
+    public void setQty(String qty) {
+        Qty = qty;
+    }
 
 
     public String getGst() {
@@ -105,6 +114,7 @@ public class CartListItem {
         cartListItem.setGst(cursor.getString(6));
         cartListItem.setSgst(cursor.getString(7));
         cartListItem.setCgst(cursor.getString(8));
+        cartListItem.setQty(cursor.getString(9));
         return cartListItem;
     }
 }

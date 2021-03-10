@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,51 +20,92 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.retailstreet.mobilepos.Controller.BillGenerator;
 import com.retailstreet.mobilepos.Controller.ControllerCart;
 import com.retailstreet.mobilepos.R;
-import com.retailstreet.mobilepos.Utils.StringWithTag;
 import com.retailstreet.mobilepos.View.ApplicationContextProvider;
 import com.retailstreet.mobilepos.View.SalesRecyclerView.CustomRecyclerViewAdapter;
-import com.retailstreet.mobilepos.View.ui.Cart.CartFragment;
+import com.retailstreet.mobilepos.View.ui.Cart.CartFragmentDirections;
 
+import java.text.DecimalFormat;
 import java.util.HashMap;
+
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Created by skyfishjy on 10/31/14.
  */
-public class CartListAdapter extends CustomRecyclerViewAdapter<CartListAdapter.ViewHolder> {
+public class CartListAdapter extends CustomRecyclerViewAdapter<CartListAdapter.ViewHolder> implements RefreshRecyclerView {
 
-    static SQLiteDatabase mydb;
+
     static HashMap<String, String> orderList = new HashMap<>();
      View myParentLayout;
-    public  TextView totalItems_view;
-    public  TextView totalPrice_view;
-    private ConstraintLayout checkout_View;
-    private Button checkout_btn;
-    private StringWithTag spinnerData;
+    public   TextView totalItems_view;
+    public   TextView totalPrice_view;
+    private static ConstraintLayout checkout_View;
+    private  Button checkout_btn;
     private Activity myActivity;
+    private static Context context;
+
+
     public CartListAdapter(Context context, Cursor cursor , View parentLayout , Activity activity){
         super(context,cursor);
         myParentLayout = parentLayout;
         myActivity = activity;
-        mydb = context.openOrCreateDatabase("MasterDB", Context.MODE_PRIVATE, null);
+        this.context =context;
         //ControllerCart.printCart();
         initMap();
         totalItems_view = myParentLayout.findViewById(R.id.total_item);
         totalPrice_view = myParentLayout.findViewById(R.id.total_rupees);
         checkout_View = myParentLayout.findViewById(R.id.checkout_layout);
         checkout_btn = myParentLayout.findViewById(R.id.btn_checkout);
-        totalPrice_view.setText(getTotalPrice()+" ₹");
-        totalItems_view.setText(orderList.size()+" Item(s)");
+        /*totalPrice_view.setText(getAmountBefore()+" ₹");
+        totalItems_view.setText(orderList.size()+" Item(s)");*/
 
-        checkout_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-                    Navigation.findNavController(myActivity,R.id.nav_host_fragment).navigate(R.id.action_nav_cart_to_checkoutFragment);
 
-            }
+
+        checkout_btn.setOnClickListener(v -> {
+
+            String totalItem = String.valueOf(orderList.size());
+            String amntBefore = getAmountBefore() ;
+            String discount = getTotalDiscount();
+            String gst = getTotalGST();
+            String grand = String.valueOf(Double.parseDouble(amntBefore)-Double.parseDouble(discount)+Double.parseDouble(gst));
+
+            CartFragmentDirections.ActionNavCartToCheckoutFragment action= CartFragmentDirections.actionNavCartToCheckoutFragment(totalItem, amntBefore, discount,gst,grand);
+            Navigation.findNavController(myActivity,R.id.nav_host_fragment).navigate(action);
+
         });
+
+    }
+
+    @Override
+    public void refreshIt(View v) {
+        notifyItemRemoved(getmRecyclerView().getChildAdapterPosition(v));
+
+    }
+
+    @Override
+    public void swapCursors(Cursor cursor) {
+        swapCursor(  new ControllerCart(ApplicationContextProvider.getContext()).getCartCursor());
+
+    }
+
+    @Override
+    public void setCheckout(String totalPrice, String totalItems) {
+        totalPrice_view.setText(totalPrice);
+        totalItems_view.setText(totalItems);
+    }
+
+    @Override
+    public void setRecyclerVisibility(int visibility) {
+        getmRecyclerView().setVisibility(visibility);
+    }
+
+    @Override
+    public void emptyCartTextVisibility(int visibility) {
+        myParentLayout.findViewById(R.id.empty_cart_text).setVisibility(visibility);
 
     }
 
@@ -77,9 +119,12 @@ public class CartListAdapter extends CustomRecyclerViewAdapter<CartListAdapter.V
         public ImageButton clear_order;
         public  ImageButton remove_order;
         public  TextView order_count;
+        public TextView sales_qty;
+        public  View root;
+        CartListItem myListItem;
+        public RefreshRecyclerView refreshRecyclerView;
 
-
-        public ViewHolder(View view) {
+        public ViewHolder(View view, RefreshRecyclerView refreshView) {
             super(view);
             productTitle = view.findViewById(R.id.product_title);
             product_detail_2=view.findViewById(R.id.product_detail_II);
@@ -90,10 +135,185 @@ public class CartListAdapter extends CustomRecyclerViewAdapter<CartListAdapter.V
             remove_order=view.findViewById(R.id.btn_order_remove);
             clear_order=view.findViewById(R.id.clear_order);
             order_count = view.findViewById(R.id.textview_order_count);
+            sales_qty = view.findViewById(R.id.sales_qty_cart);
+            root = view;
+            this.refreshRecyclerView = refreshView;
+           new Thread(() -> {
+                String AmountB4 = getAmountBefore()+" ₹";
+                view.post(() -> {
+                            refreshRecyclerView.setCheckout(AmountB4, orderList.size() + " Item(s)");
+                        }
+                );
+            }).start();
 
 
+            add_order.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.d("Cursorclick", "onClick: "+myListItem.getPrimary());
+                    TextView countorder =order_count;
+                    String countText=countorder.getText().toString();
+                    String primary= myListItem.getPrimary();
+                    int count= Integer.parseInt(countText);
+
+                    int qty = (int)Double.parseDouble(myListItem.getQty());
+
+                    if(count==qty) {
+                        if(count==1)
+                            Toast.makeText(ApplicationContextProvider.getContext(),"Sorry only "+qty+" quantity is available!",Toast.LENGTH_LONG).show();
+                        else
+                            Toast.makeText(ApplicationContextProvider.getContext(),"Sorry only "+qty+" quantities are available!",Toast.LENGTH_LONG).show();
+                        return;
+                    }
+
+                    countText = String.valueOf(count+1);
+                    countorder.setText(countText);
+                    orderList.put(primary, countText);
+                    putCartData(primary,myListItem.getName(),countText,myListItem.getProduct_detail_2(),myListItem.getProduct_detail_4(),myListItem.getProduct_detail_3(),myListItem.getGst(),myListItem.getSgst(),myListItem.getCgst());
+
+                    if(checkout_View.getVisibility() == View.GONE){
+                        checkout_View.setVisibility(View.VISIBLE);
+                    }
+                    refreshRecyclerView.setCheckout(getAmountBefore()+" ₹",orderList.size()+" Item(s)");
+
+             /*   for (String i : orderList.keySet()) {
+                    System.out.println("key: " + i + " value: " + orderList.get(i));
+                    System.out.println("Size: "+orderList.size());
+                }*/
+                }
+            });
+
+
+            remove_order.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    TextView countorder =order_count;
+                    String countText=countorder.getText().toString();
+                    String primary= myListItem.getPrimary();
+                    int count= Integer.parseInt(countText);
+
+                    Log.d("Cursorclick", "onClick: "+myListItem.getPrimary());
+
+                    if (count>1) {
+                        countText = String.valueOf(count-1);
+                        countorder.setText(countText);
+                        orderList.put(primary, countText);
+                        putCartData(primary,myListItem.getName(),countText,myListItem.getProduct_detail_2(),myListItem.getProduct_detail_4(),myListItem.getProduct_detail_3(),myListItem.getGst(),myListItem.getSgst(),myListItem.getCgst());
+
+                    }else if(count==1) {
+
+                        refreshRecyclerView.refreshIt(root);
+                        orderList.remove(primary);
+                        countText = String.valueOf(count-1);
+                        countorder.setText(countText);
+                        deletefromCart(primary);
+                        Cursor cursor1 = new ControllerCart(ApplicationContextProvider.getContext()).getCartCursor();
+                        new Handler().postDelayed(() -> {
+                            refreshRecyclerView.swapCursors(cursor1);
+                            if(cursor1==null){
+                                refreshRecyclerView.setRecyclerVisibility(View.GONE);
+                                refreshRecyclerView.emptyCartTextVisibility(View.VISIBLE);
+                                checkout_View.setVisibility(View.GONE);
+                            }else{
+                                checkout_View.setVisibility(View.VISIBLE);
+                            }
+
+
+                        }, 400);
+
+
+                    }else {
+                        refreshRecyclerView.refreshIt(root);
+                        countorder.setText("0");
+                        orderList.remove(primary);
+                        deletefromCart(primary);
+                        Cursor cursor1 = new ControllerCart(ApplicationContextProvider.getContext()).getCartCursor();
+                        new Handler().postDelayed(() -> {
+                            refreshRecyclerView.swapCursors(cursor1);
+                            if(cursor1==null){
+                                refreshRecyclerView.setRecyclerVisibility(View.GONE);
+                                refreshRecyclerView.emptyCartTextVisibility(View.VISIBLE);
+                                checkout_View.setVisibility(View.GONE);
+                            }else{
+                                checkout_View.setVisibility(View.VISIBLE);
+                            }
+
+
+                        }, 400);
+                    }
+                    refreshRecyclerView.setCheckout(getAmountBefore()+" ₹",orderList.size()+" Item(s)");
+
+               /* for (String i : orderList.keySet()) {
+                    System.out.println("key: " + i + " value: " + orderList.get(i));
+                     System.out.println("Size: "+orderList.size());
+                }*/
+                }
+            });
+
+
+            clear_order.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    refreshRecyclerView.refreshIt(root);
+                    String primary= myListItem.getPrimary();
+                    orderList.remove(primary);
+                    deletefromCart(primary);
+                    Cursor cursor1 = new ControllerCart(ApplicationContextProvider.getContext()).getCartCursor();
+                    new Handler().postDelayed(() -> {
+                        refreshRecyclerView.swapCursors(cursor1);
+                        if(cursor1==null){
+                            refreshRecyclerView.setRecyclerVisibility(View.GONE);
+                           refreshRecyclerView.emptyCartTextVisibility(View.VISIBLE);
+                            checkout_View.setVisibility(View.GONE);
+                        }else{
+                            checkout_View.setVisibility(View.VISIBLE);
+                        }
+
+                    }, 400);
+
+                    refreshRecyclerView.setCheckout(getAmountBefore()+" ₹",orderList.size()+" Item(s)");
+
+                }
+            });
 
         }
+
+        public void setItem(Cursor cursor) {
+            this.myListItem = CartListItem.fromCursor(cursor);
+
+            String mrp ="MRP: "+myListItem.getProduct_detail_2()+" ₹";
+            String sp ="Price: "+myListItem.getProduct_detail_4()+" ₹";
+            double discount = Double.parseDouble(myListItem.getProduct_detail_3());
+            String discountString = "Discount: "+myListItem.getProduct_detail_3()+" ₹";
+            int qty = (int)Double.parseDouble(myListItem.getQty());
+
+            if(discount==0){
+                product_detail_3.setVisibility(View.GONE);
+            }else {
+                product_detail_3.setText(discountString);
+               product_detail_3.setVisibility(View.VISIBLE);
+            }
+            productTitle.setText(myListItem.getName());
+            product_detail_2.setText(mrp);
+            product_detail_4.setText(sp);
+            product_detail_5.setText(myListItem.getProduct_detail_5());
+            sales_qty.setText("Avail: "+qty);
+
+
+            String oc = orderList.get(myListItem.getPrimary());
+            if(oc ==null) {
+                order_count.setText("0");
+                checkout_View.setVisibility(View.GONE);
+                sales_qty.setVisibility(View.INVISIBLE);
+            }
+            else {
+                sales_qty.setVisibility(View.VISIBLE);
+                order_count.setText(orderList.get(myListItem.getPrimary()));
+
+            }
+        }
+
     }
 
     @NonNull
@@ -101,184 +321,129 @@ public class CartListAdapter extends CustomRecyclerViewAdapter<CartListAdapter.V
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.cart_list_view_item, parent, false);
-        ViewHolder vh = new ViewHolder(itemView);
+        ViewHolder vh = new ViewHolder(itemView, this);
         return vh;
     }
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, Cursor cursor) {
-        CartListItem myListItem = CartListItem.fromCursor(cursor);
+        viewHolder.setItem(cursor);
 
-        String mrp ="MRP: "+myListItem.getProduct_detail_2()+" ₹";
-        String sp ="Price: "+myListItem.getProduct_detail_4()+" ₹";
-        double discount = Double.parseDouble(myListItem.getProduct_detail_3());
-        String discountString = "Discount: "+myListItem.getProduct_detail_3()+" ₹";
-        if(discount==0){
-            viewHolder.product_detail_3.setVisibility(View.GONE);
-        }else {
-            viewHolder.product_detail_3.setText(discountString);
-        }
-
-
-        viewHolder.productTitle.setText(myListItem.getName());
-        viewHolder.product_detail_2.setText(mrp);
-        viewHolder.product_detail_4.setText(sp);
-        viewHolder.product_detail_5.setText(myListItem.getProduct_detail_5());
-
-
-        String oc = orderList.get(myListItem.getPrimary());
-        if(oc ==null) {
-            viewHolder.order_count.setText("0");
-            checkout_View.setVisibility(View.GONE);
-        }
-      else {
-            viewHolder.order_count.setText(orderList.get(myListItem.getPrimary()));
-            totalPrice_view.setText(getTotalPrice()+" ₹");
-            totalItems_view.setText(orderList.size()+" Item(s)");
-        }
-
-        viewHolder.add_order.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d("Cursorclick", "onClick: "+myListItem.getPrimary());
-                TextView countorder =viewHolder.order_count;
-                String countText=countorder.getText().toString();
-                String primary= myListItem.getPrimary();
-                int count= Integer.parseInt(countText);
-                countText = String.valueOf(count+1);
-
-                countorder.setText(countText);
-                orderList.put(primary, countText);
-                putCartData(primary,myListItem.getName(),countText,myListItem.getProduct_detail_2(),myListItem.getProduct_detail_4(),myListItem.getProduct_detail_3(),myListItem.getGst(),myListItem.getSgst(),myListItem.getCgst());
-
-                if(checkout_View.getVisibility() == View.GONE){
-                    checkout_View.setVisibility(View.VISIBLE);
-                }
-                totalPrice_view.setText(getTotalPrice()+" ₹");
-                totalItems_view.setText(orderList.size()+" Item(s)");
-
-             /*   for (String i : orderList.keySet()) {
-                    System.out.println("key: " + i + " value: " + orderList.get(i));
-                    System.out.println("Size: "+orderList.size());
-                }*/
-            }
-        });
-
-        viewHolder.remove_order.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                TextView countorder =viewHolder.order_count;
-                String countText=countorder.getText().toString();
-                String primary= myListItem.getPrimary();
-                int count= Integer.parseInt(countText);
-
-                Log.d("Cursorclick", "onClick: "+myListItem.getPrimary());
-
-                if (count>1) {
-                    countText = String.valueOf(count-1);
-                    countorder.setText(countText);
-                    orderList.put(primary, countText);
-                    putCartData(primary,myListItem.getName(),countText,myListItem.getProduct_detail_2(),myListItem.getProduct_detail_4(),myListItem.getProduct_detail_3(),myListItem.getGst(),myListItem.getSgst(),myListItem.getCgst());
-
-                }else if(count==1) {
-                    orderList.remove(primary);
-                    countText = String.valueOf(count-1);
-                    countorder.setText(countText);
-                    deletefromCart(primary);
-                    Cursor cursor1 = new ControllerCart(ApplicationContextProvider.getContext()).getCartCursor();
-                    swapCursor( cursor1);
-                    if(cursor1==null){
-                        getmRecyclerView().setVisibility(View.GONE);
-                        myParentLayout.findViewById(R.id.empty_cart_text).setVisibility(View.VISIBLE);
-                        checkout_View.setVisibility(View.GONE);                      }
-                }else {
-                    countorder.setText("0");
-                    orderList.remove(primary);
-                    deletefromCart(primary);
-                    swapCursor(  new ControllerCart(ApplicationContextProvider.getContext()).getCartCursor());
-                    Cursor cursor1 = new ControllerCart(ApplicationContextProvider.getContext()).getCartCursor();
-                    swapCursor( cursor1);
-                    if(cursor1==null){
-                        getmRecyclerView().setVisibility(View.GONE);
-                        myParentLayout.findViewById(R.id.empty_cart_text).setVisibility(View.VISIBLE);
-                        checkout_View.setVisibility(View.GONE);                    }
-                }
-                totalPrice_view.setText(getTotalPrice()+" ₹");
-                totalItems_view.setText(orderList.size()+" Item(s)");
-
-               /* for (String i : orderList.keySet()) {
-                    System.out.println("key: " + i + " value: " + orderList.get(i));
-                     System.out.println("Size: "+orderList.size());
-                }*/
-            }
-        });
-
-        viewHolder.clear_order.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String primary= myListItem.getPrimary();
-                orderList.remove(primary);
-                deletefromCart(primary);
-                Cursor cursor1 = new ControllerCart(ApplicationContextProvider.getContext()).getCartCursor();
-                swapCursor( cursor1);
-                if(cursor1==null){
-                    getmRecyclerView().setVisibility(View.GONE);
-                    myParentLayout.findViewById(R.id.empty_cart_text).setVisibility(View.VISIBLE);
-                    checkout_View.setVisibility(View.GONE);                      }
-            }
-        });
     }
 
 
-    public  void putCartData(String id,String PROD_NM,String count,String MRP, String S_PRICE,String SALESDISCOUNTBYAMOUNT,String GST, String SGST, String CGST){
+    public static void putCartData(String id,String PROD_NM,String count,String MRP, String S_PRICE,String SALESDISCOUNTBYAMOUNT,String GST, String SGST, String CGST){
         try {
             String query = "INSERT INTO cart (STOCK_ID,PROD_NM,count,MRP,S_PRICE,SALESDISCOUNTBYAMOUNT,GST,SGST,CGST ) VALUES('"+id+"', '"+PROD_NM+"','"+count+"','"+MRP+"', '"+S_PRICE+"','"+SALESDISCOUNTBYAMOUNT+"','"+GST+"','"+SGST+"','"+CGST+"');";
+            SQLiteDatabase db = context.openOrCreateDatabase("MasterDB", Context.MODE_PRIVATE, null);
+            db.execSQL(query);
+            db.close();
 
-            mydb.execSQL(query);
         } catch (SQLException e) {
-            String strSQL = "UPDATE cart SET count = "+count+" WHERE STOCK_ID = "+ id;
-            mydb.execSQL(strSQL);
+            try {
+                SQLiteDatabase db = context.openOrCreateDatabase("MasterDB", Context.MODE_PRIVATE, null);
+                String strSQL = "UPDATE cart SET count = "+count+" WHERE STOCK_ID = "+ id;
+                db.execSQL(strSQL);
+            } catch (SQLException sqlException) {
+                sqlException.printStackTrace();
+            }
+
         }
     }
-    public void deletefromCart(String key){
+
+    public static void deletefromCart(String key){
         try {
-            mydb.delete("cart", "STOCK_ID" + "=" + key, null);
+            SQLiteDatabase db = context.openOrCreateDatabase("MasterDB", Context.MODE_PRIVATE, null);
+            db.delete("cart", "STOCK_ID" + "=" + key, null);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
 
-    public String getTotalPrice(){
-            String query = "select S_PRICE, count from cart";
-            Cursor result = mydb.rawQuery( query, null );
+    public static  String getAmountBefore(){
+        try {
+            SQLiteDatabase db = context.openOrCreateDatabase("MasterDB", Context.MODE_PRIVATE, null);
+            String query = "select STOCK_ID, SGST,CGST, count,S_PRICE from cart";
+            Cursor result = db.rawQuery( query, null );
 
-             if(result==null)
-                 return "0";
+            if(result==null)
+                return "0";
 
             double total = 0.0; // Your default if none is found
-        for (result.moveToFirst(); !result.isAfterLast(); result.moveToNext()) {
+            for (result.moveToFirst(); !result.isAfterLast(); result.moveToNext()) {
 
-                double itemprice = Double.parseDouble(result.getString(0));
-                int itemcount= Integer.parseInt(result.getString(1));
-                    total += itemprice*itemcount;
+                String  sgst =result.getString(1);
+                String cgst = result.getString(2);
+                String price = result.getString(4);
+                String count = result.getString(3);
+                String netval =  getNetValue(sgst,cgst,price,count);
+                total += Double.parseDouble(netval);
             }
             result.close();
-            return String.valueOf(total);
+
+            return   new DecimalFormat("#.##").format(total);
+
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            return "";
+        }
     }
 
+    public static String getNetValue( String cgst, String sgst,String price, String count){
+        try {
+
+            double gstD = Double.parseDouble(cgst)+Double.parseDouble(sgst);
+            double total = 0.0; // Your default if none is found
+                double itemprice = Double.parseDouble(price);
+                itemprice = itemprice-((itemprice*gstD)/100);
+                int itemcount= Integer.parseInt(count);
+                total += itemprice*itemcount;
+            return String.valueOf(total);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+    public String getTotalDiscount(){
+        double totalDis =0.00;
+
+        for (String key: orderList.keySet()) {
+
+            String dis = new BillGenerator().getDiscountValue(key);
+            totalDis += Double.parseDouble(dis);
+        }
+        return String.valueOf(totalDis);
+
+    }
+    public String getTotalGST(){
+        double totalGST =0.00;
+
+        for (String key: orderList.keySet()) {
+
+            double GST = Double.parseDouble( new BillGenerator().getCGST(key))+ Double.parseDouble(new BillGenerator().getSGST(key));
+            totalGST += GST;
+        }
+
+        return String.valueOf(totalGST);
+    }
+
+
+
     public void EmptyCart(){
-        mydb.execSQL("delete from cart");
+        SQLiteDatabase db = context.openOrCreateDatabase("MasterDB", Context.MODE_PRIVATE, null);
+        db.execSQL("delete from cart");
         orderList.clear();
         getmRecyclerView().setVisibility(View.GONE);
         myParentLayout.findViewById(R.id.empty_cart_text).setVisibility(View.VISIBLE);
         checkout_View.setVisibility(View.GONE);
+        db.close();
     }
 
     private void initMap(){
         orderList.clear();
-        Cursor cursor  = mydb.rawQuery("SELECT * FROM cart", null);
+        SQLiteDatabase db = context.openOrCreateDatabase("MasterDB", Context.MODE_PRIVATE, null);
+        Cursor cursor  = db.rawQuery("SELECT * FROM cart", null);
         if (cursor.moveToFirst()) {
             while (!cursor.isAfterLast()) {
                 String id = cursor.getString(0);
@@ -287,5 +452,7 @@ public class CartListAdapter extends CustomRecyclerViewAdapter<CartListAdapter.V
                 cursor.moveToNext();
             }
         }
+        cursor.close();
+        db.close();
     }
 }
