@@ -8,6 +8,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class ControllerStockMaster extends SQLiteOpenHelper {
 
     private final Context context;
+    SQLiteDatabase db;
+    Cursor cursor;
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "MasterDB";
     private static final String TABLE_NAME = "retail_str_stock_master";
@@ -39,19 +41,40 @@ public class ControllerStockMaster extends SQLiteOpenHelper {
 
 
     public Cursor getStockMasterCursor() {
+        try {
+            if(cursor != null){
+                cursor.close();
+            }
+            String query = "SELECT  * FROM " + TABLE_NAME;
+            db = getReadableDatabase();          //Opens database in writable mode.
+            cursor = db.rawQuery(query, null);
+           if(cursor.moveToFirst()){
+               return cursor;
+           }else {
+               return null;
+           }
 
-        String query = "SELECT  * FROM " + TABLE_NAME;
-        SQLiteDatabase db = getReadableDatabase();          //Opens database in writable mode.
-        Cursor cursor = db.rawQuery(query, null);
-        cursor.moveToFirst();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return cursor;
     }
     public Cursor searchStockMasterCursor(String pattern, String column) {
-
-        String query = "SELECT  * FROM " + TABLE_NAME+" WHERE "+ column+" LIKE "+"'%"+pattern+"%'";
-        SQLiteDatabase db = getReadableDatabase();          //Opens database in writable mode.
-        Cursor cursor = db.rawQuery(query, null);
-        cursor.moveToFirst();
+        try {
+            if(cursor != null){
+                cursor.close();
+            }
+            String query = "SELECT  * FROM " + TABLE_NAME+" WHERE "+ column+" LIKE "+"'%"+pattern+"%'";
+            db = getReadableDatabase();          //Opens database in writable mode.
+            cursor = db.rawQuery(query, null);
+            if(cursor.moveToFirst()){
+                return cursor;
+            }else {
+                return null;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return cursor;
     }
 

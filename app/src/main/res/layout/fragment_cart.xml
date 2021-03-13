@@ -7,17 +7,35 @@
     android:background="#FFFFFF"
     tools:context=".View.ui.Cart.CartFragment">
 
-    <TextView
-        android:id="@+id/empty_cart_text"
+    <LinearLayout
+        android:id="@+id/empty_cart_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Cart is empty!"
-        android:textSize="@dimen/_20ssp"
-        android:visibility="gone"
+        android:gravity="center"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/empty_cart_image"
+            android:layout_width="@dimen/_200sdp"
+            android:layout_height="@dimen/_150sdp"
+            android:layout_weight="2"
+            android:visibility="visible"
+            app:lottie_autoPlay="true"
+            app:lottie_fileName="lotte_empty_cart.json"
+            app:lottie_loop="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Cart is empty"
+            android:textSize="@dimen/_18ssp" />
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/cart_recycler_view"

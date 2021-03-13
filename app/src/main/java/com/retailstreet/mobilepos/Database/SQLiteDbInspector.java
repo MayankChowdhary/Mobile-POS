@@ -5,7 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import com.retailstreet.mobilepos.View.LoginActivity;
+import com.retailstreet.mobilepos.View.ApplicationContextProvider;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -47,12 +47,13 @@ public class SQLiteDbInspector {
                 }
             }
             result.add(temp);
-
         }
-
+         c.close();
+         myDataBase.close();
         //PrintTableData(myDataBase,"retail_str_stock_master");
     }
-    public static void PrintTableData(SQLiteDatabase db, String tableName) {
+    public static void PrintTableData(String dbname, String tableName) {
+        SQLiteDatabase db = ApplicationContextProvider.getContext().openOrCreateDatabase(dbname, Context.MODE_PRIVATE, null);
         Log.d(TAG, "getTableAsString called");
         String tableString = String.format("Table %s:\n", tableName);
         Cursor allRows  = db.rawQuery("SELECT * FROM " + tableName, null);
@@ -67,7 +68,8 @@ public class SQLiteDbInspector {
 
             } while (allRows.moveToNext());
         }
-
+        allRows.close();
+        db.close();
         Log.d("PrintingTable", "TableName: "+tableName+" : " +tableString);
     }
 
@@ -88,7 +90,10 @@ public class SQLiteDbInspector {
         SQLiteDatabase myDataBase = context.openOrCreateDatabase(dbname, Context.MODE_PRIVATE, null);
         String count = "SELECT * FROM "+tableName;
         Cursor mcursor = myDataBase.rawQuery(count, null);
-        return mcursor.moveToFirst();
+        boolean isEmpty= mcursor.moveToFirst();
+        mcursor.close();
+        myDataBase.close();
+        return isEmpty;
 
 
     }

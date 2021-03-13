@@ -13,7 +13,6 @@ public class SalesListItem {
     private String cgst;
     private String product_detail_v;
     private String Qty;
-
     private String itemGuid;
 
     public String getItemGuid() {

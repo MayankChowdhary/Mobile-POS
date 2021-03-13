@@ -8,7 +8,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.retailstreet.mobilepos.Utils.JSONParserSync;
-import com.retailstreet.mobilepos.View.LoadingDialog;
+import com.retailstreet.mobilepos.View.dialog.LoadingDialog;
 
 import org.json.JSONArray;
 import org.json.JSONObject;

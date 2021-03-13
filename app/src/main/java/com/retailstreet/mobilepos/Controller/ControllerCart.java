@@ -6,14 +6,13 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import com.retailstreet.mobilepos.View.ApplicationContextProvider;
-
 public class ControllerCart extends SQLiteOpenHelper {
     Context context;
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "MasterDB";
     private static final String TABLE_NAME = "cart";
-
+    Cursor cursor;
+    SQLiteDatabase sqLiteDatabase;
 
    public ControllerCart(Context context){
        super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -31,13 +30,21 @@ public class ControllerCart extends SQLiteOpenHelper {
     }
 
     public Cursor getCartCursor() {
-       SQLiteDatabase sqLiteDatabase = getReadableDatabase();
-        Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM cart", null);
-        if (cursor.moveToFirst()) {
-            return cursor;
-        } else {
-            return null;
+        try {
+             sqLiteDatabase = getReadableDatabase();
+            if(cursor != null){
+                cursor.close();
+            }
+            cursor = sqLiteDatabase.rawQuery("SELECT * FROM cart", null);
+            if (cursor.moveToFirst()) {
+                return cursor;
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        return null;
     }
     public  void printCart(){
         Log.d("Printing Cart", "CartPrint called");
@@ -57,5 +64,6 @@ public class ControllerCart extends SQLiteOpenHelper {
         }
         Log.d("Cart", "printCart: "+tableString);
         allRows.close();
+        mydb.close();
     }
 }

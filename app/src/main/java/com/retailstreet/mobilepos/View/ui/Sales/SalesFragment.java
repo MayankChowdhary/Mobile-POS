@@ -11,11 +11,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatButton;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -41,23 +40,33 @@ public class SalesFragment extends Fragment implements UpdateRecyclerView {
     public static Menu optionsMenu;
     static Cursor cursor;
      ControllerStockMaster controllerStockMaster;
+     TextView emptyListView;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
             ViewGroup container, Bundle savedInstanceState) {
         //homeViewModel = new ViewModelProvider(this).get(SalesViewModel.class);
         View root = inflater.inflate(R.layout.fragment_sales, container, false);
             setHasOptionsMenu(true); // Add this!
-
+            emptyListView=root.findViewById(R.id.empty_sales_text);
         //((AppCompatActivity) getActivity()).getSupportActionBar().hide();
        // final TextView textView = root.findViewById(R.id.text_home);
         controllerStockMaster= new ControllerStockMaster(getContext());
 
         recyclerView = root.findViewById(R.id.sales_recycler_view);
-         cursor = controllerStockMaster.getStockMasterCursor();
+        cursor = controllerStockMaster.getStockMasterCursor();
+
         salesListAdapter = new SalesListAdapter(ApplicationContextProvider.getContext(),cursor,getActivity(),this);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(salesListAdapter);
+        if(cursor==null){
+            recyclerView.setVisibility(View.GONE);
+            emptyListView.setVisibility(View.VISIBLE);
+        }else
+        {
+            recyclerView.setVisibility(View.VISIBLE);
+            emptyListView.setVisibility(View.GONE);
+        }
 
         root.setFocusableInTouchMode(true);
         root.requestFocus();
@@ -185,6 +194,14 @@ public class SalesFragment extends Fragment implements UpdateRecyclerView {
 
          cursor = controllerStockMaster.searchStockMasterCursor(pattern,"PROD_NM");
         salesListAdapter.swapCursor(cursor);
+        if(cursor==null){
+            recyclerView.setVisibility(View.GONE);
+            emptyListView.setVisibility(View.VISIBLE);
+        }else
+        {
+            recyclerView.setVisibility(View.VISIBLE);
+           emptyListView.setVisibility(View.GONE);
+        }
 
     }
     private  void restoreData(){
@@ -193,6 +210,14 @@ public class SalesFragment extends Fragment implements UpdateRecyclerView {
 
          cursor = controllerStockMaster.getStockMasterCursor();
         salesListAdapter.swapCursor(cursor);
+        if(cursor==null){
+            recyclerView.setVisibility(View.GONE);
+            emptyListView.setVisibility(View.VISIBLE);
+        }else
+        {
+            recyclerView.setVisibility(View.VISIBLE);
+            emptyListView.setVisibility(View.GONE);
+        }
 
     }
 

@@ -113,7 +113,10 @@ public class BillDetail {
     @SerializedName("TOTALGST")
     @Expose
     private String TOTALGST;
-    
+
+    public BillDetail(){
+
+    }
     public BillDetail(String BILLDETAILID, String BILLMASTERID, String BILLNO, String CATEGORY_GUID, String SUBCAT_GUID, String ITEM_GUID, String ITEM_CODE, String QTY, String UOM_GUID, String BATCHNO, String COST_PRICE, String NETVALUE, String DISCOUNT_PERC, String DISCOUNT_VALUE, String TOTALVALUE, String MRP, String BILLDETAILSTATUS, String HSN, String CGSTPERCENTAGE, String SGSTPERCENTAGE, String IGSTPERCENTAGE, String ADDITIONALPERCENTAGE, String CGST, String SGST, String IGST, String ADDITIONALCESS, String TOTALGST){
         super();
         this.BILLDETAILID = BILLDETAILID;
@@ -144,7 +147,7 @@ public class BillDetail {
         this.ADDITIONALCESS  = ADDITIONALCESS;
         this.TOTALGST  = TOTALGST;
     }
-    
+
 
     public String getBILLDETAILID() {
         return BILLDETAILID;

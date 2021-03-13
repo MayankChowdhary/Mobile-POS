@@ -3,7 +3,6 @@ package com.retailstreet.mobilepos.Database;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteTableLockedException;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -23,11 +22,9 @@ import com.retailstreet.mobilepos.Model.StockMaster;
 import com.retailstreet.mobilepos.Model.TerminalConfiguration;
 import com.retailstreet.mobilepos.Model.TerminalUserAllocation;
 import com.retailstreet.mobilepos.View.ApplicationContextProvider;
-import com.retailstreet.mobilepos.View.LoadingDialog;
+import com.retailstreet.mobilepos.View.dialog.LoadingDialog;
 
-import java.sql.SQLInput;
 import java.util.List;
-import java.util.concurrent.BlockingDeque;
 
 import retrofit2.Call;
 import retrofit2.Callback;

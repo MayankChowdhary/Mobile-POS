@@ -7,6 +7,17 @@
     android:background="#FFFFFF"
     tools:context=".View.ui.Sales.SalesFragment">
 
+    <TextView
+        android:id="@+id/empty_sales_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No Sales Found!"
+        android:textSize="@dimen/_20ssp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/sales_recycler_view"
         android:layout_width="0dp"

@@ -105,7 +105,7 @@ public class CartListAdapter extends CustomRecyclerViewAdapter<CartListAdapter.V
 
     @Override
     public void emptyCartTextVisibility(int visibility) {
-        myParentLayout.findViewById(R.id.empty_cart_text).setVisibility(visibility);
+        myParentLayout.findViewById(R.id.empty_cart_view).setVisibility(visibility);
 
     }
 
@@ -344,6 +344,7 @@ public class CartListAdapter extends CustomRecyclerViewAdapter<CartListAdapter.V
                 SQLiteDatabase db = context.openOrCreateDatabase("MasterDB", Context.MODE_PRIVATE, null);
                 String strSQL = "UPDATE cart SET count = "+count+" WHERE STOCK_ID = "+ id;
                 db.execSQL(strSQL);
+                db.close();
             } catch (SQLException sqlException) {
                 sqlException.printStackTrace();
             }
@@ -355,6 +356,7 @@ public class CartListAdapter extends CustomRecyclerViewAdapter<CartListAdapter.V
         try {
             SQLiteDatabase db = context.openOrCreateDatabase("MasterDB", Context.MODE_PRIVATE, null);
             db.delete("cart", "STOCK_ID" + "=" + key, null);
+            db.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -381,7 +383,7 @@ public class CartListAdapter extends CustomRecyclerViewAdapter<CartListAdapter.V
                 total += Double.parseDouble(netval);
             }
             result.close();
-
+            db.close();
             return   new DecimalFormat("#.##").format(total);
 
         } catch (NumberFormatException e) {
@@ -421,21 +423,29 @@ public class CartListAdapter extends CustomRecyclerViewAdapter<CartListAdapter.V
 
         for (String key: orderList.keySet()) {
 
-            double GST = Double.parseDouble( new BillGenerator().getCGST(key))+ Double.parseDouble(new BillGenerator().getSGST(key));
+            double GST = Double.parseDouble( getCGST(key))+ Double.parseDouble(getSGST(key));
             totalGST += GST;
         }
 
         return String.valueOf(totalGST);
     }
 
-
+    public  boolean isCartEmpty(){
+        SQLiteDatabase db = context.openOrCreateDatabase("MasterDB", Context.MODE_PRIVATE, null);
+        String query = "SELECT * FROM cart";
+        Cursor cursor = db.rawQuery(query, null);
+        int count = cursor.getCount();
+        cursor.close();
+        db.close();
+        return count <= 0;
+    }
 
     public void EmptyCart(){
         SQLiteDatabase db = context.openOrCreateDatabase("MasterDB", Context.MODE_PRIVATE, null);
         db.execSQL("delete from cart");
         orderList.clear();
         getmRecyclerView().setVisibility(View.GONE);
-        myParentLayout.findViewById(R.id.empty_cart_text).setVisibility(View.VISIBLE);
+        myParentLayout.findViewById(R.id.empty_cart_view).setVisibility(View.VISIBLE);
         checkout_View.setVisibility(View.GONE);
         db.close();
     }
@@ -454,5 +464,52 @@ public class CartListAdapter extends CustomRecyclerViewAdapter<CartListAdapter.V
         }
         cursor.close();
         db.close();
+    }
+
+    public String getSGST(String stockID){
+        SQLiteDatabase mydb  = context.openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
+        String query = "select SGST,S_PRICE, count from cart WHERE STOCK_ID = "+stockID;
+        Cursor result = mydb.rawQuery( query, null );
+
+        if(result==null)
+            return "0";
+
+        double total = 0.0; // Your default if none is found
+        for (result.moveToFirst(); !result.isAfterLast(); result.moveToNext()) {
+
+            double itemSgst = Double.parseDouble(result.getString(0));
+            double itemPrice = Double.parseDouble(result.getString(1));
+            double sgstForone= ((itemSgst*itemPrice)/100);
+            int itemcount= Integer.parseInt(result.getString(2));
+            total = sgstForone*itemcount;
+
+        }
+        result.close();
+        mydb.close();
+        return String.valueOf(total);
+    }
+
+    public  String getCGST( String stockID){
+        SQLiteDatabase  mydb  = context.openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
+        String query = "select CGST,S_PRICE, count from cart WHERE STOCK_ID = "+stockID;
+        Cursor result = mydb.rawQuery( query, null );
+
+        if(result==null)
+            return "0";
+
+        double total = 0.0; // Your default if none is found
+        for (result.moveToFirst(); !result.isAfterLast(); result.moveToNext()) {
+
+            double itemSgst = Double.parseDouble(result.getString(0));
+            double itemPrice = Double.parseDouble(result.getString(1));
+            double sgstForone= ((itemSgst*itemPrice)/100);
+            int itemcount= Integer.parseInt(result.getString(2));
+            total = sgstForone*itemcount;
+
+        }
+        result.close();
+        mydb.close();
+        return String.valueOf(total);
+
     }
 }

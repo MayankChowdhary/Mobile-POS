@@ -1,6 +1,5 @@
 package com.retailstreet.mobilepos.View.SalesRecyclerView;
 
-import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.DataSetObserver;

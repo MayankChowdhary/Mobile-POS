@@ -1,7 +1,11 @@
 package com.retailstreet.mobilepos.View.ui.Cart;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -19,10 +24,14 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.labters.lottiealertdialoglibrary.DialogTypes;
 import com.retailstreet.mobilepos.Controller.ControllerCart;
 import com.retailstreet.mobilepos.R;
 import com.retailstreet.mobilepos.View.ApplicationContextProvider;
 import com.retailstreet.mobilepos.View.CartRecyclerView.CartListAdapter;
+import com.retailstreet.mobilepos.View.LoginActivity;
+import com.retailstreet.mobilepos.View.MainDrawerActivity;
+import com.retailstreet.mobilepos.View.dialog.LottieAlertDialogs;
 
 public class CartFragment extends Fragment {
 
@@ -52,7 +61,7 @@ public class CartFragment extends Fragment {
         if(cursor==null){
             recyclerView.setVisibility(View.GONE);
             checkout_lyt.setVisibility(View.GONE);
-            root.findViewById(R.id.empty_cart_text).setVisibility(View.VISIBLE);
+            root.findViewById(R.id.empty_cart_view).setVisibility(View.VISIBLE);
         }
 
         return root;
@@ -72,17 +81,33 @@ public class CartFragment extends Fragment {
         // Handle item selection
         Log.d("MainMenuListening", "onOptionsItemSelected: Invoked ");
         if (item.getItemId() == R.id.appEmptyCart) {
-            Log.d("EmptyCartListening", "onOptionsItemSelected: Invoked ");
-            new AlertDialog.Builder(getActivity())
-                    .setTitle("Empty Cart")
-                    .setMessage("Confirm Empty Cart?")
-                    .setPositiveButton(android.R.string.yes, (dialog, which) -> {
-                        cartListAdapter.EmptyCart();
 
+            if(cartListAdapter.isCartEmpty())
+            {
+                Toast.makeText(getContext(),"Cart is already Empty!",Toast.LENGTH_LONG).show();
+                return true;
+            }
+
+            Log.d("EmptyCartListening", "onOptionsItemSelected: Invoked ");
+
+            LottieAlertDialogs alertDialog= new LottieAlertDialogs.Builder(getContext(), DialogTypes.TYPE_WARNING)
+                    .setTitle("Empty Cart")
+                    .setDescription("Do you want to clear all items?")
+                    .setPositiveText("Yes")
+                    .setPositiveButtonColor(Color.parseColor("#297999"))
+                    .setPositiveTextColor(Color.parseColor("#ffffff"))
+                    .setNegativeText("No")
+                    .setNegativeButtonColor(Color.parseColor("#297999"))
+                    .setNegativeTextColor(Color.parseColor("#ffffff"))
+                    .setPositiveListener(lottieAlertDialog -> {
+                        cartListAdapter.EmptyCart();
+                        lottieAlertDialog.dismiss();
                     })
-                    .setNegativeButton(android.R.string.no, null)
-                    .setIconAttribute(android.R.attr.alertDialogIcon)
-                    .show();
+                    .setNegativeListener(Dialog::dismiss)
+                    .build();
+            alertDialog.setCancelable(true);
+            alertDialog.show();
+
             return true;
         } else {
             return super.onOptionsItemSelected(item);

@@ -13,12 +13,18 @@ import com.retailstreet.mobilepos.Model.ProductMaster;
 import com.retailstreet.mobilepos.Model.RetailStore;
 import com.retailstreet.mobilepos.Model.ShiftMaster;
 import com.retailstreet.mobilepos.Model.StockMaster;
+import com.retailstreet.mobilepos.Model.SyncResponse;
 import com.retailstreet.mobilepos.Model.TerminalConfiguration;
 import com.retailstreet.mobilepos.Model.TerminalUserAllocation;
 
 import java.util.List;
+
+import okhttp3.RequestBody;
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
+import retrofit2.http.POST;
 import retrofit2.http.Url;
 
 
@@ -63,7 +69,9 @@ public interface ApiInterface {
     @GET
     Call<List<BillPayDetail>> getBillPay_Detail(@Url String url);
 
-    /*  @GET("ApiTest/BillMaster?STORE_ID="+storeid)
-    Call<List<BillMaster>> getBill_Mater();*/
+
+   //*********Upload API***********
+   @POST("/APIManagers/api/PullPOSRegualarSync/PullBillHeaderDetails")
+   Call<SyncResponse> UploadSaleRecords(@Header("Authorization")String Authorization, @Body RequestBody body);
 
 }

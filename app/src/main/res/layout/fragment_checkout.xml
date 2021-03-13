@@ -26,10 +26,10 @@
         android:layout_margin="@dimen/_8sdp"
         android:background="@drawable/sales_list_item_border"
         android:padding="@dimen/_8sdp"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/customer_selector">
+        app:layout_constraintTop_toBottomOf="@id/deliveryOptSpinner">
 
         <TextView
             android:id="@+id/addr_title"
@@ -46,12 +46,26 @@
             android:id="@+id/addr_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_4sdp"
             android:text="@string/addr_dummy"
             android:textSize="@dimen/_12ssp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/addr_title" />
+            app:layout_constraintTop_toBottomOf="@+id/change_add" />
+
+        <Button
+            android:id="@+id/change_add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
+            android:text="Change"
+            android:textSize="@dimen/_8ssp"
+            app:layout_constraintEnd_toEndOf="@+id/addr_title"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -60,9 +74,10 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/_10sdp"
+        android:spinnerMode="dropdown"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/address_layout" />
+        app:layout_constraintTop_toBottomOf="@+id/customer_selector" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/summery_layout"
@@ -74,7 +89,7 @@
         android:padding="@dimen/_8sdp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/deliveryOptSpinner">
+        app:layout_constraintTop_toBottomOf="@+id/address_layout">
 
         <LinearLayout
             android:id="@+id/item_layout_1"

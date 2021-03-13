@@ -18,6 +18,7 @@ import com.retailstreet.mobilepos.Database.SQLiteDbBuilder;
 import com.retailstreet.mobilepos.Database.SQLiteDbInspector;
 import com.retailstreet.mobilepos.Database.TableDataInjector;
 import com.retailstreet.mobilepos.R;
+import com.retailstreet.mobilepos.View.dialog.LoadingDialog;
 
 
 public class LoginActivity extends AppCompatActivity implements DBReadyCallback {
@@ -47,7 +48,7 @@ public class LoginActivity extends AppCompatActivity implements DBReadyCallback 
         }
 
         if (!SQLiteDbInspector.doesDatabaseExist(getApplicationContext(), "MasterDB")) {
-            LoadingDialog.showDialog(LoginActivity.this, "Please Wait", "Preparing Database...");
+            LoadingDialog.showDialog(LoginActivity.this, "Please Wait!", "Preparing Database...");
             new SQLiteDbBuilder(ApplicationContextProvider.getContext());
             Log.d("DatabaseCheck", "onCreate: Database Not exists! ");
         } else {
@@ -69,7 +70,7 @@ public class LoginActivity extends AppCompatActivity implements DBReadyCallback 
             } else {
 
                 if (SQLiteDbBuilder.dbOk && !SQLiteDbInspector.isTableNotEmpty("group_user_master", getApplicationContext(), "MasterDB")) {
-                    LoadingDialog.showDialog(LoginActivity.this, "Please Wait", "Downloading Database...");
+                    LoadingDialog.showDialog(LoginActivity.this, "Please Wait!", "Downloading Database...");
                     Log.d("TableNotYetCreated", "onCreate: Creating Table..");
                     new TableDataInjector(ApplicationContextProvider.getContext(), user_id, LoginActivity.this);
 
@@ -135,6 +136,7 @@ public class LoginActivity extends AppCompatActivity implements DBReadyCallback 
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
+        assert packageInfo != null;
         int myVersion = packageInfo.versionCode;
 
         SharedPreferences sharedPreferences = getSharedPreferences("com.retailstreet.mobilepos", MODE_PRIVATE);
@@ -152,6 +154,7 @@ public class LoginActivity extends AppCompatActivity implements DBReadyCallback 
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
+        assert packageInfo != null;
         return packageInfo.versionCode;
     }
     private void clearAppData(){

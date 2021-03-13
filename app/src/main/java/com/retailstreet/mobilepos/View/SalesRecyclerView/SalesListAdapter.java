@@ -5,7 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteTransactionListener;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -24,11 +24,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.mikepenz.actionitembadge.library.ActionItemBadge;
 import com.mikepenz.iconics.typeface.library.fontawesome.FontAwesome;
-import com.retailstreet.mobilepos.Controller.ControllerCart;
-import com.retailstreet.mobilepos.Database.SQLiteDbInspector;
 import com.retailstreet.mobilepos.R;
 import com.retailstreet.mobilepos.View.ApplicationContextProvider;
-import com.retailstreet.mobilepos.View.ui.Sales.SalesFragment;
 
 import java.util.HashMap;
 
@@ -70,6 +67,7 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
         LinearLayout addRemoveWrapper;
         Animation  FadeIn, FadeOut,FadeInX, FadeOutX;
         SalesListItem myListItem;
+        int qty;
 
         public void setMyListItem(Cursor cursor) {
             this.myListItem = SalesListItem.fromCursor(cursor);
@@ -78,7 +76,7 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
             String sp ="Price: "+myListItem.getProduct_detail_4()+" ₹";
             double discount = Double.parseDouble(myListItem.getProduct_detail_3());
             String discountString = "Discount: "+myListItem.getProduct_detail_3()+" ₹";
-            int qty = (int)Double.parseDouble(myListItem.getQty());
+            qty = (int)Double.parseDouble(myListItem.getQty());
             if(discount==0){
                product_detail_3.setVisibility(View.GONE);
             }else {
@@ -93,6 +91,7 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
             sales_qty.setText("Avail: "+qty);
 
 
+
             String oc = orderList.get(myListItem.getPrimary());
             if(oc ==null) {
                 order_count.setText("0");
@@ -104,6 +103,12 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
                 order_count.setText(orderList.get(myListItem.getPrimary()));
                 add_to_cart.setVisibility(View.GONE);
 
+            }
+
+            if(qty==0){
+                sales_qty.setText("Unavailable!");
+                sales_qty.setVisibility(View.VISIBLE);
+                sales_qty.setTextColor(Color.GRAY);
             }
         }
 
@@ -146,9 +151,9 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
 
                     if(count==qty) {
                         if(count==1)
-                            Toast.makeText(ApplicationContextProvider.getContext(),"Sorry only "+qty+" quantity is available!",Toast.LENGTH_LONG).show();
+                            Toast.makeText(ApplicationContextProvider.getContext(),"Sorry only "+qty+" quantity is available!",Toast.LENGTH_SHORT).show();
                         else
-                            Toast.makeText(ApplicationContextProvider.getContext(),"Sorry only "+qty+" quantities are available!",Toast.LENGTH_LONG).show();
+                            Toast.makeText(ApplicationContextProvider.getContext(),"Sorry only "+qty+" quantities are available!",Toast.LENGTH_SHORT).show();
                         return;
                     }
 
@@ -170,8 +175,7 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
                 @Override
                 public void onClick(View v) {
 
-                    TextView countorder =order_count;
-                    String countText=countorder.getText().toString();
+                    String countText=order_count.getText().toString();
                     String primary= myListItem.getPrimary();
                     int count= Integer.parseInt(countText);
 
@@ -179,14 +183,14 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
 
                     if (count>1) {
                         countText = String.valueOf(count-1);
-                        countorder.setText(countText);
+                        order_count.setText(countText);
                         orderList.put(primary, countText);
                         putCartData(primary,myListItem.getName(),countText,myListItem.getProduct_detail_2(),myListItem.getProduct_detail_4(),myListItem.getProduct_detail_3(),myListItem.getGst(),myListItem.getSgst(),myListItem.getCgst(),myListItem.getQty());
 
                     }else if(count==1) {
                         orderList.remove(primary);
                         countText = String.valueOf(count-1);
-                        countorder.setText(countText);
+                        order_count.setText(countText);
                         deletefromCart(primary);
                       sales_qty.setVisibility(View.INVISIBLE);
                         add_to_cart.setVisibility(View.VISIBLE);
@@ -194,7 +198,7 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
                         addRemoveWrapper.startAnimation(FadeOutX);
 
                     }else {
-                        countorder.setText("0");
+                        order_count.setText("0");
                         orderList.remove(primary);
                         deletefromCart(primary);
                         sales_qty.setVisibility(View.INVISIBLE);
@@ -215,13 +219,17 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
             add_to_cart.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    TextView countorder =order_count;
-                    String countText=countorder.getText().toString();
+                    if (qty==0){
+
+                        Toast.makeText(ApplicationContextProvider.getContext(),"Sorry Item Unavailable!", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    String countText=order_count.getText().toString();
                     String primary= myListItem.getPrimary();
                     int count= Integer.parseInt(countText);
                     countText = String.valueOf(count+1);
 
-                    countorder.setText(countText);
+                    order_count.setText(countText);
                     orderList.put(primary, countText);
                     putCartData(primary,myListItem.getName(),countText,myListItem.getProduct_detail_2(),myListItem.getProduct_detail_4(),myListItem.getProduct_detail_3(),myListItem.getGst(),myListItem.getSgst(),myListItem.getCgst(),myListItem.getQty());
                     // v.setVisibility(View.GONE);

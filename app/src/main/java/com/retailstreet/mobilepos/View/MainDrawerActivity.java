@@ -1,24 +1,23 @@
 package com.retailstreet.mobilepos.View;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.drawable.Drawable;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import com.retailstreet.mobilepos.Database.SQLiteDbInspector;
+import com.labters.lottiealertdialoglibrary.DialogTypes;
 import com.retailstreet.mobilepos.R;
 import com.google.android.material.navigation.NavigationView;
+import com.retailstreet.mobilepos.Utils.WorkManagerSync;
+import com.retailstreet.mobilepos.View.dialog.LottieAlertDialogs;
 
-import androidx.appcompat.app.ActionBar;
-import androidx.core.content.ContextCompat;
-import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.core.view.GravityCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -27,8 +26,6 @@ import androidx.navigation.ui.NavigationUI;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-
-import java.util.Currency;
 
 public class MainDrawerActivity extends AppCompatActivity  {
 
@@ -49,8 +46,9 @@ public class MainDrawerActivity extends AppCompatActivity  {
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                R.id.nav_sales)
-                .setDrawerLayout(drawer)
+                .setOpenableLayout(drawer)
                 .build();
+
 
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController,mAppBarConfiguration);
@@ -61,11 +59,16 @@ public class MainDrawerActivity extends AppCompatActivity  {
             //it's possible to do more actions on several items, if there is a large amount of items I prefer switch(){case} instead of if()
             if (id==R.id.nav_logout){
 
-                new AlertDialog.Builder(MainDrawerActivity.this)
+                LottieAlertDialogs alertDialog= new LottieAlertDialogs.Builder(MainDrawerActivity.this, DialogTypes.TYPE_WARNING)
                         .setTitle("Logout")
-                        .setMessage("Confirm Logout?")
-                        .setPositiveButton(android.R.string.yes, (dialog, which) -> {
-
+                        .setDescription("Confirm Logout?")
+                        .setPositiveText("Yes")
+                        .setPositiveButtonColor(Color.parseColor("#297999"))
+                        .setPositiveTextColor(Color.parseColor("#ffffff"))
+                        .setNegativeText("No")
+                        .setNegativeButtonColor(Color.parseColor("#297999"))
+                        .setNegativeTextColor(Color.parseColor("#ffffff"))
+                        .setPositiveListener(lottieAlertDialog -> {
                             SharedPreferences sharedPreferences = getSharedPreferences("com.retailstreet.mobilepos", MODE_PRIVATE);
                             SharedPreferences.Editor myEdit = sharedPreferences.edit();
                             myEdit.remove("username");
@@ -74,13 +77,12 @@ public class MainDrawerActivity extends AppCompatActivity  {
                             Intent loginIntent = new Intent(MainDrawerActivity.this, LoginActivity.class);
                             startActivity(loginIntent);
                             finish();
+                            lottieAlertDialog.dismiss();
                         })
-
-                        // A null listener allows the button to dismiss the dialog and take no further action.
-                        .setNegativeButton(android.R.string.no, null)
-                        .setIconAttribute(android.R.attr.alertDialogIcon)
-                        .show();
-
+                        .setNegativeListener(Dialog::dismiss)
+                        .build();
+                alertDialog.setCancelable(true);
+                alertDialog.show();
                 return true;
 
             } if (id==R.id.nav_cart) {
@@ -100,10 +102,20 @@ public class MainDrawerActivity extends AppCompatActivity  {
         });
 
     setNavigationString();
-
+        try {
+            new WorkManagerSync();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -149,5 +161,6 @@ public class MainDrawerActivity extends AppCompatActivity  {
 
 
     }
+
 
 }

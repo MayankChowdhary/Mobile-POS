@@ -9,7 +9,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -17,25 +16,20 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
-
-import com.retailstreet.mobilepos.Controller.BillGenerator;
 import com.retailstreet.mobilepos.R;
 import com.retailstreet.mobilepos.Utils.StringWithTag;
-import com.retailstreet.mobilepos.View.ui.Payment.PaymentFragment;
-import com.retailstreet.mobilepos.View.ui.Payment.PaymentFragmentArgs;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 
 @SuppressWarnings("unchecked")
 public class CheckoutFragment extends Fragment {
@@ -52,6 +46,8 @@ public class CheckoutFragment extends Fragment {
     private  String customerId=" ";
     private  String DeliveryGuidString=" ";
     private  List<StringWithTag> deliveryOptionsArray;
+    private ConstraintLayout addressLayout;
+    private  Button change_add;
 
     String totalItems;
     String amntBefore;
@@ -70,6 +66,8 @@ public class CheckoutFragment extends Fragment {
         totalCgstView= root.findViewById(R.id.cgst_value);
         grandTotalView = root.findViewById(R.id.grand_value);
         payement = root.findViewById(R.id.payment_btn);
+        addressLayout= root.findViewById(R.id.address_layout);
+        change_add = root.findViewById(R.id.change_add);
 
         //((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -90,8 +88,10 @@ public class CheckoutFragment extends Fragment {
             }
         });
 
+        change_add.setOnClickListener(v -> Toast.makeText(getContext(),"Not Yet Implemented !",Toast.LENGTH_SHORT).show());
 
         SearchableSpinner spinner = root.findViewById(R.id.customer_selector);
+        Spinner deliveryOptions = root.findViewById(R.id.deliveryOptSpinner);
 
         customerNames = getSpinnerItems();
         ArrayAdapter<StringWithTag> adap = new ArrayAdapter<StringWithTag> (getActivity(), R.layout.spinner_layout, customerNames);
@@ -109,6 +109,8 @@ public class CheckoutFragment extends Fragment {
                 customerId = spinnerSelected.tag;
                 Log.d("SpinnerSelected", "onItemSelected: Tag= "+customerId);
 
+                deliveryOptions.setEnabled(!customerId.trim().isEmpty());
+
 
             }
             public void onNothingSelected(AdapterView<?> parent)
@@ -117,7 +119,6 @@ public class CheckoutFragment extends Fragment {
             }
         });
 
-        Spinner deliveryOptions = root.findViewById(R.id.deliveryOptSpinner);
 
         // Create the instance of ArrayAdapter
         // having the list of courses
@@ -131,6 +132,13 @@ public class CheckoutFragment extends Fragment {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                StringWithTag DeliverySelected = (StringWithTag) parent.getItemAtPosition(position);
                 DeliveryGuidString= DeliverySelected.tag;
+                if(position!=0) {
+                    addressLayout.setVisibility(View.VISIBLE);
+                }
+                else {
+                    addressLayout.setVisibility(View.GONE);
+                }
+
                 Log.d("DeliverySelected", "onItemSelected: Tag= "+DeliveryGuidString);
             }
 
@@ -179,7 +187,7 @@ public class CheckoutFragment extends Fragment {
 
     private List<StringWithTag> getSpinnerItems(){
         List<StringWithTag> list = new ArrayList<StringWithTag>();
-        list.add(new StringWithTag("No Customer Selected", ""));
+        list.add(new StringWithTag("No Customer Selected", " "));
 
         SQLiteDatabase mydb = getActivity().openOrCreateDatabase("MasterDB", Context.MODE_PRIVATE,null);
         Cursor cursor = mydb.rawQuery("select CUST_ID, NAME from retail_cust",null);
@@ -198,7 +206,7 @@ public class CheckoutFragment extends Fragment {
 
     private List<StringWithTag> getDeliveryOptions(){
         List<StringWithTag> list = new ArrayList<>();
-        list.add(new StringWithTag("No Delivery Type", ""));
+        //list.add(new StringWithTag("No Delivery Type", " "));
 
         SQLiteDatabase mydb = getActivity().openOrCreateDatabase("MasterDB", Context.MODE_PRIVATE,null);
         Cursor cursor = mydb.rawQuery("select DELIVERYTYPE_GUID, DELIVERYTYPE from masterdeliverytype",null);

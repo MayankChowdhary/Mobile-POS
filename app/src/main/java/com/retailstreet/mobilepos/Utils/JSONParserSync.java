@@ -4,7 +4,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.retailstreet.mobilepos.View.ApplicationContextProvider;
-import com.retailstreet.mobilepos.View.LoadingDialog;
+import com.retailstreet.mobilepos.View.dialog.LoadingDialog;
 
 import org.json.JSONException;
 import org.json.JSONObject;

@@ -31,7 +31,10 @@ public class BillPayDetail {
     @SerializedName("BILLPAYDETAIL_STATUS")
     @Expose
     String BILLPAYDETAIL_STATUS;
-    
+
+    public BillPayDetail(){
+
+    }
     public BillPayDetail(String BILLPAYDETAILID, String BILLMASTERID, String MASTERPAYMODEGUID, String PAYAMOUNT, String TRANSACTIONNUMBER, String ADDITIONALPARAM1, String ADDITIONALPARAM2, String ADDITIONALPARAM3, String BILLPAYDETAIL_STATUS){
         this.BILLPAYDETAILID =  BILLPAYDETAILID;
         this.BILLMASTERID = BILLMASTERID;

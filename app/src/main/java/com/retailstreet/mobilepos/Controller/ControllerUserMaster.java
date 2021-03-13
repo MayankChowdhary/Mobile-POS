@@ -122,9 +122,11 @@ public class ControllerUserMaster extends SQLiteOpenHelper {
             Log.d("CursorRetrievedFor", "getUSERNamePass: " + cursor.getString(7));
             Log.d("CursorRetrievedFor", "getUSERNamePass: " + cursor.getString(2));
             cursor.close();
+            db.close();
             return groupUserMaster;
         }else
             cursor.close();
+             db.close();
             return null;
 
     }
@@ -164,7 +166,8 @@ public class ControllerUserMaster extends SQLiteOpenHelper {
                 groupUserMasters.add(groupUserMaster);
             } while (cursor.moveToNext());
         }
-
+            cursor.close();
+             db.close();
         return groupUserMasters;
     }
 

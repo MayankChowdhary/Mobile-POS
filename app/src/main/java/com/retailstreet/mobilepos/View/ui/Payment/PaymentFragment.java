@@ -1,18 +1,17 @@
 package com.retailstreet.mobilepos.View.ui.Payment;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
+import androidx.navigation.ui.NavigationUI;
 
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -24,10 +23,14 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.labters.lottiealertdialoglibrary.DialogTypes;
+import com.labters.lottiealertdialoglibrary.LottieAlertDialog;
 import com.retailstreet.mobilepos.Controller.BillGenerator;
 import com.retailstreet.mobilepos.R;
+import com.retailstreet.mobilepos.View.dialog.LottieAlertDialogs;
+import com.retailstreet.mobilepos.View.dialog.ClickListeners;
 
-import org.w3c.dom.Text;
+import org.jetbrains.annotations.NotNull;
 
 public class PaymentFragment extends Fragment implements View.OnClickListener {
 
@@ -69,9 +72,8 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
         changeAmount.setText("0.00 ₹");
         final String[] changeValue = {"0.00"};
 
-        TextView balanceTextview = view.findViewById(R.id.balance_value);
-        balanceTextview.setText("0.00 ₹");
-        final String[] balanceValue = {"0.00"};
+        final Boolean[] isPay = {false};
+
 
         Button cash50 = view.findViewById(R.id.cash_fifty);
         Button cash100 = view.findViewById(R.id.cash_hundred);
@@ -105,20 +107,19 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
                     double amountR = Double.parseDouble(amountReceived);
                     double amountP = Double.parseDouble(amountToPay);
                     if(amountR>amountP) {
+                        isPay[0] =true;
                         String balance = String.valueOf(amountR - amountP);
-                        changeAmount.setText("+"+balance+" ₹");
+                        changeAmount.setText("-"+balance+" ₹");
                         changeValue[0] = balance;
-
-                        balanceValue[0] = "0.00";
-                        balanceTextview.setText("0.00 ₹");
-                    }else {
+                    }else if(amountR==amountP){
+                        isPay[0] =true;
                         changeValue[0] = "0.00";
                         changeAmount.setText("0.00 ₹");
 
-                        String balance = String.valueOf(amountP - amountR);
-                        balanceValue[0] = balance;
-                        balanceTextview.setText("-"+balance+" ₹");
-
+                    }else {
+                        isPay[0] =false;
+                        changeValue[0] = "0.00";
+                        changeAmount.setText("0.00 ₹");
                     }
             }
         });
@@ -126,30 +127,40 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
         Button payButton = view.findViewById(R.id.pay_buton);
         payButton.setOnClickListener(v -> {
 
+            if(!isPay[0]){
 
+                Toast.makeText(getContext(),"Insufficient Amount!",Toast.LENGTH_LONG).show();
+                return;
+            }
             String receivedCash = received_amnt.getText().toString();
             if(receivedCash.isEmpty())
             {
                 Toast.makeText(getContext(),"Please Enter Amount!",Toast.LENGTH_SHORT).show();
                 return;
             }
-            String balanceCash = balanceValue[0];
+            payButton.setEnabled(false);
+            String balanceCash = changeValue[0];
 
-            new AlertDialog.Builder(getActivity())
-                    .setTitle("Purchase Completed")
-                    .setMessage("Thank You!")
-                    .setPositiveButton("Back", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            // Continue with delete operation
-                            Navigation.findNavController(requireActivity(),R.id.nav_host_fragment).navigate(R.id.nav_sales);
-                        }
-                    })
-                    .setCancelable(false)
-                    .setIcon(android.R.drawable.ic_dialog_info)
-                    .show();
+         LottieAlertDialogs alertDialog= new LottieAlertDialogs.Builder(getContext(), DialogTypes.TYPE_SUCCESS)
+                            .setTitle("Purchase Completed")
+                            .setDescription("Thank You!")
+                            .setPositiveText("Back")
+                            .setPositiveButtonColor(Color.parseColor("#297999"))
+                            .setPositiveTextColor(Color.parseColor("#ffffff"))
+                             .setPositiveListener(new ClickListeners() {
+                                @Override
+                                public void onClick(@NotNull LottieAlertDialogs lottieAlertDialog) {
+                                    Navigation.findNavController(requireActivity(),R.id.nav_host_fragment).navigate(R.id.nav_sales);
+                                    lottieAlertDialog.dismiss();
+                                }
+                            })
+                    .build();
+                     alertDialog.setCancelable(false);
+                     alertDialog.show();
 
             new BillGenerator(customerId,receivedCash,balanceCash,deliveryGuid,masterPayModeGuid);
             EmptyCart();
+
         });
     }
 
@@ -178,4 +189,6 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
         db.execSQL("delete from cart");
         db.close();
     }
+
+
 }
