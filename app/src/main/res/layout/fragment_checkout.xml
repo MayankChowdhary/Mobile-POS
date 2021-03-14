@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="@dimen/_10sdp"
-    android:background="#FFFFFF"
+    android:background="?colorSurface"
     android:visibility="visible"
     tools:context=".View.ui.Checkout.CheckoutFragment">
 
@@ -36,7 +36,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Delivery Address:"
-            android:textColor="#000000"
+            android:textColor="?colorOnSurface"
             android:textSize="@dimen/_12ssp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -49,6 +49,7 @@
             android:layout_marginTop="@dimen/_4sdp"
             android:text="@string/addr_dummy"
             android:textSize="@dimen/_12ssp"
+            android:textColor="?colorOnBackground"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -64,6 +65,7 @@
             android:minHeight="0dp"
             android:text="Change"
             android:textSize="@dimen/_8ssp"
+            android:textColor="?colorOnPrimary"
             app:layout_constraintEnd_toEndOf="@+id/addr_title"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -108,6 +110,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
                 android:text="Items:"
+                android:textColor="?colorOnBackground"
                 android:textAlignment="viewStart"
                 android:textSize="@dimen/_12ssp" />
 
@@ -117,6 +120,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="10"
+                android:textColor="?colorOnBackground"
                 android:textAlignment="viewStart"
                 android:textSize="@dimen/_12ssp" />
         </LinearLayout>
@@ -137,6 +141,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
                 android:text="Amount B4 Tax:"
+                android:textColor="?colorOnBackground"
                 android:textAlignment="viewStart"
                 android:textSize="@dimen/_12ssp" />
 
@@ -146,6 +151,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="8500"
+                android:textColor="?colorOnBackground"
                 android:textAlignment="viewStart"
                 android:textSize="@dimen/_12ssp" />
         </LinearLayout>
@@ -166,6 +172,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
                 android:text="Discount:"
+                android:textColor="?colorOnBackground"
                 android:textAlignment="viewStart"
                 android:textSize="@dimen/_12ssp" />
 
@@ -175,6 +182,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="0.00"
+                android:textColor="?colorOnBackground"
                 android:textAlignment="viewStart"
                 android:textSize="@dimen/_12ssp" />
         </LinearLayout>
@@ -195,6 +203,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
                 android:text="GST:"
+                android:textColor="?colorOnBackground"
                 android:textAlignment="viewStart"
                 android:textSize="@dimen/_12ssp" />
 
@@ -204,6 +213,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="0.00"
+                android:textColor="?colorOnBackground"
                 android:textAlignment="viewStart"
                 android:textSize="@dimen/_12ssp" />
         </LinearLayout>
@@ -224,6 +234,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
                 android:text="Grand Total:"
+                android:textColor="?colorOnBackground"
                 android:textAlignment="viewStart"
                 android:textSize="@dimen/_12ssp" />
 
@@ -233,6 +244,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="8500"
+                android:textColor="?colorOnBackground"
                 android:textAlignment="viewStart"
                 android:textSize="@dimen/_12ssp" />
         </LinearLayout>

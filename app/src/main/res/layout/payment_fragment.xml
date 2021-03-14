@@ -29,7 +29,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Cash Payment:"
-                android:textColor="#000000"
+                android:textColor="?colorOnSurface"
                 android:textSize="@dimen/_14sdp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
@@ -50,6 +50,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="2"
+                    android:textColor="?colorOnBackground"
                     android:text="Pay Amount:"
                     android:textSize="@dimen/_14ssp" />
 
@@ -59,6 +60,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="5000 ₹"
+                    android:textColor="?colorOnBackground"
                     android:textSize="@dimen/_14ssp" />
 
             </LinearLayout>
@@ -71,6 +73,7 @@
                 android:text="Quick Add:"
                 android:textSize="@dimen/_14ssp"
                 android:textStyle="bold"
+                android:textColor="?colorOnBackground"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/pay_amount_layout" />
 
@@ -161,6 +164,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="2"
+                    android:textColor="?colorOnBackground"
                     android:text="Received Amount:"
                     android:textSize="@dimen/_14ssp" />
 
@@ -170,6 +174,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:ems="7"
+                    android:textColor="?colorOnSurface"
                     android:inputType="numberDecimal" />
             </LinearLayout>
 
@@ -188,6 +193,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="2"
+                    android:textColor="?colorOnBackground"
                     android:text="Expected Change:"
                     android:textSize="@dimen/_14ssp" />
 
@@ -197,6 +203,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="100 ₹"
+                    android:textColor="?colorOnBackground"
                     android:textSize="@dimen/_14ssp" />
 
             </LinearLayout>

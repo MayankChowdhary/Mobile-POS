@@ -5,8 +5,9 @@
     android:id="@+id/main_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
+    android:background="@color/design_default_color_on_primary"
     android:padding="12dp"
+    android:forceDarkAllowed="false"
     tools:context=".View.LoginActivity">
 
     <FrameLayout
@@ -46,8 +47,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:layout_marginBottom="4dp"
-            >
+            android:layout_marginBottom="4dp">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/email_input"
@@ -66,8 +66,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:layout_marginBottom="4dp"
-            >
+            android:layout_marginBottom="4dp">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/password_input"

@@ -1,6 +1,7 @@
 package com.retailstreet.mobilepos.View;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -20,6 +21,8 @@ import com.retailstreet.mobilepos.Database.TableDataInjector;
 import com.retailstreet.mobilepos.R;
 import com.retailstreet.mobilepos.View.dialog.LoadingDialog;
 
+import java.util.Objects;
+
 
 public class LoginActivity extends AppCompatActivity implements DBReadyCallback {
 
@@ -34,7 +37,7 @@ public class LoginActivity extends AppCompatActivity implements DBReadyCallback 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        getSupportActionBar().hide();
+        Objects.requireNonNull(getSupportActionBar()).hide();
         getWindow().setBackgroundDrawable(null);
 
         versionCode=getVersionCode();
