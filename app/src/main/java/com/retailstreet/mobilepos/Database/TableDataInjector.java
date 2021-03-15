@@ -6,6 +6,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
 import com.retailstreet.mobilepos.Controller.ApiInterface;
 import com.retailstreet.mobilepos.Controller.DBReadyCallback;
 import com.retailstreet.mobilepos.Model.BillDetail;
@@ -18,6 +20,7 @@ import com.retailstreet.mobilepos.Model.PaymentModeMaster;
 import com.retailstreet.mobilepos.Model.ProductMaster;
 import com.retailstreet.mobilepos.Model.RetailStore;
 import com.retailstreet.mobilepos.Model.ShiftMaster;
+import com.retailstreet.mobilepos.Model.ShiftTrans;
 import com.retailstreet.mobilepos.Model.StockMaster;
 import com.retailstreet.mobilepos.Model.TerminalConfiguration;
 import com.retailstreet.mobilepos.Model.TerminalUserAllocation;
@@ -52,10 +55,12 @@ public class TableDataInjector {
     private List<DeliveryTypeMaster> deliveryTypeMasters = null;
     private List<PaymentModeMaster> paymentModeMasters = null;
     private List<BillPayDetail> billPayDetailList = null;
+    private List<ShiftTrans> shiftTransList = null;
+   private LoadingDialog loadingDialog;
 
 
     public static int status =0;
-    private final int tableConstant=13;
+    private final int tableConstant=14;
 
     public TableDataInjector(Context context, String storeid,DBReadyCallback callback) {
 
@@ -63,6 +68,9 @@ public class TableDataInjector {
         this.storeId = storeid;
         dbReadyCallback=callback;
         status=0;
+        loadingDialog=  new LoadingDialog();
+        loadingDialog.showDialog(context, "Please Wait!", "Downloading Database...");
+
 
         getUserMasterList();
         getRetailCustList();
@@ -77,6 +85,8 @@ public class TableDataInjector {
         getDeliveryType();
         getPaymentMode();
         getBillPayDetail();
+        getShiftTransactions();
+
     }
 
     private Retrofit getRetroInstance(String url) {
@@ -114,7 +124,7 @@ public class TableDataInjector {
                     String checkData = master.getUSERNAME();
                     if(checkData ==null || checkData.isEmpty()){
                        Toast.makeText(context,"Please Insert Valid Store ID!",Toast.LENGTH_LONG).show();
-                            LoadingDialog.cancelDialog();
+                             loadingDialog.cancelDialog();
 
                     }else {
                         InsertDataGroupUserMaster(groupUserMasterList);
@@ -124,7 +134,7 @@ public class TableDataInjector {
                 @Override
                 public void onFailure(Call<List<GroupUserMaster>> call, Throwable t) {
                     Log.i("autolog", t.getMessage());
-                    LoadingDialog.cancelDialog();
+                     loadingDialog.cancelDialog();
                     Toast.makeText(ApplicationContextProvider.getContext(),"Network Error Download Failed !",Toast.LENGTH_LONG).show();
                 }
             });
@@ -149,7 +159,7 @@ public class TableDataInjector {
                 @Override
                 public void onFailure(Call<List<BillMaster>> call, Throwable t) {
                     Log.i("autolog", t.getMessage());
-                    LoadingDialog.cancelDialog();
+                     loadingDialog.cancelDialog();
                     Toast.makeText(ApplicationContextProvider.getContext(),"Network Error Download Failed !",Toast.LENGTH_LONG).show();
                 }
             });
@@ -219,7 +229,7 @@ public class TableDataInjector {
                 @Override
                 public void onFailure(Call<List<StockMaster>> call, Throwable t) {
                     Log.i("autolog", t.getMessage());
-                    LoadingDialog.cancelDialog();
+                     loadingDialog.cancelDialog();
                     Toast.makeText(ApplicationContextProvider.getContext(),"Network Error Download Failed !",Toast.LENGTH_LONG).show();
                 }
             });
@@ -281,14 +291,14 @@ public class TableDataInjector {
             Call<List<TerminalUserAllocation>> call = service.getTerminalUser_Alloc(generateTableUrl("terminal_user_allocation",storeId));
             call.enqueue(new Callback<List<TerminalUserAllocation>>() {
                 @Override
-                public void onResponse(Call<List<TerminalUserAllocation>> call, Response<List<TerminalUserAllocation>> response) {
+                public void onResponse(@NonNull Call<List<TerminalUserAllocation>> call, Response<List<TerminalUserAllocation>> response) {
                     terminalUserAllocations = response.body();
                     Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
                    InsertTerminalUserAlloc(terminalUserAllocations);
                 }
 
                 @Override
-                public void onFailure(Call<List<TerminalUserAllocation>> call, Throwable t) {
+                public void onFailure(@NonNull Call<List<TerminalUserAllocation>> call, Throwable t) {
                     Log.i("autolog", t.getMessage());
                 }
             });
@@ -412,6 +422,72 @@ public class TableDataInjector {
         }
     }
 
+    public void getShiftTransactions() {
+        try {
+            Retrofit retrofit = getRetroInstance(baseUrl);
+            ApiInterface service = retrofit.create(ApiInterface.class);
+            Call<List<ShiftTrans>> call = service.getShiftTrans(generateTableUrl("shift_trans",storeId));
+            call.enqueue(new Callback<List<ShiftTrans>>() {
+                @Override
+                public void onResponse(Call<List<ShiftTrans>> call, Response<List<ShiftTrans>> response) {
+                    shiftTransList = response.body();
+                    Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
+                    InsertShiftTrans(shiftTransList);
+                }
+
+                @Override
+                public void onFailure(Call<List<ShiftTrans>> call, Throwable t) {
+                    Log.i("autolog", t.getMessage());
+                }
+            });
+        } catch (Exception e) {
+            Log.i("autolog", "Exception");
+        }
+    }
+
+
+    public void InsertShiftTrans(List<ShiftTrans> list) {
+        if (list == null) {
+            return;
+        }
+        try {
+            SQLiteDatabase myDataBase = context.openOrCreateDatabase(dbname, Context.MODE_PRIVATE, null);
+            myDataBase.delete("shift_trans", null, null);
+            for (ShiftTrans prod : list) {
+                ContentValues contentValues = new ContentValues();
+                contentValues.put("SHIFT_TRANS_ID", prod.getSHIFT_TRANS_ID());
+                contentValues.put("SHIFT_TRANSACTIONGUID", prod.getSHIFT_TRANSACTIONGUID());
+                contentValues.put("ORG_GUID", prod.getORG_GUID());
+                contentValues.put("STORE_GUID", prod.getSTORE_GUID());
+                contentValues.put("SHIFT_GUID", prod.getSHIFT_GUID());
+                contentValues.put("SHIFT_DATE", prod.getSHIFT_DATE());
+                contentValues.put("START_TIME", prod.getSTART_TIME());
+                contentValues.put("END_TIME", prod.getEND_TIME());
+                contentValues.put("IS_SHIFT_STARTED", prod.getIS_SHIFT_STARTED());
+                contentValues.put("IS_SHIFT_ENDED", prod.getIS_SHIFT_ENDED());
+                contentValues.put("USER_GUID", prod.getUSER_GUID());
+                contentValues.put("CASH_OPENED", prod.getCASH_OPENED());
+                contentValues.put("CASH_CLOSED", prod.getCASH_CLOSED());
+                contentValues.put("ISACTIVE", prod.getISACTIVE());
+                contentValues.put("ISSYNCED", prod.getISSYNCED());
+                myDataBase.insert("shift_trans", null, contentValues);
+
+                // myDataBase.close(); // Closing database connection
+            }
+
+            myDataBase.close();
+            status+=1;
+            if(status==tableConstant){
+                 loadingDialog.cancelDialog();
+                dbReadyCallback.onDBReady();
+            }
+            Log.d("Insertion Successful", "InsertShiftTrans: "+status);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
     public void InsertBillPayDetail(List<BillPayDetail> list) {
         if (list == null) {
             return;
@@ -438,7 +514,7 @@ public class TableDataInjector {
             myDataBase.close();
             status+=1;
             if(status==tableConstant){
-                LoadingDialog.cancelDialog();
+                 loadingDialog.cancelDialog();
                 dbReadyCallback.onDBReady();
             }
             Log.d("Insertion Successful", "InsertBillPayDetail: "+status);
@@ -466,7 +542,7 @@ public class TableDataInjector {
             myDataBase.close();
             status+=1;
             if(status==tableConstant){
-                LoadingDialog.cancelDialog();
+                 loadingDialog.cancelDialog();
                 dbReadyCallback.onDBReady();
             }
             Log.d("Insertion Successful", "InsertPaymentModeMaster: "+status);
@@ -494,7 +570,7 @@ public class TableDataInjector {
             myDataBase.close();
             status+=1;
             if(status==tableConstant){
-                LoadingDialog.cancelDialog();
+                 loadingDialog.cancelDialog();
                 dbReadyCallback.onDBReady();
             }
             Log.d("Insertion Successful", "InsertDeliveryType: "+status);
@@ -525,7 +601,7 @@ public class TableDataInjector {
             myDataBase.close();
             status+=1;
             if(status==tableConstant){
-                LoadingDialog.cancelDialog();
+                 loadingDialog.cancelDialog();
                 dbReadyCallback.onDBReady();
             }
             Log.d("Insertion Successful", "InsertShiftMaster: "+status);
@@ -556,7 +632,7 @@ public class TableDataInjector {
             myDataBase.close();
             status+=1;
             if(status==tableConstant){
-                LoadingDialog.cancelDialog();
+                 loadingDialog.cancelDialog();
                 dbReadyCallback.onDBReady();
             }
 
@@ -588,7 +664,7 @@ public class TableDataInjector {
             myDataBase.close();
             status+=1;
             if(status==tableConstant){
-                LoadingDialog.cancelDialog();
+                 loadingDialog.cancelDialog();
                 dbReadyCallback.onDBReady();
             }
             Log.d("Insertion Successful", "InsertTerminalUserAlloc: "+status);
@@ -659,7 +735,7 @@ public class TableDataInjector {
             myDataBase.close();
             status+=1;
             if(status==tableConstant){
-                LoadingDialog.cancelDialog();
+                 loadingDialog.cancelDialog();
                 dbReadyCallback.onDBReady();
             }
             Log.d("Insertion Successful", "InsertRetailStore: "+status);
@@ -710,7 +786,7 @@ public class TableDataInjector {
             myDataBase.close();
             status+=1;
             if(status==tableConstant){
-                LoadingDialog.cancelDialog();
+                 loadingDialog.cancelDialog();
                 dbReadyCallback.onDBReady();
             }
             Log.d("Insertion Successful", "InsertBillMaster: "+status);
@@ -765,7 +841,7 @@ public class TableDataInjector {
             myDataBase.close();
             status+=1;
             if(status==tableConstant){
-                LoadingDialog.cancelDialog();
+                 loadingDialog.cancelDialog();
                 dbReadyCallback.onDBReady();
             }
             Log.d("Insertion Successful", "InsertBillDetails: "+status);
@@ -834,7 +910,7 @@ public class TableDataInjector {
             myDataBase.close();
             status+=1;
             if(status==tableConstant){
-                LoadingDialog.cancelDialog();
+                 loadingDialog.cancelDialog();
                 dbReadyCallback.onDBReady();
             }
             Log.d("Insertion Successful", "InsertStockMaster: "+status);
@@ -893,7 +969,7 @@ public class TableDataInjector {
             myDataBase.close();
             status+=1;
             if(status==tableConstant){
-                LoadingDialog.cancelDialog();
+                 loadingDialog.cancelDialog();
                 dbReadyCallback.onDBReady();
             }
             Log.d("Insertion Successful", "InsertProductMaster: "+status);
@@ -929,7 +1005,7 @@ public class TableDataInjector {
             myDataBase.close();
             status+=1;
             if(status==tableConstant){
-                LoadingDialog.cancelDialog();
+                 loadingDialog.cancelDialog();
                 dbReadyCallback.onDBReady();
             }
             Log.d("Insertion Successful", "InsertDataGroupUserMaster: "+status);
@@ -995,7 +1071,7 @@ public class TableDataInjector {
             myDataBase.close();
             status+=1;
             if(status==tableConstant){
-                LoadingDialog.cancelDialog();
+                 loadingDialog.cancelDialog();
                 dbReadyCallback.onDBReady();
             }
             Log.d("Insertion Successful", "InsertRetailCust: "+status);
@@ -1056,6 +1132,8 @@ public class TableDataInjector {
 
             case "billpaydetail":
                 return "ApiTest/BillPayDetail?STORE_ID="+storeid;
+            case "shift_trans":
+                return "ApiTest/ShiftTransactions?STORE_ID="+storeid;
 
             default:
                 return "";

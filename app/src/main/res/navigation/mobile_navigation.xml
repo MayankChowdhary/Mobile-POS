@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@id/nav_sales">
+    app:startDestination="@id/nav_dayopen">
 
     <fragment
         android:id="@+id/nav_sales"
@@ -64,7 +64,7 @@
         android:id="@+id/nav_payment"
         android:name="com.retailstreet.mobilepos.View.ui.Payment.PaymentFragment"
         android:label="Payment Options"
-        tools:layout="@layout/payment_fragment">
+        tools:layout="@layout/fragment_payment">
         <argument
             android:name="amount_to_pay"
             app:argType="string" />
@@ -74,6 +74,15 @@
         <argument
             android:name="delTypeGuid"
             app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_dayopen"
+        android:name="com.retailstreet.mobilepos.View.ui.DayOpen.DayOpenFragment"
+        android:label="Day Open"
+        tools:layout="@layout/fragment_day_open" >
+        <action
+            android:id="@+id/action_nav_dayopen_to_nav_sales"
+            app:destination="@id/nav_sales" />
     </fragment>
 
 

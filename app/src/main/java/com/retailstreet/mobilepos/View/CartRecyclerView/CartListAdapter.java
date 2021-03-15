@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -209,7 +210,7 @@ public class CartListAdapter extends CustomRecyclerViewAdapter<CartListAdapter.V
                         countorder.setText(countText);
                         deletefromCart(primary);
                         Cursor cursor1 = new ControllerCart(ApplicationContextProvider.getContext()).getCartCursor();
-                        new Handler().postDelayed(() -> {
+                        new Handler(Looper.getMainLooper()).postDelayed(() -> {
                             refreshRecyclerView.swapCursors(cursor1);
                             if(cursor1==null){
                                 refreshRecyclerView.setRecyclerVisibility(View.GONE);
@@ -229,7 +230,7 @@ public class CartListAdapter extends CustomRecyclerViewAdapter<CartListAdapter.V
                         orderList.remove(primary);
                         deletefromCart(primary);
                         Cursor cursor1 = new ControllerCart(ApplicationContextProvider.getContext()).getCartCursor();
-                        new Handler().postDelayed(() -> {
+                        new Handler(Looper.getMainLooper()).postDelayed(() -> {
                             refreshRecyclerView.swapCursors(cursor1);
                             if(cursor1==null){
                                 refreshRecyclerView.setRecyclerVisibility(View.GONE);
@@ -260,7 +261,7 @@ public class CartListAdapter extends CustomRecyclerViewAdapter<CartListAdapter.V
                     orderList.remove(primary);
                     deletefromCart(primary);
                     Cursor cursor1 = new ControllerCart(ApplicationContextProvider.getContext()).getCartCursor();
-                    new Handler().postDelayed(() -> {
+                    new Handler(Looper.getMainLooper()).postDelayed(() -> {
                         refreshRecyclerView.swapCursors(cursor1);
                         if(cursor1==null){
                             refreshRecyclerView.setRecyclerVisibility(View.GONE);

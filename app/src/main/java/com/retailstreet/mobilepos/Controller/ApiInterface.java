@@ -12,6 +12,7 @@ import com.retailstreet.mobilepos.Model.PaymentModeMaster;
 import com.retailstreet.mobilepos.Model.ProductMaster;
 import com.retailstreet.mobilepos.Model.RetailStore;
 import com.retailstreet.mobilepos.Model.ShiftMaster;
+import com.retailstreet.mobilepos.Model.ShiftTrans;
 import com.retailstreet.mobilepos.Model.StockMaster;
 import com.retailstreet.mobilepos.Model.SyncResponse;
 import com.retailstreet.mobilepos.Model.TerminalConfiguration;
@@ -68,6 +69,9 @@ public interface ApiInterface {
 
     @GET
     Call<List<BillPayDetail>> getBillPay_Detail(@Url String url);
+
+    @GET
+    Call<List<ShiftTrans>> getShiftTrans(@Url String url);
 
 
    //*********Upload API***********

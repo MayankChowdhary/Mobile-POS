@@ -8,6 +8,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.retailstreet.mobilepos.Utils.JSONParserSync;
+import com.retailstreet.mobilepos.View.LoginActivity;
 import com.retailstreet.mobilepos.View.dialog.LoadingDialog;
 
 import org.json.JSONArray;
@@ -57,14 +58,20 @@ public class SQLiteDbBuilder {
     private final ArrayList<String> masterpaymode_pk;
     private final ArrayList<String> billpaydetail;
     private final ArrayList<String> billpaydetail_pk;
+    private final ArrayList<String> shift_trans;
+    private final ArrayList<String> shift_trans_pk;
 
 
    static String dbname = "MasterDB";
     public static boolean dbOk = false;
+    LoadingDialog loadingDialog;
+
 
 
     public SQLiteDbBuilder(Context context) {
         this.context = context;
+        loadingDialog=  new LoadingDialog();
+        loadingDialog.showDialog(context, "Please Wait!", "Preparing Database...");
 
         user_master = new ArrayList<>();
         user_master_pk = new ArrayList<>();
@@ -98,6 +105,8 @@ public class SQLiteDbBuilder {
         masterpaymode_pk = new ArrayList<>();
         billpaydetail = new ArrayList<>();
         billpaydetail_pk = new ArrayList<>();
+        shift_trans = new ArrayList<>();
+        shift_trans_pk = new ArrayList<>();
         cartList= new ArrayList<>(Arrays.asList("STOCK_ID","PROD_NM","count","MRP","S_PRICE","SALESDISCOUNTBYAMOUNT","GST","SGST","CGST","QTY" ));
         cartList_Pk= new ArrayList<>(Collections.singletonList("STOCK_ID"));
         getJSON();
@@ -120,6 +129,10 @@ public class SQLiteDbBuilder {
             protected void onPostExecute(String result) {
                 super.onPostExecute(result);
                 //loading.dismiss();
+                if(result==null || result.isEmpty()){
+                    loadingDialog.cancelDialog();
+                    return;
+                }
                 JSON_STRING = result;
                 JSONToArray(result);
             }
@@ -417,6 +430,23 @@ public class SQLiteDbBuilder {
             }
 
 
+            JSONArray shift_trans_json = jsonObject.getJSONArray("shift_trans");
+            for (int i = 0; i < shift_trans_json.length(); i++) {
+                JSONObject obj = (JSONObject) shift_trans_json.get(i);
+                String id = obj.getString("Field");
+                shift_trans.add(id);
+                // Log.d("retail_store", "id:" + id);
+
+            }
+
+            JSONArray shift_trans_pk_json = jsonObject.getJSONArray("shift_trans_pk");
+            for (int i = 0; i < shift_trans_pk_json.length(); i++) {
+                JSONObject obj = (JSONObject) shift_trans_pk_json.get(i);
+                String constraint = obj.getString("Constraint");
+                shift_trans_pk.add(constraint);
+                //Log.d("retail_store_pk", "constraint:" + constraint);
+            }
+
             createDynamicDatabase(context, "group_user_master", user_master, user_master_pk);
             createDynamicDatabase(context, "retail_cust", retail_cust, retail_cust_pk);
             createDynamicDatabase(context, "retail_store_prod_com", retail_store_prod_com, retail_store_prod_com_pk);
@@ -434,9 +464,10 @@ public class SQLiteDbBuilder {
             createDynamicDatabase(context, "masterdeliverytype", masterdeliverytype, masterdeliverytype_pk);
             createDynamicDatabase(context, "masterpaymode", masterpaymode, masterpaymode_pk);
             createDynamicDatabase(context, "billpaydetail", billpaydetail, billpaydetail_pk);
+            createDynamicDatabase(context, "shift_trans", shift_trans, shift_trans_pk);
 
             dbOk=true;
-            LoadingDialog.cancelDialog();
+            loadingDialog.cancelDialog();
             Toast.makeText(context, "Tables Created", Toast.LENGTH_LONG).show();
              SQLiteDbInspector.PrintTableSchema(context,dbname);
 

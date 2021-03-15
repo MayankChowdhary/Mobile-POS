@@ -99,7 +99,6 @@ public class JSONParserSync {
                 sb.append(s + "\n");
             }
         } catch (Exception e) {
-            LoadingDialog.cancelDialog();
             Toast.makeText(ApplicationContextProvider.getContext(),"Network Error Download Failed !",Toast.LENGTH_LONG).show();
             Log.e("sendGetRequest", "sendGetRequest: "+e.toString());
 

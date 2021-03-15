@@ -404,7 +404,7 @@ public class BillGenerator {
 
     private String getSaleDate(){
         Date date = new Date();
-        SimpleDateFormat formatter = new SimpleDateFormat("MM-dd-yyyy",Locale.getDefault());
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy",Locale.getDefault());
         String strDate = formatter.format(date);
         return  strDate;
     }

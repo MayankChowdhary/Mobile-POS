@@ -2,11 +2,13 @@ package com.retailstreet.mobilepos.View.SalesRecyclerView;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -106,9 +108,12 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
             }
 
             if(qty==0){
+
                 sales_qty.setText("Unavailable!");
                 sales_qty.setVisibility(View.VISIBLE);
-                sales_qty.setTextColor(Color.GRAY);
+                sales_qty.setTextColor( Color.GRAY);
+            }else {
+                sales_qty.setTextColor(  Color.parseColor("#303F9F"));
             }
         }
 
@@ -188,23 +193,26 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
                         putCartData(primary,myListItem.getName(),countText,myListItem.getProduct_detail_2(),myListItem.getProduct_detail_4(),myListItem.getProduct_detail_3(),myListItem.getGst(),myListItem.getSgst(),myListItem.getCgst(),myListItem.getQty());
 
                     }else if(count==1) {
+                        addRemoveWrapper.startAnimation(FadeOutX);
+                        add_to_cart.startAnimation(FadeInX);
                         orderList.remove(primary);
                         countText = String.valueOf(count-1);
                         order_count.setText(countText);
                         deletefromCart(primary);
                       sales_qty.setVisibility(View.INVISIBLE);
                         add_to_cart.setVisibility(View.VISIBLE);
-                        add_to_cart.startAnimation(FadeInX);
-                        addRemoveWrapper.startAnimation(FadeOutX);
+
+
 
                     }else {
+                        addRemoveWrapper.startAnimation(FadeOutX);
+                        add_to_cart.startAnimation(FadeInX);
                         order_count.setText("0");
                         orderList.remove(primary);
                         deletefromCart(primary);
                         sales_qty.setVisibility(View.INVISIBLE);
                         add_to_cart.setVisibility(View.VISIBLE);
-                        add_to_cart.startAnimation(FadeInX);
-                        addRemoveWrapper.startAnimation(FadeOutX);
+
 
                     }
                     updateRecyclerView.updateIndicator(orderList.size());
@@ -224,6 +232,8 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
                         Toast.makeText(ApplicationContextProvider.getContext(),"Sorry Item Unavailable!", Toast.LENGTH_SHORT).show();
                         return;
                     }
+                    add_to_cart.startAnimation(FadeOut);
+                    addRemoveWrapper.startAnimation(FadeIn);
                     String countText=order_count.getText().toString();
                     String primary= myListItem.getPrimary();
                     int count= Integer.parseInt(countText);
@@ -235,8 +245,8 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
                     // v.setVisibility(View.GONE);
                     updateRecyclerView.updateIndicator(orderList.size());
                     sales_qty.setVisibility(View.VISIBLE);
-                    addRemoveWrapper.startAnimation(FadeIn);
-                    add_to_cart.startAnimation(FadeOut);
+
+
                 }
             });
         }
@@ -252,12 +262,17 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
             }else if(animation == FadeOutX){
                // addRemoveWrapper.setVisibility(View.GONE);
             }
+
+            add_to_cart.setClickable(true);
+            remove_order.setClickable(true);
         }
         @Override
         public void onAnimationRepeat(Animation animation) {
         }
         @Override
         public void onAnimationStart(Animation animation) {
+            add_to_cart.setClickable(false);
+            remove_order.setClickable(false);
         }
 
     }
@@ -330,6 +345,4 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
             ActionItemBadge.update(myParentActivity, myMenu.findItem(R.id.appCart), FontAwesome.Icon.faw_shopping_cart, ActionItemBadge.BadgeStyles.RED, Integer.MIN_VALUE);
         }
     }
-
-
 }

@@ -5,6 +5,12 @@
 
     <group android:checkableBehavior="single">
         <item
+            android:id="@+id/nav_dayopen"
+            android:icon="@drawable/open"
+            android:visible="true"
+            android:title="Day Open" />
+
+        <item
             android:id="@+id/nav_sales"
             android:icon="@drawable/product"
             android:title="@string/menu_sales" />

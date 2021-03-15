@@ -6,10 +6,10 @@ import com.labters.lottiealertdialoglibrary.DialogTypes;
 
 public class LoadingDialog {
 
-    static LottieAlertDialogs progressDialog;
+     LottieAlertDialogs progressDialog;
 
 
-    public static void showDialog(Context context,String message, String title){
+    public  void showDialog(Context context,String message, String title){
     progressDialog= new LottieAlertDialogs.Builder(context, DialogTypes.TYPE_LOADING)
                 .setTitle(title)
                 .setDescription(message)
@@ -19,7 +19,7 @@ public class LoadingDialog {
 
     }
 
-    public static void cancelDialog(){
+    public void cancelDialog(){
 
         progressDialog.dismiss();
     }

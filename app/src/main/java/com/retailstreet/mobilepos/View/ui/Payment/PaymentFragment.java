@@ -11,7 +11,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
-import androidx.navigation.ui.NavigationUI;
 
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -24,7 +23,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.labters.lottiealertdialoglibrary.DialogTypes;
-import com.labters.lottiealertdialoglibrary.LottieAlertDialog;
 import com.retailstreet.mobilepos.Controller.BillGenerator;
 import com.retailstreet.mobilepos.R;
 import com.retailstreet.mobilepos.View.dialog.LottieAlertDialogs;
@@ -51,7 +49,7 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
                              @Nullable Bundle savedInstanceState) {
 
 
-        return inflater.inflate(R.layout.payment_fragment, container, false);
+        return inflater.inflate(R.layout.fragment_payment, container, false);
     }
 
 

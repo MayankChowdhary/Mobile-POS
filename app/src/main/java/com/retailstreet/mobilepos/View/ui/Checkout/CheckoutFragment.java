@@ -200,6 +200,7 @@ public class CheckoutFragment extends Fragment {
             }
         }
         cursor.close();
+        mydb.close();
         return  list;
     }
 
@@ -219,6 +220,7 @@ public class CheckoutFragment extends Fragment {
             }
         }
         cursor.close();
+        mydb.close();
         return  list;
 
     }

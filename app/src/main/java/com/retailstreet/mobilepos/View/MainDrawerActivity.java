@@ -46,7 +46,7 @@ public class MainDrawerActivity extends AppCompatActivity  {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-               R.id.nav_sales)
+               R.id.nav_sales,R.id.nav_dayopen)
                 .setOpenableLayout(drawer)
                 .build();
 
@@ -94,7 +94,12 @@ public class MainDrawerActivity extends AppCompatActivity  {
                 Navigation.findNavController(this,R.id.nav_host_fragment).navigate(R.id.nav_sales);
                 drawer.closeDrawer(GravityCompat.START);
                 return true;
+            }if(id==R.id.nav_dayopen){
+                Navigation.findNavController(this,R.id.nav_host_fragment).navigate(R.id.nav_dayopen);
+                drawer.closeDrawer(GravityCompat.START);
+                return true;
             }
+
             //This is for maintaining the behavior of the Navigation view
             NavigationUI.onNavDestinationSelected(menuItem,navController);
             //This is for closing the drawer after acting on it

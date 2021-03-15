@@ -3,6 +3,7 @@ package com.retailstreet.mobilepos.View.ui.Sales;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -36,7 +37,7 @@ public class SalesFragment extends Fragment implements UpdateRecyclerView {
     SalesListAdapter salesListAdapter;
     static  String handlerData;
     private boolean doubleBackToExitPressedOnce;
-    private final Handler queryLatencyHandler =new Handler();
+    private final Handler queryLatencyHandler =new Handler(Looper.getMainLooper());
     public static Menu optionsMenu;
     static Cursor cursor;
      ControllerStockMaster controllerStockMaster;
@@ -73,6 +74,11 @@ public class SalesFragment extends Fragment implements UpdateRecyclerView {
         root.setOnKeyListener((v, keyCode, event) -> {
             if( keyCode == KeyEvent.KEYCODE_BACK && event.getAction()== KeyEvent.ACTION_DOWN)
             {
+                if (!mSearchView.isIconified()) {
+                    mSearchView.setIconified(true);
+                    return true;
+                }
+
                 if (doubleBackToExitPressedOnce) {
                    requireActivity().finish();
 
@@ -84,7 +90,7 @@ public class SalesFragment extends Fragment implements UpdateRecyclerView {
 
               doubleBackToExitPressedOnce = true;
 
-                new Handler().postDelayed(() -> doubleBackToExitPressedOnce=false, 2000);
+                new Handler(Looper.getMainLooper()).postDelayed(() -> doubleBackToExitPressedOnce=false, 2000);
                 return true;
             }
             return false;
