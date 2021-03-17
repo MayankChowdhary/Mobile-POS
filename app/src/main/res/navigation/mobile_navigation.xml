@@ -82,7 +82,38 @@
         tools:layout="@layout/fragment_day_open" >
         <action
             android:id="@+id/action_nav_dayopen_to_nav_sales"
-            app:destination="@id/nav_sales" />
+            app:destination="@id/nav_sales"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+        <action
+            android:id="@+id/action_nav_dayopen_to_nav_dayclose"
+            app:destination="@id/nav_dayclose"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+    </fragment>
+    <fragment
+        android:id="@+id/nav_dayclose"
+        android:name="com.retailstreet.mobilepos.View.ui.DayClose.DayCloseFragmnet"
+        android:label="Day Close"
+        tools:layout="@layout/fragmnet_day_close" >
+        <action
+            android:id="@+id/action_nav_dayclose_to_nav_dayopen"
+            app:destination="@id/nav_dayopen"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+        <action
+            android:id="@+id/action_nav_dayclose_to_nav_sales"
+            app:destination="@id/nav_sales"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
 
 

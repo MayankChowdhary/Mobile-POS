@@ -13,8 +13,8 @@ android {
         applicationId "com.retailstreet.mobilepos"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 18
-        versionName "1.4.2"
+        versionCode 19
+        versionName "1.4.3"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -33,7 +33,7 @@ android {
 
 
 dependencies {
-    //implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     def work_version = "2.5.0"
     implementation "androidx.work:work-runtime:$work_version"
     implementation 'androidx.appcompat:appcompat:1.2.0'

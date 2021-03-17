@@ -28,7 +28,7 @@ class DayOpenFragment : Fragment() {
     }
 
     private lateinit var viewModel: DayOpenViewModel
-    private var shif_array: Array<StringWithTag> = emptyArray()
+    private var shiftArray: Array<StringWithTag> = emptyArray()
     private lateinit var shift_tag: String
     private lateinit var username: String
     private lateinit var dateTime: String
@@ -43,21 +43,21 @@ class DayOpenFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         username = getUsername();
-        shif_array= ControllerShiftTrans().shiftOptions.toTypedArray();
+        shiftArray= ControllerShiftTrans().shiftOptions.toTypedArray();
         dateTime = getDateAndTime()
 
         val posDate: TextView = view.findViewById(R.id.pos_date_value)
         posDate.text = dateTime
 
         val shiftSelector: Spinner = view.findViewById<Spinner>(R.id.shift_spinner)
-        val shiftAdapter: ArrayAdapter<StringWithTag> = context?.let { ArrayAdapter(it, R.layout.spinner_item_centre, shif_array) }!!
+        val shiftAdapter: ArrayAdapter<StringWithTag> = context?.let { ArrayAdapter(it, R.layout.spinner_item_centre, shiftArray) }!!
         shiftAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         shiftSelector.adapter = shiftAdapter
 
         val cashEditText : EditText = view.findViewById(R.id.cash_value)
 
         shiftSelector.onItemSelectedListener = object : OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
                 val shiftSelected = parent.getItemAtPosition(position) as StringWithTag
                 shift_tag = shiftSelected.tag
 
@@ -97,8 +97,8 @@ class DayOpenFragment : Fragment() {
                     })
                     .setNegativeListener(object : ClickListeners {
                         override fun onClick(dialog: LottieAlertDialogs) {
-                            ControllerShiftTrans().closeSessions()
-                            Toast.makeText(context, "Force Closed Shift!!", Toast.LENGTH_LONG).show()
+                            Navigation.findNavController(requireActivity(), R.id.nav_host_fragment).navigate(R.id.action_nav_dayopen_to_nav_dayclose)
+                            dialog.dismiss()
                             dialog.dismiss()
 
                         }
@@ -117,7 +117,7 @@ class DayOpenFragment : Fragment() {
     }
 
     private fun getDateAndTime(): String {
-        val formatter = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault())
+        val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
         val date = Date()
         return formatter.format(date)
     }
@@ -134,7 +134,5 @@ class DayOpenFragment : Fragment() {
         Log.d("SessionCheck", "isSessionOpen:Received $shiftTransID")
         return !(shiftTransID==null || shiftTransID.isEmpty())
     }
-
-
 
 }

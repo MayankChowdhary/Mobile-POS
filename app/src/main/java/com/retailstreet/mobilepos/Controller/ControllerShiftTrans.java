@@ -9,7 +9,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.retailstreet.mobilepos.Model.ShiftTrans;
+import com.retailstreet.mobilepos.Model.ShiftTransUpload;
 import com.retailstreet.mobilepos.Utils.StringWithTag;
+import com.retailstreet.mobilepos.Utils.WorkManagerSync;
 import com.retailstreet.mobilepos.View.ApplicationContextProvider;
 
 import java.text.ParseException;
@@ -72,7 +74,32 @@ public class ControllerShiftTrans {
         ShiftTrans shiftTrans = new ShiftTrans(  SHIFT_TRANS_ID  , SHIFT_TRANSACTIONGUID , ORG_GUID , STORE_GUID  , SHIFT_GUID  , SHIFT_DATE , START_TIME  , END_TIME  , IS_SHIFT_STARTED  , IS_SHIFT_ENDED  , USER_GUID  , CASH_OPENED  , CASH_CLOSED  , ISACTIVE  , ISSYNCED );
 
         insertIntoShiftTrans(shiftTrans);
+
     }
+
+
+    public  void closeDay( String endCash){
+        try {
+            String shiftTransID = geShiftTransID();
+            Log.d("ShiftTransID", "closeDay: Received "+shiftTransID);
+            END_TIME = getCurrentTime();
+            CASH_CLOSED = endCash;
+            SQLiteDatabase  mydb  = context.openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
+            String strSQL = "UPDATE shift_trans SET END_TIME = '"+END_TIME+"'"+", ISACTIVE = 'N', IS_SHIFT_ENDED = 'Y', CASH_CLOSED = '"+CASH_CLOSED+"'"+", ISSYNCED = '0' WHERE SHIFT_TRANS_ID = '"+shiftTransID+"'";
+            mydb.execSQL(strSQL);
+            mydb.close();
+            Log.d("SessionClosed", "closeSessions: Invoked ");
+            try {
+                new WorkManagerSync(2);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+
 
     public  void insertIntoShiftTrans(ShiftTrans shiftTrans){
 
@@ -101,6 +128,11 @@ public class ControllerShiftTrans {
             myDataBase.insert("shift_trans", null, contentValues);
             myDataBase.close(); // Closing database connection
             Log.d("DataSuccessfulInserted!", "insertIntoShiftTrans: ");
+            try {
+                new WorkManagerSync(2);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -176,25 +208,6 @@ public class ControllerShiftTrans {
 
     }
 
-    private String getFromShiftMaster( String shiftGuid ,String column) {
-        String result= null;
-        try {
-            SQLiteDatabase  mydb  = context.openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
-            result = "";
-            String selectQuery = "SELECT "+column+" FROM master_shift where SHIFTGUID ="+shiftGuid;
-            Cursor cursor = mydb.rawQuery(selectQuery, null);
-            if (cursor.moveToFirst()) {
-
-                result= cursor.getString(0);
-            }
-            cursor.close();
-            mydb.close();
-            Log.d("DataRetrieved", "getFromShiftMaster: "+column+": "+result);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
 
     private String getCurrentTime(){
         Date date = new Date();
@@ -267,22 +280,29 @@ public class ControllerShiftTrans {
         return result;
     }
 
-    public void closeSessions(){
+    public String geShiftTransID() {
+        String result= null;
+        String userGuid= getFromGroupUserMaster("USER_GUID");
         try {
-            String userGuid = getFromGroupUserMaster("USER_GUID");
             SQLiteDatabase  mydb  = context.openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
-            String strSQL = "UPDATE shift_trans SET ISACTIVE = 'N' WHERE USER_GUID = '"+userGuid+"'";
-            mydb.execSQL(strSQL);
+            String selectQuery = "SELECT * FROM shift_trans where USER_GUID ='"+userGuid+"'" +"AND ISACTIVE = 'Y' ";
+            Cursor cursor = mydb.rawQuery(selectQuery, null);
+            if (cursor.moveToLast()) {
+
+                result = cursor.getString(0);
+            }
+            cursor.close();
             mydb.close();
-            Log.d("SessionClosed", "closeSessions: Invoked ");
-        } catch (SQLException e) {
+            Log.d("DataRetrieved", "getFromShiftMaster: "+result);
+        } catch (Exception e) {
             e.printStackTrace();
         }
+        return result;
     }
 
     private String getDate(){
         Date date = new Date();
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy",Locale.getDefault());
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd",Locale.getDefault());
         String strDate = formatter.format(date);
         return  strDate;
     }
@@ -291,9 +311,9 @@ public class ControllerShiftTrans {
         try {
             Log.d("FormatterReceved", "getFormatedDate: "+date);
 
-            SimpleDateFormat formatter=new SimpleDateFormat( "dd-MM-yyyy",Locale.getDefault());
+            SimpleDateFormat formatter=new SimpleDateFormat( "yyyy-MM-dd",Locale.getDefault());
             Date date1=formatter.parse(date);
-            String formatted = new SimpleDateFormat("dd-MM-yyyy",Locale.getDefault()).format(date1);
+            String formatted = new SimpleDateFormat("yyyy-MM-dd",Locale.getDefault()).format(date1);
             Log.d("DateAfterParsed", "getFormatedDate: "+formatted);
             return formatted;
         } catch (ParseException e) {
@@ -301,4 +321,58 @@ public class ControllerShiftTrans {
         }
         return null;
     }
+
+    public ArrayList<ShiftTransUpload> get_ShiftTrans_syncdata() {
+        ArrayList<ShiftTransUpload> productlist = new ArrayList<>();
+        try {
+            SQLiteDatabase db = ApplicationContextProvider.getContext().openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
+            Cursor productcursor = db.rawQuery(" select * from shift_trans where ISSYNCED ='0' ", null);
+            if (productcursor.moveToFirst()) {
+                do {
+                    ShiftTransUpload pm = new ShiftTransUpload();
+                    pm.setSHIFT_TRANS_ID(productcursor.getString(productcursor.getColumnIndex("SHIFT_TRANS_ID")));
+                    pm.setSHIFT_TRANSACTIONGUID(productcursor.getString(productcursor.getColumnIndex("SHIFT_TRANSACTIONGUID")));
+                    pm.setORG_GUID(productcursor.getString(productcursor.getColumnIndex("ORG_GUID")));
+                    pm.setSTORE_GUID(productcursor.getString(productcursor.getColumnIndex("STORE_GUID")));
+                    pm.setUSER_GUID(productcursor.getString(productcursor.getColumnIndex("USER_GUID")));
+                    pm.setSHIFT_GUID(productcursor.getString(productcursor.getColumnIndex("SHIFT_GUID")));
+                    pm.setSHIFT_DATE(productcursor.getString(productcursor.getColumnIndex("SHIFT_DATE")));
+                    pm.setSTART_TIME(productcursor.getString(productcursor.getColumnIndex("START_TIME")));
+                    pm.setEND_TIME(productcursor.getString(productcursor.getColumnIndex("END_TIME")));
+                    pm.setIS_SHIFT_STARTED(productcursor.getString(productcursor.getColumnIndex("IS_SHIFT_STARTED")));
+                    pm.setIS_SHIFT_ENDED(productcursor.getString(productcursor.getColumnIndex("IS_SHIFT_ENDED")));
+                    pm.setCASH_OPENED(productcursor.getString(productcursor.getColumnIndex("CASH_OPENED")));
+                    pm.setCASH_CLOSED(productcursor.getString(productcursor.getColumnIndex("CASH_CLOSED")));
+                    pm.setISACTIVE(productcursor.getString(productcursor.getColumnIndex("ISACTIVE")));
+                    productlist.add(pm);
+                } while (productcursor.moveToNext());
+            }
+            productcursor.close();
+            db.close();
+        } catch (IndexOutOfBoundsException cur) {
+            cur.printStackTrace();
+        }
+        return productlist;
+    }
+
+    public Boolean updateintoShiftTrans(String SHIFT_TRANS_ID) {
+
+        boolean returnval = true;
+        SQLiteDatabase db = ApplicationContextProvider.getContext().openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
+        ContentValues value = new ContentValues();
+        value.put("ISSYNCED", "1");
+        int sqlUpdateRetval = db.update("shift_trans", value,
+                "SHIFT_TRANS_ID = ? "
+                , new String[]{SHIFT_TRANS_ID});
+
+        if (sqlUpdateRetval < 1) {
+            returnval = false;
+            Log.d("ShiftSyncNote", "updateIsSync: Faild ");
+        }else {
+            Log.d("ShiftSyncNote", "updateIsSync: Successful ");
+        }
+        db.close();
+        return returnval;
+    }
+
 }

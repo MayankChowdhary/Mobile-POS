@@ -19,6 +19,11 @@
             android:icon="@drawable/cart"
             android:visible="true"
             android:title="@string/menu_cart" />
+        <item
+            android:id="@+id/nav_dayclose"
+            android:icon="@drawable/closed"
+            android:visible="true"
+            android:title="Day Close" />
 
         <item
             android:id="@+id/nav_logout"

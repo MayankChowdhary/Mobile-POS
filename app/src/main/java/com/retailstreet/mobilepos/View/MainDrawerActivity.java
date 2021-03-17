@@ -46,7 +46,7 @@ public class MainDrawerActivity extends AppCompatActivity  {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-               R.id.nav_sales,R.id.nav_dayopen)
+               R.id.nav_sales,R.id.nav_dayopen,R.id.nav_dayclose)
                 .setOpenableLayout(drawer)
                 .build();
 
@@ -109,7 +109,7 @@ public class MainDrawerActivity extends AppCompatActivity  {
 
     setNavigationString();
         try {
-            new WorkManagerSync();
+            new WorkManagerSync(0);
         } catch (Exception e) {
             e.printStackTrace();
         }

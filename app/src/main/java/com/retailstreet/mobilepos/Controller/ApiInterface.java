@@ -78,4 +78,7 @@ public interface ApiInterface {
    @POST("/APIManagers/api/PullPOSRegualarSync/PullBillHeaderDetails")
    Call<SyncResponse> UploadSaleRecords(@Header("Authorization")String Authorization, @Body RequestBody body);
 
+
+    @POST("/APIManagers/api/PullPOSRegualarSync/PushShiftTransactions")
+    Call<SyncResponse> UploadShifttransRecords(@Header("Authorization")String Authorization, @Body RequestBody body);
 }

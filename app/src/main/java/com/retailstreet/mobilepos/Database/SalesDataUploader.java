@@ -33,7 +33,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class TableDataUploader extends Worker {
+public class SalesDataUploader extends Worker {
 
 
 
@@ -41,7 +41,7 @@ public class TableDataUploader extends Worker {
         private ArrayList<BillDetail> GetBillDetailToSync;
         private ArrayList<BillPayDetail> GetBillPaymentDetailToSync;
 
-        public TableDataUploader(@NonNull Context context, @NonNull WorkerParameters workerParams) {
+        public SalesDataUploader(@NonNull Context context, @NonNull WorkerParameters workerParams) {
             super(context, workerParams);
         }
 
@@ -176,10 +176,10 @@ public class TableDataUploader extends Worker {
                                 Log.d("Rc Updatesaledata:- ", String.valueOf(val));
 
                                 if(!i.isEmpty()){
-                                    Toast.makeText(ApplicationContextProvider.getContext(),"Data Successfully Synced!",Toast.LENGTH_LONG).show();
+                                    Toast.makeText(ApplicationContextProvider.getContext(),"Sales Successfully Synced!",Toast.LENGTH_LONG).show();
 
                                 }else {
-                                    Toast.makeText(ApplicationContextProvider.getContext(),"Sync Failed!",Toast.LENGTH_LONG).show();
+                                    Toast.makeText(ApplicationContextProvider.getContext(),"Sales Sync Failed!",Toast.LENGTH_LONG).show();
 
                                 }
 
