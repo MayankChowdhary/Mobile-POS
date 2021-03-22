@@ -8,7 +8,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.retailstreet.mobilepos.Utils.JSONParserSync;
-import com.retailstreet.mobilepos.View.LoginActivity;
+import com.retailstreet.mobilepos.View.ApplicationContextProvider;
 import com.retailstreet.mobilepos.View.dialog.LoadingDialog;
 
 import org.json.JSONArray;
@@ -21,7 +21,6 @@ import java.util.Collections;
 @SuppressWarnings("deprecation")
 public class SQLiteDbBuilder {
     private final Context context;
-    String JSON_STRING;
 
     /* Arrays to store Table field names retrieved from JSON Structure*/
     private final ArrayList<String> user_master;
@@ -60,6 +59,16 @@ public class SQLiteDbBuilder {
     private final ArrayList<String> billpaydetail_pk;
     private final ArrayList<String> shift_trans;
     private final ArrayList<String> shift_trans_pk;
+    private final ArrayList<String> master_category;
+    private final ArrayList<String> master_category_pk;
+    private final ArrayList<String> master_subcategory;
+    private final ArrayList<String> master_subcategory_pk;
+    private final ArrayList<String> hsn_master;
+    private final ArrayList<String> hsn_master_pk;
+    private final ArrayList<String> retail_str_dstr;
+    private final ArrayList<String> retail_str_dstr_pk;
+    private final ArrayList<String> master_uom;
+    private final ArrayList<String> master_uom_pk;
 
 
    static String dbname = "MasterDB";
@@ -67,11 +76,9 @@ public class SQLiteDbBuilder {
     LoadingDialog loadingDialog;
 
 
-
     public SQLiteDbBuilder(Context context) {
         this.context = context;
         loadingDialog=  new LoadingDialog();
-        loadingDialog.showDialog(context, "Please Wait!", "Preparing Database...");
 
         user_master = new ArrayList<>();
         user_master_pk = new ArrayList<>();
@@ -107,6 +114,16 @@ public class SQLiteDbBuilder {
         billpaydetail_pk = new ArrayList<>();
         shift_trans = new ArrayList<>();
         shift_trans_pk = new ArrayList<>();
+        master_category = new ArrayList<>();
+        master_category_pk= new ArrayList<>();
+        master_subcategory =  new ArrayList<>();
+        master_subcategory_pk = new ArrayList<>();
+        hsn_master = new ArrayList<>();
+        hsn_master_pk =  new ArrayList<>();
+        retail_str_dstr = new ArrayList<>();
+        retail_str_dstr_pk =  new ArrayList<>();
+        master_uom= new ArrayList<>();
+        master_uom_pk =  new ArrayList<>();
         cartList= new ArrayList<>(Arrays.asList("STOCK_ID","PROD_NM","count","MRP","S_PRICE","SALESDISCOUNTBYAMOUNT","GST","SGST","CGST","QTY" ));
         cartList_Pk= new ArrayList<>(Collections.singletonList("STOCK_ID"));
         getJSON();
@@ -117,24 +134,29 @@ public class SQLiteDbBuilder {
     private void getJSON() {
         @SuppressWarnings("deprecation")
         class GetJSON extends AsyncTask<Void, Void, String> {
+
             //ProgressDialog loading;
 
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
-                // loading = ProgressDialog.show(com.example.stock_inventory.Activity_Installation.this, "Fetching Data", "Wait...", false, false);
+                loadingDialog.showDialog(context, "Please Wait!", "Preparing Database...");
+
             }
 
             @Override
             protected void onPostExecute(String result) {
                 super.onPostExecute(result);
-                //loading.dismiss();
-                if(result==null || result.isEmpty()){
-                    loadingDialog.cancelDialog();
-                    return;
+
+                if(result!=null && !result.isEmpty()) {
+                    Toast.makeText(context, "Tables Created", Toast.LENGTH_LONG).show();
                 }
-                JSON_STRING = result;
-                JSONToArray(result);
+                else {
+                    Toast.makeText(ApplicationContextProvider.getContext(), "Network Error Download Failed !", Toast.LENGTH_LONG).show();
+                }
+                    loadingDialog.cancelDialog();
+                    loadingDialog=null;
+
             }
 
             @Override
@@ -142,6 +164,10 @@ public class SQLiteDbBuilder {
                 JSONParserSync jsonParserSync = new JSONParserSync();
                 String structure = jsonParserSync.sendGetRequest("http://www.99retailstreet.com:8080/ApiTest/TestStructure");
                 Log.d("BackgroundDone", "doInBackground: " + structure);
+
+                if(structure!=null && !structure.isEmpty())
+                JSONToArray(structure);
+
                 return structure;
 
 
@@ -447,6 +473,90 @@ public class SQLiteDbBuilder {
                 //Log.d("retail_store_pk", "constraint:" + constraint);
             }
 
+            JSONArray master_category_json = jsonObject.getJSONArray("master_category");
+            for (int i = 0; i < master_category_json.length(); i++) {
+                JSONObject obj = (JSONObject) master_category_json.get(i);
+                String id = obj.getString("Field");
+                master_category.add(id);
+                // Log.d("retail_store", "id:" + id);
+
+            }
+
+            JSONArray master_category_pk_json = jsonObject.getJSONArray("master_category_pk");
+            for (int i = 0; i < master_category_pk_json.length(); i++) {
+                JSONObject obj = (JSONObject) master_category_pk_json.get(i);
+                String constraint = obj.getString("Constraint");
+                master_category_pk.add(constraint);
+                //Log.d("retail_store_pk", "constraint:" + constraint);
+            }
+
+            JSONArray master_subcategory_json = jsonObject.getJSONArray("master_subcategory");
+            for (int i = 0; i < master_subcategory_json.length(); i++) {
+                JSONObject obj = (JSONObject) master_subcategory_json.get(i);
+                String id = obj.getString("Field");
+                master_subcategory.add(id);
+                // Log.d("retail_store", "id:" + id);
+
+            }
+
+            JSONArray master_subcategory_pk_json = jsonObject.getJSONArray("master_subcategory_pk");
+            for (int i = 0; i < master_subcategory_pk_json.length(); i++) {
+                JSONObject obj = (JSONObject) master_subcategory_pk_json.get(i);
+                String constraint = obj.getString("Constraint");
+                master_subcategory_pk.add(constraint);
+                //Log.d("retail_store_pk", "constraint:" + constraint);
+            }
+            JSONArray hsn_master_json = jsonObject.getJSONArray("hsn_master");
+            for (int i = 0; i < hsn_master_json.length(); i++) {
+                JSONObject obj = (JSONObject) hsn_master_json.get(i);
+                String id = obj.getString("Field");
+                hsn_master.add(id);
+                // Log.d("retail_store", "id:" + id);
+
+            }
+
+            JSONArray hsn_master_pk_json = jsonObject.getJSONArray("hsn_master_pk");
+            for (int i = 0; i < hsn_master_pk_json.length(); i++) {
+                JSONObject obj = (JSONObject) hsn_master_pk_json.get(i);
+                String constraint = obj.getString("Constraint");
+                hsn_master_pk.add(constraint);
+                //Log.d("retail_store_pk", "constraint:" + constraint);
+            }
+
+            JSONArray retail_str_dstr_json = jsonObject.getJSONArray("retail_str_dstr");
+            for (int i = 0; i < retail_str_dstr_json.length(); i++) {
+                JSONObject obj = (JSONObject) retail_str_dstr_json.get(i);
+                String id = obj.getString("Field");
+                retail_str_dstr.add(id);
+                // Log.d("retail_store", "id:" + id);
+
+            }
+
+            JSONArray retail_str_dstr_pk_json = jsonObject.getJSONArray("retail_str_dstr_pk");
+            for (int i = 0; i < retail_str_dstr_pk_json.length(); i++) {
+                JSONObject obj = (JSONObject) retail_str_dstr_pk_json.get(i);
+                String constraint = obj.getString("Constraint");
+                retail_str_dstr_pk.add(constraint);
+                //Log.d("retail_store_pk", "constraint:" + constraint);
+            }
+
+            JSONArray master_uom_json = jsonObject.getJSONArray("master_uom");
+            for (int i = 0; i < master_uom_json.length(); i++) {
+                JSONObject obj = (JSONObject) master_uom_json.get(i);
+                String id = obj.getString("Field");
+                master_uom.add(id);
+                // Log.d("retail_store", "id:" + id);
+
+            }
+
+            JSONArray master_uom_pk_json = jsonObject.getJSONArray("master_uom_pk");
+            for (int i = 0; i < master_uom_pk_json.length(); i++) {
+                JSONObject obj = (JSONObject) master_uom_pk_json.get(i);
+                String constraint = obj.getString("Constraint");
+                master_uom_pk.add(constraint);
+                //Log.d("retail_store_pk", "constraint:" + constraint);
+            }
+
             createDynamicDatabase(context, "group_user_master", user_master, user_master_pk);
             createDynamicDatabase(context, "retail_cust", retail_cust, retail_cust_pk);
             createDynamicDatabase(context, "retail_store_prod_com", retail_store_prod_com, retail_store_prod_com_pk);
@@ -465,10 +575,15 @@ public class SQLiteDbBuilder {
             createDynamicDatabase(context, "masterpaymode", masterpaymode, masterpaymode_pk);
             createDynamicDatabase(context, "billpaydetail", billpaydetail, billpaydetail_pk);
             createDynamicDatabase(context, "shift_trans", shift_trans, shift_trans_pk);
+            createDynamicDatabase(context, "master_category", master_category, master_category_pk);
+            createDynamicDatabase(context, "master_subcategory", master_subcategory, master_subcategory_pk);
+            createDynamicDatabase(context, "master_subcategory", master_subcategory, master_subcategory_pk);
+            createDynamicDatabase(context, "hsn_master", hsn_master, hsn_master_pk);
+            createDynamicDatabase(context, "retail_str_dstr", retail_str_dstr, retail_str_dstr_pk);
+            createDynamicDatabase(context, "master_uom", master_uom, master_uom_pk);
 
             dbOk=true;
-            loadingDialog.cancelDialog();
-            Toast.makeText(context, "Tables Created", Toast.LENGTH_LONG).show();
+            //loadingDialog.cancelDialog();
              SQLiteDbInspector.PrintTableSchema(context,dbname);
 
         } catch (Exception e) {

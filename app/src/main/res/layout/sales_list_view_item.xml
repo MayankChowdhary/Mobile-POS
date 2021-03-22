@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="@dimen/_100sdp"
     android:layout_margin="4dp"
-    android:background="@drawable/sales_list_item_border"
+    android:background="@drawable/item_box_border"
     android:elevation="2dp"
     android:padding="@dimen/_8sdp">
 

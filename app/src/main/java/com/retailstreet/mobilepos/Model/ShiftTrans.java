@@ -1,10 +1,12 @@
 package com.retailstreet.mobilepos.Model;
 
+import androidx.annotation.Keep;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.UUID;
-
+@Keep
 public class ShiftTrans {
     @SerializedName("SHIFT_TRANS_ID")
     @Expose

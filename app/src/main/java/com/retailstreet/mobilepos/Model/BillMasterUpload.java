@@ -1,5 +1,8 @@
 package com.retailstreet.mobilepos.Model;
 
+import androidx.annotation.Keep;
+
+@Keep
 public class BillMasterUpload {
     
     String BID;

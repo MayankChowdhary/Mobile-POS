@@ -42,7 +42,7 @@ public class ProductMaster {
     public ProductMaster() {
     }
 
-    public ProductMaster(String ACTIVE, String BARCODE, String CATEGORY, String CATEGORY_GUID, String CESS1, String CESS2, String CGST, String EXTERNALPRODUCTID, String GENERIC_NAME, String GST, String HSN, String IGST, String ITEM_CODE, String ITEM_GUID, String item_Type, String MASTERBRAND, String MASTERCATEGORY_id, String POS_USER, String PRINT_NAME, String PROD_ID, String PROD_NM, String PRODUCTRELEVANCE, String SGST, String STORE_ID, String STORE_NUMBER, String SUB_CATEGORYGUID, String SUBCATEGORY_DESCRIPTION, String SUBCATEGORY_ID, String UOM, String UOM_GUID, String uoMID) {
+    public ProductMaster(String ACTIVE, String BARCODE, String CATEGORY, String CATEGORY_GUID, String CESS1, String CESS2, String CGST, String EXTERNALPRODUCTID, String GENERIC_NAME, String GST, String HSN, String IGST, String ITEM_CODE, String ITEM_GUID, String item_Type, String MASTERBRAND, String MASTERCATEGORY_id, String POS_USER, String PRINT_NAME, String PROD_ID, String PROD_NM, String PRODUCTRELEVANCE, String SGST, String STORE_ID, String STORE_NUMBER, String SUB_CATEGORYGUID, String SUBCATEGORY_DESCRIPTION, String SUBCATEGORY_ID, String UOM, String UOM_GUID, String uoMID,String issync) {
         this.ACTIVE = ACTIVE;
         this.BARCODE = BARCODE;
         this.CATEGORY = CATEGORY;
@@ -57,7 +57,7 @@ public class ProductMaster {
         this.IGST = IGST;
         this.ITEM_CODE = ITEM_CODE;
         this.ITEM_GUID = ITEM_GUID;
-        Item_Type = item_Type;
+        this.Item_Type = item_Type;
         this.MASTERBRAND = MASTERBRAND;
         this.MASTERCATEGORY_id = MASTERCATEGORY_id;
         this.POS_USER = POS_USER;
@@ -73,7 +73,8 @@ public class ProductMaster {
         this.SUBCATEGORY_ID = SUBCATEGORY_ID;
         this.UOM = UOM;
         this.UOM_GUID = UOM_GUID;
-        UoMID = uoMID;
+        this.UoMID = uoMID;
+        this.ISSYNCED = issync;
     }
 
     public String getACTIVE() {

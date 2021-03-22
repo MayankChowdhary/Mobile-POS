@@ -14,18 +14,17 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="wrap_content"
+        android:layout_width="@dimen/_130sdp"
         android:layout_height="wrap_content"
         android:contentDescription="@string/nav_header_desc"
-        android:paddingTop="@dimen/nav_header_vertical_spacing"
-        app:srcCompat="@drawable/company_logo" />
+        app:srcCompat="@drawable/company_logox" />
 
     <TextView
         android:id="@+id/nav_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-smallcaps"
-        android:paddingTop="@dimen/nav_header_vertical_spacing"
+        android:paddingTop="@dimen/_4sdp"
         android:text="@string/nav_header_title"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textSize="@dimen/_14ssp" />

@@ -8,7 +8,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
-import com.retailstreet.mobilepos.Controller.ApiInterface;
+import com.retailstreet.mobilepos.Utils.ApiInterface;
 import com.retailstreet.mobilepos.Controller.DBReadyCallback;
 import com.retailstreet.mobilepos.Model.BillDetail;
 import com.retailstreet.mobilepos.Model.BillMaster;
@@ -16,6 +16,10 @@ import com.retailstreet.mobilepos.Model.BillPayDetail;
 import com.retailstreet.mobilepos.Model.DeliveryTypeMaster;
 import com.retailstreet.mobilepos.Model.GroupUserMaster;
 import com.retailstreet.mobilepos.Model.CustomerMaster;
+import com.retailstreet.mobilepos.Model.HSNMaster;
+import com.retailstreet.mobilepos.Model.MasterCategory;
+import com.retailstreet.mobilepos.Model.MasterSubcategory;
+import com.retailstreet.mobilepos.Model.MasterUOM;
 import com.retailstreet.mobilepos.Model.PaymentModeMaster;
 import com.retailstreet.mobilepos.Model.ProductMaster;
 import com.retailstreet.mobilepos.Model.RetailStore;
@@ -24,6 +28,7 @@ import com.retailstreet.mobilepos.Model.ShiftTrans;
 import com.retailstreet.mobilepos.Model.StockMaster;
 import com.retailstreet.mobilepos.Model.TerminalConfiguration;
 import com.retailstreet.mobilepos.Model.TerminalUserAllocation;
+import com.retailstreet.mobilepos.Model.VendorMaster;
 import com.retailstreet.mobilepos.View.ApplicationContextProvider;
 import com.retailstreet.mobilepos.View.dialog.LoadingDialog;
 
@@ -37,7 +42,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class TableDataInjector {
     String dbname = "MasterDB";
-    //SQLiteDatabase myDataBase;
     private Context context;
     String baseUrl = "http://99retailstreet.com:8080/";
     String storeId;
@@ -56,11 +60,15 @@ public class TableDataInjector {
     private List<PaymentModeMaster> paymentModeMasters = null;
     private List<BillPayDetail> billPayDetailList = null;
     private List<ShiftTrans> shiftTransList = null;
-   private LoadingDialog loadingDialog;
-
+    private List<MasterCategory> masterCategoryList = null;
+    private List<MasterSubcategory> masterSubcategoryList = null;
+    private List<HSNMaster> hsnMasterList = null;
+    private List<VendorMaster> vendorMasterList = null;
+    private List<MasterUOM> masterUOMList = null;
+    private LoadingDialog loadingDialog;
 
     public static int status =0;
-    private final int tableConstant=14;
+    private final int tableConstant=19;
 
     public TableDataInjector(Context context, String storeid,DBReadyCallback callback) {
 
@@ -86,6 +94,11 @@ public class TableDataInjector {
         getPaymentMode();
         getBillPayDetail();
         getShiftTransactions();
+        getMasterCategory();
+        getMasterSubCategory();
+        getHsnMaster();
+        getVendorMaster();
+        getMasterUom();
 
     }
 
@@ -442,6 +455,298 @@ public class TableDataInjector {
             });
         } catch (Exception e) {
             Log.i("autolog", "Exception");
+        }
+    }
+
+    public void getMasterCategory() {
+        try {
+            Retrofit retrofit = getRetroInstance(baseUrl);
+            ApiInterface service = retrofit.create(ApiInterface.class);
+            Call<List<MasterCategory>> call = service.getMasterCategory(generateTableUrl("master_category",storeId));
+            call.enqueue(new Callback<List<MasterCategory>>() {
+                @Override
+                public void onResponse(Call<List<MasterCategory>> call, Response<List<MasterCategory>> response) {
+                    masterCategoryList = response.body();
+                    Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
+                    InsertMasterCategory(masterCategoryList);
+                }
+
+                @Override
+                public void onFailure(Call<List<MasterCategory>> call, Throwable t) {
+                    Log.i("autolog", t.getMessage());
+                }
+            });
+        } catch (Exception e) {
+            Log.i("autolog", "Exception");
+        }
+    }
+
+    public void getMasterSubCategory() {
+        try {
+            Retrofit retrofit = getRetroInstance(baseUrl);
+            ApiInterface service = retrofit.create(ApiInterface.class);
+            Call<List<MasterSubcategory>> call = service.getMasterSubCategory(generateTableUrl("master_subcategory",storeId));
+            call.enqueue(new Callback<List<MasterSubcategory>>() {
+                @Override
+                public void onResponse(Call<List<MasterSubcategory>> call, Response<List<MasterSubcategory>> response) {
+                    masterSubcategoryList = response.body();
+                    Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
+                    InsertMasterSubCategory(masterSubcategoryList);
+                }
+
+                @Override
+                public void onFailure(Call<List<MasterSubcategory>> call, Throwable t) {
+                    Log.i("autolog", t.getMessage());
+                }
+            });
+        } catch (Exception e) {
+            Log.i("autolog", "Exception");
+        }
+    }
+
+
+    public void getHsnMaster() {
+        try {
+            Retrofit retrofit = getRetroInstance(baseUrl);
+            ApiInterface service = retrofit.create(ApiInterface.class);
+            Call<List<HSNMaster>> call = service.getHsnMaster(generateTableUrl("hsn_master",storeId));
+            call.enqueue(new Callback<List<HSNMaster>>() {
+                @Override
+                public void onResponse(Call<List<HSNMaster>> call, Response<List<HSNMaster>> response) {
+                    hsnMasterList = response.body();
+                    Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
+                    InsertHsnMaster(hsnMasterList);
+                }
+
+                @Override
+                public void onFailure(Call<List<HSNMaster>> call, Throwable t) {
+                    Log.i("autolog", t.getMessage());
+                }
+            });
+        } catch (Exception e) {
+            Log.i("autolog", "Exception");
+        }
+    }
+
+
+    public void getVendorMaster() {
+        try {
+            Retrofit retrofit = getRetroInstance(baseUrl);
+            ApiInterface service = retrofit.create(ApiInterface.class);
+            Call<List<VendorMaster>> call = service.getVendorMaster(generateTableUrl("retail_str_dstr",storeId));
+            call.enqueue(new Callback<List<VendorMaster>>() {
+                @Override
+                public void onResponse(Call<List<VendorMaster>> call, Response<List<VendorMaster>> response) {
+                    vendorMasterList = response.body();
+                    Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
+                    InsertVendorMaster(vendorMasterList);
+                }
+
+                @Override
+                public void onFailure(Call<List<VendorMaster>> call, Throwable t) {
+                    Log.i("autolog", t.getMessage());
+                }
+            });
+        } catch (Exception e) {
+            Log.i("autolog", "Exception");
+        }
+    }
+
+
+    public void getMasterUom() {
+        try {
+            Retrofit retrofit = getRetroInstance(baseUrl);
+            ApiInterface service = retrofit.create(ApiInterface.class);
+            Call<List<MasterUOM>> call = service.getMasterUom(generateTableUrl("master_uom",storeId));
+            call.enqueue(new Callback<List<MasterUOM>>() {
+                @Override
+                public void onResponse(Call<List<MasterUOM>> call, Response<List<MasterUOM>> response) {
+                    masterUOMList = response.body();
+                    Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
+                    InsertMasterUom(masterUOMList);
+                }
+
+                @Override
+                public void onFailure(Call<List<MasterUOM>> call, Throwable t) {
+                    Log.i("autolog", t.getMessage());
+                }
+            });
+        } catch (Exception e) {
+            Log.i("autolog", "Exception");
+        }
+    }
+
+    public void InsertMasterUom(List<MasterUOM> list) {
+        if (list == null) {
+            return;
+        }
+        try {
+            SQLiteDatabase myDataBase = context.openOrCreateDatabase(dbname, Context.MODE_PRIVATE, null);
+            myDataBase.delete("master_uom", null, null);
+            for (MasterUOM prod : list) {
+                ContentValues contentValues = new ContentValues();
+                contentValues.put("ISACTIVE", prod.getISACTIVE());
+                contentValues.put("UoM", prod.getUoM());
+                contentValues.put("UOM_GUID", prod.getUOM_GUID());
+                contentValues.put("UoMID", prod.getUoMID());
+                myDataBase.insert("master_uom", null, contentValues);
+
+            }
+
+            myDataBase.close();
+            status+=1;
+            if(status==tableConstant){
+                loadingDialog.cancelDialog();
+                dbReadyCallback.onDBReady();
+            }
+            Log.d("Insertion Successful", "InsertMasterUom: "+status);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public void InsertVendorMaster(List<VendorMaster> list) {
+        if (list == null) {
+            return;
+        }
+        try {
+            SQLiteDatabase myDataBase = context.openOrCreateDatabase(dbname, Context.MODE_PRIVATE, null);
+            myDataBase.delete("retail_str_dstr", null, null);
+            for (VendorMaster prod : list) {
+                ContentValues contentValues = new ContentValues();
+                contentValues.put("DSTR_ID", prod.getDSTR_ID());
+                contentValues.put("VENDOR_GUID", prod.getVENDOR_GUID());
+                contentValues.put("MASTERORGID", prod.getMASTERORGID());
+                contentValues.put("STORE_ID", prod.getSTORE_ID());
+                contentValues.put("VENDOR_CATEGORY", prod.getVENDOR_CATEGORY());
+                contentValues.put("DSTR_NM", prod.getDSTR_NM());
+                contentValues.put("VENDOR_STREET", prod.getVENDOR_STREET());
+                contentValues.put("ADD_1", prod.getADD_1());
+                contentValues.put("CITY", prod.getCITY());
+                contentValues.put("DSTR_CNTCT_NM", prod.getDSTR_CNTCT_NM());
+                contentValues.put("MOBILE", prod.getMOBILE());
+                contentValues.put("EMAIL", prod.getEMAIL());
+                contentValues.put("GST", prod.getGST());
+                contentValues.put("PAN", prod.getPAN());
+                contentValues.put("ZIP", prod.getZIP());
+                contentValues.put("TELE", prod.getTELE());
+                contentValues.put("VENDOR_STATUS", prod.getVENDOR_STATUS());
+                contentValues.put("POS_USER", prod.getPOS_USER());
+                contentValues.put("CREATEDON", prod.getCREATEDON());
+                contentValues.put("MASTERCOUNTRYID", prod.getMASTERCOUNTRYID());
+                contentValues.put("DSTR_INV", prod.getDSTR_INV());
+                contentValues.put("VENDORSTATE", prod.getVENDORSTATE());
+                contentValues.put("PAYMENTTERMS", prod.getPAYMENTTERMS());
+                contentValues.put("ISSYNCED", prod.getISSYNCED());
+                myDataBase.insert("retail_str_dstr", null, contentValues);
+
+            }
+
+            myDataBase.close();
+            status+=1;
+            if(status==tableConstant){
+                loadingDialog.cancelDialog();
+                dbReadyCallback.onDBReady();
+            }
+            Log.d("Insertion Successful", "InsertVendorMater: "+status);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public void InsertHsnMaster(List<HSNMaster> list) {
+        if (list == null) {
+            return;
+        }
+        try {
+            SQLiteDatabase myDataBase = context.openOrCreateDatabase(dbname, Context.MODE_PRIVATE, null);
+            myDataBase.delete("hsn_master", null, null);
+            for (HSNMaster prod : list) {
+                ContentValues contentValues = new ContentValues();
+                contentValues.put("HSN_ID", prod.getHSN_ID());
+                contentValues.put("HSN", prod.getHSN());
+                contentValues.put("GST", prod.getGST());
+                contentValues.put("SGST", prod.getSGST());
+                contentValues.put("CGST", prod.getCGST());
+                contentValues.put("IGST", prod.getIGST());
+                contentValues.put("CESS", prod.getCESS());
+                contentValues.put("HSN_STATUS", prod.getHSN_STATUS());
+                myDataBase.insert("hsn_master", null, contentValues);
+
+            }
+
+            myDataBase.close();
+            status+=1;
+            if(status==tableConstant){
+                loadingDialog.cancelDialog();
+                dbReadyCallback.onDBReady();
+            }
+            Log.d("Insertion Successful", "InsertHsnMaster: "+status);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+    public void InsertMasterSubCategory(List<MasterSubcategory> list) {
+        if (list == null) {
+            return;
+        }
+        try {
+            SQLiteDatabase myDataBase = context.openOrCreateDatabase(dbname, Context.MODE_PRIVATE, null);
+            myDataBase.delete("master_subcategory", null, null);
+            for (MasterSubcategory prod : list) {
+                ContentValues contentValues = new ContentValues();
+                contentValues.put("SUB_CATEGORYID", prod.getSUB_CATEGORYID());
+                contentValues.put("SUB_CATEGORYGUID", prod.getSUB_CATEGORYGUID());
+                contentValues.put("SUBCATEGORY_DESCRIPTION", prod.getSUBCATEGORY_DESCRIPTION());
+                contentValues.put("CATEGORY_GUID", prod.getCATEGORY_GUID());
+                myDataBase.insert("master_subcategory", null, contentValues);
+
+            }
+
+            myDataBase.close();
+            status+=1;
+            if(status==tableConstant){
+                loadingDialog.cancelDialog();
+                dbReadyCallback.onDBReady();
+            }
+            Log.d("Insertion Successful", "InsertMaster_subcategory: "+status);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public void InsertMasterCategory(List<MasterCategory> list) {
+        if (list == null) {
+            return;
+        }
+        try {
+            SQLiteDatabase myDataBase = context.openOrCreateDatabase(dbname, Context.MODE_PRIVATE, null);
+            myDataBase.delete("master_category", null, null);
+            for (MasterCategory prod : list) {
+                ContentValues contentValues = new ContentValues();
+                contentValues.put("CATEGORYID", prod.getCATEGORYID());
+                contentValues.put("CATEGORY_GUID", prod.getCATEGORY_GUID());
+                contentValues.put("CATEGORY", prod.getCATEGORY());
+                myDataBase.insert("master_category", null, contentValues);
+
+                // myDataBase.close(); // Closing database connection
+            }
+
+            myDataBase.close();
+            status+=1;
+            if(status==tableConstant){
+                loadingDialog.cancelDialog();
+                dbReadyCallback.onDBReady();
+            }
+            Log.d("Insertion Successful", "InsertMaster_category: "+status);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -1132,8 +1437,24 @@ public class TableDataInjector {
 
             case "billpaydetail":
                 return "ApiTest/BillPayDetail?STORE_ID="+storeid;
+
             case "shift_trans":
                 return "ApiTest/ShiftTransactions?STORE_ID="+storeid;
+
+            case "master_category":
+                return "ApiTest/MasterCategory?STORE_ID="+storeid;
+
+            case "master_subcategory":
+                return "ApiTest/MasterSubCategory?STORE_ID="+storeid;
+
+            case "hsn_master":
+                return "ApiTest/HsnMaster?STORE_ID="+storeid;
+
+            case "retail_str_dstr":
+                return "ApiTest/VendorMaster?STORE_ID="+storeid;
+
+            case "master_uom":
+                return "ApiTest/UomMaster?STORE_ID="+storeid;
 
             default:
                 return "";

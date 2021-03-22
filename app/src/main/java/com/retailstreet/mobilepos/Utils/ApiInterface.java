@@ -1,4 +1,4 @@
-package com.retailstreet.mobilepos.Controller;
+package com.retailstreet.mobilepos.Utils;
 
 
 
@@ -8,6 +8,10 @@ import com.retailstreet.mobilepos.Model.BillPayDetail;
 import com.retailstreet.mobilepos.Model.DeliveryTypeMaster;
 import com.retailstreet.mobilepos.Model.GroupUserMaster;
 import com.retailstreet.mobilepos.Model.CustomerMaster;
+import com.retailstreet.mobilepos.Model.HSNMaster;
+import com.retailstreet.mobilepos.Model.MasterCategory;
+import com.retailstreet.mobilepos.Model.MasterSubcategory;
+import com.retailstreet.mobilepos.Model.MasterUOM;
 import com.retailstreet.mobilepos.Model.PaymentModeMaster;
 import com.retailstreet.mobilepos.Model.ProductMaster;
 import com.retailstreet.mobilepos.Model.RetailStore;
@@ -17,6 +21,7 @@ import com.retailstreet.mobilepos.Model.StockMaster;
 import com.retailstreet.mobilepos.Model.SyncResponse;
 import com.retailstreet.mobilepos.Model.TerminalConfiguration;
 import com.retailstreet.mobilepos.Model.TerminalUserAllocation;
+import com.retailstreet.mobilepos.Model.VendorMaster;
 
 import java.util.List;
 
@@ -73,6 +78,21 @@ public interface ApiInterface {
     @GET
     Call<List<ShiftTrans>> getShiftTrans(@Url String url);
 
+    @GET
+    Call<List<MasterCategory>> getMasterCategory(@Url String url);
+
+    @GET
+    Call<List<MasterSubcategory>> getMasterSubCategory(@Url String url);
+
+    @GET
+    Call<List<HSNMaster>> getHsnMaster(@Url String url);
+
+    @GET
+    Call<List<MasterUOM>> getMasterUom(@Url String url);
+
+    @GET
+    Call<List<VendorMaster>> getVendorMaster(@Url String url);
+
 
    //*********Upload API***********
    @POST("/APIManagers/api/PullPOSRegualarSync/PullBillHeaderDetails")
@@ -81,4 +101,10 @@ public interface ApiInterface {
 
     @POST("/APIManagers/api/PullPOSRegualarSync/PushShiftTransactions")
     Call<SyncResponse> UploadShifttransRecords(@Header("Authorization")String Authorization, @Body RequestBody body);
+
+    @POST("/APIManagers/api/PullPOSRegualarSync/PullLocalProductDetails")
+    Call<SyncResponse> UploadproductRecords(@Header("Authorization")String Authorization, @Body RequestBody body);
+
+    @POST("/APIManagers/api/PullPOSRegualarSync/PullStockonHandDetails")
+    Call<SyncResponse> UploadStockRecords(@Header("Authorization")String Authorization, @Body RequestBody body);
 }

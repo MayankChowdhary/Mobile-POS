@@ -46,7 +46,7 @@ public class MainDrawerActivity extends AppCompatActivity  {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-               R.id.nav_sales,R.id.nav_dayopen,R.id.nav_dayclose)
+               R.id.nav_sales,R.id.nav_dayopen,R.id.nav_dayclose,R.id.nav_products)
                 .setOpenableLayout(drawer)
                 .build();
 
@@ -86,10 +86,6 @@ public class MainDrawerActivity extends AppCompatActivity  {
                 alertDialog.show();
                 return true;
 
-            } if (id==R.id.nav_cart) {
-                Navigation.findNavController(this,R.id.nav_host_fragment).navigate(R.id.action_nav_sales_to_nav_cart);
-                drawer.closeDrawer(GravityCompat.START);
-                return true;
             }if(id==R.id.nav_sales){
                 Navigation.findNavController(this,R.id.nav_host_fragment).navigate(R.id.nav_sales);
                 drawer.closeDrawer(GravityCompat.START);

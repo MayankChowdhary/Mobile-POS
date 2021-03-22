@@ -9,7 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
-import com.retailstreet.mobilepos.Controller.ApiInterface;
+import com.retailstreet.mobilepos.Utils.ApiInterface;
 import com.retailstreet.mobilepos.Controller.ControllerBillDetail;
 import com.retailstreet.mobilepos.Controller.ControllerBillMaster;
 import com.retailstreet.mobilepos.Controller.ControllerBillPayDetail;

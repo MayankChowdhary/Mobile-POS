@@ -14,14 +14,14 @@
             android:id="@+id/nav_sales"
             android:icon="@drawable/product"
             android:title="@string/menu_sales" />
-       <item
-            android:id="@+id/nav_cart"
-            android:icon="@drawable/cart"
+        <item
+            android:id="@+id/nav_products"
+            android:icon="@drawable/add_product"
             android:visible="true"
-            android:title="@string/menu_cart" />
+            android:title="Add Products" />
         <item
             android:id="@+id/nav_dayclose"
-            android:icon="@drawable/closed"
+            android:icon="@drawable/close"
             android:visible="true"
             android:title="Day Close" />
 

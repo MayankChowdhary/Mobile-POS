@@ -10,6 +10,7 @@ import android.util.Log;
 
 import com.retailstreet.mobilepos.Model.ShiftTrans;
 import com.retailstreet.mobilepos.Model.ShiftTransUpload;
+import com.retailstreet.mobilepos.Utils.IDGenerator;
 import com.retailstreet.mobilepos.Utils.StringWithTag;
 import com.retailstreet.mobilepos.Utils.WorkManagerSync;
 import com.retailstreet.mobilepos.View.ApplicationContextProvider;
@@ -20,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.UUID;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -55,8 +55,8 @@ public class ControllerShiftTrans {
     public  ControllerShiftTrans(String PosDate, String Username, String shiftGuid,String startCash){
         context= ApplicationContextProvider.getContext();
         this.username=Username;
-        SHIFT_TRANS_ID =  getTimeStamp();
-        SHIFT_TRANSACTIONGUID = getUUID();
+        SHIFT_TRANS_ID =  IDGenerator.getTimeStamp();
+        SHIFT_TRANSACTIONGUID = IDGenerator.getUUID();
         ORG_GUID =  getFromRetailStore("MASTERORG_GUID");
         STORE_GUID = getFromRetailStore("STORE_GUID");;
         SHIFT_GUID  = shiftGuid ;
@@ -175,18 +175,7 @@ public class ControllerShiftTrans {
 
     }
 
-    public String getUUID() {
-        UUID uuid = UUID.randomUUID();
-        System.out.println("UUID=" + uuid.toString());
-        return uuid.toString();
-    }
 
-    public String getTimeStamp() {
-        Date date = new Date();
-        //This method returns the time in millis
-        long timeMilli = date.getTime();
-        return String.valueOf(timeMilli);
-    }
     private String getFromRetailStore( String column){
         String result= null;
         try {

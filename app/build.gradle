@@ -13,8 +13,8 @@ android {
         applicationId "com.retailstreet.mobilepos"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 19
-        versionName "1.4.3"
+        versionCode 22
+        versionName "1.4.6"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

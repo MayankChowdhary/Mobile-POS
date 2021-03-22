@@ -3,6 +3,7 @@ package com.retailstreet.mobilepos.Controller;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
@@ -112,9 +113,9 @@ public class BillGenerator {
         this.MASTERPAYMODEGUID = MasterPayModeGuid;
 
         for (String key:orderList.keySet()) {
-            String orderId = key;
             String count = Objects.requireNonNull(orderList.get(key));
-            GenerateBillDetails(orderId,count);
+            GenerateBillDetails(key,count);
+            setNewQuantity(key);
         }
        GenerateBillMaster(customerID);
         GenerateBillPayDetail();
@@ -507,7 +508,7 @@ public class BillGenerator {
             username = sh.getString("username", "");
 
             result = "";
-            String selectQuery = "SELECT "+column+" FROM group_user_master where USER_NAME ="+username;
+            String selectQuery = "SELECT "+column+" FROM group_user_master where USER_NAME ='"+username+"'";
             Cursor cursor = mydb.rawQuery(selectQuery, null);
             if (cursor.moveToFirst()) {
 
@@ -527,7 +528,7 @@ public class BillGenerator {
         double total = 0; // Your default if none is found
         try {
             SQLiteDatabase  mydb  = context.openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
-            String query = "select SALESDISCOUNTBYAMOUNT, count from cart WHERE STOCK_ID = "+stockID;
+            String query = "select SALESDISCOUNTBYAMOUNT, count from cart WHERE STOCK_ID = '"+stockID+"'";
             Cursor result = mydb.rawQuery( query, null );
 
             if(result==null)
@@ -568,5 +569,36 @@ public class BillGenerator {
         }
     }
 
+    private void setNewQuantity(String StockId) {
+        try {
+            String newQty = "";
+            SQLiteDatabase mydb = context.openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
+            Cursor cursor = mydb.rawQuery("SELECT count, QTY FROM cart where STOCK_ID ='" + StockId + "'", null);
+            if (cursor.moveToFirst()) {
+                String cnt = cursor.getString(0);
+                String qty = cursor.getString(1);
+                newQty = String.valueOf(Double.parseDouble(qty) - Double.parseDouble(cnt));
+
+            }
+            cursor.close();
+            mydb.close();
+            UpdateQuantity(newQty, StockId);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void UpdateQuantity(String quantity, String stockID){
+        try {
+
+            String query = "Update retail_str_stock_master Set QTY = '"+quantity+"' where STOCK_ID = '"+stockID+"'";
+            SQLiteDatabase   db  = context.openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
+            db.execSQL(query);
+            db.close();
+            Log.d("UpdateStockQty", "UpdateQuantity: Successful"+quantity);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
 }

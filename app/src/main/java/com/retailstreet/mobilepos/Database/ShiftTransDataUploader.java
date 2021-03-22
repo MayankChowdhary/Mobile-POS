@@ -11,9 +11,8 @@ import androidx.work.WorkerParameters;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import com.retailstreet.mobilepos.Controller.ApiInterface;
+import com.retailstreet.mobilepos.Utils.ApiInterface;
 import com.retailstreet.mobilepos.Controller.ControllerShiftTrans;
-import com.retailstreet.mobilepos.Model.ShiftTrans;
 import com.retailstreet.mobilepos.Model.ShiftTransUpload;
 import com.retailstreet.mobilepos.Model.SyncResponse;
 import com.retailstreet.mobilepos.Utils.Constants;
@@ -31,13 +30,13 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ShiftTransDataUpload extends Worker {
+public class ShiftTransDataUploader extends Worker {
 
 
         private ArrayList<ShiftTransUpload> getShift_Trans_sync;
         private ControllerShiftTrans controllerShiftTrans;
 
-        public ShiftTransDataUpload(@NonNull Context context, @NonNull WorkerParameters workerParams) {
+        public ShiftTransDataUploader(@NonNull Context context, @NonNull WorkerParameters workerParams) {
             super(context, workerParams);
         }
         @NonNull

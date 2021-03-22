@@ -49,9 +49,9 @@ class DayOpenFragment : Fragment() {
         val posDate: TextView = view.findViewById(R.id.pos_date_value)
         posDate.text = dateTime
 
-        val shiftSelector: Spinner = view.findViewById<Spinner>(R.id.shift_spinner)
+        val shiftSelector: Spinner = view.findViewById(R.id.shift_spinner)
         val shiftAdapter: ArrayAdapter<StringWithTag> = context?.let { ArrayAdapter(it, R.layout.spinner_item_centre, shiftArray) }!!
-        shiftAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        shiftAdapter.setDropDownViewResource(R.layout.spinner_layout_centre)
         shiftSelector.adapter = shiftAdapter
 
         val cashEditText : EditText = view.findViewById(R.id.cash_value)

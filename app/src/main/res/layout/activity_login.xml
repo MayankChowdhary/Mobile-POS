@@ -27,7 +27,7 @@
             android:layout_gravity="center_vertical"
             android:contentDescription="@string/header_image"
             android:scaleType="fitCenter"
-            app:srcCompat="@drawable/company_logo" />
+            app:srcCompat="@drawable/company_logox" />
     </FrameLayout>
 
     <LinearLayout
