@@ -8,16 +8,23 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
-import com.retailstreet.mobilepos.Utils.ApiInterface;
 import com.retailstreet.mobilepos.Controller.DBReadyCallback;
+import com.retailstreet.mobilepos.Model.BankDetails;
 import com.retailstreet.mobilepos.Model.BillDetail;
 import com.retailstreet.mobilepos.Model.BillMaster;
 import com.retailstreet.mobilepos.Model.BillPayDetail;
+import com.retailstreet.mobilepos.Model.CustomerAddress;
+import com.retailstreet.mobilepos.Model.CustomerCredit;
+import com.retailstreet.mobilepos.Model.CustomerMaster;
+import com.retailstreet.mobilepos.Model.CustomerReject;
+import com.retailstreet.mobilepos.Model.CustomerReturnDetails;
+import com.retailstreet.mobilepos.Model.CustomerReturnMaster;
 import com.retailstreet.mobilepos.Model.DeliveryTypeMaster;
 import com.retailstreet.mobilepos.Model.GroupUserMaster;
-import com.retailstreet.mobilepos.Model.CustomerMaster;
 import com.retailstreet.mobilepos.Model.HSNMaster;
 import com.retailstreet.mobilepos.Model.MasterCategory;
+import com.retailstreet.mobilepos.Model.MasterCustomerType;
+import com.retailstreet.mobilepos.Model.MasterState;
 import com.retailstreet.mobilepos.Model.MasterSubcategory;
 import com.retailstreet.mobilepos.Model.MasterUOM;
 import com.retailstreet.mobilepos.Model.PaymentModeMaster;
@@ -26,9 +33,11 @@ import com.retailstreet.mobilepos.Model.RetailStore;
 import com.retailstreet.mobilepos.Model.ShiftMaster;
 import com.retailstreet.mobilepos.Model.ShiftTrans;
 import com.retailstreet.mobilepos.Model.StockMaster;
+import com.retailstreet.mobilepos.Model.StoreConfiguration;
 import com.retailstreet.mobilepos.Model.TerminalConfiguration;
 import com.retailstreet.mobilepos.Model.TerminalUserAllocation;
 import com.retailstreet.mobilepos.Model.VendorMaster;
+import com.retailstreet.mobilepos.Utils.ApiInterface;
 import com.retailstreet.mobilepos.View.ApplicationContextProvider;
 import com.retailstreet.mobilepos.View.dialog.LoadingDialog;
 
@@ -65,10 +74,20 @@ public class TableDataInjector {
     private List<HSNMaster> hsnMasterList = null;
     private List<VendorMaster> vendorMasterList = null;
     private List<MasterUOM> masterUOMList = null;
+    private List<MasterCustomerType> masterCustomerTypeList = null;
+    private List<CustomerAddress> customerAddressList = null;
+    private List<MasterState> masterStateList = null;
+    private List<BankDetails> bankDetailsList = null;
+    private List<StoreConfiguration> storeConfigurationList = null;
+    private List<CustomerReturnMaster> customerReturnMasterList = null;
+    private List<CustomerReturnDetails> customerReturnDetailsList = null;
+    private List<CustomerReject> customerRejectList = null;
+    private List<CustomerCredit> customerCreditList = null;
+
     private LoadingDialog loadingDialog;
 
     public static int status =0;
-    private final int tableConstant=19;
+    private final int tableConstant=28;
 
     public TableDataInjector(Context context, String storeid,DBReadyCallback callback) {
 
@@ -78,7 +97,6 @@ public class TableDataInjector {
         status=0;
         loadingDialog=  new LoadingDialog();
         loadingDialog.showDialog(context, "Please Wait!", "Downloading Database...");
-
 
         getUserMasterList();
         getRetailCustList();
@@ -99,6 +117,15 @@ public class TableDataInjector {
         getHsnMaster();
         getVendorMaster();
         getMasterUom();
+        getMasterCustomerType();
+        getCustomerAddress();
+        getMasterState();
+        getBankMaster();
+        getStoreConfig();
+        getCustomerReturnMaster();
+        getCustomerReturnDetails();
+        getCustomerReject();
+        getCustomerCredit();
 
     }
 
@@ -107,13 +134,11 @@ public class TableDataInjector {
             Retrofit retrofit = null;
             Log.i("autolog", "retrofit");
 
-            if (retrofit == null) {
-                retrofit = new Retrofit.Builder()
-                        .baseUrl(url)
-                        .addConverterFactory(GsonConverterFactory.create())
-                        .build();
-                Log.i("autolog", "build();");
-            }
+            retrofit = new Retrofit.Builder()
+                    .baseUrl(url)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+            Log.i("autolog", "build();");
             return retrofit;
         } catch (Exception e) {
             Log.i("autolog", "Exception");
@@ -575,6 +600,609 @@ public class TableDataInjector {
             Log.i("autolog", "Exception");
         }
     }
+
+    public void getMasterCustomerType() {
+        try {
+            Retrofit retrofit = getRetroInstance(baseUrl);
+            assert retrofit != null;
+            ApiInterface service = retrofit.create(ApiInterface.class);
+            Call<List<MasterCustomerType>> call = service.getCustomerType(generateTableUrl("master_customer_type",storeId));
+            call.enqueue(new Callback<List<MasterCustomerType>>() {
+                @Override
+                public void onResponse(Call<List<MasterCustomerType>> call, Response<List<MasterCustomerType>> response) {
+                    masterCustomerTypeList = response.body();
+                    Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
+                    InsertCustomerType(masterCustomerTypeList);
+                }
+
+                @Override
+                public void onFailure(Call<List<MasterCustomerType>> call, Throwable t) {
+                    Log.i("autolog", t.getMessage());
+                }
+            });
+        } catch (Exception e) {
+            Log.i("autolog", "Exception");
+        }
+    }
+
+    public void getCustomerAddress() {
+        try {
+            Retrofit retrofit = getRetroInstance(baseUrl);
+            assert retrofit != null;
+            ApiInterface service = retrofit.create(ApiInterface.class);
+            Call<List<CustomerAddress>> call = service.getCustomerAddress(generateTableUrl("retail_cust_address",storeId));
+            call.enqueue(new Callback<List<CustomerAddress>>() {
+                @Override
+                public void onResponse(Call<List<CustomerAddress>> call, Response<List<CustomerAddress>> response) {
+                    customerAddressList = response.body();
+                    Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
+                    InsertCustomerAddress(customerAddressList);
+                }
+
+                @Override
+                public void onFailure(Call<List<CustomerAddress>> call, Throwable t) {
+                    Log.i("autolog", t.getMessage());
+                }
+            });
+        } catch (Exception e) {
+            Log.i("autolog", "Exception");
+        }
+    }
+
+
+    public void getMasterState() {
+        try {
+            Retrofit retrofit = getRetroInstance(baseUrl);
+            assert retrofit != null;
+            ApiInterface service = retrofit.create(ApiInterface.class);
+            Call<List<MasterState>> call = service.getMasterState(generateTableUrl("masterState",storeId));
+            call.enqueue(new Callback<List<MasterState>>() {
+                @Override
+                public void onResponse(Call<List<MasterState>> call, Response<List<MasterState>> response) {
+                    masterStateList = response.body();
+                    Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
+                    InsertMasterState(masterStateList);
+                }
+
+                @Override
+                public void onFailure(Call<List<MasterState>> call, Throwable t) {
+                    Log.i("autolog", t.getMessage());
+                }
+            });
+        } catch (Exception e) {
+            Log.i("autolog", "Exception");
+        }
+    }
+
+    public void getBankMaster() {
+        try {
+            Retrofit retrofit = getRetroInstance(baseUrl);
+            assert retrofit != null;
+            ApiInterface service = retrofit.create(ApiInterface.class);
+            Call<List<BankDetails>> call = service.getBankDetails(generateTableUrl("bank_details",storeId));
+            call.enqueue(new Callback<List<BankDetails>>() {
+                @Override
+                public void onResponse(Call<List<BankDetails>> call, Response<List<BankDetails>> response) {
+                     bankDetailsList= response.body();
+                    Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
+                    InsertBankMaster(bankDetailsList);
+                }
+
+                @Override
+                public void onFailure(Call<List<BankDetails>> call, Throwable t) {
+                    Log.i("autolog", t.getMessage());
+                }
+            });
+        } catch (Exception e) {
+            Log.i("autolog", "Exception");
+        }
+    }
+
+    public void getStoreConfig() {
+        try {
+            Retrofit retrofit = getRetroInstance(baseUrl);
+            assert retrofit != null;
+            ApiInterface service = retrofit.create(ApiInterface.class);
+            Call<List<StoreConfiguration>> call = service.getStoreConfiguration(generateTableUrl("store_configuration",storeId));
+            call.enqueue(new Callback<List<StoreConfiguration>>() {
+                @Override
+                public void onResponse(Call<List<StoreConfiguration>> call, Response<List<StoreConfiguration>> response) {
+                    storeConfigurationList= response.body();
+                    Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
+                    InsertStoreConfig(storeConfigurationList);
+                }
+
+                @Override
+                public void onFailure(Call<List<StoreConfiguration>> call, Throwable t) {
+                    Log.i("autolog", t.getMessage());
+                }
+            });
+        } catch (Exception e) {
+            Log.i("autolog", "Exception");
+        }
+
+
+    }
+    public void getCustomerReturnMaster() {
+        try {
+            Retrofit retrofit = getRetroInstance(baseUrl);
+            assert retrofit != null;
+            ApiInterface service = retrofit.create(ApiInterface.class);
+            Call<List<CustomerReturnMaster>> call = service.getCustomerReturnMaster(generateTableUrl("customerReturnMaster",storeId));
+            call.enqueue(new Callback<List<CustomerReturnMaster>>() {
+                @Override
+                public void onResponse(Call<List<CustomerReturnMaster>> call, Response<List<CustomerReturnMaster>> response) {
+                    customerReturnMasterList = response.body();
+                    Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
+                    InsertCustomerReturnMaster(customerReturnMasterList);
+                }
+
+                @Override
+                public void onFailure(Call<List<CustomerReturnMaster>> call, Throwable t) {
+                    Log.i("autolog", t.getMessage());
+                }
+            });
+        } catch (Exception e) {
+            Log.i("autolog", "Exception");
+        }
+    }
+
+
+    public void getCustomerReturnDetails() {
+        try {
+            Retrofit retrofit = getRetroInstance(baseUrl);
+            assert retrofit != null;
+            ApiInterface service = retrofit.create(ApiInterface.class);
+            Call<List<CustomerReturnDetails>> call = service.getCustomerReturnDetails(generateTableUrl("customerReturnDetail",storeId));
+            call.enqueue(new Callback<List<CustomerReturnDetails>>() {
+                @Override
+                public void onResponse(Call<List<CustomerReturnDetails>> call, Response<List<CustomerReturnDetails>> response) {
+                    customerReturnDetailsList = response.body();
+                    Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
+                    InsertCustomerReturnDetails(customerReturnDetailsList);
+                }
+
+                @Override
+                public void onFailure(Call<List<CustomerReturnDetails>> call, Throwable t) {
+                    Log.i("autolog", t.getMessage());
+                }
+            });
+        } catch (Exception e) {
+            Log.i("autolog", "Exception");
+        }
+    }
+
+    public void getCustomerReject() {
+        try {
+            Retrofit retrofit = getRetroInstance(baseUrl);
+            assert retrofit != null;
+            ApiInterface service = retrofit.create(ApiInterface.class);
+            Call<List<CustomerReject>> call = service.getCustomerReject(generateTableUrl("retail_store_cust_reject",storeId));
+            call.enqueue(new Callback<List<CustomerReject>>() {
+                @Override
+                public void onResponse(Call<List<CustomerReject>> call, Response<List<CustomerReject>> response) {
+                    customerRejectList= response.body();
+                    Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
+                    InsertCustomerReject(customerRejectList);
+                }
+
+                @Override
+                public void onFailure(Call<List<CustomerReject>> call, Throwable t) {
+                    Log.i("autolog", t.getMessage());
+                }
+            });
+        } catch (Exception e) {
+            Log.i("autolog", "Exception");
+        }
+    }
+
+
+    public void getCustomerCredit() {
+        try {
+            Retrofit retrofit = getRetroInstance(baseUrl);
+            assert retrofit != null;
+            ApiInterface service = retrofit.create(ApiInterface.class);
+            Call<List<CustomerCredit>> call = service.getCustomerCredit(generateTableUrl("retail_credit_cust",storeId));
+            call.enqueue(new Callback<List<CustomerCredit>>() {
+                @Override
+                public void onResponse(Call<List<CustomerCredit>> call, Response<List<CustomerCredit>> response) {
+                    customerCreditList= response.body();
+                    Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
+                    InsertCustomerCredit(customerCreditList);
+                }
+
+                @Override
+                public void onFailure(Call<List<CustomerCredit>> call, Throwable t) {
+                    Log.i("autolog", t.getMessage());
+                }
+            });
+        } catch (Exception e) {
+            Log.i("autolog", "Exception");
+        }
+    }
+
+    public void InsertCustomerCredit(List<CustomerCredit> list) {
+        if (list == null) {
+            return;
+        }
+        try {
+            SQLiteDatabase myDataBase = context.openOrCreateDatabase(dbname, Context.MODE_PRIVATE, null);
+            myDataBase.delete("retail_credit_cust", null, null);
+            for (CustomerCredit prod : list) {
+                ContentValues contentValues = new ContentValues();
+                contentValues.put("PAYMENTID", prod.getPAYMENTID());
+                contentValues.put("STORE_GUID", prod.getSTORE_GUID());
+                contentValues.put("CUSTOMERNAME", prod.getCUSTOMERNAME());
+                contentValues.put("CUSTOMERMOBILENO", prod.getCUSTOMERMOBILENO());
+                contentValues.put("GRANDTOTAL", prod.getGRANDTOTAL());
+                contentValues.put("CUSTOMERSTATUS", prod.getCUSTOMERSTATUS());
+                contentValues.put("RECEIVEAMOUNT", prod.getRECEIVEAMOUNT());
+                contentValues.put("DUEAMOUNT", prod.getDUEAMOUNT());
+                contentValues.put("CUSTOMERGUID", prod.getCUSTOMERGUID());
+                contentValues.put("TOTALGST", prod.getTOTALGST());
+                myDataBase.insert("retail_credit_cust", null, contentValues);
+
+            }
+
+            myDataBase.close();
+            status+=1;
+            if(status==tableConstant){
+                loadingDialog.cancelDialog();
+                dbReadyCallback.onDBReady();
+            }
+            Log.d("Insertion Successful", "Insert_retail_credit_cust: "+status);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void InsertCustomerReject(List<CustomerReject> list) {
+        if (list == null) {
+            return;
+        }
+        try {
+            SQLiteDatabase myDataBase = context.openOrCreateDatabase(dbname, Context.MODE_PRIVATE, null);
+            myDataBase.delete("retail_store_cust_reject", null, null);
+            for (CustomerReject prod : list) {
+                ContentValues contentValues = new ContentValues();
+                contentValues.put("ID", prod.getID());
+                contentValues.put("REASONGUID", prod.getREASONGUID());
+                contentValues.put("REASONFOR", prod.getREASONFOR());
+                contentValues.put("REASON_FOR_REJECTION", prod.getREASON_FOR_REJECTION());
+                contentValues.put("ACTIVE", prod.getACTIVE());
+                contentValues.put("STORE_ID", prod.getSTORE_ID());
+                contentValues.put("CREATEDBY", prod.getCREATEDBY());
+                contentValues.put("LAST_MODIFIED", prod.getLAST_MODIFIED());
+                myDataBase.insert("retail_store_cust_reject", null, contentValues);
+
+            }
+
+            myDataBase.close();
+            status+=1;
+            if(status==tableConstant){
+                loadingDialog.cancelDialog();
+                dbReadyCallback.onDBReady();
+            }
+            Log.d("Insertion Successful", "Insertretail_store_cust_reject: "+status);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void InsertCustomerReturnDetails(List<CustomerReturnDetails> list) {
+        if (list == null) {
+            return;
+        }
+        try {
+            SQLiteDatabase myDataBase = context.openOrCreateDatabase(dbname, Context.MODE_PRIVATE, null);
+            myDataBase.delete("customerReturnDetail", null, null);
+            for (CustomerReturnDetails prod : list) {
+                ContentValues contentValues = new ContentValues();
+                contentValues.put("CUSTOMER_RETURNS_DETAILID", prod.getCUSTOMER_RETURNS_DETAILID());
+                contentValues.put("CUSTOMER_RETURNS_MASTER_ID", prod.getCUSTOMER_RETURNS_MASTER_ID());
+                contentValues.put("MASTER_PRODUCT_ITEM_ID", prod.getMASTER_PRODUCT_ITEM_ID());
+                contentValues.put("BATCHNO", prod.getBATCHNO());
+                contentValues.put("RETURNQUANTITY", prod.getRETURNQUANTITY());
+                contentValues.put("EXPIRYDATE", prod.getEXPIRYDATE());
+                contentValues.put("CUSTOMER_RETURN_DETAIL_STATUS", prod.getCUSTOMER_RETURN_DETAIL_STATUS());
+                myDataBase.insert("customerReturnDetail", null, contentValues);
+            }
+
+            myDataBase.close();
+            status+=1;
+            if(status==tableConstant){
+                loadingDialog.cancelDialog();
+                dbReadyCallback.onDBReady();
+            }
+            Log.d("Insertion Successful", "InsertSalesReturnMaster: "+status);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+    public void InsertCustomerReturnMaster(List<CustomerReturnMaster> list) {
+        if (list == null) {
+            return;
+        }
+        try {
+            SQLiteDatabase myDataBase = context.openOrCreateDatabase(dbname, Context.MODE_PRIVATE, null);
+            myDataBase.delete("customerReturnMaster", null, null);
+            for (CustomerReturnMaster prod : list) {
+                ContentValues contentValues = new ContentValues();
+                contentValues.put("CUSTOMER_RETURNS_MASTERID", prod.getCUSTOMER_RETURNS_MASTERID());
+                contentValues.put("CUSTOMERRETURNGUID", prod.getCUSTOMERRETURNGUID());
+                contentValues.put("REASONGUID", prod.getREASONGUID());
+                contentValues.put("MASTERSTOREID", prod.getMASTERSTOREID());
+                contentValues.put("CUSTOMERGUID", prod.getCUSTOMERGUID());
+                contentValues.put("BILLNO", prod.getBILLNO());
+                contentValues.put("SALESDATE", prod.getSALESDATE());
+                contentValues.put("REASONDETAILS", prod.getREASONDETAILS());
+                contentValues.put("RETURN_DATE", prod.getRETURN_DATE());
+                contentValues.put("ISPARTIALRETURN", prod.getISPARTIALRETURN());
+                contentValues.put("AMOUNTREFUNDED", prod.getAMOUNTREFUNDED());
+                contentValues.put("REPLACEMENTBILLNO", prod.getREPLACEMENTBILLNO());
+                contentValues.put("CUSTOMER_RETURNS_STATUS", prod.getCUSTOMER_RETURNS_STATUS());
+                contentValues.put("CREATEDBYGUID", prod.getCREATEDBYGUID());
+                contentValues.put("CREATEDON", prod.getCREATEDON());
+                contentValues.put("ISSYNCED", prod.getISSYNCED());
+                contentValues.put("CREDITNOTENUMBER", prod.getCREDITNOTENUMBER());
+
+                myDataBase.insert("customerReturnMaster", null, contentValues);
+            }
+
+            myDataBase.close();
+            status+=1;
+            if(status==tableConstant){
+                loadingDialog.cancelDialog();
+                dbReadyCallback.onDBReady();
+            }
+            Log.d("Insertion Successful", "InsertcustomerReturnMaster: "+status);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+    public void InsertStoreConfig(List<StoreConfiguration> list) {
+        if (list == null) {
+            return;
+        }
+        try {
+            SQLiteDatabase myDataBase = context.openOrCreateDatabase(dbname, Context.MODE_PRIVATE, null);
+            myDataBase.delete("store_configuration", null, null);
+            for (StoreConfiguration prod : list) {
+                ContentValues contentValues = new ContentValues();
+                contentValues.put("STORE_CONFIGKEY", prod.getSTORE_CONFIGKEY());
+                contentValues.put("STORECONFIG_GUID", prod.getSTORECONFIG_GUID());
+                contentValues.put("STORE_ID", prod.getSTORE_ID());
+                contentValues.put("MRP_VISIBILITY", prod.getMRP_VISIBILITY());
+                contentValues.put("SECONDARY_TELEPHONE_VISIBILITY", prod.getSECONDARY_TELEPHONE_VISIBILITY());
+                contentValues.put("FOOTER_VISIBILITY", prod.getFOOTER_VISIBILITY());
+                contentValues.put("INVOICE_DISCOUNT_VISIBILITY", prod.getINVOICE_DISCOUNT_VISIBILITY());
+                contentValues.put("NOOFBILLCOPIES", prod.getNOOFBILLCOPIES());
+                contentValues.put("CREDIT_BILLCOPIES", prod.getCREDIT_BILLCOPIES());
+                contentValues.put("RETURN_BILLCOPIES", prod.getRETURN_BILLCOPIES());
+                contentValues.put("MARGIN_VISIBILITY", prod.getMARGIN_VISIBILITY());
+                contentValues.put("BILL_DISCOUNT", prod.getBILL_DISCOUNT());
+                contentValues.put("FREE_QTY_VISIBILITY", prod.getFREE_QTY_VISIBILITY());
+                contentValues.put("INVOICE_BILL_PRINT", prod.getINVOICE_BILL_PRINT());
+                contentValues.put("SALE_PRINT_BILL", prod.getSALE_PRINT_BILL());
+                contentValues.put("EXP_DATE_VISIBILITY", prod.getEXP_DATE_VISIBILITY());
+                contentValues.put("BARCODE_VISIBILITY", prod.getBARCODE_VISIBILITY());
+                contentValues.put("SALES_REPORT_PASSWORD", prod.getSALES_REPORT_PASSWORD());
+                contentValues.put("FINANCIAL_REPORT_PASSWORD", prod.getFINANCIAL_REPORT_PASSWORD());
+                contentValues.put("DISPLAY_TOTALBILLVALE", prod.getDISPLAY_TOTALBILLVALE());
+                contentValues.put("DISPLAY_NETBILLPAYABLE", prod.getDISPLAY_NETBILLPAYABLE());
+                contentValues.put("DISPLAY_AMOUNTRECEIVED", prod.getDISPLAY_AMOUNTRECEIVED());
+                contentValues.put("DISPLAY_AMOUNTPAIDBACK", prod.getDISPLAY_AMOUNTPAIDBACK());
+                contentValues.put("DISPLAY_SALESRETURN", prod.getDISPLAY_SALESRETURN());
+                contentValues.put("HOLD_INVOICEDAYS", prod.getHOLD_INVOICEDAYS());
+                contentValues.put("HOLD_SALESDAYS", prod.getHOLD_SALESDAYS());
+                contentValues.put("ROUNDOFF", prod.getROUNDOFF());
+                contentValues.put("SALESDATAARCHIVEDAYS", prod.getSALESDATAARCHIVEDAYS());
+                contentValues.put("STORE_CONFIGSTATUS", prod.getSTORE_CONFIGSTATUS());
+                contentValues.put("NO_OF_SHIFTS", prod.getNO_OF_SHIFTS());
+                contentValues.put("CREATEDBY", prod.getCREATEDBY());
+                contentValues.put("CREATEDON", prod.getCREATEDON());
+                contentValues.put("OTP_CHECK", prod.getOTP_CHECK());
+                contentValues.put("CARD_MACHINE", prod.getCARD_MACHINE());
+                contentValues.put("HUTCH_PRINT", prod.getHUTCH_PRINT());
+                contentValues.put("MOBITEL_PRINT", prod.getMOBITEL_PRINT());
+                contentValues.put("DIALOG_PRINT", prod.getDIALOG_PRINT());
+                contentValues.put("MRP_DECIMAL", prod.getMRP_DECIMAL());
+                contentValues.put("PURCHASE_PRICE_DECIMAL", prod.getPURCHASE_PRICE_DECIMAL());
+                contentValues.put("SALES_PRICE_DECIMAL", prod.getSALES_PRICE_DECIMAL());
+                contentValues.put("SCREEN_COLOR", prod.getSCREEN_COLOR());
+                contentValues.put("DISCOUNT", prod.getDISCOUNT());
+                contentValues.put("NEGATIVESTOCK", prod.getNEGATIVESTOCK());
+                contentValues.put("EXPIRYDATELIMIT", prod.getEXPIRYDATELIMIT());
+                contentValues.put("TEXTSIZE", prod.getTEXTSIZE());
+                contentValues.put("SALESDATA", prod.getSALESDATA());
+                contentValues.put("BARCODEPRINT", prod.getBARCODEPRINT());
+                contentValues.put("PAPERSIZE", prod.getPAPERSIZE());
+                contentValues.put("HEADERSPIN", prod.getHEADERSPIN());
+                contentValues.put("STORE_FONT", prod.getSTORE_FONT());
+                contentValues.put("STORE_SIZE", prod.getSTORE_SIZE());
+                contentValues.put("STORE_ADFONT", prod.getSTORE_ADFONT());
+                contentValues.put("STORE_ADSIZE", prod.getSTORE_ADSIZE());
+                contentValues.put("TELEPHONEFONT", prod.getTELEPHONEFONT());
+                contentValues.put("TELEPHONESIZE", prod.getTELEPHONESIZE());
+                contentValues.put("TELEPHONEALIGN", prod.getTELEPHONEALIGN());
+                contentValues.put("STORE_ALIGN", prod.getSTORE_ALIGN());
+                contentValues.put("STORE_ADALIGN", prod.getSTORE_ADALIGN());
+                contentValues.put("TOTAL_TAX_VISIBLE", prod.getTOTAL_TAX_VISIBLE());
+                contentValues.put("TAX_VISIBLE", prod.getTAX_VISIBLE());
+                contentValues.put("ISSYNCED", prod.getISSYNCED());
+                contentValues.put("RATE_APPEARANCE", prod.getRATE_APPEARANCE());
+                contentValues.put("DISCOUNT_APPEARANCE", prod.getDISCOUNT_APPEARANCE());
+                contentValues.put("ADDITIONAL_EXP1", prod.getADDITIONAL_EXP1());
+                contentValues.put("ADDITIONAL_EXP2", prod.getADDITIONAL_EXP2());
+                contentValues.put("ADDITIONAL_EXP3", prod.getADDITIONAL_EXP3());
+                contentValues.put("ADDITIONAL_EXP4", prod.getADDITIONAL_EXP4());
+                contentValues.put("ADDITIONAL_EXP5", prod.getADDITIONAL_EXP5());
+                contentValues.put("ADDITIONAL_EXP6", prod.getADDITIONAL_EXP6());
+                contentValues.put("ADDITIONAL_EXP7", prod.getADDITIONAL_EXP7());
+                contentValues.put("ADDITIONAL_EXP8", prod.getADDITIONAL_EXP8());
+                contentValues.put("ADDITIONAL_EXP9", prod.getADDITIONAL_EXP9());
+                contentValues.put("ADDITIONAL_EXP10", prod.getADDITIONAL_EXP10());
+
+                myDataBase.insert("store_configuration", null, contentValues);
+
+            }
+            myDataBase.close();
+            status+=1;
+            if(status==tableConstant){
+                loadingDialog.cancelDialog();
+                dbReadyCallback.onDBReady();
+            }
+            Log.d("Insertion Successful", "InsertStoreConfiguration: "+status);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public void InsertBankMaster(List<BankDetails> list) {
+        if (list == null) {
+            return;
+        }
+        try {
+            SQLiteDatabase myDataBase = context.openOrCreateDatabase(dbname, Context.MODE_PRIVATE, null);
+            myDataBase.delete("bank_details", null, null);
+            for (BankDetails prod : list) {
+                ContentValues contentValues = new ContentValues();
+                contentValues.put("BANK_ID", prod.getBANK_ID());
+                contentValues.put("BANK_GUID", prod.getBANK_GUID());
+                contentValues.put("BANK_NAME", prod.getBANK_NAME());
+                contentValues.put("BANK_ADDRESS", prod.getBANK_ADDRESS());
+                contentValues.put("BANK_LOCATION", prod.getBANK_LOCATION());
+                contentValues.put("BANK_CITY", prod.getBANK_CITY());
+                contentValues.put("COUNTRY_CODE", prod.getCOUNTRY_CODE());
+                contentValues.put("BANK_STATUS", prod.getBANK_STATUS());
+                contentValues.put("STORE_ID", prod.getSTORE_ID());
+                contentValues.put("POS_USER", prod.getPOS_USER());
+                contentValues.put("LAST_MODIFIED", prod.getLAST_MODIFIED());
+                contentValues.put("STORE_GUID", prod.getSTORE_GUID());
+                myDataBase.insert("bank_details", null, contentValues);
+
+            }
+
+            myDataBase.close();
+            status+=1;
+            if(status==tableConstant){
+                loadingDialog.cancelDialog();
+                dbReadyCallback.onDBReady();
+            }
+            Log.d("Insertion Successful", "InsertmasterState: "+status);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void InsertMasterState(List<MasterState> list) {
+        if (list == null) {
+            return;
+        }
+        try {
+            SQLiteDatabase myDataBase = context.openOrCreateDatabase(dbname, Context.MODE_PRIVATE, null);
+            myDataBase.delete("masterState", null, null);
+            for (MasterState prod : list) {
+                ContentValues contentValues = new ContentValues();
+                contentValues.put("STATE_GUID", prod.getSTATE_GUID());
+                contentValues.put("STATE", prod.getSTATE());
+                contentValues.put("ISSYNCED", prod.getISSYNCED());
+                myDataBase.insert("masterState", null, contentValues);
+            }
+
+            myDataBase.close();
+            status+=1;
+            if(status==tableConstant){
+                loadingDialog.cancelDialog();
+                dbReadyCallback.onDBReady();
+            }
+            Log.d("Insertion Successful", "InsertmasterState: "+status);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+
+
+
+    public void InsertCustomerAddress(List<CustomerAddress> list) {
+        if (list == null) {
+            return;
+        }
+        try {
+            SQLiteDatabase myDataBase = context.openOrCreateDatabase(dbname, Context.MODE_PRIVATE, null);
+            myDataBase.delete("retail_cust_address", null, null);
+            for (CustomerAddress prod : list) {
+                ContentValues contentValues = new ContentValues();
+                contentValues.put("CUSTOMERADDRESSID", prod.getCUSTOMERADDRESSID());
+                contentValues.put("MASTERCUSTOMERID", prod.getMASTERCUSTOMERID());
+                contentValues.put("ADDRESSTYPE", prod.getADDRESSTYPE());
+                contentValues.put("CONTACTPERSONNAME", prod.getCONTACTPERSONNAME());
+                contentValues.put("ADDRESSLINE1", prod.getADDRESSLINE1());
+                contentValues.put("ADDRESSLINE2", prod.getADDRESSLINE2());
+                contentValues.put("STREET_AREA", prod.getSTREET_AREA());
+                contentValues.put("PINCODE", prod.getPINCODE());
+                contentValues.put("CITY", prod.getCITY());
+                contentValues.put("MASTERSTATEID", prod.getMASTERSTATEID());
+                contentValues.put("ADDRESSSTATUS", prod.getADDRESSSTATUS());
+                contentValues.put("CREATEDBY", prod.getCREATEDBY());
+                contentValues.put("CREATEDDATETIME", prod.getCREATEDDATETIME());
+
+                myDataBase.insert("retail_cust_address", null, contentValues);
+            }
+
+            myDataBase.close();
+            status+=1;
+            if(status==tableConstant){
+                loadingDialog.cancelDialog();
+                dbReadyCallback.onDBReady();
+            }
+            Log.d("Insertion Successful", "InsertMasterAddress: "+status);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+    public void InsertCustomerType(List<MasterCustomerType> list) {
+        if (list == null) {
+            return;
+        }
+        try {
+            SQLiteDatabase myDataBase = context.openOrCreateDatabase(dbname, Context.MODE_PRIVATE, null);
+            myDataBase.delete("master_customer_type", null, null);
+            for (MasterCustomerType prod : list) {
+                ContentValues contentValues = new ContentValues();
+                contentValues.put("MASTER_CUSTOMERTYPEID", prod.getMASTER_CUSTOMERTYPEID());
+                contentValues.put("CUSTOMERTYPE", prod.getCUSTOMERTYPE());
+                contentValues.put("MASTER_CUSTOMERTYPESTATUS", prod.getMASTER_CUSTOMERTYPESTATUS());
+                myDataBase.insert("master_customer_type", null, contentValues);
+            }
+
+            myDataBase.close();
+            status+=1;
+            if(status==tableConstant){
+                loadingDialog.cancelDialog();
+                dbReadyCallback.onDBReady();
+            }
+            Log.d("Insertion Successful", "InsertMasterCustomerType: "+status);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
 
     public void InsertMasterUom(List<MasterUOM> list) {
         if (list == null) {
@@ -1366,6 +1994,7 @@ public class TableDataInjector {
                 contentValues.put("PERCENTAGE", prod.getPERCENTAGE());
                 contentValues.put("CREATEDBY", prod.getCREATEDBY());
                 contentValues.put("ISSYNCED", prod.getISSYNCED());
+                contentValues.put("CREDITLIMIT", prod.getCREDITLIMIT());
 
 
                 myDataBase.insert("retail_cust", null, contentValues);
@@ -1455,6 +2084,33 @@ public class TableDataInjector {
 
             case "master_uom":
                 return "ApiTest/UomMaster?STORE_ID="+storeid;
+
+            case "master_customer_type":
+                return "ApiTest/MasterCustomerType?STORE_ID"+storeid;
+
+            case "retail_cust_address":
+                return "ApiTest/MasterCustomerAddress?STORE_ID="+storeid;
+
+            case "masterState":
+                return "ApiTest/MasterState?STORE_ID="+storeid;
+
+            case "bank_details":
+                return "ApiTest/BankMaster?STORE_ID="+storeid;
+
+            case "store_configuration":
+                return "ApiTest/StoreConfiguration?STORE_ID="+storeid;
+
+            case "customerReturnDetail":
+                return "ApiTest/CustomerReturnDetail?STORE_ID="+storeid;
+
+            case "customerReturnMaster":
+                return "ApiTest/CustomerReturnMaster?STORE_ID="+storeid;
+
+            case "retail_store_cust_reject":
+                return "ApiTest/RetailStoreCustReject?STORE_ID="+storeid;
+
+            case "retail_credit_cust":
+                return "ApiTest/RetailCreditCust?STORE_ID="+storeid;
 
             default:
                 return "";

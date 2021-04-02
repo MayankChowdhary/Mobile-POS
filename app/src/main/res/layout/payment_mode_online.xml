@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView android:id="@+id/scroll_view_customer"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/item_box_border"
+    android:layout_marginTop="0dp"
+    android:layout_marginBottom="@dimen/_10sdp"
+    android:layout_marginStart="@dimen/_3sdp"
+    android:layout_marginEnd="@dimen/_3sdp"
+    android:padding="@dimen/_6sdp"
+    android:elevation="2dp">
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+    <TextView
+        android:id="@+id/pay_paytm_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="start"
+        android:singleLine="true"
+        android:text="Paytm"
+        android:textStyle="bold"
+        android:layout_marginTop="@dimen/_6sdp"
+        android:textColor="?colorOnBackground"
+        android:textSize="@dimen/_13ssp" />
+
+    <LinearLayout
+        android:id="@+id/pay_paytm_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <EditText
+            android:id="@+id/pay_paytm_trans"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:ems="15"
+            android:layout_weight="1"
+            android:hint="Trans No."
+            android:inputType="text"
+            android:textColor="?colorOnSurface" />
+
+        <EditText
+            android:id="@+id/pay_paytm_value"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="Amount"
+            android:layout_weight="1"
+            android:ems="10"
+            android:digits="0,1,2,3,4,5,6,7,8,9,."
+            android:inputType="numberDecimal"
+            android:textColor="?colorOnSurface" />
+    </LinearLayout>
+
+
+
+    <TextView
+        android:id="@+id/pay_gpay_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="start"
+        android:singleLine="true"
+        android:text="Google Pay"
+        android:textStyle="bold"
+        android:layout_marginTop="@dimen/_6sdp"
+        android:textColor="?colorOnBackground"
+        android:textSize="@dimen/_13ssp" />
+
+    <LinearLayout
+        android:id="@+id/pay_gpay_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <EditText
+            android:id="@+id/pay_gpay_trans"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:ems="15"
+            android:layout_weight="1"
+            android:hint="Trans No."
+            android:inputType="text"
+            android:textColor="?colorOnSurface" />
+
+        <EditText
+            android:id="@+id/pay_gpay_value"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="Amount"
+            android:layout_weight="1"
+            android:ems="10"
+            android:digits="0,1,2,3,4,5,6,7,8,9,."
+            android:inputType="numberDecimal"
+            android:textColor="?colorOnSurface" />
+    </LinearLayout>
+
+
+    <TextView
+        android:id="@+id/pay_whatsapp_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="start"
+        android:singleLine="true"
+        android:text="Whatsapp Pay"
+        android:textStyle="bold"
+        android:layout_marginTop="@dimen/_6sdp"
+        android:textColor="?colorOnBackground"
+        android:textSize="@dimen/_13ssp" />
+
+    <LinearLayout
+        android:id="@+id/pay_whatsapp_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <EditText
+            android:id="@+id/pay_whatsapp_trans"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:ems="15"
+            android:layout_weight="1"
+            android:hint="Trans No."
+            android:inputType="text"
+            android:textColor="?colorOnSurface" />
+
+        <EditText
+            android:id="@+id/pay_whatsapp_value"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="Amount"
+            android:layout_weight="1"
+            android:ems="10"
+            android:digits="0,1,2,3,4,5,6,7,8,9,."
+            android:inputType="numberDecimal"
+            android:textColor="?colorOnSurface" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/pay_amazon_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="start"
+        android:singleLine="true"
+        android:text="Amazon Pay"
+        android:textStyle="bold"
+        android:layout_marginTop="@dimen/_6sdp"
+        android:textColor="?colorOnBackground"
+        android:textSize="@dimen/_13ssp" />
+
+    <LinearLayout
+        android:id="@+id/pay_amazon_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <EditText
+            android:id="@+id/pay_amazon_trans"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:ems="15"
+            android:layout_weight="1"
+            android:hint="Trans No."
+            android:inputType="text"
+            android:textColor="?colorOnSurface" />
+
+        <EditText
+            android:id="@+id/pay_amazon_value"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="Amount"
+            android:layout_weight="1"
+            android:ems="10"
+            android:digits="0,1,2,3,4,5,6,7,8,9,."
+            android:inputType="numberDecimal"
+            android:textColor="?colorOnSurface" />
+    </LinearLayout>
+
+
+    <TextView
+        android:id="@+id/pay_bhim_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="start"
+        android:singleLine="true"
+        android:text="Bhim"
+        android:textStyle="bold"
+        android:layout_marginTop="@dimen/_6sdp"
+        android:textColor="?colorOnBackground"
+        android:textSize="@dimen/_13ssp" />
+
+    <LinearLayout
+        android:id="@+id/pay_bhim_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <EditText
+            android:id="@+id/pay_bhim_trans"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:ems="15"
+            android:layout_weight="1"
+            android:hint="Trans No."
+            android:inputType="text"
+            android:textColor="?colorOnSurface" />
+
+        <EditText
+            android:id="@+id/pay_bhim_value"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="Amount"
+            android:layout_weight="1"
+            android:ems="10"
+            android:digits="0,1,2,3,4,5,6,7,8,9,."
+            android:inputType="numberDecimal"
+            android:textColor="?colorOnSurface" />
+    </LinearLayout>
+    <View
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/_80sdp"/>
+
+</LinearLayout>
+</ScrollView>

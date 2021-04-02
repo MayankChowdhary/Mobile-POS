@@ -4,221 +4,130 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginTop="@dimen/_6sdp"
+    android:layout_marginBottom="@dimen/_6sdp"
     tools:context=".View.ui.Payment.PaymentFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/payment_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#FFFFFF">
+        android:layout_margin="@dimen/_6sdp"
+        android:background="@drawable/item_box_border"
+        android:elevation="2dp"
+        android:padding="@dimen/_6sdp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/cash_pay_layout"
-            android:layout_width="match_parent"
+
+        <LinearLayout
+            android:id="@+id/pending_amount_layout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/_10sdp"
+            android:orientation="horizontal"
+         app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <TextView
+                android:id="@+id/pending_amount_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:gravity="end"
+                android:text="Pending Amount:"
+                android:textColor="?colorPrimary"
+                android:textSize="@dimen/_14ssp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/pending_amount_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="5000 ₹"
+                android:textColor="?colorPrimary"
+                android:textSize="@dimen/_14ssp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+
+
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/pay_mode_viewpager"
+            android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_margin="@dimen/_10sdp"
-            android:background="@drawable/item_box_border"
-            android:elevation="2dp"
-            android:padding="@dimen/_10sdp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintBottom_toTopOf="@+id/pay_buton"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toBottomOf="@+id/payment_method_title">
 
-            <TextView
-                android:id="@+id/pay_cash_title"
-                android:layout_width="wrap_content"
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/pay_mode_tab"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Cash Payment:"
-                android:textColor="?colorOnSurface"
-                android:textSize="@dimen/_14sdp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:tabMode="scrollable"/>
 
-            <LinearLayout
-                android:id="@+id/pay_amount_layout"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:orientation="horizontal"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/pay_cash_title">
+            <include
+                android:id="@+id/pager_cash"
+                layout="@layout/payment_mode_cash" />
 
-                <TextView
-                    android:id="@+id/amoutn_to_pay_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    android:textColor="?colorOnBackground"
-                    android:text="Pay Amount:"
-                    android:textSize="@dimen/_14ssp" />
+            <include
+                android:id="@+id/pager_card"
+                layout="@layout/payment_mode_card" />
 
-                <TextView
-                    android:id="@+id/pay_amount_value"
-                    android:layout_width="@dimen/_150sdp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="5000 ₹"
-                    android:textColor="?colorOnBackground"
-                    android:textSize="@dimen/_14ssp" />
+            <include
+                android:id="@+id/pager_online"
+                layout="@layout/payment_mode_online" />
 
-            </LinearLayout>
+            <include
+                android:id="@+id/pager_redeem"
+                layout="@layout/payment_mode_redeem" />
+        </androidx.viewpager.widget.ViewPager>
 
-            <TextView
-                android:id="@+id/quick_add_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="Quick Add:"
-                android:textSize="@dimen/_14ssp"
-                android:textStyle="bold"
-                android:textColor="?colorOnBackground"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/pay_amount_layout" />
+        <Button
+            android:id="@+id/pay_buton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/_20sdp"
+            android:layout_marginBottom="@dimen/_10sdp"
+            android:text="COMPLETE"
+            android:textSize="@dimen/_13ssp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
-            <LinearLayout
-                android:id="@+id/quick_add_btn_layout"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_10sdp"
-                android:divider="@drawable/layout_divider"
-                android:orientation="horizontal"
-                android:showDividers="middle"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/quick_add_title">
 
-                <Button
-                    android:id="@+id/cash_fifty"
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/_30sdp"
-                    android:layout_weight="1"
-                    android:insetTop="0dp"
-                    android:insetBottom="0dp"
-                    android:minWidth="65dip"
-                    android:text="50"
-                    android:textSize="@dimen/_12sdp"
-                    app:cornerRadius="0dp" />
+        <TextView
+            android:id="@+id/payment_method_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Payment Method:"
+            android:textColor="?colorOnBackground"
+            android:textSize="@dimen/_14ssp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/pending_amount_layout" />
 
-                <Button
-                    android:id="@+id/cash_hundred"
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/_30sdp"
-                    android:layout_weight="1"
-                    android:insetTop="0dp"
-                    android:insetBottom="0dp"
-                    android:minWidth="75dip"
-                    android:text="100"
-                    android:textSize="@dimen/_12sdp"
-                    app:cornerRadius="0dp" />
+        <CheckBox
+            android:id="@+id/print_checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="PRINT"
+            android:textSize="@dimen/_14sdp"
+            app:layout_constraintBottom_toBottomOf="@+id/pay_buton"
+            app:layout_constraintEnd_toStartOf="@+id/pay_buton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/pay_buton" />
 
-                <Button
-                    android:id="@+id/cash_200"
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/_30sdp"
-                    android:layout_weight="1"
-                    android:insetTop="0dp"
-                    android:insetBottom="0dp"
-                    android:minWidth="75dip"
-                    android:text="200"
-                    android:textSize="@dimen/_12sdp"
-                    app:cornerRadius="0dp" />
-
-                <Button
-                    android:id="@+id/cash_500"
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/_30sdp"
-                    android:layout_weight="1"
-                    android:insetTop="0dp"
-                    android:insetBottom="0dp"
-                    android:minWidth="75dip"
-                    android:text="500"
-                    android:textSize="@dimen/_12sdp"
-                    app:cornerRadius="0dp" />
-
-                <Button
-                    android:id="@+id/cash_2000"
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/_30sdp"
-                    android:layout_weight="1"
-                    android:insetTop="0dp"
-                    android:insetBottom="0dp"
-                    android:text="2000"
-                    android:textSize="@dimen/_12sdp"
-                    app:cornerRadius="0dp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/received_amount_layout"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:orientation="horizontal"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/quick_add_btn_layout">
-
-                <TextView
-                    android:id="@+id/amoutn_received_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    android:textColor="?colorOnBackground"
-                    android:text="Received Amount:"
-                    android:textSize="@dimen/_14ssp" />
-
-                <EditText
-                    android:id="@+id/received_amount_value"
-                    android:layout_width="@dimen/_150sdp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:ems="7"
-                    android:textColor="?colorOnSurface"
-                    android:inputType="numberDecimal" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/expected_change_layout"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:orientation="horizontal"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/received_amount_layout">
-
-                <TextView
-                    android:id="@+id/expected_change_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    android:textColor="?colorOnBackground"
-                    android:text="Expected Change:"
-                    android:textSize="@dimen/_14ssp" />
-
-                <TextView
-                    android:id="@+id/expected_change_value"
-                    android:layout_width="@dimen/_150sdp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="100 ₹"
-                    android:textColor="?colorOnBackground"
-                    android:textSize="@dimen/_14ssp" />
-
-            </LinearLayout>
-
-            <Button
-                android:id="@+id/pay_buton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/_20sdp"
-                android:text="PAY"
-                android:textSize="@dimen/_16ssp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/expected_change_layout" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </FrameLayout>

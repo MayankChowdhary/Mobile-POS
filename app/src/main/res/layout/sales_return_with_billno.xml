@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+    <androidx.core.widget.NestedScrollView android:id="@+id/sales_return_bill_scroll_view"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/item_box_border"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="@dimen/_10sdp"
+        android:layout_marginStart="@dimen/_3sdp"
+        android:layout_marginEnd="@dimen/_3sdp"
+        android:padding="@dimen/_6sdp"
+        android:elevation="2dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+
+    <LinearLayout
+        android:id="@+id/sale_return_bill_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/sales_return_bill_input"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_8sdp"
+            android:layout_weight="2"
+            android:ems="15"
+            android:hint="Enter Bill No."
+            android:inputType="number"
+            android:textColor="?colorOnSurface" />
+
+        <Button
+            android:id="@+id/sales_return_bill_submit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_8sdp"
+            android:layout_weight="1"
+            android:text="OK"
+            android:textColor="?colorOnPrimary" />
+    </LinearLayout>
+
+        <Spinner
+            android:id="@+id/sales_reason_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_marginTop="0dp"
+            android:layout_marginEnd="@dimen/_20sdp"
+            android:layout_marginBottom="@dimen/_10sdp"
+            android:layout_weight="1"
+            android:gravity="start" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/sales_return_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="6dp"
+            android:overScrollMode="never"
+            android:background="#FFFFFF" />
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>
+

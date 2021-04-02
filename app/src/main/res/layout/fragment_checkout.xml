@@ -37,6 +37,7 @@
             android:layout_height="wrap_content"
             android:text="Delivery Address:"
             android:textColor="?colorOnSurface"
+            android:visibility="gone"
             android:textSize="@dimen/_12ssp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -59,14 +60,15 @@
             android:id="@+id/change_add"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
             android:insetTop="0dp"
             android:insetBottom="0dp"
             android:minWidth="0dp"
             android:minHeight="0dp"
             android:text="Change"
-            android:textSize="@dimen/_8ssp"
             android:textColor="?colorOnPrimary"
-            app:layout_constraintEnd_toEndOf="@+id/addr_title"
+            android:textSize="@dimen/_8ssp"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

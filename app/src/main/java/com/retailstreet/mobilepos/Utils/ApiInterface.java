@@ -1,23 +1,34 @@
 package com.retailstreet.mobilepos.Utils;
 
 
-
+import com.retailstreet.mobilepos.Model.BankDetails;
 import com.retailstreet.mobilepos.Model.BillDetail;
 import com.retailstreet.mobilepos.Model.BillMaster;
 import com.retailstreet.mobilepos.Model.BillPayDetail;
+import com.retailstreet.mobilepos.Model.CustomerAddress;
+import com.retailstreet.mobilepos.Model.CustomerCredit;
+import com.retailstreet.mobilepos.Model.CustomerMaster;
+import com.retailstreet.mobilepos.Model.CustomerReject;
+import com.retailstreet.mobilepos.Model.CustomerReturnDetails;
+import com.retailstreet.mobilepos.Model.CustomerReturnMaster;
 import com.retailstreet.mobilepos.Model.DeliveryTypeMaster;
 import com.retailstreet.mobilepos.Model.GroupUserMaster;
-import com.retailstreet.mobilepos.Model.CustomerMaster;
 import com.retailstreet.mobilepos.Model.HSNMaster;
+import com.retailstreet.mobilepos.Model.InvoiceSyncResponse;
 import com.retailstreet.mobilepos.Model.MasterCategory;
+import com.retailstreet.mobilepos.Model.MasterCustomerType;
+import com.retailstreet.mobilepos.Model.MasterState;
 import com.retailstreet.mobilepos.Model.MasterSubcategory;
 import com.retailstreet.mobilepos.Model.MasterUOM;
 import com.retailstreet.mobilepos.Model.PaymentModeMaster;
 import com.retailstreet.mobilepos.Model.ProductMaster;
 import com.retailstreet.mobilepos.Model.RetailStore;
+import com.retailstreet.mobilepos.Model.SalesRetunMaster;
+import com.retailstreet.mobilepos.Model.SalesReturnDetails;
 import com.retailstreet.mobilepos.Model.ShiftMaster;
 import com.retailstreet.mobilepos.Model.ShiftTrans;
 import com.retailstreet.mobilepos.Model.StockMaster;
+import com.retailstreet.mobilepos.Model.StoreConfiguration;
 import com.retailstreet.mobilepos.Model.SyncResponse;
 import com.retailstreet.mobilepos.Model.TerminalConfiguration;
 import com.retailstreet.mobilepos.Model.TerminalUserAllocation;
@@ -93,8 +104,46 @@ public interface ApiInterface {
     @GET
     Call<List<VendorMaster>> getVendorMaster(@Url String url);
 
+    @GET
+    Call<List<CustomerAddress>> getCustomerAddress(@Url String url);
 
-   //*********Upload API***********
+    @GET
+    Call<List<MasterState>> getMasterState(@Url String url);
+
+    @GET
+    Call<List<MasterCustomerType>> getCustomerType(@Url String url);
+
+    @GET
+    Call<List<BankDetails>> getBankDetails(@Url String url);
+
+    @GET
+    Call<List<StoreConfiguration>> getStoreConfiguration(@Url String url);
+
+    @GET
+    Call<List<SalesRetunMaster>> getSalesReturnMaster(@Url String url);
+
+    @GET
+    Call<List<SalesReturnDetails>> getSalesReturnDetails(@Url String url);
+
+    @GET
+    Call<List<CustomerReject>> getCustomerReject(@Url String url);
+
+    @GET
+    Call<List<CustomerCredit>> getCustomerCredit(@Url String url);
+
+    @GET
+    Call<List<CustomerReturnMaster>> getCustomerReturnMaster(@Url String url);
+
+    @GET
+    Call<List<CustomerReturnDetails>> getCustomerReturnDetails(@Url String url);
+
+
+
+
+
+
+   //****************************Upload API*****************************
+
    @POST("/APIManagers/api/PullPOSRegualarSync/PullBillHeaderDetails")
    Call<SyncResponse> UploadSaleRecords(@Header("Authorization")String Authorization, @Body RequestBody body);
 
@@ -107,4 +156,13 @@ public interface ApiInterface {
 
     @POST("/APIManagers/api/PullPOSRegualarSync/PullStockonHandDetails")
     Call<SyncResponse> UploadStockRecords(@Header("Authorization")String Authorization, @Body RequestBody body);
+
+    @POST("/APIManagers/api/PullPOSRegualarSync/PushCustomerMasterDetails")
+    Call<SyncResponse> UploadCustomerRecords(@Header("Authorization")String Authorization, @Body RequestBody body);
+
+    @POST("/ApiTest/Invoice")
+    Call<List<InvoiceSyncResponse>> UploadSaleRecordsSMS(@Body RequestBody body);
+
+    @POST("/APIManagers/api/PullPOSRegualarSync/PushCustomerReturns")
+    Call<SyncResponse> UploadSalesReturnRecords(@Header("Authorization")String Authorization, @Body RequestBody body);
 }

@@ -68,6 +68,7 @@ public class CheckoutFragment extends Fragment {
         payement = root.findViewById(R.id.payment_btn);
         addressLayout= root.findViewById(R.id.address_layout);
         change_add = root.findViewById(R.id.change_add);
+        addressLayout.setVisibility(View.GONE);
 
         //((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 

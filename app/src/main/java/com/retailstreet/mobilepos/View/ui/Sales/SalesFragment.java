@@ -1,6 +1,7 @@
 package com.retailstreet.mobilepos.View.ui.Sales;
 
 import android.database.Cursor;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -52,22 +53,11 @@ public class SalesFragment extends Fragment implements UpdateRecyclerView {
         //((AppCompatActivity) getActivity()).getSupportActionBar().hide();
        // final TextView textView = root.findViewById(R.id.text_home);
         controllerStockMaster= new ControllerStockMaster(getContext());
-
         recyclerView = root.findViewById(R.id.sales_recycler_view);
-        cursor = controllerStockMaster.getStockMasterCursor();
-
         salesListAdapter = new SalesListAdapter(ApplicationContextProvider.getContext(),cursor,getActivity(),this);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(salesListAdapter);
-        if(cursor==null){
-            recyclerView.setVisibility(View.GONE);
-            emptyListView.setVisibility(View.VISIBLE);
-        }else
-        {
-            recyclerView.setVisibility(View.VISIBLE);
-            emptyListView.setVisibility(View.GONE);
-        }
 
         root.setFocusableInTouchMode(true);
         root.requestFocus();
@@ -112,8 +102,16 @@ public class SalesFragment extends Fragment implements UpdateRecyclerView {
     @Override
     public void onResume() {
         super.onResume();
-
-
+        if (cursor != null && !cursor.isClosed()) {
+            cursor.close();
+            cursor = null;
+        }
+        salesListAdapter.swapCursor(null);
+        GetSalesCursorData scd = new GetSalesCursorData(null);
+        scd.execute();
+        if (mSearchView!=null && !mSearchView.isIconified()) {
+            mSearchView.setIconified(true);
+        }
     }
 
     @Override
@@ -149,7 +147,7 @@ public class SalesFragment extends Fragment implements UpdateRecyclerView {
                 //processQuery(newText);
                 handlerData=newText;
                 queryLatencyHandler.removeCallbacks(queryLatencyRunnable);
-                queryLatencyHandler.postDelayed(queryLatencyRunnable, 1000);
+                queryLatencyHandler.postDelayed(queryLatencyRunnable, 500);
                 return false;
             }
 
@@ -198,33 +196,15 @@ public class SalesFragment extends Fragment implements UpdateRecyclerView {
         if(cursor != null && !cursor.isClosed())
         cursor.close();
 
-         cursor = controllerStockMaster.searchStockMasterCursor(pattern,"PROD_NM");
-        salesListAdapter.swapCursor(cursor);
-        if(cursor==null){
-            recyclerView.setVisibility(View.GONE);
-            emptyListView.setVisibility(View.VISIBLE);
-        }else
-        {
-            recyclerView.setVisibility(View.VISIBLE);
-           emptyListView.setVisibility(View.GONE);
-        }
+        GetSalesCursorData scd = new GetSalesCursorData(pattern);
+        scd.execute();
 
     }
     private  void restoreData(){
         if(cursor != null && !cursor.isClosed())
         cursor.close();
-
-         cursor = controllerStockMaster.getStockMasterCursor();
-        salesListAdapter.swapCursor(cursor);
-        if(cursor==null){
-            recyclerView.setVisibility(View.GONE);
-            emptyListView.setVisibility(View.VISIBLE);
-        }else
-        {
-            recyclerView.setVisibility(View.VISIBLE);
-            emptyListView.setVisibility(View.GONE);
-        }
-
+        GetSalesCursorData scd = new GetSalesCursorData(null);
+        scd.execute();
     }
 
     @Override
@@ -241,5 +221,57 @@ public class SalesFragment extends Fragment implements UpdateRecyclerView {
         }
 
 
+    }
+
+    @SuppressWarnings("deprecation")
+    class GetSalesCursorData extends AsyncTask<Void, Void, String> {
+
+        String pattern;
+        public GetSalesCursorData(String pattern){
+            this.pattern = pattern;
+        }
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            emptyListView.setText("Loading...");
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            swapRecyclerViewData();
+        }
+
+
+
+        @Override
+        protected String doInBackground(Void... params) {
+            if(pattern==null) {
+                cursor = controllerStockMaster.getStockMasterCursor();
+            }else {
+                cursor = controllerStockMaster.searchStockMasterCursor(pattern,"PROD_NM");
+            }
+            return null;
+        }
+    }
+
+
+    protected void swapRecyclerViewData(){
+
+        if(cursor == null || cursor.isClosed()) {
+            salesListAdapter.swapCursor(null);
+        }
+        else {
+            salesListAdapter.swapCursor(cursor);
+        }
+        if(cursor==null){
+            recyclerView.setVisibility(View.GONE);
+            emptyListView.setVisibility(View.VISIBLE);
+            emptyListView.setText("No Sales Found!");
+        }else
+        {
+            recyclerView.setVisibility(View.VISIBLE);
+            emptyListView.setVisibility(View.GONE);
+        }
     }
 }

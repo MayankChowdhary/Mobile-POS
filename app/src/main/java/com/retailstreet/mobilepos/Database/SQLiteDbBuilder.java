@@ -69,6 +69,24 @@ public class SQLiteDbBuilder {
     private final ArrayList<String> retail_str_dstr_pk;
     private final ArrayList<String> master_uom;
     private final ArrayList<String> master_uom_pk;
+    private final ArrayList<String> master_customer_type;
+    private final ArrayList<String> master_customer_type_pk;
+    private final ArrayList<String> masterState;
+    private final ArrayList<String> masterState_pk;
+    private final ArrayList<String> bank_details;
+    private final ArrayList<String> bank_details_pk;
+    private final ArrayList<String> store_configuration;
+    private final ArrayList<String> store_configuration_pk;
+    private final ArrayList<String> retail_store_cust_reject;
+    private final ArrayList<String> retail_store_cust_reject_pk;
+    private final ArrayList<String> retail_credit_cust;
+    private final ArrayList<String> retail_credit_cust_pk;
+
+    private final ArrayList<String> customerReturnDetail;
+    private final ArrayList<String> customerReturnDetail_pk;
+    private final ArrayList<String> customerReturnMaster;
+    private final ArrayList<String> customerReturnMaster_pk;
+
 
 
    static String dbname = "MasterDB";
@@ -124,6 +142,23 @@ public class SQLiteDbBuilder {
         retail_str_dstr_pk =  new ArrayList<>();
         master_uom= new ArrayList<>();
         master_uom_pk =  new ArrayList<>();
+        master_customer_type =  new ArrayList<>();
+        master_customer_type_pk =  new ArrayList<>();
+        masterState =  new ArrayList<>();
+        masterState_pk=  new ArrayList<>();
+        bank_details =  new ArrayList<>();
+        bank_details_pk=  new ArrayList<>();
+        store_configuration=  new ArrayList<>();
+        store_configuration_pk =  new ArrayList<>();
+        retail_store_cust_reject=  new ArrayList<>();
+        retail_store_cust_reject_pk =  new ArrayList<>();
+        retail_credit_cust=  new ArrayList<>();
+        retail_credit_cust_pk =  new ArrayList<>();
+        customerReturnDetail=  new ArrayList<>();
+        customerReturnDetail_pk =  new ArrayList<>();
+        customerReturnMaster =  new ArrayList<>();
+        customerReturnMaster_pk =  new ArrayList<>();
+
         cartList= new ArrayList<>(Arrays.asList("STOCK_ID","PROD_NM","count","MRP","S_PRICE","SALESDISCOUNTBYAMOUNT","GST","SGST","CGST","QTY" ));
         cartList_Pk= new ArrayList<>(Collections.singletonList("STOCK_ID"));
         getJSON();
@@ -169,7 +204,6 @@ public class SQLiteDbBuilder {
                 JSONToArray(structure);
 
                 return structure;
-
 
             }
         }
@@ -557,6 +591,146 @@ public class SQLiteDbBuilder {
                 //Log.d("retail_store_pk", "constraint:" + constraint);
             }
 
+            JSONArray customer_type_json = jsonObject.getJSONArray("master_customer_type");
+            for (int i = 0; i < customer_type_json.length(); i++) {
+                JSONObject obj = (JSONObject) customer_type_json.get(i);
+                String id = obj.getString("Field");
+                master_customer_type.add(id);
+                // Log.d("retail_store", "id:" + id);
+
+            }
+
+            JSONArray customer_type_pk_json = jsonObject.getJSONArray("master_customer_type_pk");
+            for (int i = 0; i < customer_type_pk_json.length(); i++) {
+                JSONObject obj = (JSONObject) customer_type_pk_json.get(i);
+                String constraint = obj.getString("Constraint");
+                master_customer_type_pk.add(constraint);
+                //Log.d("retail_store_pk", "constraint:" + constraint);
+            }
+
+            JSONArray masterState_json = jsonObject.getJSONArray("masterState");
+            for (int i = 0; i < masterState_json.length(); i++) {
+                JSONObject obj = (JSONObject) masterState_json.get(i);
+                String id = obj.getString("Field");
+                masterState.add(id);
+                // Log.d("retail_store", "id:" + id);
+
+            }
+
+            JSONArray masterState_pk_json = jsonObject.getJSONArray("masterState_pk");
+            for (int i = 0; i < masterState_pk_json.length(); i++) {
+                JSONObject obj = (JSONObject) masterState_pk_json.get(i);
+                String constraint = obj.getString("Constraint");
+                masterState_pk.add(constraint);
+                //Log.d("retail_store_pk", "constraint:" + constraint);
+            }
+            JSONArray bankDetails_json = jsonObject.getJSONArray("bank_details");
+            for (int i = 0; i < bankDetails_json.length(); i++) {
+                JSONObject obj = (JSONObject) bankDetails_json.get(i);
+                String id = obj.getString("Field");
+                bank_details.add(id);
+                // Log.d("retail_store", "id:" + id);
+
+            }
+
+            JSONArray bank_details_pk_json = jsonObject.getJSONArray("bank_details_pk");
+            for (int i = 0; i < bank_details_pk_json.length(); i++) {
+                JSONObject obj = (JSONObject) bank_details_pk_json.get(i);
+                String constraint = obj.getString("Constraint");
+                bank_details_pk.add(constraint);
+                //Log.d("retail_store_pk", "constraint:" + constraint);
+            }
+
+            JSONArray store_configuration_json = jsonObject.getJSONArray("store_configuration");
+            for (int i = 0; i < store_configuration_json.length(); i++) {
+                JSONObject obj = (JSONObject) store_configuration_json.get(i);
+                String id = obj.getString("Field");
+                store_configuration.add(id);
+                // Log.d("retail_store", "id:" + id);
+
+            }
+
+            JSONArray store_configuration_pk_json = jsonObject.getJSONArray("store_configuration_pk");
+            for (int i = 0; i < store_configuration_pk_json.length(); i++) {
+                JSONObject obj = (JSONObject) store_configuration_pk_json.get(i);
+                String constraint = obj.getString("Constraint");
+                store_configuration_pk.add(constraint);
+                //Log.d("retail_store_pk", "constraint:" + constraint);
+            }
+
+
+            JSONArray retail_store_cust_reject_json = jsonObject.getJSONArray("retail_store_cust_reject");
+            for (int i = 0; i < retail_store_cust_reject_json.length(); i++) {
+                JSONObject obj = (JSONObject) retail_store_cust_reject_json.get(i);
+                String id = obj.getString("Field");
+                retail_store_cust_reject.add(id);
+                // Log.d("retail_store", "id:" + id);
+
+            }
+
+            JSONArray retail_store_cust_reject_pk_json = jsonObject.getJSONArray("retail_store_cust_reject_pk");
+            for (int i = 0; i < retail_store_cust_reject_pk_json.length(); i++) {
+                JSONObject obj = (JSONObject) retail_store_cust_reject_pk_json.get(i);
+                String constraint = obj.getString("Constraint");
+                retail_store_cust_reject_pk.add(constraint);
+                //Log.d("retail_store_pk", "constraint:" + constraint);
+            }
+
+            JSONArray retail_credit_cust_json = jsonObject.getJSONArray("retail_credit_cust");
+            for (int i = 0; i < retail_credit_cust_json.length(); i++) {
+                JSONObject obj = (JSONObject) retail_credit_cust_json.get(i);
+                String id = obj.getString("Field");
+                retail_credit_cust.add(id);
+                // Log.d("retail_store", "id:" + id);
+
+            }
+
+            JSONArray retail_credit_cust_pk_json = jsonObject.getJSONArray("retail_credit_cust_pk");
+            for (int i = 0; i < retail_credit_cust_pk_json.length(); i++) {
+                JSONObject obj = (JSONObject) retail_credit_cust_pk_json.get(i);
+                String constraint = obj.getString("Constraint");
+                retail_credit_cust_pk.add(constraint);
+                //Log.d("retail_store_pk", "constraint:" + constraint);
+            }
+
+
+            JSONArray customerReturnDetail_json = jsonObject.getJSONArray("customerReturnDetail");
+            for (int i = 0; i < customerReturnDetail_json.length(); i++) {
+                JSONObject obj = (JSONObject) customerReturnDetail_json.get(i);
+                String id = obj.getString("Field");
+                customerReturnDetail.add(id);
+                // Log.d("retail_store", "id:" + id);
+
+            }
+
+            JSONArray customerReturnDetail_pk_json = jsonObject.getJSONArray("customerReturnDetail_pk");
+            for (int i = 0; i < customerReturnDetail_pk_json.length(); i++) {
+                JSONObject obj = (JSONObject) customerReturnDetail_pk_json.get(i);
+                String constraint = obj.getString("Constraint");
+                customerReturnDetail_pk.add(constraint);
+                //Log.d("retail_store_pk", "constraint:" + constraint);
+            }
+
+
+            JSONArray customerReturnMaster_json = jsonObject.getJSONArray("customerReturnMaster");
+            for (int i = 0; i < customerReturnMaster_json.length(); i++) {
+                JSONObject obj = (JSONObject) customerReturnMaster_json.get(i);
+                String id = obj.getString("Field");
+                customerReturnMaster.add(id);
+                // Log.d("retail_store", "id:" + id);
+
+            }
+
+            JSONArray customerReturnMaster_pk_json = jsonObject.getJSONArray("customerReturnMaster_pk");
+            for (int i = 0; i < customerReturnMaster_pk_json.length(); i++) {
+                JSONObject obj = (JSONObject) customerReturnMaster_pk_json.get(i);
+                String constraint = obj.getString("Constraint");
+                customerReturnMaster_pk.add(constraint);
+                //Log.d("retail_store_pk", "constraint:" + constraint);
+            }
+
+
+
             createDynamicDatabase(context, "group_user_master", user_master, user_master_pk);
             createDynamicDatabase(context, "retail_cust", retail_cust, retail_cust_pk);
             createDynamicDatabase(context, "retail_store_prod_com", retail_store_prod_com, retail_store_prod_com_pk);
@@ -581,6 +755,14 @@ public class SQLiteDbBuilder {
             createDynamicDatabase(context, "hsn_master", hsn_master, hsn_master_pk);
             createDynamicDatabase(context, "retail_str_dstr", retail_str_dstr, retail_str_dstr_pk);
             createDynamicDatabase(context, "master_uom", master_uom, master_uom_pk);
+            createDynamicDatabase(context, "master_customer_type", master_customer_type, master_customer_type_pk);
+            createDynamicDatabase(context, "masterState", masterState, masterState_pk);
+            createDynamicDatabase(context, "bank_details", bank_details, bank_details_pk);
+            createDynamicDatabase(context, "store_configuration", store_configuration, store_configuration_pk);
+            createDynamicDatabase(context, "retail_store_cust_reject", retail_store_cust_reject, retail_store_cust_reject_pk);
+            createDynamicDatabase(context, "retail_credit_cust", retail_credit_cust, retail_credit_cust_pk);
+            createDynamicDatabase(context, "customerReturnDetail", customerReturnDetail, customerReturnDetail_pk);
+            createDynamicDatabase(context, "customerReturnMaster", customerReturnMaster, customerReturnMaster_pk);
 
             dbOk=true;
             //loadingDialog.cancelDialog();

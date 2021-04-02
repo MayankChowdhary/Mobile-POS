@@ -2,7 +2,6 @@ package com.retailstreet.mobilepos.Utils;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.retailstreet.mobilepos.Model.RetailStore;
 
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
@@ -52,6 +51,20 @@ public class RetroSync {
                     .build();
         }
 
+        return retrofit;
+    }
+
+    public static Retrofit getClient() {
+        Retrofit retrofit = null;
+        if (retrofit==null) {
+            Gson gson = new GsonBuilder()
+                    .setLenient()
+                    .create();
+            retrofit = new Retrofit.Builder()
+                    .baseUrl("http://www.99retailstreet.com:8080/")
+                    .addConverterFactory(GsonConverterFactory.create(gson))
+                    .build();
+        }
         return retrofit;
     }
 }

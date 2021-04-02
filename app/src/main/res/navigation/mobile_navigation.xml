@@ -120,6 +120,26 @@
         android:name="com.retailstreet.mobilepos.View.ui.Products.ProductsFragment"
         android:label="Add Product"
         tools:layout="@layout/fragment_products" />
+    <fragment
+        android:id="@+id/nav_customer"
+        android:name="com.retailstreet.mobilepos.View.ui.Customer.CustomerFragment"
+        android:label="Add Customer"
+        tools:layout="@layout/fragment_customer" />
+    <fragment
+        android:id="@+id/nav_customer_update"
+        android:name="com.retailstreet.mobilepos.View.ui.CustomerUpdateFragment.CustomerUpdateFragment"
+        android:label="Update Customer"
+        tools:layout="@layout/fragment_customer_update" />
+    <fragment
+        android:id="@+id/nav_sales_refund"
+        android:name="com.retailstreet.mobilepos.View.ui.SalesRefund.SalesRefundFragment"
+        android:label="Sales Return"
+        tools:layout="@layout/fragment_sales_refund" />
+    <fragment
+        android:id="@+id/nav_credit_pay"
+        android:name="com.retailstreet.mobilepos.View.ui.CreditPayFragment.CreditPayFragment"
+        android:label="Credit Pay"
+        tools:layout="@layout/fragment_credit_pay" />
 
 
 </navigation>

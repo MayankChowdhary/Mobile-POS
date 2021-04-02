@@ -71,6 +71,9 @@ class DayOpenFragment : Fragment() {
         val openButton: Button = view.findViewById(R.id.submit_dayopen);
         openButton.setOnClickListener{
             startCash = cashEditText.text.toString()
+            if(startCash.isBlank())
+                startCash = "0.00"
+
             ControllerShiftTrans(dateTime, username, shift_tag, startCash)
             activity?.let { it1 -> Navigation.findNavController(it1, R.id.nav_host_fragment).navigate(R.id.nav_sales) }
             Toast.makeText(activity, "Shift Successfully Started!", Toast.LENGTH_LONG).show();

@@ -1,6 +1,5 @@
 package com.retailstreet.mobilepos.View;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,21 +11,20 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
 
-import com.labters.lottiealertdialoglibrary.DialogTypes;
-import com.retailstreet.mobilepos.R;
-import com.google.android.material.navigation.NavigationView;
-import com.retailstreet.mobilepos.Utils.WorkManagerSync;
-import com.retailstreet.mobilepos.View.dialog.LottieAlertDialogs;
-
-import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
+
+import com.google.android.material.navigation.NavigationView;
+import com.labters.lottiealertdialoglibrary.DialogTypes;
+import com.retailstreet.mobilepos.R;
+import com.retailstreet.mobilepos.Utils.WorkManagerSync;
+import com.retailstreet.mobilepos.View.dialog.LottieAlertDialogs;
 
 public class MainDrawerActivity extends AppCompatActivity  {
 
@@ -40,13 +38,14 @@ public class MainDrawerActivity extends AppCompatActivity  {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getWindow().setBackgroundDrawable(null);
+        //Thread.setDefaultUncaughtExceptionHandler(new CrashHandler(this));
 
         DrawerLayout  drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-               R.id.nav_sales,R.id.nav_dayopen,R.id.nav_dayclose,R.id.nav_products)
+               R.id.nav_sales,R.id.nav_dayopen,R.id.nav_dayclose,R.id.nav_products,R.id.nav_customer,R.id.nav_customer_update,R.id.nav_sales_refund,R.id.nav_credit_pay)
                 .setOpenableLayout(drawer)
                 .build();
 

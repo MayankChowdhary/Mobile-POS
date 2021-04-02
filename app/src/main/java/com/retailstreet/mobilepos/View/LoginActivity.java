@@ -1,8 +1,5 @@
 package com.retailstreet.mobilepos.View;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
-
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
@@ -13,13 +10,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.retailstreet.mobilepos.Controller.ControllerUserMaster;
 import com.retailstreet.mobilepos.Controller.DBReadyCallback;
 import com.retailstreet.mobilepos.Database.SQLiteDbBuilder;
 import com.retailstreet.mobilepos.Database.SQLiteDbInspector;
 import com.retailstreet.mobilepos.Database.TableDataInjector;
 import com.retailstreet.mobilepos.R;
-import com.retailstreet.mobilepos.View.dialog.LoadingDialog;
 
 import java.util.Objects;
 
@@ -39,6 +37,7 @@ public class LoginActivity extends AppCompatActivity implements DBReadyCallback 
         setContentView(R.layout.activity_login);
         Objects.requireNonNull(getSupportActionBar()).hide();
         getWindow().setBackgroundDrawable(null);
+
 
         versionCode=getVersionCode();
 

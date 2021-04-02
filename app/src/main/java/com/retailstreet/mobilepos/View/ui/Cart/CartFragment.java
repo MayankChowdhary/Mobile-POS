@@ -1,9 +1,6 @@
 package com.retailstreet.mobilepos.View.ui.Cart;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -29,8 +26,6 @@ import com.retailstreet.mobilepos.Controller.ControllerCart;
 import com.retailstreet.mobilepos.R;
 import com.retailstreet.mobilepos.View.ApplicationContextProvider;
 import com.retailstreet.mobilepos.View.CartRecyclerView.CartListAdapter;
-import com.retailstreet.mobilepos.View.LoginActivity;
-import com.retailstreet.mobilepos.View.MainDrawerActivity;
 import com.retailstreet.mobilepos.View.dialog.LottieAlertDialogs;
 
 public class CartFragment extends Fragment {
@@ -40,7 +35,7 @@ public class CartFragment extends Fragment {
     SearchView mSearchView;
     RecyclerView recyclerView;
     CartListAdapter cartListAdapter;
-      ConstraintLayout checkout_lyt;
+    ConstraintLayout checkout_lyt;
     static Cursor cursor;
     ControllerCart controllerCart;
 

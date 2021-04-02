@@ -110,6 +110,11 @@ public class CartListAdapter extends CustomRecyclerViewAdapter<CartListAdapter.V
 
     }
 
+    @Override
+    public void refreshAll() {
+
+    }
+
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public TextView productTitle;
         public TextView product_detail_2;
@@ -127,6 +132,7 @@ public class CartListAdapter extends CustomRecyclerViewAdapter<CartListAdapter.V
 
         public ViewHolder(View view, RefreshRecyclerView refreshView) {
             super(view);
+
             productTitle = view.findViewById(R.id.product_title);
             product_detail_2=view.findViewById(R.id.product_detail_II);
             product_detail_3=view.findViewById(R.id.product_detail_III);
@@ -138,6 +144,7 @@ public class CartListAdapter extends CustomRecyclerViewAdapter<CartListAdapter.V
             order_count = view.findViewById(R.id.textview_order_count);
             sales_qty = view.findViewById(R.id.sales_qty_cart);
             root = view;
+
             this.refreshRecyclerView = refreshView;
            new Thread(() -> {
                 String AmountB4 = getAmountBefore()+" ₹";

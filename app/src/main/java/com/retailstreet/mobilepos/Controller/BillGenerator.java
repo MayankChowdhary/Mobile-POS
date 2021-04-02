@@ -1,10 +1,12 @@
 package com.retailstreet.mobilepos.Controller;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.retailstreet.mobilepos.Utils.WorkManagerSync;
@@ -13,14 +15,18 @@ import com.retailstreet.mobilepos.View.ApplicationContextProvider;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import static android.content.Context.MODE_PRIVATE;
 
 
 public class BillGenerator {
     Context context;
+    private static Set<String> smsSetFromPrefs = new HashSet<>();
      HashMap<String, String> orderList = new HashMap<>();
     String itemGuid;
     String customerID;
@@ -92,25 +98,19 @@ public class BillGenerator {
             context = ApplicationContextProvider.getContext();
         }
 
-    public BillGenerator( String customerID, String receivedCash,String balanceCash, String deliveryTypeGuid, String MasterPayModeGuid) {
+    public BillGenerator( String customerID, String receivedCash,String balanceCash, String deliveryTypeGuid, HashMap<String , String[]> payModeData) {
         context = ApplicationContextProvider.getContext();
+        GetSetFromPrefs();
         initMap();
         context = ApplicationContextProvider.getContext();
         this.customerID = customerID;
         NO_OF_ITEMS = String.valueOf(orderList.size());
         billNumber = getBillNumber();
         billMasterId = getTimeStamp();
-        BILLPAYDETAILID = getTimeStamp();
         RECEIVED_CASH = receivedCash;
-
-        if(Double.parseDouble(balanceCash)==0)
-            BALANCE_CASH="0.00";
-        else
-        BALANCE_CASH = "-"+balanceCash+"0";
-
+        BALANCE_CASH=balanceCash;
 
         DELIVERY_TYPE_GUID = deliveryTypeGuid;
-        this.MASTERPAYMODEGUID = MasterPayModeGuid;
 
         for (String key:orderList.keySet()) {
             String count = Objects.requireNonNull(orderList.get(key));
@@ -118,14 +118,23 @@ public class BillGenerator {
             setNewQuantity(key);
         }
        GenerateBillMaster(customerID);
-        GenerateBillPayDetail();
+        GenerateBillPayDetail(payModeData);
+        smsSetFromPrefs.add(billNumber);
+        SaveSetsInPrefs();
+
         try {
             new WorkManagerSync(1);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-    }
+            try {
+                new WorkManagerSync(6);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
 
     public void GenerateBillDetails( String orderid , String count) {
             billDetailId = getTimeStamp();
@@ -198,16 +207,51 @@ public class BillGenerator {
 
     }
 
-    public void GenerateBillPayDetail(){
+    public void GenerateBillPayDetail(HashMap<String , String[]> payModeData){
         BILLMASTERID=  billMasterId;
-        PAYAMOUNT = TOTAL_AMOUNT;
         TRANSACTIONNUMBER = billNumber;
-        ADDITIONALPARAM1 ="0";
+        BILLPAYDETAIL_STATUS = "1";
+        ADDITIONALPARAM1 = "0";
         ADDITIONALPARAM2 = "0";
         ADDITIONALPARAM3 = "0";
-        BILLPAYDETAIL_STATUS = "1";
 
-        new ControllerBillPayDetail().createBillPayDetail( BILLPAYDETAILID,  BILLMASTERID,  MASTERPAYMODEGUID,  PAYAMOUNT,  TRANSACTIONNUMBER,  ADDITIONALPARAM1,  ADDITIONALPARAM2,  ADDITIONALPARAM3,  BILLPAYDETAIL_STATUS);
+
+        for (Map.Entry<String,String[]> entry : payModeData.entrySet()) {
+            String[] data = entry.getValue();
+            Log.d("AddingBillPay", "GenerateBillPayDetail: "+entry.getKey());
+
+            if(data[1]!=null && !data[1].trim().isEmpty()) {
+                TRANSACTIONNUMBER = data[1];
+            }else {
+                TRANSACTIONNUMBER = billNumber;
+            }
+
+            MASTERPAYMODEGUID=data[0];
+            PAYAMOUNT = data[2];
+
+            if(!data[3].trim().isEmpty()) {
+                ADDITIONALPARAM1 = data[3];
+            }else {
+                ADDITIONALPARAM1 = "0";
+            }
+
+            if(!data[4].trim().isEmpty()) {
+                ADDITIONALPARAM2 = data[4];
+            }else {
+                ADDITIONALPARAM2 = "0";
+            }
+
+            if(!data[5].trim().isEmpty()) {
+                ADDITIONALPARAM3 = data[5];
+            }else {
+                ADDITIONALPARAM3 = "0";
+            }
+
+            BILLPAYDETAILID = getTimeStamp();
+            new ControllerBillPayDetail().createBillPayDetail( BILLPAYDETAILID,  BILLMASTERID,  MASTERPAYMODEGUID,  PAYAMOUNT,  TRANSACTIONNUMBER,  ADDITIONALPARAM1,  ADDITIONALPARAM2,  ADDITIONALPARAM3,  BILLPAYDETAIL_STATUS);
+
+        }
+
     }
 
 
@@ -599,6 +643,23 @@ public class BillGenerator {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
     }
 
+
+
+    public void GetSetFromPrefs()
+    {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+        smsSetFromPrefs = sharedPref.getStringSet("smsSync", new HashSet<String>() );
+    }
+
+    @SuppressLint("ApplySharedPref")
+    public void SaveSetsInPrefs()
+    {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putStringSet("smsSync", smsSetFromPrefs);
+        editor.commit();
+    }
 }

@@ -10,7 +10,6 @@ import android.util.Log;
 import com.retailstreet.mobilepos.Model.StockMaster;
 import com.retailstreet.mobilepos.Model.StockMasterSync;
 import com.retailstreet.mobilepos.Utils.IDGenerator;
-import com.retailstreet.mobilepos.Utils.WorkManagerSync;
 import com.retailstreet.mobilepos.View.ApplicationContextProvider;
 
 import java.text.SimpleDateFormat;
@@ -201,7 +200,7 @@ public class ControllerStockMaster extends SQLiteOpenHelper {
 
     public Cursor getStockMasterCursor() {
         try {
-            if(cursor != null){
+            if(cursor != null && !cursor.isClosed()){
                 cursor.close();
             }
             String query = "SELECT  * FROM " + TABLE_NAME;

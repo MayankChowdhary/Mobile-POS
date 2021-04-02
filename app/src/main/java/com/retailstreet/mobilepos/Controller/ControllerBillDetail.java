@@ -17,6 +17,7 @@ public class ControllerBillDetail {
 
     String dbname = "MasterDB";
     private Context context;
+    BillDetail billDetail;
 
     public ControllerBillDetail(){
         
@@ -27,6 +28,8 @@ public class ControllerBillDetail {
         BillDetail billDetail = new BillDetail( BILLDETAILID,  BILLMASTERID,  BILLNO,  CATEGORY_GUID,  SUBCAT_GUID,  ITEM_GUID,  ITEM_CODE,  QTY,  UOM_GUID,  BATCHNO,  COST_PRICE,  NETVALUE,  DISCOUNT_PERC,  DISCOUNT_VALUE,  TOTALVALUE,  MRP,  BILLDETAILSTATUS,  HSN,  CGSTPERCENTAGE,  SGSTPERCENTAGE,  IGSTPERCENTAGE,  ADDITIONALPERCENTAGE,  CGST,  SGST,  IGST,  ADDITIONALCESS,  TOTALGST );
         insertBillDetails(billDetail);
     }
+
+
 
     public void insertBillDetails(BillDetail billDetail) {
         if (billDetail == null) {

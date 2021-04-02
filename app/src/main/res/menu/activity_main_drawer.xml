@@ -20,6 +20,22 @@
             android:visible="true"
             android:title="Add Products" />
         <item
+            android:id="@+id/nav_customer"
+            android:icon="@drawable/customer"
+            android:title="Add Customer" />
+        <item
+            android:id="@+id/nav_customer_update"
+            android:icon="@drawable/customer_update"
+            android:title="Update Customer" />
+        <item
+            android:id="@+id/nav_sales_refund"
+            android:icon="@drawable/returning"
+            android:title="Sales Return" />
+        <item
+            android:id="@+id/nav_credit_pay"
+            android:icon="@drawable/credit"
+            android:title="Credit Pay" />
+        <item
             android:id="@+id/nav_dayclose"
             android:icon="@drawable/close"
             android:visible="true"

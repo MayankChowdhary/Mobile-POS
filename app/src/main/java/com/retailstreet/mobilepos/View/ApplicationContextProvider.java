@@ -14,11 +14,13 @@ public class ApplicationContextProvider extends Application {
     public static Context getContext(){
         return instance.getApplicationContext();
         // or return instance.getApplicationContext();
+
     }
 
     @Override
     public void onCreate() {
         instance = this;
         super.onCreate();
+
     }
 }

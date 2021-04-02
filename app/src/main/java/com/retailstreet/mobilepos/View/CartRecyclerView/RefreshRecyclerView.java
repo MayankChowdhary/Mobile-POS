@@ -9,4 +9,6 @@ public interface RefreshRecyclerView {
     void setCheckout(String totalPrice, String totalItems);
     void setRecyclerVisibility(int visibility);
     void emptyCartTextVisibility(int visibility);
+    void refreshAll();
+
 }

@@ -39,7 +39,10 @@
                 android:id="@+id/shift_spinner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/_10sdp"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginEnd="@dimen/_30sdp"
+                android:layout_marginBottom="@dimen/_10sdp"
                 android:layout_weight="1"
                 android:spinnerMode="dropdown" />
         </LinearLayout>
@@ -138,8 +141,8 @@
                 android:layout_marginBottom="0dp"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:textAlignment="center"
                 android:inputType="number"
+                android:textAlignment="center"
                 android:textColor="?colorOnBackground"
                 android:textSize="@dimen/_14ssp" />
         </LinearLayout>
