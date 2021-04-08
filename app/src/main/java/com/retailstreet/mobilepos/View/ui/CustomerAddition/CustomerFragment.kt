@@ -1,4 +1,4 @@
-package com.retailstreet.mobilepos.View.ui.Customer
+package com.retailstreet.mobilepos.View.ui.CustomerAddition
 
 import android.content.Context
 import android.graphics.Color
@@ -230,7 +230,7 @@ class CustomerFragment : Fragment() {
            custBalance = if(custBalanceEdittext.text.toString().isBlank()) "0.00" else custBalanceEdittext.text.toString()
            custAdvance = if(custAdvanceEdtText.text.toString().isBlank()) "0.00" else custAdvanceEdtText.text.toString()
            custCreditLimit = if(custCreditLimitEdtText.text.toString().isBlank()) "0.00" else custCreditLimitEdtText.text.toString()
-           custCreditLimit = (custCreditLimit.toDouble() + (custAdvance.toDouble() - custBalance.toDouble())).toString()
+          // custCreditLimit = (custCreditLimit.toDouble() + (custAdvance.toDouble() - custBalance.toDouble())).toString()
            custAdd1 = custAdd1EdtText.text.toString()
            custAdd2 = custAdd2EdtText.text.toString()
            custStreet = streetEdtText.text.toString()

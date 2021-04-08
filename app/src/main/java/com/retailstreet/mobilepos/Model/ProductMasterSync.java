@@ -28,14 +28,20 @@ public class ProductMasterSync {
     String UOMID;
     String ISSYNCED;
     String STORE_GUID;
+    String ISPRODUCTRETURNABLE;
+    String ISLOOSEITEM;
+    String ADDITIONALPARAM1;
+    String ADDITIONALPARAM2;
+    String ADDITIONALPARAM3;
 
 
 
 
     public ProductMasterSync() {
+
     }
 
-    public ProductMasterSync(String ISACTIVE, String BARCODE, String CATEGORY, String CATEGORY_GUID, String CESS1, String CESS2, String CGST, String EXTERNALPRODUCTID, String GENERICNAME, String GST, String HSN, String IGST, String ITEM_CODE, String ITEM_GUID, String item_Type, String MASTERBRAND, String MASTERCATEGORY_id, String USER_GUID, String PRINT_NAME, String ITEMID, String ITEM_NAME, String PRODUCTRELEVANCE, String SGST, String STORE_ID, String STORE_NUMBER, String SUBCATEGORY_GUID, String SUBCATEGORY_DESCRIPTION, String SUBCATEGORY_ID, String UOM, String UOMID, String uoMID, String issync) {
+    public ProductMasterSync(String ISACTIVE, String BARCODE, String CATEGORY_GUID, String CGST, String EXTERNALPRODUCTID, String GENERICNAME, String GST, String HSN, String IGST, String ITEM_CODE, String ITEM_GUID, String MASTERBRAND, String USER_GUID, String PRINT_NAME, String ITEMID, String ITEM_NAME, String PRODUCTRELEVANCE, String SGST, String SUBCATEGORY_GUID, String UOMID, String ISSYNCED, String STORE_GUID, String ISPRODUCTRETURNABLE, String ISLOOSEITEM, String ADDITIONALPARAM1, String ADDITIONALPARAM2, String ADDITIONALPARAM3) {
         this.ISACTIVE = ISACTIVE;
         this.BARCODE = BARCODE;
         this.CATEGORY_GUID = CATEGORY_GUID;
@@ -56,10 +62,56 @@ public class ProductMasterSync {
         this.SGST = SGST;
         this.SUBCATEGORY_GUID = SUBCATEGORY_GUID;
         this.UOMID = UOMID;
-        this.ISSYNCED = issync;
+        this.ISSYNCED = ISSYNCED;
+        this.STORE_GUID = STORE_GUID;
+        this.ISPRODUCTRETURNABLE = ISPRODUCTRETURNABLE;
+        this.ISLOOSEITEM = ISLOOSEITEM;
+        this.ADDITIONALPARAM1 = ADDITIONALPARAM1;
+        this.ADDITIONALPARAM2 = ADDITIONALPARAM2;
+        this.ADDITIONALPARAM3 = ADDITIONALPARAM3;
+    }
+
+    public String getISPRODUCTRETURNABLE() {
+        return ISPRODUCTRETURNABLE;
+    }
+
+    public void setISPRODUCTRETURNABLE(String ISPRODUCTRETURNABLE) {
+        this.ISPRODUCTRETURNABLE = ISPRODUCTRETURNABLE;
+    }
+
+    public String getISLOOSEITEM() {
+        return ISLOOSEITEM;
+    }
+
+    public void setISLOOSEITEM(String ISLOOSEITEM) {
+        this.ISLOOSEITEM = ISLOOSEITEM;
+
 
     }
 
+    public String getADDITIONALPARAM1() {
+        return ADDITIONALPARAM1;
+    }
+
+    public void setADDITIONALPARAM1(String ADDITIONALPARAM1) {
+        this.ADDITIONALPARAM1 = ADDITIONALPARAM1;
+    }
+
+    public String getADDITIONALPARAM2() {
+        return ADDITIONALPARAM2;
+    }
+
+    public void setADDITIONALPARAM2(String ADDITIONALPARAM2) {
+        this.ADDITIONALPARAM2 = ADDITIONALPARAM2;
+    }
+
+    public String getADDITIONALPARAM3() {
+        return ADDITIONALPARAM3;
+    }
+
+    public void setADDITIONALPARAM3(String ADDITIONALPARAM3) {
+        this.ADDITIONALPARAM3 = ADDITIONALPARAM3;
+    }
 
     public String getSTORE_GUID() {
         return STORE_GUID;

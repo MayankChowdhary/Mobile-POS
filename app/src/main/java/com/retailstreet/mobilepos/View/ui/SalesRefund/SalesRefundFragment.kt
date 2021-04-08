@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.labters.lottiealertdialoglibrary.DialogTypes
+import com.retailstreet.mobilepos.Controller.ControllerCreditPay
 import com.retailstreet.mobilepos.Controller.ControllerCustomerReturn
 import com.retailstreet.mobilepos.R
 import com.retailstreet.mobilepos.Utils.IDGenerator
@@ -28,6 +29,7 @@ import com.retailstreet.mobilepos.View.dialog.LottieAlertDialogs
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner
 import java.text.DecimalFormat
 import java.util.*
+import kotlin.math.abs
 
 
 class SalesRefundFragment : Fragment() {
@@ -42,16 +44,18 @@ class SalesRefundFragment : Fragment() {
     lateinit var resetBtn: ImageButton
     lateinit var mainFrame:ViewGroup
     lateinit var salesReturnRadioGroup:RadioGroup
-    lateinit var billNoEditText:EditText
-    lateinit var submitBillNo:Button
+
     lateinit var salesReturnRecyclerView:RecyclerView
     lateinit var salesRecyclerAdapter2:SalesReturnListAdapter2
-     private var totalAmount:String? = "0.00"
+     private var totalAmount:String= "0.00"
     private var billNumer:String = " "
     var rejectTypeGuid = " "
     var   rejectTypeName = " "
     var creditNoteNumber=""
     lateinit var cashCheckBox:CheckBox
+    lateinit var custSearchSelector: SearchableSpinner
+    private var custGuid:String = " "
+    private var balance:String = ""
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -95,16 +99,50 @@ class SalesRefundFragment : Fragment() {
                 creditNoteNumber= IDGenerator.getTimeStamp()
             }
 
+            if(custGuid.isEmpty()){
+                Toast.makeText(context, "Please Select Customer First!", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+
+            if(rejectTypeGuid.isEmpty()){
+                Toast.makeText(context, "Please Select Return Reason First!", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+
+
 
             if(checkedId==R.id.sales_return_billno_radio){
                 totalAmount = getAmountTotal1()
                 Log.d("Proceeding With Bill", "onViewCreated: Total " + totalAmount)
-                ControllerCustomerReturn(billNumer, rejectTypeGuid, " ", rejectTypeName, totalAmount, creditNoteNumber)
+                if( balance.toDouble()!=0.00) {
+                    if (balance.toDouble() >= totalAmount.toDouble()) {
+                        totalAmount = "0.00"
+                        balance = totalAmount
+
+                    } else if (balance.toDouble() < totalAmount.toDouble()) {
+                        totalAmount = (totalAmount.toDouble() - balance.toDouble()).toString()
+                    }
+                    ControllerCreditPay(custGuid, balance)
+                }
+                ControllerCustomerReturn(billNumer, rejectTypeGuid, custGuid, rejectTypeName, totalAmount, creditNoteNumber)
                 inflateBillLayout(mainFrame)
             }else{
+
                 totalAmount = getAmountTotal()
+
                 Log.d("Proceeding With NoBill", "onViewCreated: Total " + totalAmount)
-                ControllerCustomerReturn(rejectTypeGuid, " ", rejectTypeName, totalAmount, creditNoteNumber)
+                if( balance.toDouble()!=0.00) {
+                    if (balance.toDouble() >= totalAmount.toDouble()) {
+                        totalAmount = "0.00"
+                        balance = totalAmount
+
+                    } else if (balance.toDouble() < totalAmount.toDouble()) {
+                        totalAmount = (totalAmount.toDouble() - balance.toDouble()).toString()
+                    }
+                    ControllerCreditPay(custGuid, balance)
+                }
+
+                ControllerCustomerReturn(rejectTypeGuid, custGuid, rejectTypeName, totalAmount, creditNoteNumber)
                 inflateNoBillLayout(mainFrame)
             }
             salesReturnRecyclerView.adapter = null;
@@ -135,8 +173,9 @@ class SalesRefundFragment : Fragment() {
                 inflateBillLayout(mainFrame)
             }else{
                 inflateNoBillLayout(mainFrame)
+
             }
-            salesReturnRecyclerView.adapter = null;
+          //  salesReturnRecyclerView.adapter = null;
             returnSubmitLayout.visibility = View.GONE
             Toast.makeText(context, "Reset Done!", Toast.LENGTH_LONG).show();
             Vibration.vibrate(300)
@@ -154,14 +193,17 @@ class SalesRefundFragment : Fragment() {
     }
 
     private fun initBillLayout(root: ViewGroup){
+         val submitBillNo:Button  = root.findViewById(R.id.sales_return_bill_submit)
+        val billNoEditText:EditText = root.findViewById(R.id.sales_return_bill_input)
+        val balanceText:TextView = root.findViewById(R.id.sr_billno_balance)
 
-        billNoEditText = root.findViewById(R.id.sales_return_bill_input)
-        submitBillNo = root.findViewById(R.id.sales_return_bill_submit)
+
         salesReturnRecyclerView = root.findViewById(R.id.sales_return_recycler_view)
+
 
         val rejectReasonArray:List<StringWithTag> = getReturnReasons()
         val rejectReasonSelector: Spinner = root.findViewById(R.id.sales_reason_spinner)
-        val rejectReasonAdapter: ArrayAdapter<StringWithTag> = context?.let { ArrayAdapter(it, android.R.layout.simple_spinner_item, rejectReasonArray) }!!
+        val rejectReasonAdapter: ArrayAdapter<StringWithTag> = context?.let { ArrayAdapter(it, R.layout.spinner_layout, rejectReasonArray) }!!
         rejectReasonAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         rejectReasonSelector.adapter = rejectReasonAdapter
         rejectReasonSelector.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -176,6 +218,31 @@ class SalesRefundFragment : Fragment() {
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
 
+
+        val custNameArray:List<StringWithTag> = getCustomerName()
+        custSearchSelector = root.findViewById(R.id.sr_cust_search_value)
+        val custSearchAdapter: ArrayAdapter<StringWithTag> = context?.let { ArrayAdapter(it, R.layout.spinner_layout, custNameArray) }!!
+        custSearchAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        custSearchSelector.adapter = custSearchAdapter
+        custSearchSelector.setTitle("Select Customer")
+        custSearchSelector.setPositiveButton("OK")
+        custSearchSelector.gravity = Gravity.START
+        custSearchSelector.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, views: View?, position: Int, id: Long) {
+                val custSelected = parent.getItemAtPosition(position) as StringWithTag
+                custGuid = custSelected.tag
+
+                if(custGuid.isNotEmpty()) {
+                    balance = getCustBalance(custGuid)
+                    balanceText.setText("Balance:\n" + balance + " ₹")
+                }
+                Log.d("CustomerSelected", "onItemSelected: Tag= $custGuid")
+
+            }
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
+
+
         submitBillNo.setOnClickListener {
 
             try {
@@ -184,10 +251,18 @@ class SalesRefundFragment : Fragment() {
                 val salesRecyclerAdapter = SalesReturnListAdapter(context, saleReturnCursor, view, activity)
                 salesReturnRecyclerView.layoutManager= LinearLayoutManager(context)
                 salesReturnRecyclerView.adapter = salesRecyclerAdapter
-                if(saleReturnCursor.count>0)
+                if(saleReturnCursor.count>0) {
                     returnSubmitLayout.visibility = View.VISIBLE
-                else
+                   custGuid  = getFromCustomerGuid(billNumer)
+                    val pos: Int = getIndex(custSearchSelector, custGuid)
+                    custSearchSelector.setSelection(pos)
+
+                    custSearchSelector.isEnabled = custGuid.isEmpty()
+
+                }else {
                     returnSubmitLayout.visibility = View.GONE
+                    custSearchSelector.isEnabled = true
+                }
 
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -209,20 +284,21 @@ class SalesRefundFragment : Fragment() {
     }
 
     private  fun initNoBillLayout(root: ViewGroup){
+        val balanceText:TextView = root.findViewById(R.id.sr_no_bill_balance)
         salesReturnRecyclerView = root.findViewById(R.id.sales_return_recycler_view)
         val productArray: List<StringWithTag> = getProductsName();
        val productSpinner:SearchableSpinner =  root.findViewById(R.id.sales_return_product_selector)
-        val productAdapter: ArrayAdapter<StringWithTag> = context?.let { ArrayAdapter(it, R.layout.spinner_layout, productArray) }!!
+        val productAdapter: ArrayAdapter<StringWithTag> = context?.let { ArrayAdapter(it, android.R.layout.simple_spinner_item, productArray) }!!
         productAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         productSpinner.adapter = productAdapter
-        productSpinner.setTitle("Select Category")
+        productSpinner.setTitle("Select Product")
         productSpinner.setPositiveButton("OK")
         productSpinner.gravity = Gravity.START
         initTable()
 
         val rejectReasonArray:List<StringWithTag> = getReturnReasons()
         val rejectReasonSelector: Spinner = root.findViewById(R.id.sales_reason_spinner)
-        val rejectReasonAdapter: ArrayAdapter<StringWithTag> = context?.let { ArrayAdapter(it, android.R.layout.simple_spinner_item, rejectReasonArray) }!!
+        val rejectReasonAdapter: ArrayAdapter<StringWithTag> = context?.let { ArrayAdapter(it, R.layout.spinner_layout, rejectReasonArray) }!!
         rejectReasonAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         rejectReasonSelector.adapter = rejectReasonAdapter
         rejectReasonSelector.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -237,15 +313,46 @@ class SalesRefundFragment : Fragment() {
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
 
+        val custNameArray:List<StringWithTag> = getCustomerName()
+        custSearchSelector = root.findViewById(R.id.sr_cust_search_value)
+        val custSearchAdapter: ArrayAdapter<StringWithTag> = context?.let { ArrayAdapter(it, R.layout.spinner_layout, custNameArray) }!!
+        custSearchAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        custSearchSelector.adapter = custSearchAdapter
+        custSearchSelector.setTitle("Select Customer")
+        custSearchSelector.setPositiveButton("OK")
+        custSearchSelector.gravity = Gravity.START
+        custSearchSelector.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, views: View?, position: Int, id: Long) {
+                val custSelected = parent.getItemAtPosition(position) as StringWithTag
+                custGuid = custSelected.tag
+                balance = getCustBalance(custGuid)
+                balanceText.setText("Balance:\n" + balance + " ₹")
+                Log.d("CustomerSelected", "onItemSelected: Tag= $custGuid")
+
+            }
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
+
         productSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+
+                if(position==0)
+                    return
+
                 val productSelected = parent.getItemAtPosition(position) as StringWithTag
                 val stockGuid = productSelected.tag
                 val prodName = productSelected.string
 
+                if(!isProductReturnable(stockGuid)){
+
+                    Toast.makeText(context, "Item is not Returnable!", Toast.LENGTH_LONG).show()
+                    return
+                }
+
+
                 insertIntoTable(stockGuid)
                 swapNoBillRecycler()
-
+                productSpinner.setSelection(0)
                 Log.d("ProductSelected", "onItemSelected: Tag= $stockGuid")
             }
 
@@ -253,7 +360,7 @@ class SalesRefundFragment : Fragment() {
         }
 
         try {
-             salesRecyclerAdapter2 = SalesReturnListAdapter2(context, null, view, activity)
+            salesRecyclerAdapter2 = SalesReturnListAdapter2(context, null, view, activity)
             salesReturnRecyclerView.layoutManager= LinearLayoutManager(context)
             salesReturnRecyclerView.adapter = salesRecyclerAdapter2
 
@@ -280,9 +387,24 @@ class SalesRefundFragment : Fragment() {
 
     }
 
+    private fun isProductReturnable(stockId: String):Boolean{
+        var result:Boolean = false;
+        val mydb = requireActivity().openOrCreateDatabase("MasterDB", Context.MODE_PRIVATE, null)
+        val query:String = "SELECT pm.ISPRODUCTRETURNABLE  FROM retail_store_prod_com pm INNER JOIN retail_str_stock_master bd ON bd.ITEM_GUID = pm.ITEM_GUID WHERE bd.STOCK_ID = '$stockId'";
+        val cursor = mydb.rawQuery(query, null)
+        if(cursor.moveToFirst()){
+
+            Log.d("Isitem Returnable", "isProductReturnable: " + cursor.getString(0))
+            result = cursor.getString(0) == "YES"
+        }
+
+        return  result
+
+    }
+
     private fun getProductsName(): List<StringWithTag> {
         val list: MutableList<StringWithTag> = ArrayList()
-        list.add(StringWithTag("SELECT PRODUCT", ""))
+        list.add(StringWithTag("ADD PRODUCT", ""))
         val mydb = requireActivity().openOrCreateDatabase("MasterDB", Context.MODE_PRIVATE, null)
         val query:String = "select STOCK_ID, PROD_NM from retail_str_stock_master";
         val cursor = mydb.rawQuery(query, null)
@@ -333,7 +455,7 @@ class SalesRefundFragment : Fragment() {
     }
 
 
-    fun getAmountTotal(): String? {
+    private fun getAmountTotal(): String {
         return try {
             val db = requireContext().openOrCreateDatabase("MasterDB", Context.MODE_PRIVATE, null)
             val query = "select TOTAL from tmp_sr_no_bill"
@@ -357,7 +479,7 @@ class SalesRefundFragment : Fragment() {
 
     private fun getReturnReasons(): List<StringWithTag> {
         val list: MutableList<StringWithTag> = ArrayList()
-        list.add(StringWithTag("SELECT REJECT REASON", ""))
+        list.add(StringWithTag("SELECT RETURN REASON", ""))
         val mydb = requireActivity().openOrCreateDatabase("MasterDB", Context.MODE_PRIVATE, null)
         val query = "select REASONGUID, REASON_FOR_REJECTION from retail_store_cust_reject";
         val cursor = mydb.rawQuery(query, null)
@@ -375,7 +497,7 @@ class SalesRefundFragment : Fragment() {
         return list
     }
 
-    fun getAmountTotal1(): String? {
+    private fun getAmountTotal1(): String{
         return try {
             val db = requireContext().openOrCreateDatabase("MasterDB", Context.MODE_PRIVATE, null)
             val query = "select QTY,MRP from tmp_sales_return"
@@ -395,5 +517,76 @@ class SalesRefundFragment : Fragment() {
             e.printStackTrace()
             ""
         }
+    }
+
+
+    private fun getCustomerName(): List<StringWithTag> {
+        val list: MutableList<StringWithTag> = ArrayList()
+        list.add(StringWithTag("SELECT CUSTOMER", ""))
+        val mydb = requireActivity().openOrCreateDatabase("MasterDB", Context.MODE_PRIVATE, null)
+        val query:String = "select CUSTOMERGUID, MOBILE_NO, NAME from retail_cust";
+        val cursor = mydb.rawQuery(query, null)
+        if (cursor.moveToFirst()) {
+            while (!cursor.isAfterLast) {
+                val id = cursor.getString(0)
+                val name = cursor.getString(2) +" - "+ cursor.getString(1)
+                list.add(StringWithTag(name, id))
+                cursor.moveToNext()
+            }
+        }
+        Log.d("CustomerNamesTable", "getCustomerType: Successfully Fetched")
+        cursor.close()
+        mydb.close()
+        return list
+    }
+    private fun getCustBalance(custGuid: String): String {
+        var balance="";
+        val mydb = requireActivity().openOrCreateDatabase("MasterDB", Context.MODE_PRIVATE, null)
+        val query = "select  GRANDTOTAL from retail_credit_cust Where CUSTOMERGUID = '$custGuid'";
+        val cursor = mydb.rawQuery(query, null)
+        if (cursor.moveToFirst()) {
+                balance = cursor.getString(0)
+                balance = abs(balance.toDouble()).toString()
+
+        }
+        if(balance.isEmpty())
+            balance= "0.00"
+        Log.d("CustomerOneValue", "getCustomerType: Successfully Fetched")
+        cursor.close()
+        mydb.close()
+        return balance
+    }
+
+    private fun getFromCustomerGuid(billNo: String): String {
+        var result: String = " "
+        try {
+            val mydb = requireContext().openOrCreateDatabase("MasterDB", Context.MODE_PRIVATE, null)
+            result = ""
+            val selectQuery = "SELECT MASTERCUSTOMERGUID FROM retail_str_sales_master where BILLNO ='$billNo'"
+            val cursor = mydb.rawQuery(selectQuery, null)
+            if (cursor.moveToFirst()) {
+                result = cursor.getString(0)
+            }
+            cursor.close()
+            mydb.close()
+            Log.d("DataRetrieved", "getFromStockMaster:: $result")
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+        }
+        return result
+    }
+
+    private fun getIndex(spinner: SearchableSpinner, myString: String): Int {
+        Log.d("GetIndexInvoked", "getIndex: CustID: "+myString)
+        for (i in 0 until spinner.count) {
+           val st: StringWithTag = spinner.getItemAtPosition(i) as StringWithTag
+            Log.d("GetIndexInvoked", "getIndex: "+st.tag)
+            if (st.tag.equals(myString)) {
+                Log.d("GetIndexInvoked", "getIndex: "+i)
+                return i
+            }
+        }
+        Log.d("GetIndexInvoked", "getIndex: "+0)
+        return 0
     }
 }

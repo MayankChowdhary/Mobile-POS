@@ -81,11 +81,13 @@ public class SQLiteDbBuilder {
     private final ArrayList<String> retail_store_cust_reject_pk;
     private final ArrayList<String> retail_credit_cust;
     private final ArrayList<String> retail_credit_cust_pk;
-
     private final ArrayList<String> customerReturnDetail;
     private final ArrayList<String> customerReturnDetail_pk;
     private final ArrayList<String> customerReturnMaster;
     private final ArrayList<String> customerReturnMaster_pk;
+    private final ArrayList<String> customerLedger;
+    private final ArrayList<String> customerLedger_pk;
+    private final ArrayList<String> retail_credit_bill_details;
 
 
 
@@ -158,6 +160,9 @@ public class SQLiteDbBuilder {
         customerReturnDetail_pk =  new ArrayList<>();
         customerReturnMaster =  new ArrayList<>();
         customerReturnMaster_pk =  new ArrayList<>();
+        customerLedger =  new ArrayList<>();
+        customerLedger_pk =  new ArrayList<>();
+        retail_credit_bill_details =  new ArrayList<>();
 
         cartList= new ArrayList<>(Arrays.asList("STOCK_ID","PROD_NM","count","MRP","S_PRICE","SALESDISCOUNTBYAMOUNT","GST","SGST","CGST","QTY" ));
         cartList_Pk= new ArrayList<>(Collections.singletonList("STOCK_ID"));
@@ -729,7 +734,31 @@ public class SQLiteDbBuilder {
                 //Log.d("retail_store_pk", "constraint:" + constraint);
             }
 
+            JSONArray customerLedger_json = jsonObject.getJSONArray("customerLedger");
+            for (int i = 0; i < customerLedger_json.length(); i++) {
+                JSONObject obj = (JSONObject) customerLedger_json.get(i);
+                String id = obj.getString("Field");
+                customerLedger.add(id);
+                // Log.d("retail_store", "id:" + id);
 
+            }
+
+            JSONArray customerLedger_pk_json = jsonObject.getJSONArray("customerLedger_pk");
+            for (int i = 0; i < customerLedger_pk_json.length(); i++) {
+                JSONObject obj = (JSONObject) customerLedger_pk_json.get(i);
+                String constraint = obj.getString("Constraint");
+                customerLedger_pk.add(constraint);
+                //Log.d("retail_store_pk", "constraint:" + constraint);
+            }
+
+            JSONArray retailCreditBillDetails_JSON = jsonObject.getJSONArray("retail_credit_bill_details");
+            for (int i = 0; i < retailCreditBillDetails_JSON.length(); i++) {
+                JSONObject obj = (JSONObject) retailCreditBillDetails_JSON.get(i);
+                String id = obj.getString("Field");
+                retail_credit_bill_details.add(id);
+                // Log.d("retail_store", "id:" + id);
+
+            }
 
             createDynamicDatabase(context, "group_user_master", user_master, user_master_pk);
             createDynamicDatabase(context, "retail_cust", retail_cust, retail_cust_pk);
@@ -763,6 +792,8 @@ public class SQLiteDbBuilder {
             createDynamicDatabase(context, "retail_credit_cust", retail_credit_cust, retail_credit_cust_pk);
             createDynamicDatabase(context, "customerReturnDetail", customerReturnDetail, customerReturnDetail_pk);
             createDynamicDatabase(context, "customerReturnMaster", customerReturnMaster, customerReturnMaster_pk);
+            createDynamicDatabase(context, "customerLedger", customerLedger, customerLedger_pk);
+            createDynamicDatabaseWithoutKey(context, "retail_credit_bill_details", retail_credit_bill_details);
 
             dbOk=true;
             //loadingDialog.cancelDialog();
@@ -799,6 +830,34 @@ public class SQLiteDbBuilder {
             querryString += title.get(i) + " NVARCHAR(30) ";
             querryString = "CREATE TABLE IF NOT EXISTS " + tableName + "(" + querryString + ", CONSTRAINT store_pk PRIMARY KEY " + constraintString + " );";
           //  System.out.println("Create Table Stmt : " + querryString);
+            myDataBase.execSQL(querryString);
+            myDataBase.close();
+
+        } catch (SQLException ex) {
+            Log.i("xyz CreateDB Exception ", ex.getMessage());
+        }
+    }
+
+    public void createDynamicDatabaseWithoutKey(Context context, String tableName, ArrayList<String> title) {
+        // Log.i("INSIDE LoginDatabase", "****creatLoginDatabase*****"+tableName+constraint.toString());
+        //  Log.d("PrintingTableReceived", "createDynamicDatabase: "+title.toString());
+        try {
+            int i;
+            String querryString;
+            SQLiteDatabase myDataBase = context.openOrCreateDatabase(dbname,Context.MODE_PRIVATE, null);          //Opens database in writable mode.
+            //myDataBase.execSQL("PRAGMA key ='Anaconda'");          //Opens database in writable mode.
+
+            //Opens database in writable mode.
+            querryString = title.get(0) + " NVARCHAR(30),";
+            Log.d("**createDynamicDatabase", "in oncreate");
+            for (i = 1; i < title.size() - 1; i++) {
+                querryString += title.get(i);
+                querryString += " NVARCHAR(30) ";
+                querryString += ",";
+            }
+            querryString += title.get(i) + " NVARCHAR(30) ";
+            querryString = "CREATE TABLE IF NOT EXISTS " + tableName + "(" + querryString + " );";
+            //  System.out.println("Create Table Stmt : " + querryString);
             myDataBase.execSQL(querryString);
             myDataBase.close();
 

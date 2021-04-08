@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".View.ui.CustomerUpdateFragment.CustomerUpdateFragment">
+    tools:context=".View.ui.CustomerUpdate.CustomerUpdateFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -207,6 +207,66 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/cu_advance_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="0dp"
+                    android:layout_marginEnd="0dp"
+                    android:layout_marginBottom="@dimen/_5sdp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/cu_advance_title"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="start"
+                        android:singleLine="true"
+                        android:text="Advance "
+                        android:textColor="?colorOnBackground"
+                        android:textSize="@dimen/_14ssp" />
+
+                    <EditText
+                        android:id="@+id/cu_advance_value"
+                        android:layout_width="@dimen/_80sdp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:ems="10"
+                        android:inputType="numberDecimal"
+                        android:textColor="?colorOnSurface" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/cu_credit_limit_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="0dp"
+                    android:layout_marginEnd="0dp"
+                    android:layout_marginBottom="@dimen/_5sdp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/cu_credit_limit_title"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="start"
+                        android:singleLine="true"
+                        android:text="Credit Limit "
+                        android:textColor="?colorOnBackground"
+                        android:textSize="@dimen/_14ssp" />
+
+                    <EditText
+                        android:id="@+id/cu_credit_limit_value"
+                        android:layout_width="@dimen/_80sdp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:ems="10"
+                        android:inputType="numberDecimal"
+                        android:textColor="?colorOnSurface" />
+                </LinearLayout>
+
+                <LinearLayout
                     android:id="@+id/cu_cust_type_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -272,124 +332,7 @@
                         android:gravity="start" />
                 </LinearLayout>
 
-                <View
-                    android:id="@+id/cu_divider_1"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginTop="25dp"
-                    android:background="?colorPrimary" />
 
-                <TextView
-                    android:id="@+id/address_header"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Address Details"
-                    android:textColor="?colorPrimary"
-                    android:textSize="@dimen/_11sdp"
-                    android:textStyle="bold" />
-
-                <View
-                    android:id="@+id/cu_divider_2"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginTop="5dp"
-                    android:background="?colorPrimary" />
-
-                <LinearLayout
-                    android:id="@+id/cu_add1_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="0dp"
-                    android:layout_marginEnd="0dp"
-                    android:layout_marginBottom="@dimen/_5sdp"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/cu_add1_title"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="start"
-                        android:singleLine="true"
-                        android:text="Address 1* "
-                        android:textColor="?colorOnBackground"
-                        android:textSize="@dimen/_14ssp" />
-
-                    <EditText
-                        android:id="@+id/cu_add1_value"
-                        android:layout_width="@dimen/_80sdp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:ems="10"
-                        android:inputType="text"
-                        android:textColor="?colorOnSurface" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/cu_add2_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="0dp"
-                    android:layout_marginEnd="0dp"
-                    android:layout_marginBottom="@dimen/_5sdp"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/cu_add2_title"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="start"
-                        android:singleLine="true"
-                        android:text="Address 2* "
-                        android:textColor="?colorOnBackground"
-                        android:textSize="@dimen/_14ssp" />
-
-                    <EditText
-                        android:id="@+id/cu_add2_value"
-                        android:layout_width="@dimen/_80sdp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:ems="10"
-                        android:inputType="text"
-                        android:textColor="?colorOnSurface" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/cu_street_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="0dp"
-                    android:layout_marginEnd="0dp"
-                    android:layout_marginBottom="@dimen/_5sdp"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/cu_street_title"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:ellipsize="marquee"
-                        android:focusable="true"
-                        android:focusableInTouchMode="true"
-                        android:freezesText="true"
-                        android:gravity="start"
-                        android:marqueeRepeatLimit="marquee_forever"
-                        android:scrollHorizontally="true"
-                        android:singleLine="true"
-                        android:text="Street Area* "
-                        android:textColor="?colorOnBackground"
-                        android:textSize="@dimen/_14ssp" />
-
-                    <EditText
-                        android:id="@+id/cu_street_value"
-                        android:layout_width="@dimen/_80sdp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:ems="10"
-                        android:inputType="text"
-                        android:textColor="?colorOnSurface" />
-                </LinearLayout>
             </LinearLayout>
         </ScrollView>
 

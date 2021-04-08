@@ -138,37 +138,100 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/pay_credit_amount_layout"
+        android:id="@+id/pay_credit_main_layout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="@dimen/_10sdp"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/pay_cash_amount_layout">
+        app:layout_constraintTop_toBottomOf="@+id/pay_cash_amount_layout">
 
-        <TextView
-            android:id="@+id/pay_credit_amount_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Credit Payment"
-            android:textColor="?colorOnBackground"
-            android:textSize="@dimen/_13ssp"
-            android:textStyle="bold" />
+            <View
+                android:id="@+id/c_divider_1"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="?colorPrimary" />
 
-        <EditText
-            android:id="@+id/pay_credit_amount_value"
+            <TextView
+                android:id="@+id/address_header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Credit Payment"
+                android:textColor="?colorPrimary"
+                android:textSize="@dimen/_11sdp"
+                android:textStyle="bold" />
+
+            <View
+                android:id="@+id/c_divider_2"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="5dp"
+                android:background="?colorPrimary" />
+
+        <LinearLayout
+            android:id="@+id/pay_cash_credit_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:digits="0,1,2,3,4,5,6,7,8,9,."
-            android:ems="15"
-            android:includeFontPadding="true"
-            android:inputType="numberDecimal|textNoSuggestions"
-            android:letterSpacing="0.4"
-            android:textColor="?colorOnSurface"
-            android:textStyle="bold" />
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/pay_cash_credit_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Credit Balance:"
+                android:textColor="?colorOnBackground"
+                android:textSize="@dimen/_13ssp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/pay_cash_credit_value"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="start"
+                android:text="00.0 ₹"
+                android:textColor="?colorOnBackground"
+                android:textSize="@dimen/_13ssp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/pay_credit_amount_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_6sdp"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/pay_cash_credit_layout">
+
+            <TextView
+                android:id="@+id/pay_credit_amount_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Credit Payment"
+                android:textColor="?colorOnBackground"
+                android:textSize="@dimen/_13ssp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/pay_credit_amount_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:digits="0,1,2,3,4,5,6,7,8,9,."
+                android:ems="8"
+                android:includeFontPadding="true"
+                android:inputType="numberDecimal|textNoSuggestions"
+                android:letterSpacing="0.4"
+                android:textColor="?colorOnSurface"
+                android:textStyle="bold" />
+        </LinearLayout>
     </LinearLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

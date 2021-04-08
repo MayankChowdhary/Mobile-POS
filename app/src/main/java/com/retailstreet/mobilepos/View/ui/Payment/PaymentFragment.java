@@ -16,8 +16,10 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -33,6 +35,7 @@ import androidx.viewpager.widget.ViewPager;
 import com.google.android.material.tabs.TabLayout;
 import com.labters.lottiealertdialoglibrary.DialogTypes;
 import com.retailstreet.mobilepos.Controller.BillGenerator;
+import com.retailstreet.mobilepos.Controller.ControllerCreditPay;
 import com.retailstreet.mobilepos.R;
 import com.retailstreet.mobilepos.Utils.StringWithTag;
 import com.retailstreet.mobilepos.Utils.Vibration;
@@ -44,6 +47,7 @@ import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -58,8 +62,9 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
     private EditText received_amnt;
     private String deliveryGuid;
     private TextView pendingAmountTextView;
+    private LinearLayout creditPayLayout;
+    private boolean isCreditPay = false;
     private Double pendingAmount;
-     String changeValue = "0.00";
      double paidByCash = 0.00;
     double paidByCard = 0.00;
     double paidByOnline = 0.00;
@@ -82,6 +87,14 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
     HashMap<String , String[]> payModeData= new HashMap<String, String[]>();
     HashMap<String ,String> payModeId= new HashMap<String, String>();
     String cardType = "OT";
+
+    String creditBalance="0.00";
+    String addDiscount="0.00";
+    double paidByCredit = 0.00;
+    String isCreditEnabled;
+    String creditLimit ;
+    String redeemNumber="";
+    String redeemMasterAmount="0.00";
 
 
 
@@ -106,12 +119,24 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
         amountToPay=myArgs.getAmountToPay();
         customerId=myArgs.getCustomerID();
         deliveryGuid = myArgs.getDelTypeGuid();
-        getPayModeID();
+        isCreditPay = myArgs.getIsCreditPay();
+        creditBalance = myArgs.getCreditBalance();
+        addDiscount = myArgs.getAddDiscount();
 
-        
+        if(!customerId.trim().isEmpty()){
+
+            getCreditDetails(customerId);
+        }
+
+        Log.d("Credit Balance Received", "onViewCreated: "+creditBalance);
+        Log.d("Additional Disc", "onViewCreated: "+addDiscount);
+        Log.d("CustGuid Received", "onViewCreated: "+customerId);
+
+        getPayModeID();
        pendingAmountTextView = view.findViewById(R.id.pending_amount_value);
         pendingAmountTextView.setText(amountToPay+" ₹");
         pendingAmount = Double.parseDouble(amountToPay);
+
 
         ViewPager payModeViewPager = view.findViewById(R.id.pay_mode_viewpager);
         PaymentPagerAdapter paymentPagerAdapter = new PaymentPagerAdapter();
@@ -127,22 +152,33 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
         initCashLayout(payModeViewPager.getRootView());
         initCardLayout(payModeViewPager.getRootView());
         initOnlinePayLayout(payModeViewPager.getRootView());
+        initRedeemLayout(payModeViewPager.getRootView());
 
         Button payButton = view.findViewById(R.id.pay_buton);
         payButton.setOnClickListener(v -> {
 
-            if(pendingAmount>0){
+            if(pendingAmount>0 && !isCreditPay){
 
                 Toast.makeText(getContext(),"Insufficient Amount",Toast.LENGTH_LONG).show();
                 Vibration.Companion.vibrate(500);
                 return;
             }
 
+            String message = "";
+
+            if(isCreditPay){
+
+                message = "Settlement Completed";
+            }else {
+
+                message = "Purchase Completed";
+            }
+
             payButton.setClickable(false);
             String balanceCash = String.valueOf(pendingAmount);
 
          LottieAlertDialogs alertDialog= new LottieAlertDialogs.Builder(getContext(), DialogTypes.TYPE_SUCCESS)
-                            .setTitle("Purchase Completed")
+                            .setTitle(message)
                             .setDescription("Thank You!")
                             .setPositiveText("Back")
                             .setPositiveButtonColor(Color.parseColor("#297999"))
@@ -150,7 +186,14 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
                              .setPositiveListener(new ClickListeners() {
                                 @Override
                                 public void onClick(@NotNull LottieAlertDialogs lottieAlertDialog) {
-                                    Navigation.findNavController(requireActivity(),R.id.nav_host_fragment).navigate(R.id.nav_sales);
+                                    if(!isCreditPay)
+                                        {
+                                            Navigation.findNavController(requireActivity(), R.id.nav_host_fragment).navigate(R.id.nav_sales);
+                                        }else {
+
+                                        Navigation.findNavController(requireActivity(), R.id.nav_host_fragment).popBackStack();
+
+                                    }
                                     lottieAlertDialog.dismiss();
                                 }
                             })
@@ -159,9 +202,13 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
                      alertDialog.show();
 
 
+            if(isCreditPay){
 
-            new BillGenerator(customerId,receivedcash,balanceCash,deliveryGuid,payModeData);
-            EmptyCart();
+                new ControllerCreditPay(customerId,payModeData);
+            }else {
+                new BillGenerator(customerId, receivedcash, balanceCash, deliveryGuid, payModeData,addDiscount,redeemNumber);
+                EmptyCart();
+            }
 
 
 
@@ -196,6 +243,9 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
 
     private void initCashLayout(View viewPager){
         received_amnt = viewPager.findViewById(R.id.received_amount_value);
+        TextView creditBalanceTV = viewPager.findViewById(R.id.pay_cash_credit_value);
+        creditBalanceTV.setText(creditBalance+" ₹");
+        EditText creditPayEditText = viewPager.findViewById(R.id.pay_credit_amount_value);
 
 
         Button cash50 = viewPager.findViewById(R.id.cash_fifty);
@@ -209,6 +259,84 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
         cash200.setOnClickListener(this);
         cash500.setOnClickListener(this);
         cash2000.setOnClickListener(this);
+
+        creditPayLayout = viewPager.findViewById(R.id.pay_credit_main_layout);
+        if(isCreditPay || customerId.trim().isEmpty() || Integer.parseInt(isCreditEnabled)==0){
+            creditPayLayout.setVisibility(View.GONE);
+        }else {
+            creditPayLayout.setVisibility(View.VISIBLE);
+        }
+
+
+        creditPayEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                paidByCredit = 0;
+                setPendingAmount();
+                payModeData.remove("RX");
+
+                if(s.toString().trim().isEmpty()){
+                    return;
+                }
+
+                try {
+                    if(Double.parseDouble(creditLimit)<= 0.00){
+                        Toast.makeText(getContext(), "Not Allowed! Credit Limit is 0", Toast.LENGTH_LONG).show();
+                        Vibration.Companion.vibrate(300);
+                        return;
+
+                    }
+
+                    if (pendingAmount <= 0) {
+                        Toast.makeText(getContext(), "No Amount is Pending!", Toast.LENGTH_LONG).show();
+                        Vibration.Companion.vibrate(300);
+                        return;
+                    }
+
+                    String amntReceived = s.toString();
+                    if (amntReceived.trim().isEmpty()){
+                        amntReceived = "0.00";
+                    }
+
+
+                    Log.d("Printing Double", "afterTextChanged: "+amntReceived);
+                    double received = Double.parseDouble(amntReceived);
+
+                    if(Double.parseDouble(creditLimit)<received){
+
+                        Toast.makeText(getContext(), "Incorrect Amount, Current Credit Limit is:  "+creditLimit, Toast.LENGTH_LONG).show();
+                        Vibration.Companion.vibrate(300);
+                        return;
+                    }
+
+
+                    if (received <= pendingAmount && received > 0) {
+                        paidByCredit = received;
+                        setPendingAmount();
+                        payModeData.put("RX", new String[]{payModeId.get("RX"), "", String.valueOf(paidByCredit), "", "", ""});
+                    } else {
+                        paidByCredit = 0;
+                        setPendingAmount();
+                        Toast.makeText(getContext(), "Incorrect Amount!", Toast.LENGTH_LONG).show();
+                        Vibration.Companion.vibrate(300);
+                    }
+                } catch (NumberFormatException e) {
+                    Toast.makeText(getContext(), "Incorrect Amount!", Toast.LENGTH_LONG).show();
+                    Vibration.Companion.vibrate(300);
+                    e.printStackTrace();
+                }
+            }
+        });
 
         received_amnt.addTextChangedListener(new TextWatcher() {
 
@@ -239,7 +367,16 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
                     }else {
                         paidByCash = received;
                         setPendingAmount();
-                        double payCash = received<=pendingAmount ? received : received - pendingAmount;
+                        double payCash=0.00;
+                        if(!isCreditPay) {
+                            payCash = received <= pendingAmount ? received : received - pendingAmount;
+                        }else {
+                            if(received<=pendingAmount){
+                                payCash = received;
+                            }else if(received>pendingAmount) {
+                                payCash = pendingAmount;
+                            }
+                        }
                         payModeData.put("CA",new String[]{payModeId.get("CA"),"",String.valueOf(payCash),"","",""});
 
                     }
@@ -286,8 +423,6 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
         bankNameSpinner.setTitle("Select Bank");
         bankNameSpinner.setPositiveButton("OK");
         bankNameSpinner.setGravity(Gravity.START);
-
-
 
 
         Spinner expirySelector = viewPager.findViewById(R.id.pay_card_expiry_value);
@@ -807,6 +942,66 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
         });
     }
 
+    private  void initRedeemLayout(View viewPger) {
+
+        TextView redeemAmount = viewPger.findViewById(R.id.pay_redeem_amount_value);
+        AutoCompleteTextView redeemNoteValue = viewPger.findViewById(R.id.pay_redeem_note_value);
+
+        List<StringWithTag> creditNotelist = getCreditNoteArray();
+
+        ArrayAdapter<StringWithTag> redeemAdapter = new ArrayAdapter<>(getContext(), android.R.layout.select_dialog_item, creditNotelist);
+        //Getting the instance of AutoCompleteTextView
+        redeemNoteValue.setThreshold(1);//will start working from first character
+        redeemNoteValue.setAdapter(redeemAdapter);//setting the adapter data into the AutoCompleteTextView
+
+        redeemNoteValue.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View arg1, int position, long arg3) {
+                Object item = parent.getItemAtPosition(position);
+                StringWithTag myItem = (StringWithTag) item;
+                String amount = myItem.tag;
+                redeemAmount.setText(amount+" ₹");
+                Log.d("NoteSelected", "onItemClick: "+redeemNumber);
+                double amountInNum = Math.abs(Double.parseDouble(amount));
+                if(amountInNum>pendingAmount){
+                    Toast.makeText(getContext(), "Incorrect Amount!", Toast.LENGTH_LONG).show();
+                    Vibration.Companion.vibrate(300);
+                }else {
+                    redeemNumber = myItem.string;
+                    redeemMasterAmount = amount;
+                    setPendingAmount();
+                }
+
+            }
+        });
+
+        redeemNoteValue.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+
+                redeemAmount.setText("0.00 ₹");
+                redeemMasterAmount = "0.00";
+                redeemNumber = "";
+                setPendingAmount();
+            }
+
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+
+            }
+        });
+
+    }
+
 
     private List<StringWithTag> getBankListData(){
         List<StringWithTag> list = new ArrayList<StringWithTag>();
@@ -863,16 +1058,72 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
 
     private void setPendingAmount(){
 
-        List<Double> allAmount = new ArrayList<>(Arrays.asList(paidByCash, paidByCard, paidByOnline,paidByPaytm,paidByGpay,paidByWhatsapp,paidByAmazon,paidByBhim));
+        List<Double> allAmount = new ArrayList<>(Arrays.asList(paidByCash, paidByCard, paidByOnline,paidByPaytm,paidByGpay,paidByWhatsapp,paidByAmazon,paidByBhim,paidByCredit));
         pendingAmount = Double.parseDouble(amountToPay);
         for(Double paid: allAmount){
 
             pendingAmount = pendingAmount - paid;
             Log.d("PendingAmount Set", "setPendingAmount: "+pendingAmount);
         }
-        pendingAmountTextView.setText(pendingAmount+" ₹");
+        if(redeemMasterAmount!=null && !redeemMasterAmount.trim().isEmpty()){
+            if(Double.parseDouble(redeemMasterAmount)>0){
+
+                pendingAmount = pendingAmount - Double.parseDouble(redeemMasterAmount);
+            }
+        }
+        pendingAmountTextView.setText((new DecimalFormat("#.##").format(pendingAmount))+" ₹");
 
     }
 
+    private void getCreditDetails(String custId){
+        SQLiteDatabase mydb = requireActivity().openOrCreateDatabase("MasterDB", Context.MODE_PRIVATE,null);
+        Cursor cursor = mydb.rawQuery("select CREDITLIMIT, CREDIT_CUST from retail_cust where CUSTOMERGUID = '"+custId+"'",null);
+        if (cursor.moveToFirst()) {
+            while (!cursor.isAfterLast()) {
+                creditLimit = cursor.getString(0);
+                isCreditEnabled = cursor.getString(1);
+
+                Log.d("CreditLimitRetrieved", "getCreditDetails: "+creditLimit);
+                Log.d("isCreditEnabled", "getCreditDetails: "+isCreditEnabled);
+
+                cursor.moveToNext();
+            }
+        }
+        cursor.close();
+        mydb.close();
+    }
+
+    /*private String getTotalPayment(){
+        double totalSum=0.00;
+        for (Map.Entry<String,String[]> entry : payModeData.entrySet()) {
+            String[] data = entry.getValue();
+           String  PAYAMOUNT = data[2];
+           totalSum += Double.parseDouble(PAYAMOUNT);
+        }
+
+        return String.valueOf(totalSum);
+    }*/
+
+
+
+    private List<StringWithTag> getCreditNoteArray(){
+        List<StringWithTag> list = new ArrayList<>();
+        //list.add(new StringWithTag("No Delivery Type", " "));
+
+        SQLiteDatabase mydb = requireContext().openOrCreateDatabase("MasterDB", Context.MODE_PRIVATE,null);
+        Cursor cursor = mydb.rawQuery("select CREDITNOTENUMBER, AMOUNTREFUNDED from customerReturnMaster Where REPLACEMENTBILLNO = ?",new String[] {""});
+        if (cursor.moveToFirst()) {
+            while (!cursor.isAfterLast()) {
+                String number = cursor.getString(0);
+                String amount = cursor.getString(1);
+                list.add(new StringWithTag(number, amount));
+                cursor.moveToNext();
+            }
+        }
+        cursor.close();
+        mydb.close();
+        return  list;
+
+    }
 
 }

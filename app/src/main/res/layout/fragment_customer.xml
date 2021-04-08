@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".View.ui.Customer.CustomerFragment">
+    tools:context=".View.ui.CustomerAddition.CustomerFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -288,7 +288,7 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/pay_gpay_layout"
+                    android:id="@+id/c_credit_limit_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="0dp"

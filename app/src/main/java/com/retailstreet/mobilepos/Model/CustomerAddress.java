@@ -3,7 +3,7 @@ package com.retailstreet.mobilepos.Model;
 public class CustomerAddress {
 
     String CUSTOMERADDRESSID;
-    String MASTERCUSTOMERGUID;
+    String MASTERCUSTOMERID;
     String ADDRESSTYPE;
     String CONTACTPERSONNAME;
     String ADDRESSLINE1;
@@ -11,7 +11,7 @@ public class CustomerAddress {
     String STREET_AREA;
     String PINCODE;
     String CITY;
-    String MASTERSTATEGUID;
+    String MASTERSTATEID;
     String ADDRESSSTATUS;
     String CREATEDBY;
     String CREATEDDATETIME;
@@ -19,9 +19,9 @@ public class CustomerAddress {
     public CustomerAddress() {
     }
 
-    public CustomerAddress(String CUSTOMERADDRESSID, String MASTERCUSTOMERGUID, String ADDRESSTYPE, String CONTACTPERSONNAME, String ADDRESSLINE1, String ADDRESSLINE2, String STREET_AREA, String PINCODE, String CITY, String MASTERSTATEGUID, String ADDRESSSTATUS, String CREATEDBY, String CREATEDDATETIME) {
+    public CustomerAddress(String CUSTOMERADDRESSID, String MASTERCUSTOMERID, String ADDRESSTYPE, String CONTACTPERSONNAME, String ADDRESSLINE1, String ADDRESSLINE2, String STREET_AREA, String PINCODE, String CITY, String MASTERSTATEID, String ADDRESSSTATUS, String CREATEDBY, String CREATEDDATETIME) {
         this.CUSTOMERADDRESSID = CUSTOMERADDRESSID;
-        this.MASTERCUSTOMERGUID = MASTERCUSTOMERGUID;
+        this.MASTERCUSTOMERID = MASTERCUSTOMERID;
         this.ADDRESSTYPE = ADDRESSTYPE;
         this.CONTACTPERSONNAME = CONTACTPERSONNAME;
         this.ADDRESSLINE1 = ADDRESSLINE1;
@@ -29,7 +29,7 @@ public class CustomerAddress {
         this.STREET_AREA = STREET_AREA;
         this.PINCODE = PINCODE;
         this.CITY = CITY;
-        this.MASTERSTATEGUID = MASTERSTATEGUID;
+        this.MASTERSTATEID = MASTERSTATEID;
         this.ADDRESSSTATUS = ADDRESSSTATUS;
         this.CREATEDBY = CREATEDBY;
         this.CREATEDDATETIME = CREATEDDATETIME;
@@ -44,11 +44,11 @@ public class CustomerAddress {
     }
 
     public String getMASTERCUSTOMERID() {
-        return MASTERCUSTOMERGUID;
+        return MASTERCUSTOMERID;
     }
 
     public void setMASTERCUSTOMERID(String MASTERCUSTOMERID) {
-        this.MASTERCUSTOMERGUID = MASTERCUSTOMERID;
+        this.MASTERCUSTOMERID = MASTERCUSTOMERID;
     }
 
     public String getADDRESSTYPE() {
@@ -108,11 +108,11 @@ public class CustomerAddress {
     }
 
     public String getMASTERSTATEID() {
-        return MASTERSTATEGUID;
+        return MASTERSTATEID;
     }
 
     public void setMASTERSTATEID(String MASTERSTATEID) {
-        this.MASTERSTATEGUID = MASTERSTATEID;
+        this.MASTERSTATEID = MASTERSTATEID;
     }
 
     public String getADDRESSSTATUS() {

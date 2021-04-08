@@ -54,6 +54,11 @@ public class ControllerProductMaster {
     String UOM_GUID;
     String UoMID;
     String ISSYNCED;
+    String ISPRODUCTRETURNABLE;
+    String ISLOOSEITEM;
+    String ADDITIONALPARAM1;
+    String ADDITIONALPARAM2;
+    String ADDITIONALPARAM3;
 
     String userGuid;
 
@@ -62,7 +67,7 @@ public class ControllerProductMaster {
 
     }
 
-    public ControllerProductMaster(String qty, String batch_no, String internetPrice, String sPrice, String mrp,String minQty, String MaxQty, String wholePrice, String specPrice, String expDate, String vendor_nm, String vendorGuid,String prodName, String brandName,String p_price, String category, String subCategory, String barcode, String categoryGuid, String cess1, String cess2, String cgst, String extProID, String hsn, String igst, String sgst, String subCategoryGuid, String uom, String uomGuid){
+    public ControllerProductMaster(String qty, String batch_no, String internetPrice, String sPrice, String mrp,String minQty, String MaxQty, String wholePrice, String specPrice, String expDate, String vendor_nm, String vendorGuid,String prodName, String brandName,String p_price, String category, String subCategory, String barcode, String categoryGuid, String cess1, String cess2, String cgst, String extProID, String hsn, String igst, String sgst, String subCategoryGuid, String uom, String uomGuid, String isProdReturn, String isLoose){
 
         context = ApplicationContextProvider.getContext();
         ACTIVE="1";
@@ -98,8 +103,13 @@ public class ControllerProductMaster {
         UoMID = getFromUomMaster(uomGuid,"UoMID");
         ISSYNCED = "0";
         userGuid= getFromGroupUserMaster("USER_GUID");
+        ISPRODUCTRETURNABLE = isProdReturn;
+        ISLOOSEITEM = isLoose;
+        ADDITIONALPARAM1 = "YES";
+        ADDITIONALPARAM2 ="YES";
+        ADDITIONALPARAM3 = "YES";
 
-        ProductMaster productMaster= new ProductMaster( ACTIVE,  BARCODE,  CATEGORY,  CATEGORY_GUID,  CESS1,  CESS2,  CGST,  EXTERNALPRODUCTID,  GENERIC_NAME,  GST,  HSN,  IGST,  ITEM_CODE,  ITEM_GUID,  Item_Type,  MASTERBRAND,  MASTERCATEGORY_id,  POS_USER,  PRINT_NAME,  PROD_ID,  PROD_NM,  PRODUCTRELEVANCE,  SGST,  STORE_ID,  STORE_NUMBER,  SUB_CATEGORYGUID,  SUBCATEGORY_DESCRIPTION,  SUBCATEGORY_ID,  UOM,  UOM_GUID,  UoMID,ISSYNCED) ;
+        ProductMaster productMaster= new ProductMaster( ACTIVE,  BARCODE,  CATEGORY,  CATEGORY_GUID,  CESS1,  CESS2,  CGST,  EXTERNALPRODUCTID,  GENERIC_NAME,  GST,  HSN,  IGST,  ITEM_CODE,  ITEM_GUID,  Item_Type,  MASTERBRAND,  MASTERCATEGORY_id,  POS_USER,  PRINT_NAME,  PROD_ID,  PROD_NM,  PRODUCTRELEVANCE,  SGST,  STORE_ID,  STORE_NUMBER,  SUB_CATEGORYGUID,  SUBCATEGORY_DESCRIPTION,  SUBCATEGORY_ID,  UOM,  UOM_GUID,  UoMID,ISSYNCED, ISPRODUCTRETURNABLE, ISLOOSEITEM, ADDITIONALPARAM1, ADDITIONALPARAM2, ADDITIONALPARAM3) ;
         InsertProductMaster(productMaster);
         new ControllerStockMaster(context).InjectIntoStockMaster(vendor_nm,vendorGuid,  userGuid,  ITEM_CODE, PROD_NM, expDate, CESS1, CESS2, GST, SGST, IGST, CGST, EXTERNALPRODUCTID, GENERIC_NAME, specPrice, wholePrice,  minQty,  MaxQty, internetPrice, sPrice, mrp, p_price, BARCODE, batch_no,  UOM, ITEM_GUID, qty, UOM_GUID);
 
@@ -148,7 +158,11 @@ public class ControllerProductMaster {
                 contentValues.put("UOM_GUID",prod.getUOM_GUID());
                 contentValues.put("UoMID",prod.getUoMID());
                 contentValues.put("ISSYNCED",prod.getISSYNCED());
-
+                contentValues.put("ISPRODUCTRETURNABLE",prod.getISPRODUCTRETURNABLE());
+                contentValues.put("ISLOOSEITEM",prod.getISLOOSEITEM());
+                contentValues.put("ADDITIONALPARAM1",prod.getADDITIONALPARAM1());
+                contentValues.put("ADDITIONALPARAM2",prod.getADDITIONALPARAM2());
+                contentValues.put("ADDITIONALPARAM3",prod.getADDITIONALPARAM3());
                 myDataBase.insert("retail_store_prod_com", null, contentValues);
             myDataBase.close();
             Log.d("Insertion Successful", "InsertProductMaster: ");
@@ -156,6 +170,8 @@ public class ControllerProductMaster {
             e.printStackTrace();
         }
     }
+
+
 
     private String getFromCategoryMaster( String catGuid, String column) {
 
@@ -280,7 +296,7 @@ public class ControllerProductMaster {
             SQLiteDatabase mydb  = context.openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
             Cursor productcursor = mydb.rawQuery(" select a.PROD_ID,a.CATEGORY_GUID,a.SUB_CATEGORYGUID,a.ITEM_GUID," +
                     "a.ITEM_CODE,a.PROD_NM,a.PRINT_NAME,a.BARCODE,a.HSN,a.GST,a.ACTIVE,a.STORE_ID,a.POS_USER," +
-                    "a.PRODUCTRELEVANCE,a.GENERIC_NAME,a.EXTERNALPRODUCTID,a.MASTERBRAND,b.UOM_GUID from retail_store_prod_com a LEFt JOIN master_uom b ON a.UoMID=b.UoMID where ISSYNCED = '0'  ", null);
+                    "a.PRODUCTRELEVANCE,a.GENERIC_NAME,a.EXTERNALPRODUCTID,a.MASTERBRAND,b.UOM_GUID, a.ISPRODUCTRETURNABLE, a.ISLOOSEITEM, a.ADDITIONALPARAM1, a.ADDITIONALPARAM2, a.ADDITIONALPARAM3 from retail_store_prod_com a LEFt JOIN master_uom b ON a.UoMID=b.UoMID where ISSYNCED = '0'  ", null);
             if (productcursor.moveToFirst()) {
                 do {
 
@@ -314,6 +330,11 @@ public class ControllerProductMaster {
                     pm.setEXTERNALPRODUCTID(productcursor.getString(productcursor.getColumnIndex("EXTERNALPRODUCTID")));
                     pm.setMASTERBRAND(productcursor.getString(productcursor.getColumnIndex("MASTERBRAND")));
                     pm.setISACTIVE("1");
+                    pm.setISPRODUCTRETURNABLE(productcursor.getString(productcursor.getColumnIndex("ISPRODUCTRETURNABLE")));
+                    pm.setISLOOSEITEM(productcursor.getString(productcursor.getColumnIndex("ISLOOSEITEM")));
+                    pm.setADDITIONALPARAM1(productcursor.getString(productcursor.getColumnIndex("ADDITIONALPARAM1")));
+                    pm.setADDITIONALPARAM2(productcursor.getString(productcursor.getColumnIndex("ADDITIONALPARAM2")));
+                    pm.setADDITIONALPARAM3(productcursor.getString(productcursor.getColumnIndex("ADDITIONALPARAM3")));
                     productlist.add(pm);
                 } while (productcursor.moveToNext());
             }
@@ -339,6 +360,9 @@ public class ControllerProductMaster {
             returnval = false;
         }
         db.close();
+
         return returnval;
     }
+
+
 }

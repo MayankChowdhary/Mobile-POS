@@ -13,8 +13,10 @@ import com.retailstreet.mobilepos.Model.BankDetails;
 import com.retailstreet.mobilepos.Model.BillDetail;
 import com.retailstreet.mobilepos.Model.BillMaster;
 import com.retailstreet.mobilepos.Model.BillPayDetail;
+import com.retailstreet.mobilepos.Model.CreditBillDetails;
 import com.retailstreet.mobilepos.Model.CustomerAddress;
 import com.retailstreet.mobilepos.Model.CustomerCredit;
+import com.retailstreet.mobilepos.Model.CustomerLedger;
 import com.retailstreet.mobilepos.Model.CustomerMaster;
 import com.retailstreet.mobilepos.Model.CustomerReject;
 import com.retailstreet.mobilepos.Model.CustomerReturnDetails;
@@ -83,11 +85,13 @@ public class TableDataInjector {
     private List<CustomerReturnDetails> customerReturnDetailsList = null;
     private List<CustomerReject> customerRejectList = null;
     private List<CustomerCredit> customerCreditList = null;
+    private List<CustomerLedger> customerLedgerList = null;
+    private List<CreditBillDetails> creditBillDetails = null;
 
     private LoadingDialog loadingDialog;
 
     public static int status =0;
-    private final int tableConstant=28;
+    private final int tableConstant=30;
 
     public TableDataInjector(Context context, String storeid,DBReadyCallback callback) {
 
@@ -126,6 +130,8 @@ public class TableDataInjector {
         getCustomerReturnDetails();
         getCustomerReject();
         getCustomerCredit();
+        getCustomerLedger();
+        getCreditBillDetails();
 
     }
 
@@ -820,6 +826,142 @@ public class TableDataInjector {
             Log.i("autolog", "Exception");
         }
     }
+
+    public void getCreditBillDetails() {
+        try {
+            Retrofit retrofit = getRetroInstance(baseUrl);
+            assert retrofit != null;
+            ApiInterface service = retrofit.create(ApiInterface.class);
+            Call<List<CreditBillDetails>> call = service.getCreditBillDetails(generateTableUrl("retail_credit_bill_details",storeId));
+            call.enqueue(new Callback<List<CreditBillDetails>>() {
+                @Override
+                public void onResponse(Call<List<CreditBillDetails>> call, Response<List<CreditBillDetails>> response) {
+                    creditBillDetails= response.body();
+                    Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
+                    InsertCreditBillDetails(creditBillDetails);
+                }
+
+                @Override
+                public void onFailure(Call<List<CreditBillDetails>> call, Throwable t) {
+                    Log.i("autolog", t.getMessage());
+                }
+            });
+        } catch (Exception e) {
+            Log.i("autolog", "Exception");
+        }
+    }
+
+    public void getCustomerLedger() {
+        try {
+            Retrofit retrofit = getRetroInstance(baseUrl);
+            assert retrofit != null;
+            ApiInterface service = retrofit.create(ApiInterface.class);
+            Call<List<CustomerLedger>> call = service.getCustomerLedger(generateTableUrl("customerLedger",storeId));
+            call.enqueue(new Callback<List<CustomerLedger>>() {
+                @Override
+                public void onResponse(Call<List<CustomerLedger>> call, Response<List<CustomerLedger>> response) {
+                    customerLedgerList= response.body();
+                    Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
+                    InsertCustomerLedger(customerLedgerList);
+                }
+
+                @Override
+                public void onFailure(Call<List<CustomerLedger>> call, Throwable t) {
+                    Log.i("autolog", t.getMessage());
+                }
+            });
+        } catch (Exception e) {
+            Log.i("autolog", "Exception");
+        }
+    }
+
+    public void InsertCreditBillDetails(List<CreditBillDetails> list) {
+        if (list == null) {
+            return;
+        }
+        try {
+            SQLiteDatabase myDataBase = context.openOrCreateDatabase(dbname, Context.MODE_PRIVATE, null);
+            myDataBase.delete("retail_credit_bill_details", null, null);
+            for (CreditBillDetails prod : list) {
+                ContentValues contentValues = new ContentValues();
+                contentValues.put("STORE_GUID", prod.getSTORE_GUID());
+                contentValues.put("CUSTOMERMOBILENO", prod.getCUSTOMERMOBILENO());
+                contentValues.put("CUSTOMERGUID", prod.getCUSTOMERGUID());
+                contentValues.put("BILLNO", prod.getBILLNO());
+                contentValues.put("BILLDATE", prod.getBILLDATE());
+                contentValues.put("ITEM_GUID", prod.getITEM_GUID());
+                contentValues.put("ITEM_NAME", prod.getITEM_NAME());
+                contentValues.put("MRP", prod.getMRP());
+                contentValues.put("SELLINGPRICE", prod.getSELLINGPRICE());
+                contentValues.put("QTY", prod.getQTY());
+                contentValues.put("TOTALVALUE", prod.getTOTALVALUE());
+                contentValues.put("TOTALGST", prod.getTOTALGST());
+                contentValues.put("CGST", prod.getCGST());
+                contentValues.put("SGST", prod.getSGST());
+                contentValues.put("IGST", prod.getIGST());
+                contentValues.put("DISCOUNT_PERC", prod.getDISCOUNT_PERC());
+                contentValues.put("DISCOUNT_VALUE", prod.getDISCOUNT_VALUE());
+
+                myDataBase.insert("retail_credit_bill_details", null, contentValues);
+
+            }
+
+            myDataBase.close();
+            status+=1;
+            if(status==tableConstant){
+                loadingDialog.cancelDialog();
+                dbReadyCallback.onDBReady();
+            }
+            Log.d("Insertion Successful", "CreditBillDetails: "+status);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void InsertCustomerLedger(List<CustomerLedger> list) {
+        if (list == null) {
+            return;
+        }
+        try {
+            SQLiteDatabase myDataBase = context.openOrCreateDatabase(dbname, Context.MODE_PRIVATE, null);
+            myDataBase.delete("customerLedger", null, null);
+            for (CustomerLedger prod : list) {
+                ContentValues contentValues = new ContentValues();
+                contentValues.put("CUSTLEDGERID", prod.getCUSTLEDGERID());
+                contentValues.put("CUSTOMERGUID", prod.getCUSTOMERGUID());
+                contentValues.put("STORE_GUID", prod.getSTORE_GUID());
+                contentValues.put("USER_GUID", prod.getUSER_GUID());
+                contentValues.put("ACTIONDATE", prod.getACTIONDATE());
+                contentValues.put("GRANDTOTAL", prod.getGRANDTOTAL());
+                contentValues.put("CREDITAMOUNT", prod.getCREDITAMOUNT());
+                contentValues.put("DEBITAMOUNT", prod.getDEBITAMOUNT());
+                contentValues.put("BALANCEAMOUNT", prod.getBALANCEAMOUNT());
+                contentValues.put("BILLNO", prod.getBILLNO());
+                contentValues.put("ISSYNCED", prod.getISSYNCED());
+                contentValues.put("MASTERPAYMODEGUID", prod.getMASTERPAYMODEGUID());
+                contentValues.put("ADDITIONALPARAM1", prod.getADDITIONALPARAM1());
+                contentValues.put("ADDITIONALPARAM2", prod.getADDITIONALPARAM2());
+                contentValues.put("ADDITIONALPARAM3", prod.getADDITIONALPARAM3());
+                contentValues.put("ADDITIONALPARAM4", prod.getADDITIONALPARAM4());
+                contentValues.put("ADDITIONALPARAM5", prod.getADDITIONALPARAM5());
+                contentValues.put("ADDITIONALPARAM6", prod.getADDITIONALPARAM6());
+
+                myDataBase.insert("customerLedger", null, contentValues);
+
+            }
+
+            myDataBase.close();
+            status+=1;
+            if(status==tableConstant){
+                loadingDialog.cancelDialog();
+                dbReadyCallback.onDBReady();
+            }
+            Log.d("Insertion Successful", "CustomerLedger: "+status);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public void InsertCustomerCredit(List<CustomerCredit> list) {
         if (list == null) {
@@ -1893,6 +2035,11 @@ public class TableDataInjector {
                 contentValues.put("UOM_GUID",prod.getUOM_GUID());
                 contentValues.put("UoMID",prod.getUoMID());
                 contentValues.put("ISSYNCED",prod.getISSYNCED());
+                contentValues.put("ISPRODUCTRETURNABLE",prod.getISPRODUCTRETURNABLE());
+                contentValues.put("ISLOOSEITEM",prod.getISLOOSEITEM());
+                contentValues.put("ADDITIONALPARAM1",prod.getADDITIONALPARAM1());
+                contentValues.put("ADDITIONALPARAM2",prod.getADDITIONALPARAM2());
+                contentValues.put("ADDITIONALPARAM3",prod.getADDITIONALPARAM3());
 
                 myDataBase.insert("retail_store_prod_com", null, contentValues);
 
@@ -2111,6 +2258,12 @@ public class TableDataInjector {
 
             case "retail_credit_cust":
                 return "ApiTest/RetailCreditCust?STORE_ID="+storeid;
+
+            case "customerLedger":
+                return "ApiTest/CustomerLedger?STORE_ID="+storeid;
+
+            case "retail_credit_bill_details":
+                return "ApiTest/RetailCreditBillDetails?STORE_ID="+storeid;
 
             default:
                 return "";

@@ -18,11 +18,14 @@ import com.retailstreet.mobilepos.Utils.Vibration
 import com.retailstreet.mobilepos.View.dialog.ClickListeners
 import com.retailstreet.mobilepos.View.dialog.LottieAlertDialogs
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner
+import com.tsongkha.spinnerdatepicker.DatePicker
+import com.tsongkha.spinnerdatepicker.DatePickerDialog
+import com.tsongkha.spinnerdatepicker.SpinnerDatePickerDialogBuilder
 import java.text.SimpleDateFormat
 import java.util.*
 
 
-class ProductsFragment : Fragment() {
+class ProductsFragment : Fragment() , DatePickerDialog.OnDateSetListener {
 
     companion object {
         fun newInstance() = ProductsFragment()
@@ -34,6 +37,8 @@ class ProductsFragment : Fragment() {
     private  var sgst:String =""
     private  var cgst:String =""
     private  var igst:String =""
+    lateinit var  expirySelector: Spinner
+    var expiryDate:String = ""
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -49,6 +54,8 @@ class ProductsFragment : Fragment() {
     @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        expiryDate = getSaleDateAndTime()
 
         val productNameEdittext:EditText = view.findViewById(R.id.p_name__value)
         val brandNameEdittext: EditText = view.findViewById(R.id.p_brand__value)
@@ -92,7 +99,8 @@ class ProductsFragment : Fragment() {
         var hsnName = " "
         var uomName =" "
         var uomGuid = " "
-        val expiryDate = getSaleDateAndTime()
+        var isProductReturnable:String = "TRUE"
+        var isLooseItem:String = "TRUE"
 
 
         val sgstName: EditText = view.findViewById(R.id.p_sgst_value);
@@ -103,6 +111,8 @@ class ProductsFragment : Fragment() {
         val vendorSpinner: SearchableSpinner = view.findViewById(R.id.p_vendor_value);
         val hsnSpinner: SearchableSpinner = view.findViewById(R.id.p_hsn_value);
         val uomSpinner: SearchableSpinner = view.findViewById(R.id.p_uom_value);
+        val productReturnableChk:CheckBox = view.findViewById(R.id.product_returnable_checkbox)
+        val looseItemChk:CheckBox = view.findViewById(R.id.product_looseitem_checkbox)
         val categoryArray: List<StringWithTag> = getCategoryName();
         var subCategoryArray: List<StringWithTag>
         val vendorArray: List<StringWithTag> = getVendorName();
@@ -157,12 +167,49 @@ class ProductsFragment : Fragment() {
         uomSpinner.gravity = Gravity.START
 
 
+         expirySelector = view.findViewById<Spinner>(R.id.product_expiry_value)
+        val expiryItem = arrayOf("DD/MM/YYYY")
+        val expiryAdapter = ArrayAdapter(requireContext(), R.layout.spinner_layout_centre, expiryItem)
+        expiryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        expirySelector.adapter = expiryAdapter
+
+        expirySelector.setOnTouchListener { v, event ->
+            if (event != null) {
+                if (event.action == MotionEvent.ACTION_UP) {
+
+                    val date = Date()
+                    val calendar = Calendar.getInstance()
+                    calendar.time = date
+
+
+                    SpinnerDatePickerDialogBuilder()
+                            .context(activity)
+                            .callback(this)
+                            .spinnerTheme(R.style.NumberPickerStyle)
+                            .showTitle(true)
+                            .showDaySpinner(true)
+                            .defaultDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
+                            .maxDate(2099, 0, 1)
+                            .minDate(calendar.get(Calendar.YEAR), 0, 1)
+                            .build()
+                            .show()
+                }
+
+
+            }
+            true
+        }
+
+
+
         class SpinnerTouchListener : OnTouchListener {
             override fun onTouch(v: View, event: MotionEvent?): Boolean {
                 if (event != null) {
                     if(event.action ==MotionEvent.ACTION_UP) {
                         Toast.makeText(context, "Select Category First!", Toast.LENGTH_LONG).show()
                         Vibration.vibrate(200);
+
+
                     }
                 }
                 return true
@@ -302,7 +349,20 @@ class ProductsFragment : Fragment() {
             minQty= min_qty_edittext.text.toString()
             maxQty= max_qty_edittext.text.toString()
 
-            ControllerProductMaster(stockQuantity, batchNum, internetPrice, sPrice, mrp, minQty, maxQty, wholePrice, specialPrice, expiryDate, vendorName, vendorGuid, productName, brandName, pPrice, categoryname, subCatName, barCode, categoryGuid, cess1, cess2, cgst, extProdId, hsnName, igst, sgst, subCatGuid, uomName, uomGuid)
+            isProductReturnable = if(productReturnableChk.isChecked){
+                "TRUE"
+            }else{
+                "FALSE"
+            }
+
+            isLooseItem = if(looseItemChk.isChecked){
+                "TRUE"
+            }else{
+                "FALSE"
+            }
+
+
+            ControllerProductMaster(stockQuantity, batchNum, internetPrice, sPrice, mrp, minQty, maxQty, wholePrice, specialPrice, expiryDate, vendorName, vendorGuid, productName, brandName, pPrice, categoryname, subCatName, barCode, categoryGuid, cess1, cess2, cgst, extProdId, hsnName, igst, sgst, subCatGuid, uomName, uomGuid, isProductReturnable, isLooseItem)
             //Toast.makeText(context, "Product Successfully Added", Toast.LENGTH_LONG).show();
             val alertDialog = LottieAlertDialogs.Builder(context, DialogTypes.TYPE_SUCCESS)
                     .setTitle("Product Added")
@@ -319,8 +379,6 @@ class ProductsFragment : Fragment() {
                     .build()
             alertDialog.setCancelable(false)
             alertDialog.show()
-
-
 
         }
     }
@@ -470,5 +528,17 @@ class ProductsFragment : Fragment() {
         val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
         val date = Date()
         return formatter.format(date)
+    }
+
+    override fun onDateSet(view: DatePicker?, year: Int, monthOfYear: Int, dayOfMonth: Int) {
+        val expiryItem = arrayOf("DD/MM/YYYY")
+        expiryItem[0] = dayOfMonth.toString()+"/"+(monthOfYear+1)+"/"+year.toString()
+        val expiryAdapter = ArrayAdapter(requireContext(), R.layout.spinner_layout_centre, expiryItem)
+        expiryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        expirySelector.adapter = expiryAdapter
+
+        expiryDate = year.toString()+"-"+monthOfYear.toString()+"-"+dayOfMonth.toString()+" 00:00:00"
+        Log.d("ExpiryDateSelected", "onDateSet: "+expiryDate)
+
     }
 }

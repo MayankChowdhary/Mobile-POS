@@ -5,8 +5,10 @@ import com.retailstreet.mobilepos.Model.BankDetails;
 import com.retailstreet.mobilepos.Model.BillDetail;
 import com.retailstreet.mobilepos.Model.BillMaster;
 import com.retailstreet.mobilepos.Model.BillPayDetail;
+import com.retailstreet.mobilepos.Model.CreditBillDetails;
 import com.retailstreet.mobilepos.Model.CustomerAddress;
 import com.retailstreet.mobilepos.Model.CustomerCredit;
+import com.retailstreet.mobilepos.Model.CustomerLedger;
 import com.retailstreet.mobilepos.Model.CustomerMaster;
 import com.retailstreet.mobilepos.Model.CustomerReject;
 import com.retailstreet.mobilepos.Model.CustomerReturnDetails;
@@ -137,12 +139,17 @@ public interface ApiInterface {
     @GET
     Call<List<CustomerReturnDetails>> getCustomerReturnDetails(@Url String url);
 
+    @GET
+    Call<List<CustomerLedger>> getCustomerLedger(@Url String url);
+
+    @GET
+    Call<List<CreditBillDetails>> getCreditBillDetails(@Url String url);
 
 
 
 
 
-   //****************************Upload API*****************************
+    //****************************Upload API*****************************
 
    @POST("/APIManagers/api/PullPOSRegualarSync/PullBillHeaderDetails")
    Call<SyncResponse> UploadSaleRecords(@Header("Authorization")String Authorization, @Body RequestBody body);
@@ -165,4 +172,8 @@ public interface ApiInterface {
 
     @POST("/APIManagers/api/PullPOSRegualarSync/PushCustomerReturns")
     Call<SyncResponse> UploadSalesReturnRecords(@Header("Authorization")String Authorization, @Body RequestBody body);
+
+    @POST("/APIManagers/api/PullPOSRegualarSync/PushCustomerLedger")
+    Call<SyncResponse> UploadcustomerladgersRecords(@Header("Authorization")String Authorization, @Body RequestBody body);
+
 }

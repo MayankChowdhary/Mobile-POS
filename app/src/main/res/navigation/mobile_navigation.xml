@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@id/nav_dayopen">
+    app:startDestination="@id/nav_home">
 
     <fragment
         android:id="@+id/nav_sales"
@@ -17,6 +17,13 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_nav_sales_to_nav_dayopen"
+            app:destination="@id/nav_dayopen"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
 
     <fragment
@@ -74,6 +81,17 @@
         <argument
             android:name="delTypeGuid"
             app:argType="string" />
+        <argument
+            android:name="isCreditPay"
+            app:argType="boolean" />
+        <argument
+            android:name="creditBalance"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="addDiscount"
+            app:argType="string"
+            app:nullable="true" />
     </fragment>
     <fragment
         android:id="@+id/nav_dayopen"
@@ -122,12 +140,12 @@
         tools:layout="@layout/fragment_products" />
     <fragment
         android:id="@+id/nav_customer"
-        android:name="com.retailstreet.mobilepos.View.ui.Customer.CustomerFragment"
+        android:name="com.retailstreet.mobilepos.View.ui.CustomerAddition.CustomerFragment"
         android:label="Add Customer"
         tools:layout="@layout/fragment_customer" />
     <fragment
         android:id="@+id/nav_customer_update"
-        android:name="com.retailstreet.mobilepos.View.ui.CustomerUpdateFragment.CustomerUpdateFragment"
+        android:name="com.retailstreet.mobilepos.View.ui.CustomerUpdate.CustomerUpdateFragment"
         android:label="Update Customer"
         tools:layout="@layout/fragment_customer_update" />
     <fragment
@@ -137,9 +155,38 @@
         tools:layout="@layout/fragment_sales_refund" />
     <fragment
         android:id="@+id/nav_credit_pay"
-        android:name="com.retailstreet.mobilepos.View.ui.CreditPayFragment.CreditPayFragment"
+        android:name="com.retailstreet.mobilepos.View.ui.CreditPayment.CreditPayFragment"
         android:label="Credit Pay"
-        tools:layout="@layout/fragment_credit_pay" />
+        tools:layout="@layout/fragment_credit_pay" >
+        <action
+            android:id="@+id/action_nav_credit_pay_to_nav_payment"
+            app:destination="@id/nav_payment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_nav_credit_pay_to_customerLedgerFragment"
+            app:destination="@id/customerLedgerFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+    <fragment
+        android:id="@+id/customerLedgerFragment"
+        android:name="com.retailstreet.mobilepos.View.ui.CustomerLedger.CustomerLedgerFragment"
+        android:label="Credit Customer Ledger"
+        tools:layout="@layout/customer_ledger_fragment">
+        <argument
+            android:name="custGuid"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_home"
+        android:name="com.retailstreet.mobilepos.View.ui.Home.HomeFragment"
+        android:label="Reception"
+        tools:layout="@layout/fragment_home" />
 
 
 </navigation>

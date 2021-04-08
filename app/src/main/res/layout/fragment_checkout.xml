@@ -37,7 +37,7 @@
             android:layout_height="wrap_content"
             android:text="Delivery Address:"
             android:textColor="?colorOnSurface"
-            android:visibility="gone"
+            android:visibility="visible"
             android:textSize="@dimen/_12ssp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -48,7 +48,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_4sdp"
-            android:text="@string/addr_dummy"
+            android:text="No Address Found"
             android:textSize="@dimen/_12ssp"
             android:textColor="?colorOnBackground"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -249,6 +249,43 @@
                 android:textColor="?colorOnBackground"
                 android:textAlignment="viewStart"
                 android:textSize="@dimen/_12ssp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/item_layout_6"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/item_layout_5">
+
+            <TextView
+                android:id="@+id/add_discount_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start|center_vertical"
+                android:layout_weight="1"
+                android:lines="2"
+                android:text="Additional Discount:"
+                android:textColor="?colorPrimary"
+                android:textSize="@dimen/_13ssp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/add_discount_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:digits="0,1,2,3,4,5,6,7,8,9,."
+                android:ems="8"
+                android:importantForAutofill="no"
+                android:includeFontPadding="true"
+                android:inputType="numberDecimal|textNoSuggestions"
+                android:letterSpacing="0.4"
+                android:textColor="?colorOnSurface"
+                android:textStyle="bold" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 

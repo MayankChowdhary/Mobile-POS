@@ -1,4 +1,4 @@
-package com.retailstreet.mobilepos.View.ui.CustomerUpdateFragment
+package com.retailstreet.mobilepos.View.ui.CustomerUpdate
 
 import android.content.Context
 import android.graphics.Color
@@ -48,9 +48,8 @@ class CustomerUpdateFragment : Fragment() {
         val custEmailEdtText: EditText = view.findViewById(R.id.cu_email_value)
         val custPanEdtText: EditText = view.findViewById(R.id.cu_pan_value)
         val custGstEdtText: EditText = view.findViewById(R.id.cu_gst_value)
-        val custAdd1EdtText: EditText = view.findViewById(R.id.cu_add1_value)
-        val custAdd2EdtText: EditText = view.findViewById(R.id.cu_add2_value)
-        val custStreetEdtText: EditText = view.findViewById(R.id.cu_street_value)
+        val custAdvanceEditText: EditText = view.findViewById(R.id.cu_advance_value)
+        val custCreditLimitEditText: EditText = view.findViewById(R.id.cu_credit_limit_value)
         val submitCustUpdate:Button = view.findViewById(R.id.submit_update_customer)
 
         var custName = " "
@@ -60,12 +59,12 @@ class CustomerUpdateFragment : Fragment() {
         var custPAN= " "
         var custType= " "
         var custCreditType= " "
-        var custAdd1= " "
-        var custAdd2= " "
-        var custStreet= " "
         var custTypeGuid= " "
         var custId = " "
         var custGuid = " "
+        var custAdvance = " "
+        var custCreditLImit = " "
+        var custAdvanceOld = "0.00"
 
 
         val custNameArray:List<StringWithTag> = getCustomerName()
@@ -97,9 +96,8 @@ class CustomerUpdateFragment : Fragment() {
             custEmailEdtText.setText("")
             custGstEdtText.setText("")
             custPanEdtText.setText("")
-            custAdd1EdtText.setText("")
-            custAdd2EdtText.setText("")
-            custStreetEdtText.setText("")
+            custCreditLimitEditText.setText("")
+            custAdvanceEditText.setText("")
             custTypeSelector.setSelection(0)
             creditCustSelector.setSelection(0)
             custSearchSelector.setSelection(0)
@@ -126,13 +124,11 @@ class CustomerUpdateFragment : Fragment() {
                     custEmailEdtText.setText(customerData[2])
                     custPanEdtText.setText(customerData[3])
                     custGstEdtText.setText(customerData[4])
-                    custAdd1EdtText.setText(customerData[7])
-                    custAdd2EdtText.setText(customerData[8])
-                    custStreetEdtText.setText(customerData[9])
                     custTypeSelector.setSelection(getIndex(custTypeSelector, customerData[5]))
                     val spinnerPosition: Int = creditCustAdapter.getPosition(customerData[6])
                     creditCustSelector.setSelection(spinnerPosition)
-                    custGuid = customerData[10]
+                    custGuid = customerData[7]
+                    custAdvanceOld = customerData[8]
                 }
 
             }
@@ -168,11 +164,19 @@ class CustomerUpdateFragment : Fragment() {
             custEmail = custEmailEdtText.text.toString()
             custGST = custGstEdtText.text.toString()
             custPAN = custPanEdtText.text.toString()
-            custAdd1 = custAdd1EdtText.text.toString()
-            custAdd2 = custAdd2EdtText.text.toString()
-            custStreet = custStreetEdtText.text.toString()
+            custAdvance = custAdvanceEditText.text.toString()
+            custCreditLImit = custCreditLimitEditText.text.toString()
 
-            val allStringsArray: Array<String> = arrayOf(custName,custMobile,custAdd1,custAdd2,custStreet);
+            custAdvance = if(custAdvance.isEmpty()){
+
+                (custAdvanceOld.toDouble() + 0.00).toString()
+            }else{
+                (custAdvanceOld.toDouble() + custAdvance.toDouble()).toString()
+            }
+
+
+
+            val allStringsArray: Array<String> = arrayOf(custName,custMobile);
 
             if(!validateStrings(allStringsArray)){
 
@@ -180,7 +184,7 @@ class CustomerUpdateFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            ControllerCustomerMaster(custId,custMobile,custName,custEmail,custPAN,custGST,custType,custTypeGuid,custGuid,custAdd1,custAdd2,custStreet)
+            ControllerCustomerMaster(custId,custMobile,custName,custEmail,custPAN,custGST,custType,custTypeGuid,custGuid,custCreditLImit, custAdvance)
             val alertDialog = LottieAlertDialogs.Builder(context, DialogTypes.TYPE_SUCCESS)
                     .setTitle("Customer Updated")
                     .setDescription("Successful!")
@@ -262,7 +266,7 @@ class CustomerUpdateFragment : Fragment() {
         try {
 
             val mydb = requireContext().openOrCreateDatabase("MasterDB", Context.MODE_PRIVATE, null)
-            val selectQuery = "SELECT MOBILE_NO, NAME, E_MAIL, PANNO, GSTNO, CUSTOMERTYPE,CREDIT_CUST,CUSTOMERGUID FROM retail_cust where CUST_ID ='$custId'"
+            val selectQuery = "SELECT MOBILE_NO, NAME, E_MAIL, PANNO, GSTNO, CUSTOMERTYPE,CREDIT_CUST,CUSTOMERGUID,ADVANCE_AMOUNT FROM retail_cust where CUST_ID ='$custId'"
             val cursor = mydb.rawQuery(selectQuery, null)
             if (cursor.moveToFirst()) {
 
@@ -273,11 +277,9 @@ class CustomerUpdateFragment : Fragment() {
                viewData[4]= (if(cursor.getString(4).isBlank()) " " else cursor.getString(4))
                viewData[5]= (if(cursor.getString(5).isBlank()) " " else cursor.getString(5))
                viewData[6]= (if(cursor.getString(6).isBlank()) " " else cursor.getString(6))
-                val addressData =  getCustomerAddress(cursor.getString(7))
-               viewData[7]= (addressData[0])
-               viewData[8]= (addressData[1])
-               viewData[9]= (addressData[2])
-                viewData[10]= (if(cursor.getString(7).isBlank()) " " else cursor.getString(7))
+                viewData[7]= (if(cursor.getString(7).isBlank()) " " else cursor.getString(7))
+                viewData[8]= (if(cursor.getString(8).isBlank()) "0.00" else cursor.getString(8))
+
             }
             cursor.close()
             mydb.close()
@@ -288,28 +290,6 @@ class CustomerUpdateFragment : Fragment() {
         return viewData
     }
 
-    private fun getCustomerAddress(custGuId: String): Array<String> {
-        val viewData: Array<String> = arrayOf(" "," "," ")
-        try {
-            Log.d("IDRetrieved", "getFromAddressMaster:$custGuId");
-            val mydb = requireContext().openOrCreateDatabase("MasterDB", Context.MODE_PRIVATE, null)
-            val selectQuery = "SELECT ADDRESSLINE1, ADDRESSLINE2, STREET_AREA FROM retail_cust_address where MASTERCUSTOMERID ='$custGuId'"
-            val cursor = mydb.rawQuery(selectQuery, null)
-            if (cursor.moveToFirst()) {
-
-                viewData[0] =(if(cursor.getString(0).isBlank()) " " else cursor.getString(0))
-                viewData[1] = (if(cursor.getString(1).isBlank()) " " else cursor.getString(1))
-                viewData[2] = (if(cursor.getString(2).isBlank()) " " else cursor.getString(2))
-                Log.d("DataRetrieved", "getFromAddressMaster:$viewData");
-            }
-            cursor.close()
-            mydb.close()
-
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-        return viewData
-    }
 
 
     private fun getIndex(spinner: Spinner, myString: String): Int {

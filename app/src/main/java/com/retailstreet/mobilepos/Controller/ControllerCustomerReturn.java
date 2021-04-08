@@ -196,17 +196,17 @@ public class ControllerCustomerReturn {
         try {
             SQLiteDatabase mydb  = context.openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
             mydb.execSQL("DROP TABLE IF EXISTS tmp_sales_return");
-            mydb.execSQL("CREATE TABLE IF NOT EXISTS tmp_sales_return AS SELECT pm.PROD_NM, pm.BARCODE, pm.UOM, bd.QTY, bd.MRP, bd.TOTALVALUE,  bd.DISCOUNT_PERC, bd.ITEM_GUID  FROM retail_store_prod_com pm INNER JOIN retail_str_sales_detail bd ON bd.ITEM_GUID = pm.ITEM_GUID WHERE bd.BILLNO = '"+billno+"'");
+            mydb.execSQL("CREATE TABLE IF NOT EXISTS tmp_sales_return AS SELECT pm.PROD_NM, pm.BARCODE, pm.UOM, bd.QTY, bd.MRP, bd.TOTALVALUE,  bd.DISCOUNT_PERC, bd.ITEM_GUID, pm.ISPRODUCTRETURNABLE  FROM retail_store_prod_com pm INNER JOIN retail_str_sales_detail bd ON bd.ITEM_GUID = pm.ITEM_GUID WHERE bd.BILLNO = '"+billno+"'");
             mydb.execSQL("ALTER TABLE tmp_sales_return ADD COLUMN MAXQTY INTEGER DEFAULT 0");
+            mydb.execSQL("DELETE FROM tmp_sales_return WHERE ISPRODUCTRETURNABLE= 'NO'");
             mydb.execSQL("UPDATE tmp_sales_return SET MAXQTY = QTY, MRP = TOTALVALUE/QTY ");
-            //mydb.execSQL("UPDATE tmp_sales_return SET MRP = TOTALVALUE/QTY");
 
             Cursor cursor = mydb.rawQuery("SELECT * from tmp_sales_return",null);
             if (cursor.moveToFirst()) {
                 Log.d("SalesReturnCursor", "getSalesReturnCursor: "+cursor.getString(0));
                 return cursor;
             } else {
-                Toast.makeText(context,"No Bill Number Found!",Toast.LENGTH_LONG).show();
+                Toast.makeText(context,"Bill Number Or Returnable Item Not Found!",Toast.LENGTH_LONG).show();
                 return null;
             }
         } catch (Exception e) {

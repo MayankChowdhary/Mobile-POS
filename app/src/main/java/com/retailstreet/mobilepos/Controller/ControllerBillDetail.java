@@ -30,7 +30,6 @@ public class ControllerBillDetail {
     }
 
 
-
     public void insertBillDetails(BillDetail billDetail) {
         if (billDetail == null) {
             return;

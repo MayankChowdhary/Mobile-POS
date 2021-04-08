@@ -45,7 +45,7 @@ public class MainDrawerActivity extends AppCompatActivity  {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-               R.id.nav_sales,R.id.nav_dayopen,R.id.nav_dayclose,R.id.nav_products,R.id.nav_customer,R.id.nav_customer_update,R.id.nav_sales_refund,R.id.nav_credit_pay)
+               R.id.nav_sales,R.id.nav_dayopen,R.id.nav_dayclose,R.id.nav_products,R.id.nav_customer,R.id.nav_customer_update,R.id.nav_sales_refund,R.id.nav_credit_pay,R.id.nav_home)
                 .setOpenableLayout(drawer)
                 .build();
 
@@ -53,6 +53,7 @@ public class MainDrawerActivity extends AppCompatActivity  {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController,mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+
 
         navigationView.setNavigationItemSelectedListener(menuItem -> {
             int id=menuItem.getItemId();
@@ -85,14 +86,6 @@ public class MainDrawerActivity extends AppCompatActivity  {
                 alertDialog.show();
                 return true;
 
-            }if(id==R.id.nav_sales){
-                Navigation.findNavController(this,R.id.nav_host_fragment).navigate(R.id.nav_sales);
-                drawer.closeDrawer(GravityCompat.START);
-                return true;
-            }if(id==R.id.nav_dayopen){
-                Navigation.findNavController(this,R.id.nav_host_fragment).navigate(R.id.nav_dayopen);
-                drawer.closeDrawer(GravityCompat.START);
-                return true;
             }
 
             //This is for maintaining the behavior of the Navigation view
@@ -101,6 +94,8 @@ public class MainDrawerActivity extends AppCompatActivity  {
             drawer.closeDrawer(GravityCompat.START);
             return true;
         });
+
+
 
     setNavigationString();
         try {

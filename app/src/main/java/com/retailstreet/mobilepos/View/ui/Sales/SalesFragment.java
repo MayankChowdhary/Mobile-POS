@@ -1,10 +1,12 @@
 package com.retailstreet.mobilepos.View.ui.Sales;
 
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -17,18 +19,25 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.labters.lottiealertdialoglibrary.DialogTypes;
 import com.mikepenz.actionitembadge.library.ActionItemBadge;
 import com.mikepenz.iconics.typeface.library.fontawesome.FontAwesome;
+import com.retailstreet.mobilepos.Controller.ControllerShiftTrans;
 import com.retailstreet.mobilepos.Controller.ControllerStockMaster;
 import com.retailstreet.mobilepos.R;
 import com.retailstreet.mobilepos.View.ApplicationContextProvider;
 import com.retailstreet.mobilepos.View.SalesRecyclerView.SalesListAdapter;
 import com.retailstreet.mobilepos.View.SalesRecyclerView.UpdateRecyclerView;
+import com.retailstreet.mobilepos.View.dialog.ClickListeners;
+import com.retailstreet.mobilepos.View.dialog.LottieAlertDialogs;
+
+import org.jetbrains.annotations.NotNull;
 
 public class SalesFragment extends Fragment implements UpdateRecyclerView {
 
@@ -46,6 +55,7 @@ public class SalesFragment extends Fragment implements UpdateRecyclerView {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
             ViewGroup container, Bundle savedInstanceState) {
+        Log.d("SalesFragment", "onCreateView: Invoked ");
         //homeViewModel = new ViewModelProvider(this).get(SalesViewModel.class);
         View root = inflater.inflate(R.layout.fragment_sales, container, false);
             setHasOptionsMenu(true); // Add this!
@@ -89,6 +99,39 @@ public class SalesFragment extends Fragment implements UpdateRecyclerView {
     }
 
     @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        if(!isSessionOpen()){
+
+            LottieAlertDialogs alertDialog = new LottieAlertDialogs.Builder(getActivity(), DialogTypes.TYPE_WARNING)
+                    .setTitle("Shift Status")
+                    .setDescription("Your Shift is not running!")
+                    .setNegativeText("Back")
+                    .setPositiveButtonColor(Color.parseColor("#297999"))
+                    .setPositiveTextColor(Color.parseColor("#ffffff"))
+                    .setPositiveText("Open Day")
+                    .setNegativeButtonColor(Color.parseColor("#297999"))
+                    .setNegativeTextColor(Color.parseColor("#ffffff"))
+                    .setPositiveListener(new ClickListeners() {
+                        @Override
+                        public void onClick(@NotNull LottieAlertDialogs dialog) {
+                            Navigation.findNavController(requireActivity(), R.id.nav_host_fragment).navigate(R.id.action_nav_sales_to_nav_dayopen);
+                            dialog.dismiss();
+                        }
+                    })
+                    .setNegativeListener(new ClickListeners() {
+                        @Override
+                        public void onClick(@NotNull LottieAlertDialogs dialog) {
+                            Navigation.findNavController(requireActivity(), R.id.nav_host_fragment).navigate(R.id.nav_home);
+                            dialog.dismiss();
+                }
+            }).build();
+            alertDialog.setCancelable(false);
+            alertDialog.show();
+        }
+    }
+
+    @Override
     public void updateIndicator(int size) {
 
         if (size >0 ) {
@@ -101,6 +144,7 @@ public class SalesFragment extends Fragment implements UpdateRecyclerView {
 
     @Override
     public void onResume() {
+        Log.d("SalesFragment", "onResumeView: Invoked ");
         super.onResume();
         if (cursor != null && !cursor.isClosed()) {
             cursor.close();
@@ -212,8 +256,8 @@ public class SalesFragment extends Fragment implements UpdateRecyclerView {
         super.onDestroy();
         try {
             salesListAdapter = null;
-            if(cursor != null && !cursor.isClosed())
-                cursor.close();
+           // if(cursor != null && !cursor.isClosed())
+               // cursor.close();
             controllerStockMaster.close();
             controllerStockMaster=null;
         } catch (Exception e) {
@@ -234,18 +278,21 @@ public class SalesFragment extends Fragment implements UpdateRecyclerView {
         protected void onPreExecute() {
             super.onPreExecute();
             emptyListView.setText("Loading...");
+            Log.d("AsyncTask", "onPreExecute: Invoked");
         }
 
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
             swapRecyclerViewData();
+            Log.d("AsyncTask", "onPostExecute: ");
         }
 
 
 
         @Override
         protected String doInBackground(Void... params) {
+            Log.d("AsyncTask", "doInBackground: ");
             if(pattern==null) {
                 cursor = controllerStockMaster.getStockMasterCursor();
             }else {
@@ -260,9 +307,12 @@ public class SalesFragment extends Fragment implements UpdateRecyclerView {
 
         if(cursor == null || cursor.isClosed()) {
             salesListAdapter.swapCursor(null);
+            Log.d("SettingRecycler", "swapRecyclerViewData: Cursor Is Null");
         }
         else {
+
             salesListAdapter.swapCursor(cursor);
+            Log.d("SettingRecycler", "swapRecyclerViewData: Cursor Is OK");
         }
         if(cursor==null){
             recyclerView.setVisibility(View.GONE);
@@ -273,5 +323,11 @@ public class SalesFragment extends Fragment implements UpdateRecyclerView {
             recyclerView.setVisibility(View.VISIBLE);
             emptyListView.setVisibility(View.GONE);
         }
+    }
+
+    private Boolean isSessionOpen(){
+
+        String shiftTransID = new ControllerShiftTrans().geShiftSession();
+        return !(shiftTransID==null || shiftTransID.isEmpty());
     }
 }

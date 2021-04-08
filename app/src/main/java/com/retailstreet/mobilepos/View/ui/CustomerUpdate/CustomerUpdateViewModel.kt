@@ -1,4 +1,4 @@
-package com.retailstreet.mobilepos.View.ui.CustomerUpdateFragment
+package com.retailstreet.mobilepos.View.ui.CustomerUpdate
 
 import androidx.lifecycle.ViewModel
 

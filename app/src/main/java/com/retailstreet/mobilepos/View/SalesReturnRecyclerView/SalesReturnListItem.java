@@ -85,7 +85,7 @@ public class SalesReturnListItem {
         salesReturnListItem.setProduct_detail_5("PRICE: "+cursor.getString(4)+"  TOTAL: "+cursor.getString(5));
         salesReturnListItem.setQty(cursor.getString(3));
        salesReturnListItem.setPrimary(cursor.getString(7));
-        salesReturnListItem.setMaxQty(cursor.getString(8));
+        salesReturnListItem.setMaxQty(cursor.getString(9));
         return salesReturnListItem;
     }
 

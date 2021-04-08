@@ -1,6 +1,5 @@
 package com.retailstreet.mobilepos.View.ui.DayClose
 
-import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -69,7 +68,7 @@ class DayCloseFragmnet : Fragment() {
         var totalAmount: Long = 0;
         fun calcAmount() {
             try {
-
+                totalAmount =0
                 totalAmount += if( cash2000.text==null || cash2000.text.toString().isEmpty()) 0 else (cash2000.text.toString().toLong())*2000
                 totalAmount += if( cash500.text==null || cash500.text.toString().isEmpty()) 0 else (cash500.text.toString().toLong())*500
                 totalAmount += if( cash200.text==null || cash200.text.toString().isEmpty()) 0 else (cash200.text.toString().toLong())*200
@@ -86,6 +85,9 @@ class DayCloseFragmnet : Fragment() {
             }
         }
 
+        cash2000.addTextChangedListener {
+            calcAmount()
+        }
         cash500.addTextChangedListener {
             calcAmount()
         }
@@ -117,6 +119,13 @@ class DayCloseFragmnet : Fragment() {
       submit.setOnClickListener {
 
           closeCash = totalAmount.toString();
+
+          if(closeCash.toDouble()<=0){
+
+              Toast.makeText(context,"Invalid Amount!",Toast.LENGTH_LONG).show()
+              return@setOnClickListener;
+          }
+
            Toast.makeText(context, "Day Successfully Closed!", Toast.LENGTH_LONG).show()
             ControllerShiftTrans().closeDay(closeCash);
           val sharedPreferences: SharedPreferences? = activity?.getSharedPreferences("com.retailstreet.mobilepos", Context.MODE_PRIVATE)

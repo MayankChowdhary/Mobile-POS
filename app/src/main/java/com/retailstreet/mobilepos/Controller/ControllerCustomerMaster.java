@@ -153,10 +153,9 @@ public class ControllerCustomerMaster {
 
     }
 
-    public ControllerCustomerMaster(String custId, String mobile, String name,String email,String pan, String gst,String custType, String custTypeGuid,String custguId,String add1, String add2, String street ) {
+    public ControllerCustomerMaster(String custId, String mobile, String name,String email,String pan, String gst,String custType, String custTypeGuid,String custguId, String creditLimit, String advance ) {
         context= ApplicationContextProvider.getContext();
-      updateCustomerMaster(custId,mobile,name,email,pan,gst,custType,custTypeGuid);
-       updateAddressMaster(custguId,add1,add2,street);
+      updateCustomerMaster(custId,mobile,name,email,pan,gst,custType,custTypeGuid, creditLimit,advance);
             try {
                 new WorkManagerSync(5);
             } catch (Exception e) {
@@ -243,7 +242,7 @@ public class ControllerCustomerMaster {
         }
     }
 
-    public void updateCustomerMaster(String custId, String mobile, String name,String email,String pan, String gst,String custType, String custTypeGuid){
+    public void updateCustomerMaster(String custId, String mobile, String name,String email,String pan, String gst,String custType, String custTypeGuid, String creditLimit, String advance){
         try{
         SQLiteDatabase myDataBase = context.openOrCreateDatabase(DBNAME, Context.MODE_PRIVATE, null);
         ContentValues contentValues = new ContentValues();
@@ -254,6 +253,8 @@ public class ControllerCustomerMaster {
         contentValues.put("GSTNO", gst);
         contentValues.put("CUSTOMERTYPE", custType);
         contentValues.put("MASTER_CUSTOMER_TYPE", custTypeGuid);
+        contentValues.put("CREDITLIMIT", creditLimit);
+        contentValues.put("ADVANCE_AMOUNT", advance);
         contentValues.put("ISSYNCED", "0");
 
         String where = "CUST_ID=?";

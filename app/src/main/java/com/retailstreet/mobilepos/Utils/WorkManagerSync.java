@@ -14,6 +14,7 @@ import androidx.work.OneTimeWorkRequest;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
+import com.retailstreet.mobilepos.Database.CustomerLedgerUploader;
 import com.retailstreet.mobilepos.Database.CustomerMasterUploader;
 import com.retailstreet.mobilepos.Database.CustomerReturnUploader;
 import com.retailstreet.mobilepos.Database.InvoiceUploader;
@@ -162,6 +163,22 @@ public class WorkManagerSync {
                     "CUSTOMER_RETURN_DETAILS_SYNC",
                     ExistingPeriodicWorkPolicy.REPLACE, //Existing Periodic Work policy
                     CustomerReturnSyncWork //work request
+            );
+        }
+
+        if(index == 8 || index ==0) {
+            PeriodicWorkRequest CustomerLedgerSyncWork =
+                    new PeriodicWorkRequest.Builder(CustomerLedgerUploader.class, 15, TimeUnit.MINUTES)
+                            .addTag("CUSTOMER_LEDGER_SYNC_REQUEST")
+                            .setConstraints(constraints)
+                            // setting a backoff on case the work needs to retry
+                            .setBackoffCriteria(BackoffPolicy.LINEAR, PeriodicWorkRequest.MIN_BACKOFF_MILLIS, TimeUnit.MILLISECONDS)
+                            .setInitialDelay(3, TimeUnit.SECONDS)
+                            .build();
+            mWorkManager.enqueueUniquePeriodicWork(
+                    "CUSTOMER_LEDGER_DETAILS_SYNC",
+                    ExistingPeriodicWorkPolicy.REPLACE, //Existing Periodic Work policy
+                    CustomerLedgerSyncWork //work request
             );
         }
 

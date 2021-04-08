@@ -1,4 +1,4 @@
-package com.retailstreet.mobilepos.View.ui.CreditPayFragment
+package com.retailstreet.mobilepos.View.ui.CreditPayment
 
 import androidx.lifecycle.ViewModel
 

@@ -38,11 +38,16 @@ public class ProductMaster {
     String UOM_GUID;
     String UoMID;
     String ISSYNCED;
+    String ISPRODUCTRETURNABLE;
+    String ISLOOSEITEM;
+    String ADDITIONALPARAM1;
+    String ADDITIONALPARAM2;
+    String ADDITIONALPARAM3;
 
     public ProductMaster() {
     }
 
-    public ProductMaster(String ACTIVE, String BARCODE, String CATEGORY, String CATEGORY_GUID, String CESS1, String CESS2, String CGST, String EXTERNALPRODUCTID, String GENERIC_NAME, String GST, String HSN, String IGST, String ITEM_CODE, String ITEM_GUID, String item_Type, String MASTERBRAND, String MASTERCATEGORY_id, String POS_USER, String PRINT_NAME, String PROD_ID, String PROD_NM, String PRODUCTRELEVANCE, String SGST, String STORE_ID, String STORE_NUMBER, String SUB_CATEGORYGUID, String SUBCATEGORY_DESCRIPTION, String SUBCATEGORY_ID, String UOM, String UOM_GUID, String uoMID,String issync) {
+    public ProductMaster(String ACTIVE, String BARCODE, String CATEGORY, String CATEGORY_GUID, String CESS1, String CESS2, String CGST, String EXTERNALPRODUCTID, String GENERIC_NAME, String GST, String HSN, String IGST, String ITEM_CODE, String ITEM_GUID, String item_Type, String MASTERBRAND, String MASTERCATEGORY_id, String POS_USER, String PRINT_NAME, String PROD_ID, String PROD_NM, String PRODUCTRELEVANCE, String SGST, String STORE_ID, String STORE_NUMBER, String SUB_CATEGORYGUID, String SUBCATEGORY_DESCRIPTION, String SUBCATEGORY_ID, String UOM, String UOM_GUID, String uoMID, String ISSYNCED, String ISPRODUCTRETURNABLE, String ISLOOSEITEM, String ADDITIONALPARAM1, String ADDITIONALPARAM2, String ADDITIONALPARAM3) {
         this.ACTIVE = ACTIVE;
         this.BARCODE = BARCODE;
         this.CATEGORY = CATEGORY;
@@ -57,7 +62,7 @@ public class ProductMaster {
         this.IGST = IGST;
         this.ITEM_CODE = ITEM_CODE;
         this.ITEM_GUID = ITEM_GUID;
-        this.Item_Type = item_Type;
+        Item_Type = item_Type;
         this.MASTERBRAND = MASTERBRAND;
         this.MASTERCATEGORY_id = MASTERCATEGORY_id;
         this.POS_USER = POS_USER;
@@ -73,8 +78,53 @@ public class ProductMaster {
         this.SUBCATEGORY_ID = SUBCATEGORY_ID;
         this.UOM = UOM;
         this.UOM_GUID = UOM_GUID;
-        this.UoMID = uoMID;
-        this.ISSYNCED = issync;
+        UoMID = uoMID;
+        this.ISSYNCED = ISSYNCED;
+        this.ISPRODUCTRETURNABLE = ISPRODUCTRETURNABLE;
+        this.ISLOOSEITEM = ISLOOSEITEM;
+        this.ADDITIONALPARAM1 = ADDITIONALPARAM1;
+        this.ADDITIONALPARAM2 = ADDITIONALPARAM2;
+        this.ADDITIONALPARAM3 = ADDITIONALPARAM3;
+    }
+
+    public String getISPRODUCTRETURNABLE() {
+        return ISPRODUCTRETURNABLE;
+    }
+
+    public void setISPRODUCTRETURNABLE(String ISPRODUCTRETURNABLE) {
+        this.ISPRODUCTRETURNABLE = ISPRODUCTRETURNABLE;
+    }
+
+    public String getISLOOSEITEM() {
+        return ISLOOSEITEM;
+    }
+
+    public void setISLOOSEITEM(String ISLOOSEITEM) {
+        this.ISLOOSEITEM = ISLOOSEITEM;
+    }
+
+    public String getADDITIONALPARAM1() {
+        return ADDITIONALPARAM1;
+    }
+
+    public void setADDITIONALPARAM1(String ADDITIONALPARAM1) {
+        this.ADDITIONALPARAM1 = ADDITIONALPARAM1;
+    }
+
+    public String getADDITIONALPARAM2() {
+        return ADDITIONALPARAM2;
+    }
+
+    public void setADDITIONALPARAM2(String ADDITIONALPARAM2) {
+        this.ADDITIONALPARAM2 = ADDITIONALPARAM2;
+    }
+
+    public String getADDITIONALPARAM3() {
+        return ADDITIONALPARAM3;
+    }
+
+    public void setADDITIONALPARAM3(String ADDITIONALPARAM3) {
+        this.ADDITIONALPARAM3 = ADDITIONALPARAM3;
     }
 
     public String getACTIVE() {

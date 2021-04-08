@@ -269,6 +269,49 @@ public class ControllerShiftTrans {
         return result;
     }
 
+    public String getShiftTime() {
+        String result= null;
+        String time=null;
+        String date=getDate();
+        Log.d("DateGenerated", "geShiftSession: "+date);
+
+        String userGuid= getFromGroupUserMaster("USER_GUID");
+        try {
+            SQLiteDatabase  mydb  = context.openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
+            result = "";
+
+
+            String selectQuery = "SELECT * FROM shift_trans where USER_GUID ='"+userGuid+"'" +"AND ISACTIVE = 'Y' ";
+            Cursor cursor = mydb.rawQuery(selectQuery, null);
+            if (cursor.moveToLast()) {
+
+                result= cursor.getString(5);
+                time= cursor.getString(6);
+                Log.d("Printing Received Date", "geShiftSession: "+result);
+                result = getFormatedDate(result);
+                if(result==null)
+                    return null;
+
+                if(result.equals(date)){
+                    Log.d("DateMatched", "geShiftSession: "+result);
+                    return time;
+                }else {
+                    return null;
+                }
+
+            }else {
+                result ="";
+            }
+            cursor.close();
+            mydb.close();
+            Log.d("DataRetrieved", "getFromShiftMaster: "+result);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return time;
+    }
+
+
     public String geShiftTransID() {
         String result= null;
         String userGuid= getFromGroupUserMaster("USER_GUID");

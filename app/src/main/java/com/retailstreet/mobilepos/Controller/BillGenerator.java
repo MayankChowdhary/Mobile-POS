@@ -1,6 +1,7 @@
 package com.retailstreet.mobilepos.Controller;
 
 import android.annotation.SuppressLint;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -9,6 +10,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.retailstreet.mobilepos.Model.CreditBillDetails;
 import com.retailstreet.mobilepos.Utils.WorkManagerSync;
 import com.retailstreet.mobilepos.View.ApplicationContextProvider;
 
@@ -22,6 +24,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import static android.content.Context.MODE_PRIVATE;
+import static com.retailstreet.mobilepos.Utils.Constants.DBNAME;
 
 
 public class BillGenerator {
@@ -29,7 +32,6 @@ public class BillGenerator {
     private static Set<String> smsSetFromPrefs = new HashSet<>();
      HashMap<String, String> orderList = new HashMap<>();
     String itemGuid;
-    String customerID;
 
     String billDetailId ;
     String billMasterId;
@@ -94,31 +96,53 @@ public class BillGenerator {
         String ADDITIONALPARAM3 ;
         String BILLPAYDETAIL_STATUS ;
 
+
+    String STORE_GUID;
+    String CUSTOMERMOBILENO;
+    String CUSTOMERGUID;
+    String BILLNO;
+    String BILLDATE;
+    String ITEM_GUID;
+    String ITEM_NAME;
+    String SELLINGPRICE;
+
+
         public  BillGenerator(){
             context = ApplicationContextProvider.getContext();
         }
 
-    public BillGenerator( String customerID, String receivedCash,String balanceCash, String deliveryTypeGuid, HashMap<String , String[]> payModeData) {
+    public BillGenerator( String customerID, String receivedCash,String balanceCash, String deliveryTypeGuid, HashMap<String , String[]> payModeData, String additionDisc, String redeemNumber) {
         context = ApplicationContextProvider.getContext();
         GetSetFromPrefs();
         initMap();
         context = ApplicationContextProvider.getContext();
-        this.customerID = customerID;
         NO_OF_ITEMS = String.valueOf(orderList.size());
         billNumber = getBillNumber();
         billMasterId = getTimeStamp();
         RECEIVED_CASH = receivedCash;
         BALANCE_CASH=balanceCash;
-
         DELIVERY_TYPE_GUID = deliveryTypeGuid;
+        STORE_GUID  = MASTERSTOREGUID = getFromRetailStore("STORE_GUID");
+        CUSTOMERMOBILENO = CUST_MOBILENO = getFromMasterCustomer(customerID,"MOBILE_NO");
+        BILLDATE =  SALEDATETIME = getSaleDateAndTime();
+        CUSTOMERGUID = customerID;
+         BILLNO = billNumber;
+
 
         for (String key:orderList.keySet()) {
             String count = Objects.requireNonNull(orderList.get(key));
-            GenerateBillDetails(key,count);
+            Boolean isCreditBill =  payModeData.containsKey("RX");
+            GenerateBillDetails(key,count,isCreditBill);
             setNewQuantity(key);
         }
-       GenerateBillMaster(customerID);
+
+
+       GenerateBillMaster(customerID, additionDisc);
         GenerateBillPayDetail(payModeData);
+        if(redeemNumber!=null && !redeemNumber.trim().isEmpty()){
+
+                updateRetunMaster(redeemNumber,billNumber);
+        }
         smsSetFromPrefs.add(billNumber);
         SaveSetsInPrefs();
 
@@ -136,7 +160,7 @@ public class BillGenerator {
         }
 
 
-    public void GenerateBillDetails( String orderid , String count) {
+    public void GenerateBillDetails( String orderid , String count, Boolean isCreditBill) {
             billDetailId = getTimeStamp();
             itemGuid = getFromStockMaster(orderid,"ITEM_GUID");
             CATEGORY_GUID = getFromProductMaster(itemGuid,"CATEGORY_GUID");
@@ -183,27 +207,47 @@ public class BillGenerator {
             TOTAL_AMOUNT = String.valueOf( Double.parseDouble(TOTALVALUE) +Double.parseDouble(TOTAL_AMOUNT));
 
             new ControllerBillDetail().createBillDetailData( billDetailId,  billMasterId,  billNumber,  CATEGORY_GUID,  SUBCAT_GUID,  itemGuid,  ITEM_CODE,  QTY,  UOM_GUID,  BATCHNO,  COST_PRICE,  NETVALUE,  DISCOUNT_PERC,  DISCOUNT_VALUE,  TOTALVALUE,  MRP,  BILLDETAILSTATUS,  HSN,  CGSTPERCENTAGE,  SGSTPERCENTAGE,  IGSTPERCENTAGE,  ADDITIONALPERCENTAGE,  CGST,  SGST,  IGST,  ADDITIONALCESS,  TOTALGST);
-    }
+    
+            if(isCreditBill){
 
-    public void GenerateBillMaster( String custId) {
+                try {
+                    ITEM_GUID = itemGuid;
+                    SELLINGPRICE = String.valueOf(Double.parseDouble(NETVALUE) / Double.parseDouble(QTY));
+                    ITEM_NAME = getFromStockMaster(orderid,"PROD_NM");
 
-        SALEDATETIME = getSaleDateAndTime();
-        SALEDATE = getSaleDate();
-        SALETIME = getSaleTime();
-        if(custId!=null && !custId.isEmpty())
-        MASTERCUSTOMERGUID = getFromMasterCustomer(custId,"CUSTOMERGUID");
-        MASTERSTOREGUID = getFromRetailStore("STORE_GUID");
-        MASTERTERMINALGUID = getFromTerminalConfig(MASTERSTOREGUID,"TERMINALCONFIG_GUID");
-        MASTERSHIFTGUID = getFromMasterShift(MASTERSTOREGUID,"SHIFTGUID");
-        USER_GUID  = getFromGroupUserMaster("USER_GUID");
-        CUST_MOBILENO = getFromMasterCustomer(custId,"MOBILE_NO");
-        BILL_PRINT ="1";
-        TOTAL_BILL_AMOUNT = TOTAL_AMOUNT;
-        BILLSTATUS ="1";
-        ISSYNCED = "0";
-        ROUND_OFF ="0.00";
 
-        new ControllerBillMaster().createBillMasterData(billMasterId, billNumber, SALEDATETIME, SALEDATE, SALETIME, MASTERCUSTOMERGUID, MASTERSTOREGUID, MASTERTERMINALGUID, MASTERSHIFTGUID, USER_GUID, CUST_MOBILENO, NETVALUEM, TAXVALUE, TOTAL_AMOUNT, DELIVERY_TYPE_GUID, BILL_PRINT, TOTAL_BILL_AMOUNT, NO_OF_ITEMS, BILLSTATUS, ISSYNCED, RECEIVED_CASH, BALANCE_CASH, ROUND_OFF, NETDISCOUNT);
+                    Log.d("CreditInsert", "GenerateCreditBillDetails: ");
+
+                    CreditBillDetails creditBillDetails = new CreditBillDetails( STORE_GUID,  CUSTOMERMOBILENO,  CUSTOMERGUID,  BILLNO,  BILLDATE,  ITEM_GUID,  ITEM_NAME,  MRP,  SELLINGPRICE,  QTY,  TOTALVALUE,  TOTALGST,  CGST,  SGST,  IGST,  DISCOUNT_PERC, DISCOUNT_VALUE);
+                    InsertCreditBillDetails(creditBillDetails);
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+    public void GenerateBillMaster( String custId, String additionDiscount) {
+
+
+        try {
+            SALEDATE = getSaleDate();
+            SALETIME = getSaleTime();
+            if(custId!=null && !custId.isEmpty())
+            MASTERCUSTOMERGUID = custId;
+            MASTERTERMINALGUID = getFromTerminalConfig(MASTERSTOREGUID,"TERMINALCONFIG_GUID");
+            MASTERSHIFTGUID = getFromMasterShift(MASTERSTOREGUID,"SHIFTGUID");
+            USER_GUID  = getFromGroupUserMaster("USER_GUID");
+            BILL_PRINT ="1";
+            TOTAL_BILL_AMOUNT = TOTAL_AMOUNT;
+            BILLSTATUS ="1";
+            ISSYNCED = "0";
+            ROUND_OFF ="0.00";
+            NETDISCOUNT = String.valueOf(Double.parseDouble(NETDISCOUNT)+Double.parseDouble(additionDiscount));
+
+            new ControllerBillMaster().createBillMasterData(billMasterId, billNumber, SALEDATETIME, SALEDATE, SALETIME, MASTERCUSTOMERGUID, MASTERSTOREGUID, MASTERTERMINALGUID, MASTERSHIFTGUID, USER_GUID, CUST_MOBILENO, NETVALUEM, TAXVALUE, TOTAL_AMOUNT, DELIVERY_TYPE_GUID, BILL_PRINT, TOTAL_BILL_AMOUNT, NO_OF_ITEMS, BILLSTATUS, ISSYNCED, RECEIVED_CASH, BALANCE_CASH, ROUND_OFF, NETDISCOUNT);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -247,6 +291,13 @@ public class BillGenerator {
                 ADDITIONALPARAM3 = "0";
             }
 
+            if(entry.getKey().equals("RX")){
+                String currentLImit = getCreditDetails(CUSTOMERGUID);
+                String newLimit = String.valueOf(Double.parseDouble(currentLImit) - Double.parseDouble(PAYAMOUNT));
+                updateCreditCust(newLimit,CUSTOMERGUID);
+                new ControllerCreditPay().updateCreditCustomer(PAYAMOUNT,CUSTOMERGUID);
+                new ControllerCreditPay().updateCustLedger(PAYAMOUNT,CUSTOMERGUID,BILLNO);
+            }
             BILLPAYDETAILID = getTimeStamp();
             new ControllerBillPayDetail().createBillPayDetail( BILLPAYDETAILID,  BILLMASTERID,  MASTERPAYMODEGUID,  PAYAMOUNT,  TRANSACTIONNUMBER,  ADDITIONALPARAM1,  ADDITIONALPARAM2,  ADDITIONALPARAM3,  BILLPAYDETAIL_STATUS);
 
@@ -254,6 +305,37 @@ public class BillGenerator {
 
     }
 
+    public void InsertCreditBillDetails(CreditBillDetails prod) {
+
+        try {
+            SQLiteDatabase myDataBase = context.openOrCreateDatabase(DBNAME, Context.MODE_PRIVATE, null);
+            myDataBase.delete("retail_credit_bill_details", null, null);
+                ContentValues contentValues = new ContentValues();
+                contentValues.put("STORE_GUID", prod.getSTORE_GUID());
+                contentValues.put("CUSTOMERMOBILENO", prod.getCUSTOMERMOBILENO());
+                contentValues.put("CUSTOMERGUID", prod.getCUSTOMERGUID());
+                contentValues.put("BILLNO", prod.getBILLNO());
+                contentValues.put("BILLDATE", prod.getBILLDATE());
+                contentValues.put("ITEM_GUID", prod.getITEM_GUID());
+                contentValues.put("ITEM_NAME", prod.getITEM_NAME());
+                contentValues.put("MRP", prod.getMRP());
+                contentValues.put("SELLINGPRICE", prod.getSELLINGPRICE());
+                contentValues.put("QTY", prod.getQTY());
+                contentValues.put("TOTALVALUE", prod.getTOTALVALUE());
+                contentValues.put("TOTALGST", prod.getTOTALGST());
+                contentValues.put("CGST", prod.getCGST());
+                contentValues.put("SGST", prod.getSGST());
+                contentValues.put("IGST", prod.getIGST());
+                contentValues.put("DISCOUNT_PERC", prod.getDISCOUNT_PERC());
+                contentValues.put("DISCOUNT_VALUE", prod.getDISCOUNT_VALUE());
+
+                myDataBase.insert("retail_credit_bill_details", null, contentValues);
+            myDataBase.close();
+            Log.d("Insertion Successful", "CreditBillDetails: ");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 
     public String getTimeStamp() {
@@ -466,7 +548,7 @@ public class BillGenerator {
         try {
             SQLiteDatabase mydb  = context.openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
             result = "";
-            String selectQuery = "SELECT "+column+" FROM retail_cust where CUST_ID ='"+custId+"'";
+            String selectQuery = "SELECT "+column+" FROM retail_cust where CUSTOMERGUID ='"+custId+"'";
             Cursor cursor = mydb.rawQuery(selectQuery, null);
             if (cursor.moveToFirst()) {
 
@@ -661,5 +743,52 @@ public class BillGenerator {
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putStringSet("smsSync", smsSetFromPrefs);
         editor.commit();
+    }
+
+    public void updateCreditCust(String newLimit, String custGuid){
+        try {
+
+            String query = "Update retail_cust Set CREDITLIMIT = '"+newLimit+"'  where CUSTOMERGUID = '"+custGuid+"'";
+            SQLiteDatabase db  = context.openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
+            db.execSQL(query);
+            db.close();
+            Log.d("UpdateStockQty", "UpdateQuantity: Successful"+custGuid);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void updateRetunMaster(String redeemNum, String billNum){
+        try {
+
+            String query = "Update customerReturnMaster Set REPLACEMENTBILLNO = '"+billNum+"'  where CREDITNOTENUMBER = '"+redeemNum+"'";
+            SQLiteDatabase db  = context.openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
+            db.execSQL(query);
+            db.close();
+            Log.d("UpdateStockQty", "UpdateQuantity: Successful"+redeemNum);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private String  getCreditDetails(String custId){
+        String creditLimit="0.00";
+        SQLiteDatabase mydb = context.openOrCreateDatabase("MasterDB", Context.MODE_PRIVATE,null);
+        Cursor cursor = mydb.rawQuery("select CREDITLIMIT from retail_cust where CUSTOMERGUID = '"+custId+"'",null);
+        if (cursor.moveToFirst()) {
+            while (!cursor.isAfterLast()) {
+                creditLimit = cursor.getString(0);
+
+                Log.d("CreditLimitRetrieved", "getCreditDetails: "+creditLimit);
+
+                cursor.moveToNext();
+            }
+        }
+        cursor.close();
+        mydb.close();
+
+        return creditLimit;
     }
 }
