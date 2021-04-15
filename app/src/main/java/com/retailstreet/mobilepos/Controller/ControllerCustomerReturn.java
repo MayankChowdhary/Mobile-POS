@@ -104,6 +104,11 @@ public class ControllerCustomerReturn {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        try {
+            new WorkManagerSync(4);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void GenerateSalesReturnDetails(String key,String count){
@@ -121,7 +126,7 @@ public class ControllerCustomerReturn {
     private void GenerateReturnMaster(String billno, String reasonGuid, String custGuid, String reason,String amount, String creditNoteNum){
         CUSTOMER_RETURNS_MASTER_ID= IDGenerator.getTimeStamp();
         REASONGUID = reasonGuid;
-        MASTERSTOREID = getFromRetailStore("STORE_ID");
+        MASTERSTOREID = getFromRetailStore("STORE_GUID");
         CUSTOMERGUID = custGuid;
         BILLNO = billno;
         SALESDATE = getCurrentDateAndTime();
@@ -387,7 +392,7 @@ public class ControllerCustomerReturn {
 
             String CurrentQty= getFromStockMaster(stockID,"QTY");
             CurrentQty = String.valueOf(Double.parseDouble(CurrentQty)+Double.parseDouble(quantity));
-            String query = "Update retail_str_stock_master Set QTY = '"+CurrentQty+"' where STOCK_ID = '"+stockID+"'";
+            String query = "Update retail_str_stock_master Set QTY = '"+CurrentQty+"', ISSYNCED = '0'  where STOCK_ID = '"+stockID+"'";
             SQLiteDatabase   db  = context.openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
             db.execSQL(query);
             db.close();

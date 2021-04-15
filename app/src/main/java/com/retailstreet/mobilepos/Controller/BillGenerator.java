@@ -157,6 +157,12 @@ public class BillGenerator {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        try {
+            new WorkManagerSync(4);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         }
 
 
@@ -238,6 +244,7 @@ public class BillGenerator {
             MASTERSHIFTGUID = getFromMasterShift(MASTERSTOREGUID,"SHIFTGUID");
             USER_GUID  = getFromGroupUserMaster("USER_GUID");
             BILL_PRINT ="1";
+            TOTAL_AMOUNT = String.valueOf( Double.parseDouble(TOTAL_AMOUNT)-Double.parseDouble(additionDiscount));
             TOTAL_BILL_AMOUNT = TOTAL_AMOUNT;
             BILLSTATUS ="1";
             ISSYNCED = "0";
@@ -531,7 +538,7 @@ public class BillGenerator {
 
     private String getSaleDate(){
         Date date = new Date();
-        SimpleDateFormat formatter = new SimpleDateFormat("MM-dd-yyyy",Locale.getDefault());
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd",Locale.getDefault());
         String strDate = formatter.format(date);
         return  strDate;
     }
@@ -717,7 +724,7 @@ public class BillGenerator {
     public void UpdateQuantity(String quantity, String stockID){
         try {
 
-            String query = "Update retail_str_stock_master Set QTY = '"+quantity+"' where STOCK_ID = '"+stockID+"'";
+            String query = "Update retail_str_stock_master Set QTY = '"+quantity+"', ISSYNCED = '0' where STOCK_ID = '"+stockID+"'";
             SQLiteDatabase   db  = context.openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
             db.execSQL(query);
             db.close();

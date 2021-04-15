@@ -187,6 +187,29 @@
         android:name="com.retailstreet.mobilepos.View.ui.Home.HomeFragment"
         android:label="Reception"
         tools:layout="@layout/fragment_home" />
-
-
+    <fragment
+        android:id="@+id/nav_sales_report"
+        android:name="com.retailstreet.mobilepos.View.ui.SalesReport.SalesReportFragment"
+        android:label="Sales Reports"
+        tools:layout="@layout/fragment_sales_report" >
+        <action
+            android:id="@+id/action_nav_sales_report_to_nav_sales_report_details"
+            app:destination="@id/nav_sales_report_details"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+    </fragment>
+    <fragment
+        android:id="@+id/nav_sales_report_details"
+        android:name="com.retailstreet.mobilepos.View.ui.SalesReportDetails.SalesReportDetailsFragment"
+        android:label="Sales Details"
+        tools:layout="@layout/fragment_sales_report_details" >
+        <argument
+            android:name="rowid"
+            app:argType="string" />
+        <argument
+            android:name="masterId"
+            app:argType="string" />
+    </fragment>
 </navigation>

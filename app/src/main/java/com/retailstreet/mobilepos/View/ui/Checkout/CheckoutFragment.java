@@ -183,14 +183,20 @@ public class CheckoutFragment extends Fragment {
             public void afterTextChanged(Editable s) {
 
                 totalAmount = grand;
+                addDiscount = "0.00";
+                grandTotalView.setText(totalAmount+" ₹");
+                if(s.toString().trim().isEmpty()){
+                    return;
+                }
                 try {
-                    if(!s.toString().trim().isEmpty() && Double.parseDouble(s.toString())<=Double.parseDouble(grand)) {
+                    if( Double.parseDouble(s.toString())<Double.parseDouble(grand)) {
                         addDiscount = s.toString();
                         totalAmount = String.valueOf(Double.parseDouble(totalAmount)-Double.parseDouble(s.toString()));
                     }else {
                         totalAmount = grand;
                         addDiscount = "0.00";
-
+                        Toast.makeText(getContext(), "Incorrect Amount!", Toast.LENGTH_LONG).show();
+                        Vibration.Companion.vibrate(300);
                     }
                     grandTotalView.setText(totalAmount+" ₹");
                 } catch (NumberFormatException e) {

@@ -15,6 +15,13 @@
     <string name="menu_cart">Cart</string>
     <string name="menu_checkout">Order Summery</string>
     <string name="addr_dummy">Tower A4- Flat-171 - Floor- 17, DLF Westend Heights, Begur Main Road. DLF Newtown Akkshaya Nagar Bangalore, Pin-560068</string>
+
+
+    <string name="sort_ascending">Sort Ascending</string>
+    <string name="sort_descending">Sort Descending</string>
+    <string name="clear_sorting">Clear</string>
+    <string name="row_show">Show 5. Row</string>
+    <string name="row_hide">Hide 5. Row</string>
     <string-array name="genderArray">
         <item>MALE</item>
         <item>FEMALE</item>

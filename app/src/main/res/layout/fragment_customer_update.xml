@@ -75,7 +75,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:gravity="start"
-                        android:text="Mobile No*"
+                        android:text="Mobile No"
                         android:textColor="?colorOnBackground"
                         android:textSize="@dimen/_14ssp"
                         android:visibility="visible" />
@@ -89,7 +89,7 @@
                         android:includeFontPadding="false"
                         android:inputType="number"
                         android:maxLength="10"
-                        android:textColor="?colorOnSurface" />
+                        android:textColor="?colorOnBackground" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -207,36 +207,6 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/cu_advance_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="0dp"
-                    android:layout_marginEnd="0dp"
-                    android:layout_marginBottom="@dimen/_5sdp"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/cu_advance_title"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="start"
-                        android:singleLine="true"
-                        android:text="Advance "
-                        android:textColor="?colorOnBackground"
-                        android:textSize="@dimen/_14ssp" />
-
-                    <EditText
-                        android:id="@+id/cu_advance_value"
-                        android:layout_width="@dimen/_80sdp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:ems="10"
-                        android:inputType="numberDecimal"
-                        android:textColor="?colorOnSurface" />
-                </LinearLayout>
-
-                <LinearLayout
                     android:id="@+id/cu_credit_limit_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -330,6 +300,39 @@
                         android:layout_weight="1"
                         android:entries="@array/custCreditType"
                         android:gravity="start" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/cu_add_cash_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginEnd="0dp"
+                    android:layout_marginBottom="@dimen/_5sdp"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/cu_advance_title"
+                        android:layout_width="@dimen/_80sdp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="start"
+                        android:lines="2"
+                        android:text="Advance:\n0.00 ₹"
+                        android:textColor="?colorOnBackground"
+                        android:textSize="@dimen/_14ssp"
+                        android:textStyle="bold" />
+
+                    <Button
+                        android:id="@+id/cu_add_cash_btn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_8sdp"
+                        android:layout_marginEnd="@dimen/_20sdp"
+                        android:layout_weight="0"
+                        android:gravity="center|start"
+                        android:text="Add Cash" />
                 </LinearLayout>
 
 

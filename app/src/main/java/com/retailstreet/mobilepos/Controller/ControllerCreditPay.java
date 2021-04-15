@@ -84,8 +84,9 @@ public class ControllerCreditPay {
         STORE_GUID = getFromRetailStore("STORE_GUID");
         USER_GUID = getFromGroupUserMaster("USER_GUID");
         ACTIONDATE = getDateAndTime();
+        GRANDTOTAL = creditTaken;
         DEBITAMOUNT = GRANDTOTAL;
-        BALANCEAMOUNT = "0.00";
+        BALANCEAMOUNT = GRANDTOTAL;
         ADDITIONALPARAM4 = "";
         ADDITIONALPARAM5 = "";
         ADDITIONALPARAM6 = "";
@@ -94,10 +95,16 @@ public class ControllerCreditPay {
         MASTERPAYMODEGUID="23FD7DBD-2386-423A-A0FB-8C97477BBEA7";
         RECEIVEAMOUNT = creditTaken;
         CREDITAMOUNT = "0";
-        GRANDTOTAL = creditTaken;
+
 
         CustomerLedger customerLedger = new CustomerLedger( CUSTLEDGERID,  CUSTOMERGUID,  STORE_GUID,  USER_GUID,  ACTIONDATE,  GRANDTOTAL,  CREDITAMOUNT,  DEBITAMOUNT,  BALANCEAMOUNT,  BILLNO,  ISSYNCED,  MASTERPAYMODEGUID,  ADDITIONALPARAM1,  ADDITIONALPARAM2,  ADDITIONALPARAM3,  ADDITIONALPARAM4,  ADDITIONALPARAM5,  ADDITIONALPARAM6);
         InsertCustomerLedger(customerLedger);
+        try {
+            new WorkManagerSync(8);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
 
@@ -267,7 +274,7 @@ public class ControllerCreditPay {
 
 
     private String getFromCreditCust( String custGuid,String column) {
-        String result= null;
+        String result= "0.00";
         try {
             SQLiteDatabase  mydb  = context.openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
             result = "";
@@ -279,8 +286,11 @@ public class ControllerCreditPay {
             }
             cursor.close();
             mydb.close();
+            if(result==null || result.isEmpty())
+                result = "0.00";
             Log.d("DataRetrieved", "getFromStockMaster: "+column+": "+result);
         } catch (Exception e) {
+            result = "0.00";
             e.printStackTrace();
         }
         return result;

@@ -145,7 +145,7 @@ class SalesRefundFragment : Fragment() {
                 ControllerCustomerReturn(rejectTypeGuid, custGuid, rejectTypeName, totalAmount, creditNoteNumber)
                 inflateNoBillLayout(mainFrame)
             }
-            salesReturnRecyclerView.adapter = null;
+           // salesReturnRecyclerView.adapter = null;
             returnSubmitLayout.visibility = View.GONE
 
             val alertDialog = LottieAlertDialogs.Builder(activity, DialogTypes.TYPE_SUCCESS)

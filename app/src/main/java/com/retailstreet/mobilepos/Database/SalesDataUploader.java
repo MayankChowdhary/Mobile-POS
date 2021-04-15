@@ -9,7 +9,6 @@ import androidx.annotation.NonNull;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
-import com.retailstreet.mobilepos.Utils.ApiInterface;
 import com.retailstreet.mobilepos.Controller.ControllerBillDetail;
 import com.retailstreet.mobilepos.Controller.ControllerBillMaster;
 import com.retailstreet.mobilepos.Controller.ControllerBillPayDetail;
@@ -17,6 +16,7 @@ import com.retailstreet.mobilepos.Model.BillDetail;
 import com.retailstreet.mobilepos.Model.BillMasterUpload;
 import com.retailstreet.mobilepos.Model.BillPayDetail;
 import com.retailstreet.mobilepos.Model.SyncResponse;
+import com.retailstreet.mobilepos.Utils.ApiInterface;
 import com.retailstreet.mobilepos.Utils.Constants;
 import com.retailstreet.mobilepos.Utils.RetroSync;
 import com.retailstreet.mobilepos.View.ApplicationContextProvider;
@@ -177,7 +177,6 @@ public class SalesDataUploader extends Worker {
 
                                 if(!i.isEmpty()){
                                     Toast.makeText(ApplicationContextProvider.getContext(),"Sales Successfully Synced!",Toast.LENGTH_LONG).show();
-
                                 }else {
                                     Toast.makeText(ApplicationContextProvider.getContext(),"Sales Sync Failed!",Toast.LENGTH_LONG).show();
 

@@ -71,10 +71,10 @@ class CustomerLedgerFragment : Fragment() {
 
         //depending on the phone screen size default table scale is 100
         //you can change it using this method
-        legacyTableView.setInitialScale(120);//default initialScale is zero (0)
+        legacyTableView.setInitialScale(110);//default initialScale is zero (0)
 
         //if you want a smaller table, change the padding setting
-        legacyTableView.setTablePadding(20)
+        legacyTableView.setTablePadding(10)
 
         //to enable users to zoom in and out:
 
@@ -83,9 +83,6 @@ class CustomerLedgerFragment : Fragment() {
         legacyTableView.setShowZoomControls(true)
         legacyTableView.setTitleFont(BOLD)
         legacyTableView.setContentTextSize(25)
-
-
-        //remember to build your table as the last step
 
         //remember to build your table as the last step
         legacyTableView.build()

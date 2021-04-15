@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.material.switchmaterial.SwitchMaterial
 import com.labters.lottiealertdialoglibrary.DialogTypes
 import com.retailstreet.mobilepos.Controller.ControllerCustomerMaster
 import com.retailstreet.mobilepos.R
@@ -57,6 +58,10 @@ class CustomerFragment : Fragment() {
         val pincodeEdtText: EditText = view.findViewById(R.id.c_pin_value)
         val cityEdtText: EditText = view.findViewById(R.id.c_city_value)
         val submit_btn: Button = view.findViewById(R.id.submit_add_customer)
+        val addressSwitch: SwitchMaterial = view.findViewById(R.id.ca_address_switch)
+        val addressLayout:LinearLayout = view.findViewById(R.id.address_master_layout)
+
+        enableDisableView(addressLayout,false)
 
         var custName = " "
         var custMobile= " "
@@ -82,7 +87,16 @@ class CustomerFragment : Fragment() {
         var custCatId = " "
         var custCity = " "
 
+    addressSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
 
+        if(isChecked){
+
+            enableDisableView(addressLayout,true)
+        }else{
+            enableDisableView(addressLayout,false)
+        }
+
+    }
 
         val custCatTitle: TextView = view.findViewById(R.id.c_cat_type_title)
         custCatTitle.isSelected = true
@@ -125,6 +139,7 @@ class CustomerFragment : Fragment() {
         val custTypeAdapter: ArrayAdapter<StringWithTag> = context?.let { ArrayAdapter(it, R.layout.spinner_layout_center_box,custTypeArray) }!!
         custTypeAdapter.setDropDownViewResource(R.layout.spinner_layout_centre)
         custTypeSelector.adapter = custTypeAdapter
+        custTypeSelector.setSelection(3)
 
 
         val stateTypeArray:List<StringWithTag> = getStateType()
@@ -201,9 +216,9 @@ class CustomerFragment : Fragment() {
             custAgeEdtText.setText("")
             custGSTEdtText.setText("")
             custPanEdtText.setText("")
-            custBalanceEdittext.setText("")
-            custAdvanceEdtText.setText("")
-            custCreditLimitEdtText.setText("")
+            custBalanceEdittext.setText("0")
+            custAdvanceEdtText.setText("0")
+            custCreditLimitEdtText.setText("0")
             custAdd1EdtText.setText("")
             custAdd2EdtText.setText("")
             streetEdtText.setText("")
@@ -211,7 +226,7 @@ class CustomerFragment : Fragment() {
             cityEdtText.setText("")
 
             genderSelector.setSelection(0)
-            custTypeSelector.setSelection(0)
+            custTypeSelector.setSelection(3)
             custCatSelector.setSelection(0)
             creditCustSelector.setSelection(0)
             addTypeSelector.setSelection(0)
@@ -237,8 +252,17 @@ class CustomerFragment : Fragment() {
            custPincode = pincodeEdtText.text.toString()
            custCity = cityEdtText.text.toString()
 
+           var allStringsArray:Array<String>? = null
+           allStringsArray = if(addressSwitch.isChecked){
 
-           val allStringsArray: Array<String> = arrayOf(custName,custMobile,custAdd1,custAdd2,custStreet,custPincode,custState);
+               arrayOf(custName,custMobile,custAdd1,custAdd2,custStreet,custPincode,custState,custCity);
+
+           }else{
+
+               arrayOf(custName,custMobile);
+
+           }
+
 
            if(!validateStrings(allStringsArray)){
 
@@ -246,7 +270,7 @@ class CustomerFragment : Fragment() {
                return@setOnClickListener
            }
 
-            ControllerCustomerMaster(custStateGuid,custCity,custPincode,custStreet,custAdd1,custAdd2,custAddType, custCreditLimit,  custBalance,  custAdvance,  custCatId,  custTypeGuid,  custPAN,  custGST,  custCreditType,  custMobile,  custGender,  custType,  custCategory,  custName ,  custEmail,  custAge)
+            ControllerCustomerMaster(custStateGuid,custCity,custPincode,custStreet,custAdd1,custAdd2,custAddType, custCreditLimit,  custBalance,  custAdvance,  custCatId,  custTypeGuid,  custPAN,  custGST,  custCreditType,  custMobile,  custGender,  custType,  custCategory,  custName ,  custEmail,  custAge,addressSwitch.isChecked)
            val alertDialog = LottieAlertDialogs.Builder(context, DialogTypes.TYPE_SUCCESS)
                    .setTitle("Customer Added")
                    .setDescription("Successful!")
@@ -271,7 +295,7 @@ class CustomerFragment : Fragment() {
 
     private fun getCustomerType(): List<StringWithTag> {
         val list: MutableList<StringWithTag> = ArrayList()
-        list.add(StringWithTag("NO CUST TYPE", ""))
+       // list.add(StringWithTag("NO CUST TYPE", ""))
         val mydb = requireActivity().openOrCreateDatabase("MasterDB", Context.MODE_PRIVATE, null)
         val query:String = "select MASTER_CUSTOMERTYPEID, CUSTOMERTYPE from master_customer_type";
         val cursor = mydb.rawQuery(query, null)
@@ -319,5 +343,15 @@ class CustomerFragment : Fragment() {
             }
         }
         return true
+    }
+
+    private fun enableDisableView(view: View, enabled: Boolean) {
+        view.isEnabled = enabled
+        if (view is ViewGroup) {
+            val group = view
+            for (idx in 0 until group.childCount) {
+                enableDisableView(group.getChildAt(idx), enabled)
+            }
+        }
     }
 }

@@ -41,6 +41,11 @@
             android:icon="@drawable/credit"
             android:title="Credit Pay" />
         <item
+            android:id="@+id/nav_sales_report"
+            android:icon="@drawable/sales_report"
+            android:visible="true"
+            android:title="Sales Report" />
+        <item
             android:id="@+id/nav_dayclose"
             android:icon="@drawable/close"
             android:visible="true"

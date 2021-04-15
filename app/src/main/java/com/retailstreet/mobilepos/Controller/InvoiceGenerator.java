@@ -118,10 +118,11 @@ public class InvoiceGenerator {
 
     public ArrayList<BillPayInvoice> getBillPaymentDetails(String billno) {
         ArrayList<BillPayInvoice> productlist = new ArrayList<BillPayInvoice>();
+        billno = getFromSalesMaster(billno,"BILLMASTERID");
         try {
             SQLiteDatabase db = context.openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
             Cursor productcursor = db.rawQuery(" select a.BILLMASTERID,b.MASTERTERMINALGUID,b.BILLNO,a.MASTERPAYMODEGUID,a.PAYAMOUNT,a.TRANSACTIONNUMBER," +
-                    "a.ADDITIONALPARAM1,a.ADDITIONALPARAM2,a.ADDITIONALPARAM3 from billpaydetail a LEFT JOIN retail_str_sales_master b ON a.BILLMASTERID =b.BILLMASTERID  where a.BILLMASTERID='" + billno + "' ", null);
+                    "a.ADDITIONALPARAM1,a.ADDITIONALPARAM2,a.ADDITIONALPARAM3 from billpaydetail a LEFT JOIN retail_str_sales_master b ON a.BILLMASTERID =b.BILLMASTERID  where a.BILLMASTERID='" + billno + "'", null);
             if (productcursor.moveToFirst()) {//BILLPAYDETAILID
                 do {
                     BillPayInvoice pm = new BillPayInvoice();
@@ -136,8 +137,19 @@ public class InvoiceGenerator {
                     pm.setADDITIONALPARAM2(productcursor.getString(productcursor.getColumnIndex("ADDITIONALPARAM2")));
                     pm.setADDITIONALPARAM3(productcursor.getString(productcursor.getColumnIndex("ADDITIONALPARAM3")));
                     productlist.add(pm);
+                    Log.d("PayModeData", "getBillPaymentDetails: GUID "+productcursor.getString(productcursor.getColumnIndex("MASTERPAYMODEGUID")));
+                    Log.d("PayModeData", "getBillPaymentDetails: PAYMAMOUNT"+productcursor.getString(productcursor.getColumnIndex("PAYAMOUNT")));
+
                 } while (productcursor.moveToNext());
+            }else {
+
+                Log.d("No Bill Data Found", "getBillPaymentDetails: Size= "+productlist.size());
             }
+
+
+
+
+
 
             db.close();
         } catch (IndexOutOfBoundsException cur) {
@@ -167,13 +179,13 @@ public class InvoiceGenerator {
 
     }
 
-    private String getFromProductMaster( String itemGuid, String column) {
+    private String getFromSalesMaster( String billno, String column) {
 
         String result = null;
         try {
             SQLiteDatabase mydb  = context.openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
             result = "";
-            String selectQuery = "SELECT "+column+" FROM retail_store_prod_com where ITEM_GUID ='"+itemGuid+"'";
+            String selectQuery = "SELECT "+column+" FROM retail_str_sales_master where BILLNO ='"+billno+"'";
             Cursor cursor = mydb.rawQuery(selectQuery, null);
 
             if (cursor.moveToFirst()) {
@@ -181,7 +193,7 @@ public class InvoiceGenerator {
                 result = cursor.getString(0);
             }
             cursor.close();
-            Log.d("DataRetrieved", "getFromProductMaster: "+column+":"+result);
+            Log.d("DataRetrieved", "getFromSalesMaster: "+column+":"+result);
             mydb.close();
         } catch (Exception e) {
             e.printStackTrace();

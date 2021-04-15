@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.retailstreet.mobilepos.Model.CustomerAddress;
+import com.retailstreet.mobilepos.Model.CustomerCredit;
 import com.retailstreet.mobilepos.Model.CustomerMaster;
 import com.retailstreet.mobilepos.Model.CustomerMasterUpload;
 import com.retailstreet.mobilepos.Utils.IDGenerator;
@@ -81,11 +82,22 @@ public class ControllerCustomerMaster {
     String CREATEDDATETIME;
 
 
+    String PAYMENTID;
+    String STORE_GUID;
+    String CUSTOMERNAME;
+    String CUSTOMERMOBILENO;
+    String GRANDTOTAL;
+   // String CUSTOMERSTATUS;
+    String RECEIVEAMOUNT;
+    String DUEAMOUNT;
+    //String CUSTOMERGUID;
+    String TOTALGST;
+
     public ControllerCustomerMaster() {
         context= ApplicationContextProvider.getContext();
     }
 
-    public ControllerCustomerMaster( String stateGuid, String city, String pin, String street, String add1, String add2, String addType, String creditLimit, String balance, String advance, String custCatid, String custTypeguid, String PAN, String GST, String custCredittype, String mobile, String gender, String custType, String custCategory, String custName , String email, String age){
+    public ControllerCustomerMaster( String stateGuid, String city, String pin, String street, String add1, String add2, String addType, String creditLimit, String balance, String advance, String custCatid, String custTypeguid, String PAN, String GST, String custCredittype, String mobile, String gender, String custType, String custCategory, String custName , String email, String age, Boolean isAddressUpdate){
         context= ApplicationContextProvider.getContext();
         CUSTOMERTYPE = custType;
         CUSTOMERCATEGORY = custCategory;
@@ -140,10 +152,29 @@ public class ControllerCustomerMaster {
         CREATEDDATETIME = getDateAndTime();
 
 
+        PAYMENTID = IDGenerator.getTimeStamp();;
+        STORE_GUID = getFromRetailStore("STORE_GUID");
+        CUSTOMERNAME = custName;
+        CUSTOMERMOBILENO = mobile;
+        GRANDTOTAL = balance;
+        RECEIVEAMOUNT = "0.00";
+        DUEAMOUNT = "0.00";
+        TOTALGST ="0.00";
+        
+        
+        
+
         CustomerMaster customerMaster = new CustomerMaster(  CUSTOMERTYPE,  CUSTOMERCATEGORY,  CUST_ID,  CUSTOMERGUID,  NAME,  E_MAIL,  GENDER,  AGE,  ISEMAILVALIDATED,  MOBILE_NO,  ISMOBILEVALIDATED,  SECONDARYEMAIL,  SECONDARYMOBILE,  CUSTOMERDISCOUNTPERCENTAGE,  LASTOTP,  OTPVALIDATEDDATETIME,  EMAILVALIDATEDDATETIME,  UPDATEDBY,  LAST_MODIFIED,  TOTALORDERS,  CREDIT_CUST,  REGISTEREDFROM,  REGISTEREDFROMSTOREID,  PANNO,  GSTNO,  CPASSWORD,  CUSTOMERSTATUS,  MASTER_CUSTOMER_TYPE,  MASTER_CUSTOMERCATEGORY,  ADVANCE_AMOUNT,  BALANCE_AMOUNT,  CUSTOMERSTOREKEY,  STORE_ID,  MASTER_CUSTOMERCATEGORYID,  PERCENTAGE,  CREATEDBY,  ISSYNCED,  CREDITLIMIT);
-        CustomerAddress customerAddress = new CustomerAddress( CUSTOMERADDRESSID,  MASTERCUSTOMERID,  ADDRESSTYPE,  CONTACTPERSONNAME,  ADDRESSLINE1,  ADDRESSLINE2,  STREET_AREA,  PINCODE,  CITY,  MASTERSTATEID,  ADDRESSSTATUS,  CREATEDBY,  CREATEDDATETIME);
+        CustomerCredit customerCredit= new CustomerCredit( PAYMENTID,  STORE_GUID,  CUSTOMERNAME,  CUSTOMERMOBILENO,  GRANDTOTAL,  CUSTOMERSTATUS,  RECEIVEAMOUNT,  DUEAMOUNT,  CUSTOMERGUID,  TOTALGST);
+
         InsertRetailCust(customerMaster);
-        InsertCustomerAddress(customerAddress);
+
+        InsertCustomerCredit(customerCredit);
+
+        if(isAddressUpdate){
+            CustomerAddress customerAddress = new CustomerAddress( CUSTOMERADDRESSID,  MASTERCUSTOMERID,  ADDRESSTYPE,  CONTACTPERSONNAME,  ADDRESSLINE1,  ADDRESSLINE2,  STREET_AREA,  PINCODE,  CITY,  MASTERSTATEID,  ADDRESSSTATUS,  CREATEDBY,  CREATEDDATETIME);
+            InsertCustomerAddress(customerAddress);
+        }
 
         try {
             new WorkManagerSync(5);
@@ -153,15 +184,39 @@ public class ControllerCustomerMaster {
 
     }
 
-    public ControllerCustomerMaster(String custId, String mobile, String name,String email,String pan, String gst,String custType, String custTypeGuid,String custguId, String creditLimit, String advance ) {
+    public ControllerCustomerMaster(String custId, String mobile, String name,String email,String pan, String gst,String custType, String custTypeGuid,String custguId, String creditLimit , String creditCust) {
         context= ApplicationContextProvider.getContext();
-      updateCustomerMaster(custId,mobile,name,email,pan,gst,custType,custTypeGuid, creditLimit,advance);
+      updateCustomerMaster(custId,mobile,name,email,pan,gst,custType,custTypeGuid, creditLimit, creditCust);
             try {
                 new WorkManagerSync(5);
             } catch (Exception e) {
                 e.printStackTrace();
             }
     }
+
+    public void InsertCustomerCredit(CustomerCredit prod) {
+        try {
+            SQLiteDatabase myDataBase = context.openOrCreateDatabase(DBNAME, Context.MODE_PRIVATE, null);
+                ContentValues contentValues = new ContentValues();
+                contentValues.put("PAYMENTID", prod.getPAYMENTID());
+                contentValues.put("STORE_GUID", prod.getSTORE_GUID());
+                contentValues.put("CUSTOMERNAME", prod.getCUSTOMERNAME());
+                contentValues.put("CUSTOMERMOBILENO", prod.getCUSTOMERMOBILENO());
+                contentValues.put("GRANDTOTAL", prod.getGRANDTOTAL());
+                contentValues.put("CUSTOMERSTATUS", prod.getCUSTOMERSTATUS());
+                contentValues.put("RECEIVEAMOUNT", prod.getRECEIVEAMOUNT());
+                contentValues.put("DUEAMOUNT", prod.getDUEAMOUNT());
+                contentValues.put("CUSTOMERGUID", prod.getCUSTOMERGUID());
+                contentValues.put("TOTALGST", prod.getTOTALGST());
+                myDataBase.insert("retail_credit_cust", null, contentValues);
+
+            myDataBase.close();
+            Log.d("Insertion Successful", "Insert_retail_credit_cust: ");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
         public void InsertRetailCust(CustomerMaster prod) {
         try {
@@ -242,19 +297,19 @@ public class ControllerCustomerMaster {
         }
     }
 
-    public void updateCustomerMaster(String custId, String mobile, String name,String email,String pan, String gst,String custType, String custTypeGuid, String creditLimit, String advance){
+    public void updateCustomerMaster(String custId, String mobile, String name,String email,String pan, String gst,String custType, String custTypeGuid, String creditLimit, String creditCust){
         try{
         SQLiteDatabase myDataBase = context.openOrCreateDatabase(DBNAME, Context.MODE_PRIVATE, null);
         ContentValues contentValues = new ContentValues();
-        contentValues.put("MOBILE_NO", mobile);
+       // contentValues.put("MOBILE_NO", mobile);
         contentValues.put("NAME", name);
         contentValues.put("E_MAIL", email);
         contentValues.put("PANNO", pan);
         contentValues.put("GSTNO", gst);
         contentValues.put("CUSTOMERTYPE", custType);
+        contentValues.put("CREDIT_CUST", creditCust);
         contentValues.put("MASTER_CUSTOMER_TYPE", custTypeGuid);
         contentValues.put("CREDITLIMIT", creditLimit);
-        contentValues.put("ADVANCE_AMOUNT", advance);
         contentValues.put("ISSYNCED", "0");
 
         String where = "CUST_ID=?";
@@ -300,7 +355,6 @@ public class ControllerCustomerMaster {
             String username;
             SharedPreferences sh = context.getSharedPreferences("com.retailstreet.mobilepos", MODE_PRIVATE);
             username = sh.getString("username", "");
-
             result = "";
             String selectQuery = "SELECT "+column+" FROM group_user_master where USER_NAME ='"+username+"'";
             Cursor cursor = mydb.rawQuery(selectQuery, null);

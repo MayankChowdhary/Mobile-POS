@@ -45,7 +45,7 @@ public class MainDrawerActivity extends AppCompatActivity  {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-               R.id.nav_sales,R.id.nav_dayopen,R.id.nav_dayclose,R.id.nav_products,R.id.nav_customer,R.id.nav_customer_update,R.id.nav_sales_refund,R.id.nav_credit_pay,R.id.nav_home)
+               R.id.nav_sales,R.id.nav_dayopen,R.id.nav_dayclose,R.id.nav_products,R.id.nav_customer,R.id.nav_customer_update,R.id.nav_sales_refund,R.id.nav_credit_pay,R.id.nav_home,R.id.nav_sales_report)
                 .setOpenableLayout(drawer)
                 .build();
 
@@ -140,8 +140,8 @@ public class MainDrawerActivity extends AppCompatActivity  {
             Cursor cursor = mydb.rawQuery("Select STR_NM, E_MAIL from retail_store",null);
             if(cursor.moveToFirst()){
 
-                title = cursor.getString(0);
-                subtitle= cursor.getString(1);
+                title = cursor.getString(0).toUpperCase();
+                subtitle= cursor.getString(1).toLowerCase();
 
             }
         } catch (Exception e) {

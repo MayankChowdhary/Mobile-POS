@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.*
 import android.view.View.OnTouchListener
 import android.widget.*
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.labters.lottiealertdialoglibrary.DialogTypes
@@ -132,6 +133,16 @@ class ProductsFragment : Fragment() , DatePickerDialog.OnDateSetListener {
         stockQuantityTitle.isSelected = true
         val extProdIdTitle: TextView = view.findViewById(R.id.p_ext_id_title)
         extProdIdTitle.isSelected = true
+
+
+        sprice_edittext.addTextChangedListener {
+
+            special_price_edittext.setText(it.toString())
+            internet_price_edittext.setText(it.toString())
+            whole_price_edittext.setText(it.toString())
+
+        }
+
 
         val categoryAdapter: ArrayAdapter<StringWithTag> = context?.let { ArrayAdapter(it, R.layout.spinner_layout, categoryArray) }!!
         categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)

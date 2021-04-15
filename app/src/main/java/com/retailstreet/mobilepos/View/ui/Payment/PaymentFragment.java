@@ -2,6 +2,7 @@ package com.retailstreet.mobilepos.View.ui.Payment;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -52,7 +53,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.Map;
+
+import static android.content.Context.MODE_PRIVATE;
 
 public class PaymentFragment extends Fragment implements View.OnClickListener {
 
@@ -63,6 +66,7 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
     private String deliveryGuid;
     private TextView pendingAmountTextView;
     private LinearLayout creditPayLayout;
+    private LinearLayout advanceLayout;
     private boolean isCreditPay = false;
     private Double pendingAmount;
      double paidByCash = 0.00;
@@ -83,7 +87,7 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
     String bankName = "";
     String bankGuid = "";
     String expDate = " ";
-    String receivedcash="";
+    String receivedcash="0.00";
     HashMap<String , String[]> payModeData= new HashMap<String, String[]>();
     HashMap<String ,String> payModeId= new HashMap<String, String>();
     String cardType = "OT";
@@ -95,6 +99,18 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
     String creditLimit ;
     String redeemNumber="";
     String redeemMasterAmount="0.00";
+    String advance_amount = "0.00";
+    Double paidByAdvance = 0.00;
+    String newAdvance = "0.00";
+
+    List<String> cardValidateStrings;
+    EditText cardNumber1 ;
+    EditText cardNumber2 ;
+    EditText cardNumber3 ;
+    EditText cardNumber4 ;
+    EditText custNameEdittext;
+    String expMont;
+    String expYear ;
 
 
 
@@ -123,9 +139,26 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
         creditBalance = myArgs.getCreditBalance();
         addDiscount = myArgs.getAddDiscount();
 
+
         if(!customerId.trim().isEmpty()){
 
             getCreditDetails(customerId);
+            advance_amount = getAdvanceDetails(customerId);
+        }
+
+
+        if(!isCreditPay && Double.parseDouble(advance_amount)>0.00){
+            double advance = Math.abs(Double.parseDouble(advance_amount));
+            if(advance<Double.parseDouble(amountToPay)){
+                amountToPay= String.valueOf(Double.parseDouble(amountToPay) - advance);
+                paidByAdvance = advance;
+                newAdvance = "0.00";
+            }else if(advance>=Double.parseDouble(amountToPay)){
+                amountToPay = "0.00";
+                paidByAdvance = Double.parseDouble(amountToPay);
+                newAdvance = String.valueOf( advance - Double.parseDouble(amountToPay));
+            }
+
         }
 
         Log.d("Credit Balance Received", "onViewCreated: "+creditBalance);
@@ -163,6 +196,15 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
                 Vibration.Companion.vibrate(500);
                 return;
             }
+            if(isCreditPay){
+
+                if(Double.parseDouble(getTotalPayment())<=0){
+                    Toast.makeText(getContext(),"No amount added!",Toast.LENGTH_LONG).show();
+                    Vibration.Companion.vibrate(500);
+                    return;
+                }
+
+            }
 
             String message = "";
 
@@ -172,6 +214,23 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
             }else {
 
                 message = "Purchase Completed";
+            }
+
+            if(paidByCard>0 ) {
+                Log.d("PaidByCard is true", "onViewCreated: "+paidByCard);
+                String card1 =  cardNumber1.getText().toString();
+                String card2 =  cardNumber2.getText().toString();
+                String card3 =  cardNumber3.getText().toString();
+                String card4 =  cardNumber4.getText().toString();
+                custName = custNameEdittext.getText().toString();
+                cardNumberX = card1+card2+card3+card4;
+                cardValidateStrings = new ArrayList<>(Arrays.asList(card1,card2,card3,card4,custName, expMont, expYear,bankGuid));
+                if (!validateStrings(cardValidateStrings)) {
+
+                    Toast.makeText(getContext(), "Please Fill up card details first!", Toast.LENGTH_LONG).show();
+                    Vibration.Companion.vibrate(300);
+                    return;
+                }
             }
 
             payButton.setClickable(false);
@@ -210,6 +269,11 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
                 EmptyCart();
             }
 
+            if(!isCreditPay && Double.parseDouble(advance_amount)>0.00) {
+
+                updateCustomerAdvance(newAdvance,customerId);
+            }
+
 
 
         });
@@ -246,6 +310,9 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
         TextView creditBalanceTV = viewPager.findViewById(R.id.pay_cash_credit_value);
         creditBalanceTV.setText(creditBalance+" ₹");
         EditText creditPayEditText = viewPager.findViewById(R.id.pay_credit_amount_value);
+        advanceLayout = viewPager.findViewById(R.id.advance_amount_layout);
+        TextView advanceAmountTV = viewPager.findViewById(R.id.advance_amount_value);
+        advanceAmountTV.setText(advance_amount+" ₹");
 
 
         Button cash50 = viewPager.findViewById(R.id.cash_fifty);
@@ -263,8 +330,16 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
         creditPayLayout = viewPager.findViewById(R.id.pay_credit_main_layout);
         if(isCreditPay || customerId.trim().isEmpty() || Integer.parseInt(isCreditEnabled)==0){
             creditPayLayout.setVisibility(View.GONE);
+
         }else {
             creditPayLayout.setVisibility(View.VISIBLE);
+        }
+
+        if(isCreditPay || customerId.trim().isEmpty()){
+            advanceLayout.setVisibility(View.GONE);
+
+        }else {
+            advanceLayout.setVisibility(View.VISIBLE);
         }
 
 
@@ -342,9 +417,14 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
 
             @Override
             public void afterTextChanged(Editable s) {
+
                 paidByCash = 0;
-                setPendingAmount();
                 payModeData.remove("CA");
+                if(paidByAdvance>0.00){
+                    payModeData.put("CA",new String[]{payModeId.get("CA"),"",String.valueOf(paidByAdvance),"","",""});
+                }
+
+                setPendingAmount();
                 if(s.toString().trim().isEmpty()){
                     return;
                 }
@@ -377,8 +457,12 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
                                 payCash = pendingAmount;
                             }
                         }
-                        payModeData.put("CA",new String[]{payModeId.get("CA"),"",String.valueOf(payCash),"","",""});
+                        if(paidByAdvance>0.00){
+                            payModeData.put("CA",new String[]{payModeId.get("CA"),"",String.valueOf(payCash+paidByAdvance),"","",""});
 
+                        }else {
+                            payModeData.put("CA", new String[]{payModeId.get("CA"), "", String.valueOf(payCash), "", "", ""});
+                        }
                     }
 
                 } catch (NumberFormatException e) {
@@ -409,11 +493,11 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
 
         SearchableSpinner bankNameSpinner = viewPager.findViewById(R.id.pay_card_bank_value);
         EditText cardAmount = viewPager.findViewById(R.id.pay_card_amount_value);
-        EditText custNameEdittext = viewPager.findViewById(R.id.pay_card_name__value);
-        EditText cardNumber1 = viewPager.findViewById(R.id.pay_card_number_one);
-        EditText cardNumber2 = viewPager.findViewById(R.id.pay_card_number_two);
-        EditText cardNumber3 = viewPager.findViewById(R.id.pay_card_number_three);
-        EditText cardNumber4 = viewPager.findViewById(R.id.pay_card_number_four);
+         custNameEdittext = viewPager.findViewById(R.id.pay_card_name__value);
+         cardNumber1 = viewPager.findViewById(R.id.pay_card_number_one);
+         cardNumber2 = viewPager.findViewById(R.id.pay_card_number_two);
+         cardNumber3 = viewPager.findViewById(R.id.pay_card_number_three);
+         cardNumber4 = viewPager.findViewById(R.id.pay_card_number_four);
 
 
          List<StringWithTag> banknameList = getBankListData();
@@ -430,8 +514,7 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
         ArrayAdapter<String> expiryAdapter = new ArrayAdapter<String>(getActivity(), R.layout.spinner_item_bold, expiryItem);
         expiryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         expirySelector.setAdapter(expiryAdapter);
-        AtomicReference<String> expMont =  new AtomicReference<>();
-        AtomicReference<String> expYear = new AtomicReference<>();
+
 
         expirySelector.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -443,13 +526,13 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
                             //Toast.makeText(getContext(), year + "-" + month, Toast.LENGTH_SHORT).show();
 
                             if(month<10) {
-                                expMont.set("0" + month);
+                                expMont="0" + month;
                             }
                             else {
-                                expMont.set(String.valueOf(month));
+                                expMont=String.valueOf(month);
                             }
 
-                            expYear.set(String.valueOf(year));
+                            expYear=String.valueOf(year);
                             expiryItem[0] =expDate = expMont + "/" + expYear;
                             ArrayAdapter<String> expiryAdapter = new ArrayAdapter<String>(getActivity(), R.layout.spinner_item_bold, expiryItem);
                             expiryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -481,6 +564,7 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
+
             }
 
             @Override
@@ -505,12 +589,7 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
                         Vibration.Companion.vibrate(300);
                         return;
                     }
-                    String card1 =  cardNumber1.getText().toString();
-                    String card2 =  cardNumber2.getText().toString();
-                    String card3 =  cardNumber3.getText().toString();
-                    String card4 =  cardNumber4.getText().toString();
-                    custName = custNameEdittext.getText().toString();
-                    cardNumberX = card1+card2+card3+card4;
+
 
                     String cardReceived = s.toString();
                     if(cardReceived.trim().isEmpty()) {
@@ -519,20 +598,19 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
 
                     double received =  Double.parseDouble(cardReceived);
 
-                    List<String> allStrings = new ArrayList<>(Arrays.asList(card1,card2,card3,card4,custName, expMont.get(), expYear.get(),bankGuid));
 
-                    if (!validateStrings(allStrings)) {
+                    /*if (!validateStrings(cardValidateStrings)) {
 
                         Toast.makeText(getContext(),"Please Fill up all fields first!",Toast.LENGTH_LONG).show();
                         Vibration.Companion.vibrate(300);
                         return;
-                    }
+                    }*/
 
                     if(received<=pendingAmount && received >0) {
                         paidByCard = received;
                         setPendingAmount();
 
-                        expDate = expMont.get()+expYear.get();
+                        expDate = expMont+expYear;
                         if(cardType.equals("OT")) {
                             payModeData.put(cardType, new String[]{payModeId.get("OT"), "", String.valueOf(paidByCard), cardNumberX, expDate, custName});
                         }else if(cardType.equals("CR")) {
@@ -1042,7 +1120,9 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
     }
     private boolean validateStrings(List<String> fields) {
         for (String str : fields) {
+            Log.d("ValidatinCard", "validateStrings: "+str);
             if (str ==null || str.trim().isEmpty()) {
+                Log.d("FoundEmpty", "validateStrings: "+str);
                 return false;
             }
         }
@@ -1093,7 +1173,7 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
         mydb.close();
     }
 
-    /*private String getTotalPayment(){
+    private String getTotalPayment(){
         double totalSum=0.00;
         for (Map.Entry<String,String[]> entry : payModeData.entrySet()) {
             String[] data = entry.getValue();
@@ -1102,7 +1182,7 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
         }
 
         return String.valueOf(totalSum);
-    }*/
+    }
 
 
 
@@ -1123,6 +1203,37 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
         cursor.close();
         mydb.close();
         return  list;
+
+    }
+
+    private String getAdvanceDetails(String custId){
+        String advance="0.00";
+        SQLiteDatabase mydb = requireActivity().openOrCreateDatabase("MasterDB", Context.MODE_PRIVATE,null);
+        Cursor cursor = mydb.rawQuery("select ADVANCE_AMOUNT from retail_cust where CUSTOMERGUID = '"+custId+"'",null);
+        if (cursor.moveToFirst()) {
+            while (!cursor.isAfterLast()) {
+                advance = cursor.getString(0);
+                Log.d("AdvanceRetrieved", "getAdvanceAmount: "+advance_amount);
+                cursor.moveToNext();
+            }
+        }
+
+        cursor.close();
+        mydb.close();
+        return advance;
+    }
+
+    public void updateCustomerAdvance(String newAdvance, String custGuid){
+        try {
+
+            String query = "Update retail_cust Set ADVANCE_AMOUNT = '"+newAdvance+"'  where CUSTOMERGUID = '"+custGuid+"'";
+            SQLiteDatabase db  = requireContext().openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
+            db.execSQL(query);
+            db.close();
+            Log.d("UpdateAdvance", "Update New Advance: Successful"+newAdvance);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
     }
 

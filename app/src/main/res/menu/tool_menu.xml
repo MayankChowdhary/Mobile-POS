@@ -23,9 +23,17 @@
         android:visible="false" />
 
     <item
+        android:id="@+id/filterSpinner"
+        android:title="Filter"
+        app:showAsAction="always"
+        app:actionViewClass="androidx.appcompat.widget.AppCompatSpinner"
+        android:visible="false"/>
+
+    <item
         android:id="@+id/appEmptyCart"
         android:title="Empty Cart"
         app:showAsAction="never"
         android:visible="false" />
+
 
 </menu>

@@ -254,6 +254,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:ems="10"
+                        android:text="0"
                         android:inputType="numberDecimal"
                         android:textColor="?colorOnSurface"/>
                 </LinearLayout>
@@ -283,6 +284,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:ems="10"
+                        android:text="0"
                         android:inputType="numberDecimal"
                         android:textColor="?colorOnSurface" />
                 </LinearLayout>
@@ -313,6 +315,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:ems="10"
+                        android:text="0"
                         android:inputType="numberDecimal"
                         android:textColor="?colorOnSurface" />
                 </LinearLayout>
@@ -424,22 +427,41 @@
                     android:id="@+id/c_divider_1"
                     android:layout_marginTop="25dp" />
 
-                <TextView
-                    android:id="@+id/address_header"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Address Details"
-                    android:textColor="?colorPrimary"
-                    android:textSize="@dimen/_11sdp"
-                    android:textStyle="bold" />
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/address_header"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Address Details"
+                        android:textColor="?colorPrimary"
+                        android:textSize="@dimen/_11sdp"
+                        android:textStyle="bold" />
+
+                    <com.google.android.material.switchmaterial.SwitchMaterial
+                        android:id="@+id/ca_address_switch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:checked="false" />
+                </LinearLayout>
+
                 <View
+                    android:id="@+id/c_divider_2"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="?colorPrimary"
-                    android:id="@+id/c_divider_2"
-                    android:layout_marginTop="5dp" />
+                    android:background="?colorPrimary" />
+    <LinearLayout
+        android:id="@+id/address_master_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-                <LinearLayout
+                    <LinearLayout
                     android:id="@+id/c_add_type_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -662,7 +684,7 @@
                         android:layout_weight="1"
                         android:gravity="start" />
                 </LinearLayout>
-
+</LinearLayout>
 
 
             </LinearLayout>

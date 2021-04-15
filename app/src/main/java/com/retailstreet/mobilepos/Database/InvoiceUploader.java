@@ -63,6 +63,7 @@ public class InvoiceUploader extends Worker {
                 invoiceGenerator= new InvoiceGenerator();
                 this.GetBillDetailToSync = invoiceGenerator.getBillDetailsSyncdata(Bill_No);
                 this.GetBillMasterToSync = invoiceGenerator.getBillMasterSyncdataforSMS(Bill_No);
+
                 this.GetBillPaymentDetailToSync = invoiceGenerator.getBillPaymentDetails(Bill_No);
 
 
@@ -108,7 +109,6 @@ public class InvoiceUploader extends Worker {
                     JSONArray jsonArray3 = new JSONArray();
                     for (BillPayInvoice paydetail : GetBillPaymentDetailToSync) {
                         Log.e("RC paydetailsize:- ", String.valueOf(GetBillPaymentDetailToSync.size()));
-
                         JSONObject jsonObject3 = new JSONObject();
                         jsonObject3.put("PAYMODE",getFromPayModeMaster( paydetail.getMASTERPAYMODEGUID(),"PAYMODE"));
                         jsonObject3.put("PAYAMOUNT", paydetail.getPAYAMOUNT());
@@ -143,8 +143,26 @@ public class InvoiceUploader extends Worker {
                         if (response.isSuccessful()) {
                             Log.d("Rc Response for sales :", "SMS " + (response.body() != null ? response.body().get(0).getMessage() : null));
                             smsSetFromPrefs.remove(Bill_No);
+                            Log.d("SMSNoRemoved", "onResponse: "+Bill_No);
                             SaveSetsInPrefs();
-                            Toast.makeText(context,"SMS Successfully Synced!",Toast.LENGTH_SHORT).show();
+
+                            String code = "";
+                            if (response.body().toString().length() > 4) {
+                                code = response.body().toString().substring(1, 5);
+                                Log.d("SMSCodeExtracted", "CODE: " + code);
+                            }
+
+                            if (code != null && code.contains("1025")) {
+                                Toast.makeText(context, "SMS Failed! Insufficient Amount", Toast.LENGTH_SHORT).show();
+
+                            } else if (code != null && code.contains("1706")){
+                                Toast.makeText(context, "SMS Failed! Wrong Number", Toast.LENGTH_SHORT).show();
+
+                            }else {
+                                Toast.makeText(context,"SMS Successfully Synced!",Toast.LENGTH_SHORT).show();
+
+                            }
+
 
                         }
                     } catch (Exception e) {
@@ -298,10 +316,23 @@ public class InvoiceUploader extends Worker {
     @SuppressLint("ApplySharedPref")
     public void SaveSetsInPrefs()
     {
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putStringSet("smsSync", smsSetFromPrefs);
-        editor.commit();
+
+        if(smsSetFromPrefs.isEmpty()){
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.remove("smsSync");
+            editor.commit();
+        }else {
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putStringSet("smsSync", smsSetFromPrefs);
+            editor.commit();
+
+            for (String data : smsSetFromPrefs) {
+
+                Log.d("Saved Sms Keys", "SaveSetsInPrefs: " + data);
+            }
+        }
     }
 
 }

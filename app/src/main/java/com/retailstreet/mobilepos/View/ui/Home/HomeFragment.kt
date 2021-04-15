@@ -17,6 +17,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.retailstreet.mobilepos.Controller.ControllerShiftTrans
 import com.retailstreet.mobilepos.R
+import java.sql.Time
+import java.text.SimpleDateFormat
+import java.util.*
 
 class HomeFragment : Fragment() {
 
@@ -39,6 +42,7 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+       // requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         val myArray:Array<String?> = getStoreName()
 
         val handlerData: String? = null
@@ -55,7 +59,18 @@ class HomeFragment : Fragment() {
         username.text = myArray[2]
         if(isSessionOpen()){
             shiftStatus.text = "Running"
-            startTime.text = ControllerShiftTrans().shiftTime
+
+            try {
+                val format = SimpleDateFormat("hh:mm:ss", Locale.getDefault()) // 12 hour format
+                val d1 = format.parse(ControllerShiftTrans().shiftTime) as Date
+                val ppstime = Time(d1.time)
+                startTime.text = ppstime.toString()
+            } catch (e: java.lang.Exception) {
+                Log.e("Exception is ", e.toString())
+                startTime.text = ControllerShiftTrans().shiftTime
+            }
+
+
         }else{
             shiftStatus.text = "Not Running"
           startTime.text = "00:00:00"
@@ -91,8 +106,8 @@ class HomeFragment : Fragment() {
             if (cursor.moveToFirst()) {
                 val title: String = cursor.getString(0)
                 val subtitle: String = cursor.getString(1)
-                myArray[0] = title
-                myArray[1] = subtitle
+                myArray[0] = title.toUpperCase(Locale.ROOT)
+                myArray[1] = subtitle.toLowerCase(Locale.ROOT)
                 myArray[2] = user_id
             }
 
