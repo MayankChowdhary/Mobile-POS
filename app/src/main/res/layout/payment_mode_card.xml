@@ -115,7 +115,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="start"
-            android:text="Customer Name"
+            android:text="Card Holder Name"
             android:textStyle="bold"
             android:textColor="?colorOnBackground"
             android:textSize="@dimen/_13ssp" />

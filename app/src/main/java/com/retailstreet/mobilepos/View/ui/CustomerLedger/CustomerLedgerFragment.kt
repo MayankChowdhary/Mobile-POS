@@ -44,7 +44,7 @@ class CustomerLedgerFragment : Fragment() {
         getLedgerDetails(custGuid,getFromMasterCustomer(custGuid,"NAME"))
 
 
-        LegacyTableView.insertLegacyTitle("NAME", "DATE", "PAYMODE", "CREDIT AMOUNT")
+        LegacyTableView.insertLegacyTitle("NAME", "DATE", "PAYMODE","ADVANCE AMOUNT", "CREDIT AMOUNT","DEBIT AMOUNT")
         //set table contents as string arrays
         //set table contents as string arrays
 
@@ -92,14 +92,16 @@ class CustomerLedgerFragment : Fragment() {
 
     private fun getLedgerDetails(custGuid: String, custName: String) {
         val mydb = requireActivity().openOrCreateDatabase("MasterDB", Context.MODE_PRIVATE, null)
-        val query = "select   ACTIONDATE, MASTERPAYMODEGUID, CREDITAMOUNT from customerLedger Where CUSTOMERGUID = '$custGuid'";
+        val query = "select   ACTIONDATE, MASTERPAYMODEGUID, CREDITAMOUNT,DEBITAMOUNT,ADDITIONALPARAM6 from customerLedger Where CUSTOMERGUID = '$custGuid'";
         val cursor = mydb.rawQuery(query, null)
         if (cursor.moveToFirst()) {
             while (!cursor.isAfterLast) {
                 val date = cursor.getString(0)
                 val paymode:String? = getFromPayMode(cursor.getString(1))
                 val creditAmount = cursor.getString(2)
-                LegacyTableView.insertLegacyContent(custName, date, paymode, creditAmount);
+                val advanceAmount = cursor.getString(4)
+                val debitAmount = cursor.getString(3)
+                LegacyTableView.insertLegacyContent(custName, date, paymode,advanceAmount, creditAmount,debitAmount);
                 cursor.moveToNext()
             }
         }

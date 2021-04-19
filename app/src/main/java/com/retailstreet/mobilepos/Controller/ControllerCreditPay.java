@@ -25,7 +25,6 @@ import static com.retailstreet.mobilepos.Utils.Constants.DBNAME;
 public class ControllerCreditPay {
 
     Context context;
-
     String GRANDTOTAL;
     String RECEIVEAMOUNT;
     String DUEAMOUNT;
@@ -107,6 +106,71 @@ public class ControllerCreditPay {
 
     }
 
+    public  void updateCustAdditionLedger(  String custGuid, String advance){
+
+        ADDITIONALPARAM1 = "";
+        ADDITIONALPARAM2 = advance;
+        ADDITIONALPARAM3 = "";
+        ISSYNCED = "0";
+        BILLNO = " ";
+        CUSTOMERGUID = custGuid;
+        STORE_GUID = getFromRetailStore("STORE_GUID");
+        USER_GUID = getFromGroupUserMaster("USER_GUID");
+        ACTIONDATE = getDateAndTime();
+        GRANDTOTAL = "0";
+        DEBITAMOUNT = "0";
+        BALANCEAMOUNT = "0";
+        ADDITIONALPARAM4 = "";
+        ADDITIONALPARAM5 = "";
+        ADDITIONALPARAM6 = "";
+        CUSTLEDGERID = IDGenerator.getTimeStamp();
+        ADDITIONALPARAM1 = "";
+        MASTERPAYMODEGUID="";
+        RECEIVEAMOUNT = "0";
+        CREDITAMOUNT = "0";
+
+        CustomerLedger customerLedger = new CustomerLedger( CUSTLEDGERID,  CUSTOMERGUID,  STORE_GUID,  USER_GUID,  ACTIONDATE,  GRANDTOTAL,  CREDITAMOUNT,  DEBITAMOUNT,  BALANCEAMOUNT,  BILLNO,  ISSYNCED,  MASTERPAYMODEGUID,  ADDITIONALPARAM1,  ADDITIONALPARAM2,  ADDITIONALPARAM3,  ADDITIONALPARAM4,  ADDITIONALPARAM5,  ADDITIONALPARAM6);
+        InsertCustomerLedger(customerLedger);
+        try {
+            new WorkManagerSync(8);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public  void updateAdvanceSettlement( String advance, String custGuid, String billnum) {
+
+        ADDITIONALPARAM1 = "";
+        ADDITIONALPARAM2 = "";
+        ADDITIONALPARAM3 = "";
+        ISSYNCED = "0";
+        BILLNO = billnum;
+        CUSTOMERGUID = custGuid;
+        STORE_GUID = getFromRetailStore("STORE_GUID");
+        USER_GUID = getFromGroupUserMaster("USER_GUID");
+        ACTIONDATE = getDateAndTime();
+        GRANDTOTAL = "0";
+        DEBITAMOUNT = "0";
+        BALANCEAMOUNT = "0";
+        ADDITIONALPARAM4 = "";
+        ADDITIONALPARAM5 = "";
+        ADDITIONALPARAM6 = advance;
+        CUSTLEDGERID = IDGenerator.getTimeStamp();
+        ADDITIONALPARAM1 = "";
+        MASTERPAYMODEGUID="";
+        RECEIVEAMOUNT = "0";
+        CREDITAMOUNT = "0";
+
+        CustomerLedger customerLedger = new CustomerLedger( CUSTLEDGERID,  CUSTOMERGUID,  STORE_GUID,  USER_GUID,  ACTIONDATE,  GRANDTOTAL,  CREDITAMOUNT,  DEBITAMOUNT,  BALANCEAMOUNT,  BILLNO,  ISSYNCED,  MASTERPAYMODEGUID,  ADDITIONALPARAM1,  ADDITIONALPARAM2,  ADDITIONALPARAM3,  ADDITIONALPARAM4,  ADDITIONALPARAM5,  ADDITIONALPARAM6);
+        InsertCustomerLedger(customerLedger);
+        try {
+            new WorkManagerSync(8);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
 
     public ControllerCreditPay(String custId, String amount){
         context = ApplicationContextProvider.getContext();

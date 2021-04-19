@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView android:id="@+id/scroll_view_customer"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/item_box_border"
+    android:layout_marginTop="0dp"
+    android:layout_marginBottom="@dimen/_10sdp"
+    android:layout_marginStart="@dimen/_3sdp"
+    android:layout_marginEnd="@dimen/_3sdp"
+    android:padding="@dimen/_6sdp"
+    android:elevation="2dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+
+        <TextView
+            android:id="@+id/pay_cheque_number_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_6sdp"
+            android:gravity="start"
+            android:singleLine="true"
+            android:text="Cheque Number"
+            android:textColor="?colorOnBackground"
+            android:textSize="@dimen/_13ssp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/pay_cheque_number"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:ems="15"
+            android:inputType="text|textNoSuggestions"
+            android:letterSpacing="0.4"
+            android:maxLength="20"
+            android:textColor="?colorOnSurface"
+            android:textStyle="bold" />
+
+        <LinearLayout
+        android:id="@+id/pay_cheque_bank_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_8sdp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginBottom="@dimen/_5sdp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/pay_cheque_bank_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="start"
+            android:text="Bank Name "
+            android:textStyle="bold"
+            android:textColor="?colorOnBackground"
+            android:textSize="@dimen/_13ssp" />
+
+        <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+            android:id="@+id/pay_cheque_bank_value"
+            android:layout_width="@dimen/_80sdp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="0dp"
+            android:layout_weight="1"
+            android:gravity="start" />
+    </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/pay_cheque_date_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginBottom="@dimen/_5sdp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/pay_cheque_date_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="start"
+                android:text="Cheque Date"
+                android:textStyle="bold"
+                android:textColor="?colorOnBackground"
+                android:textSize="@dimen/_13ssp" />
+
+            <Spinner
+                android:id="@+id/pay_cheque_date_value"
+                android:layout_width="@dimen/_80sdp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="0dp"
+                android:layout_weight="1"
+                android:gravity="start" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/pay_cheque_amount_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/pay_cheque_amount_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="start"
+                android:text="Amount "
+                android:textColor="?colorOnBackground"
+                android:textSize="@dimen/_13ssp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/pay_cheque_amount_value"
+                android:layout_width="@dimen/_80sdp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ems="10"
+                android:textStyle="bold"
+                android:letterSpacing="0.4"
+                android:includeFontPadding="true"
+                android:inputType="numberDecimal|textNoSuggestions"
+                android:digits="0,1,2,3,4,5,6,7,8,9,."
+                android:textColor="?colorOnSurface" />
+        </LinearLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_80sdp"/>
+    </LinearLayout>
+</ScrollView>

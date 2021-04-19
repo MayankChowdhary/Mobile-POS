@@ -7,8 +7,10 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.widget.ExpandableListView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,12 +26,23 @@ import com.google.android.material.navigation.NavigationView;
 import com.labters.lottiealertdialoglibrary.DialogTypes;
 import com.retailstreet.mobilepos.R;
 import com.retailstreet.mobilepos.Utils.WorkManagerSync;
+import com.retailstreet.mobilepos.View.ExpandableNavigation.ExpandableListAdapter;
+import com.retailstreet.mobilepos.View.ExpandableNavigation.MenuModel;
 import com.retailstreet.mobilepos.View.dialog.LottieAlertDialogs;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
 
 public class MainDrawerActivity extends AppCompatActivity  {
 
     private AppBarConfiguration mAppBarConfiguration;
-
+    ExpandableListAdapter expandableListAdapter;
+    ExpandableListView expandableListView;
+    List<MenuModel> headerList = new ArrayList<>();
+    HashMap<MenuModel, List<MenuModel>> childList = new HashMap<>();
+    DrawerLayout drawer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,61 +52,220 @@ public class MainDrawerActivity extends AppCompatActivity  {
         setSupportActionBar(toolbar);
         getWindow().setBackgroundDrawable(null);
         //Thread.setDefaultUncaughtExceptionHandler(new CrashHandler(this));
+        expandableListView = findViewById(R.id.expandableListView);
+        prepareMenuData();
+        populateExpandableList();
 
-        DrawerLayout  drawer = findViewById(R.id.drawer_layout);
+         drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-               R.id.nav_sales,R.id.nav_dayopen,R.id.nav_dayclose,R.id.nav_products,R.id.nav_customer,R.id.nav_customer_update,R.id.nav_sales_refund,R.id.nav_credit_pay,R.id.nav_home,R.id.nav_sales_report)
+                R.id.nav_sales, R.id.nav_dayopen, R.id.nav_dayclose, R.id.nav_products, R.id.nav_customer, R.id.nav_customer_update, R.id.nav_sales_refund, R.id.nav_credit_pay, R.id.nav_home, R.id.nav_sales_report)
                 .setOpenableLayout(drawer)
                 .build();
 
 
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-        NavigationUI.setupActionBarWithNavController(this, navController,mAppBarConfiguration);
+        NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
 
 
         navigationView.setNavigationItemSelectedListener(menuItem -> {
-            int id=menuItem.getItemId();
+            int id = menuItem.getItemId();
             //it's possible to do more actions on several items, if there is a large amount of items I prefer switch(){case} instead of if()
-            if (id==R.id.nav_logout){
+            if (id == R.id.nav_logout) {
 
-                LottieAlertDialogs alertDialog= new LottieAlertDialogs.Builder(MainDrawerActivity.this, DialogTypes.TYPE_WARNING)
-                        .setTitle("Logout")
-                        .setDescription("Confirm Logout?")
-                        .setPositiveText("Yes")
-                        .setPositiveButtonColor(Color.parseColor("#297999"))
-                        .setPositiveTextColor(Color.parseColor("#ffffff"))
-                        .setNegativeText("No")
-                        .setNegativeButtonColor(Color.parseColor("#297999"))
-                        .setNegativeTextColor(Color.parseColor("#ffffff"))
-                        .setPositiveListener(lottieAlertDialog -> {
-                            SharedPreferences sharedPreferences = getSharedPreferences("com.retailstreet.mobilepos", MODE_PRIVATE);
-                            SharedPreferences.Editor myEdit = sharedPreferences.edit();
-                            myEdit.remove("username");
-                            myEdit.remove("password");
-                            myEdit.apply();
-                            Intent loginIntent = new Intent(MainDrawerActivity.this, LoginActivity.class);
-                            startActivity(loginIntent);
-                            finish();
-                            lottieAlertDialog.dismiss();
-                        })
-                        .setNegativeListener(Dialog::dismiss)
-                        .build();
-                alertDialog.setCancelable(true);
-                alertDialog.show();
+
                 return true;
 
             }
 
             //This is for maintaining the behavior of the Navigation view
-            NavigationUI.onNavDestinationSelected(menuItem,navController);
+            NavigationUI.onNavDestinationSelected(menuItem, navController);
             //This is for closing the drawer after acting on it
             drawer.closeDrawer(GravityCompat.START);
             return true;
         });
+
+    }
+
+    private void prepareMenuData() {
+
+        MenuModel menuModel = new MenuModel("Reception", true, false, R.drawable.reception); //Menu of Android Tutorial. No sub menus
+        headerList.add(menuModel);
+
+        if (!menuModel.hasChildren) {
+            childList.put(menuModel, null);
+        }
+
+
+        menuModel = new MenuModel("Billing", true, true,  R.drawable.billing);
+        headerList.add(menuModel);
+        List<MenuModel> childModelsList = new ArrayList<>();
+        MenuModel childModel = new MenuModel("Sales", false, false, R.drawable.product);
+        childModelsList.add(childModel);
+
+        childModel = new MenuModel("Sales Return", false, false, R.drawable.returning);
+        childModelsList.add(childModel);
+
+
+        if (menuModel.hasChildren) {
+            Log.d("API123","here");
+            childList.put(menuModel, childModelsList);
+        }
+
+
+        menuModel = new MenuModel("Inventory", true, true,  R.drawable.inventory);
+        headerList.add(menuModel);
+        childModelsList = new ArrayList<>();
+        childModel = new MenuModel("Add Product", false, false, R.drawable.add_product);
+        childModelsList.add(childModel);
+
+        if (menuModel.hasChildren) {
+            Log.d("API123","here");
+            childList.put(menuModel, childModelsList);
+        }
+
+        childModelsList = new ArrayList<>();
+        menuModel = new MenuModel("Credit Management", true, true,  R.drawable.creditmanagement); //Menu of Python Tutorials
+        headerList.add(menuModel);
+        childModel = new MenuModel("Credit Pay", false, false, R.drawable.credit);
+        childModelsList.add(childModel);
+
+        childModel = new MenuModel("Customer Addition", false, false, R.drawable.customer);
+        childModelsList.add(childModel);
+        childModel = new MenuModel("Customer Update", false, false, R.drawable.customer_update);
+        childModelsList.add(childModel);
+
+        if (menuModel.hasChildren) {
+            childList.put(menuModel, childModelsList);
+        }
+
+        childModelsList = new ArrayList<>();
+        menuModel = new MenuModel("Cashier", true, true,  R.drawable.cashier); //Menu of Python Tutorials
+        headerList.add(menuModel);
+        childModel = new MenuModel("Day Open", false, false, R.drawable.open);
+        childModelsList.add(childModel);
+
+        childModel = new MenuModel("Day Close", false, false, R.drawable.close);
+        childModelsList.add(childModel);
+
+        if (menuModel.hasChildren) {
+            childList.put(menuModel, childModelsList);
+        }
+
+        childModelsList = new ArrayList<>();
+        menuModel = new MenuModel("Reports", true, true, R.drawable.reports); //Menu of Python Tutorials
+        headerList.add(menuModel);
+        childModel = new MenuModel("Sales Reports", false, false,  R.drawable.sales_report);
+        childModelsList.add(childModel);
+
+        if (menuModel.hasChildren) {
+            childList.put(menuModel, childModelsList);
+        }
+
+
+         menuModel = new MenuModel("Logout", true, false,  R.drawable.logout); //Menu of Android Tutorial. No sub menus
+        headerList.add(menuModel);
+
+        if (!menuModel.hasChildren) {
+            childList.put(menuModel, null);
+        }
+
+    }
+
+    private void populateExpandableList() {
+
+            expandableListAdapter = new ExpandableListAdapter(this, headerList, childList);
+            expandableListView.setAdapter(expandableListAdapter);
+
+            expandableListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+                @Override
+                public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
+
+                    if (headerList.get(groupPosition).isGroup) {
+                        if (!headerList.get(groupPosition).hasChildren) {
+                            /*NavController navController = Navigation.findNavController(MainDrawerActivity.this, R.id.nav_host_fragment);
+                            navController.popBackStack();*/
+                            if(groupPosition==0){
+                                Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.nav_home);
+                                drawer.closeDrawer(GravityCompat.START);
+                            } if(groupPosition==6){
+                                LottieAlertDialogs alertDialog = new LottieAlertDialogs.Builder(MainDrawerActivity.this, DialogTypes.TYPE_WARNING)
+                                        .setTitle("Logout")
+                                        .setDescription("Confirm Logout?")
+                                        .setPositiveText("Yes")
+                                        .setPositiveButtonColor(Color.parseColor("#297999"))
+                                        .setPositiveTextColor(Color.parseColor("#ffffff"))
+                                        .setNegativeText("No")
+                                        .setNegativeButtonColor(Color.parseColor("#297999"))
+                                        .setNegativeTextColor(Color.parseColor("#ffffff"))
+                                        .setPositiveListener(lottieAlertDialog -> {
+                                            SharedPreferences sharedPreferences = getSharedPreferences("com.retailstreet.mobilepos", MODE_PRIVATE);
+                                            SharedPreferences.Editor myEdit = sharedPreferences.edit();
+                                            myEdit.remove("username");
+                                            myEdit.remove("password");
+                                            myEdit.apply();
+                                            Intent loginIntent = new Intent(MainDrawerActivity.this, LoginActivity.class);
+                                            startActivity(loginIntent);
+                                            lottieAlertDialog.dismiss();
+                                            finish();
+
+                                        })
+                                        .setNegativeListener(Dialog::dismiss)
+                                        .build();
+                                alertDialog.setCancelable(true);
+                                alertDialog.show();
+                            }
+                        }
+                    }
+
+                    return false;
+                }
+            });
+
+            expandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+                @Override
+                public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+
+                    if (childList.get(headerList.get(groupPosition)) != null) {
+                        MenuModel model = Objects.requireNonNull(childList.get(headerList.get(groupPosition))).get(childPosition);
+
+                        if (groupPosition==1 && childPosition==0) {
+                            Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.nav_sales);
+                            drawer.closeDrawer(GravityCompat.START);
+                        }else if (groupPosition==1 && childPosition==1) {
+                            Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.nav_sales_refund);
+                            drawer.closeDrawer(GravityCompat.START);
+                        }else if (groupPosition==2 && childPosition==0) {
+                            Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.nav_products);
+                            drawer.closeDrawer(GravityCompat.START);
+                        }else if (groupPosition==3 && childPosition==0) {
+                            Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.nav_credit_pay);
+                            drawer.closeDrawer(GravityCompat.START);
+                        }else if (groupPosition==3 && childPosition==1) {
+                            Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.nav_customer);
+                            drawer.closeDrawer(GravityCompat.START);
+                        }else if (groupPosition==3 && childPosition==2) {
+                            Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.nav_customer_update);
+                            drawer.closeDrawer(GravityCompat.START);
+                        }else if (groupPosition==4 && childPosition==0) {
+                            Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.nav_dayopen);
+                            drawer.closeDrawer(GravityCompat.START);
+                        }else if (groupPosition==4 && childPosition==1) {
+                            Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.nav_dayclose);
+                            drawer.closeDrawer(GravityCompat.START);
+                        }else if (groupPosition==5 && childPosition==0) {
+                            Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.nav_sales_report);
+                            drawer.closeDrawer(GravityCompat.START);
+                        }
+
+                    }
+
+                    return false;
+                }
+            });
 
 
 

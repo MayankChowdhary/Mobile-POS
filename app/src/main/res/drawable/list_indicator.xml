@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item  android:state_empty="true" android:drawable="@android:color/transparent"  />
+    <item android:state_selected="true">
+        <bitmap android:src="@drawable/up"
+            android:tint="?colorOnBackground" />
+    </item>
+    <item android:state_selected="false">
+        <bitmap android:src="@drawable/down"
+            android:tint="?colorOnBackground" />
+    </item>
+</selector>

@@ -85,6 +85,9 @@
             <include
                 android:id="@+id/pager_online"
                 layout="@layout/payment_mode_online" />
+            <include
+                android:id="@+id/pager_cheque"
+                layout="@layout/payment_mode_cheque" />
 
             <include
                 android:id="@+id/pager_redeem"

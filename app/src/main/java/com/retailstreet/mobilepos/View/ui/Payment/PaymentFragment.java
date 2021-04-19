@@ -40,7 +40,6 @@ import com.retailstreet.mobilepos.Controller.ControllerCreditPay;
 import com.retailstreet.mobilepos.R;
 import com.retailstreet.mobilepos.Utils.StringWithTag;
 import com.retailstreet.mobilepos.Utils.Vibration;
-import com.retailstreet.mobilepos.View.PaymentPagerAdapter.PaymentPagerAdapter;
 import com.retailstreet.mobilepos.View.dialog.ClickListeners;
 import com.retailstreet.mobilepos.View.dialog.LottieAlertDialogs;
 import com.retailstreet.mobilepos.View.dialog.MonthYearPickerDialog;
@@ -71,6 +70,7 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
     private Double pendingAmount;
      double paidByCash = 0.00;
     double paidByCard = 0.00;
+    double paidByCheque = 0.00;
     double paidByOnline = 0.00;
     double paidByPaytm = 0.00;
     String paytmTransNo ="";
@@ -84,9 +84,13 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
     String bhimTransNo ="";
     String custName = "";
     String cardNumberX="";
+    String chequeNumber="";
     String bankName = "";
+    String checkBankName = "";
     String bankGuid = "";
+    String checkBankGuid = "";
     String expDate = " ";
+    String chequeDate = " ";
     String receivedcash="0.00";
     HashMap<String , String[]> payModeData= new HashMap<String, String[]>();
     HashMap<String ,String> payModeId= new HashMap<String, String>();
@@ -104,13 +108,22 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
     String newAdvance = "0.00";
 
     List<String> cardValidateStrings;
+    List<String> chequeValidateStrings;
     EditText cardNumber1 ;
     EditText cardNumber2 ;
     EditText cardNumber3 ;
     EditText cardNumber4 ;
+    EditText chequeNumberEditText ;
     EditText custNameEdittext;
     String expMont;
     String expYear ;
+    String card1 ;
+    String card2 ;
+    String card3 ;
+    String card4 ;
+
+    String chequeMont;
+    String chequeYear ;
 
 
 
@@ -176,16 +189,18 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
         paymentPagerAdapter.insertViewId(R.id.pager_cash);
         paymentPagerAdapter.insertViewId(R.id.pager_card);
         paymentPagerAdapter.insertViewId(R.id.pager_online);
+        paymentPagerAdapter.insertViewId(R.id.pager_cheque);
         paymentPagerAdapter.insertViewId(R.id.pager_redeem);
         // attach adapter to viewpager
         payModeViewPager.setAdapter(paymentPagerAdapter);
         TabLayout payModeTab = view.findViewById(R.id.pay_mode_tab);
         payModeTab.setupWithViewPager(payModeViewPager);
-        payModeViewPager.setOffscreenPageLimit(4);
+        payModeViewPager.setOffscreenPageLimit(5);
         initCashLayout(payModeViewPager.getRootView());
         initCardLayout(payModeViewPager.getRootView());
         initOnlinePayLayout(payModeViewPager.getRootView());
         initRedeemLayout(payModeViewPager.getRootView());
+        initChequeLayout(payModeViewPager.getRootView());
 
         Button payButton = view.findViewById(R.id.pay_buton);
         payButton.setOnClickListener(v -> {
@@ -218,16 +233,28 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
 
             if(paidByCard>0 ) {
                 Log.d("PaidByCard is true", "onViewCreated: "+paidByCard);
-                String card1 =  cardNumber1.getText().toString();
-                String card2 =  cardNumber2.getText().toString();
-                String card3 =  cardNumber3.getText().toString();
-                String card4 =  cardNumber4.getText().toString();
+                 card1 =  cardNumber1.getText().toString();
+                 card2 =  cardNumber2.getText().toString();
+                 card3 =  cardNumber3.getText().toString();
+                 card4 =  cardNumber4.getText().toString();
                 custName = custNameEdittext.getText().toString();
                 cardNumberX = card1+card2+card3+card4;
-                cardValidateStrings = new ArrayList<>(Arrays.asList(card1,card2,card3,card4,custName, expMont, expYear,bankGuid));
+                cardValidateStrings = new ArrayList<>(Arrays.asList(card1,card2,card3,card4,custName,bankGuid));
                 if (!validateStrings(cardValidateStrings)) {
 
                     Toast.makeText(getContext(), "Please Fill up card details first!", Toast.LENGTH_LONG).show();
+                    Vibration.Companion.vibrate(300);
+                    return;
+                }
+            }
+
+            if(paidByCheque>0 ) {
+                Log.d("PaidByCheque is true", "onViewCreated: "+paidByCheque);
+                chequeNumber =  chequeNumberEditText.getText().toString();
+                chequeValidateStrings = new ArrayList<>(Arrays.asList(chequeNumber,chequeMont, chequeYear,checkBankGuid));
+                if (!validateStrings(chequeValidateStrings)) {
+
+                    Toast.makeText(getContext(), "Please Fill up Cheque details first!", Toast.LENGTH_LONG).show();
                     Vibration.Companion.vibrate(300);
                     return;
                 }
@@ -265,7 +292,7 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
 
                 new ControllerCreditPay(customerId,payModeData);
             }else {
-                new BillGenerator(customerId, receivedcash, balanceCash, deliveryGuid, payModeData,addDiscount,redeemNumber);
+                new BillGenerator(customerId, receivedcash, balanceCash, deliveryGuid, payModeData,addDiscount,redeemNumber,paidByAdvance);
                 EmptyCart();
             }
 
@@ -609,13 +636,17 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
                     if(received<=pendingAmount && received >0) {
                         paidByCard = received;
                         setPendingAmount();
+                        card1 =  cardNumber1.getText().toString();
+                        card2 =  cardNumber2.getText().toString();
+                        card3 =  cardNumber3.getText().toString();
+                        card4 =  cardNumber4.getText().toString();
+                        cardNumberX = card1+card2+card3+card4;
+                        custName = custNameEdittext.getText().toString();
 
-                        expDate = expMont+expYear;
                         if(cardType.equals("OT")) {
-                            payModeData.put(cardType, new String[]{payModeId.get("OT"), "", String.valueOf(paidByCard), cardNumberX, expDate, custName});
+                            payModeData.put(cardType, new String[]{payModeId.get("OT"), "", String.valueOf(paidByCard), cardNumberX, bankName, custName});
                         }else if(cardType.equals("CR")) {
-                            payModeData.put(cardType, new String[]{payModeId.get("CR"), "", String.valueOf(paidByCard), cardNumberX, expDate, custName});
-
+                            payModeData.put(cardType, new String[]{payModeId.get("CR"), "", String.valueOf(paidByCard), cardNumberX, bankName, custName});
                         }
 
                     }else {
@@ -716,6 +747,143 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
             }
         });
     }
+
+
+
+
+    private void initChequeLayout(View viewPager){
+
+        SearchableSpinner bankNameSpinner = viewPager.findViewById(R.id.pay_cheque_bank_value);
+        EditText chequeAmount = viewPager.findViewById(R.id.pay_cheque_amount_value);
+        chequeNumberEditText = viewPager.findViewById(R.id.pay_cheque_number);
+
+        List<StringWithTag> banknameList = getBankListData();
+        ArrayAdapter<StringWithTag> bankNameAdapter = new ArrayAdapter<StringWithTag> (getActivity(), R.layout.spinner_layout, banknameList);
+        bankNameAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        bankNameSpinner.setAdapter(bankNameAdapter);
+        bankNameSpinner.setTitle("Select Bank");
+        bankNameSpinner.setPositiveButton("OK");
+        bankNameSpinner.setGravity(Gravity.START);
+
+        Spinner dateSelector = viewPager.findViewById(R.id.pay_cheque_date_value);
+        String[] dateItem = new String[] {"MM/YYYY"};
+        ArrayAdapter<String> dateAdapter = new ArrayAdapter<String>(getActivity(), R.layout.spinner_item_bold, dateItem);
+        dateAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        dateSelector.setAdapter(dateAdapter);
+
+
+        dateSelector.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event != null) {
+                    if(event.getAction() ==MotionEvent.ACTION_UP) {
+                        MonthYearPickerDialog pickerDialog = new MonthYearPickerDialog();
+                        pickerDialog.setListener((datePicker, year, month, i2) -> {
+                            //Toast.makeText(getContext(), year + "-" + month, Toast.LENGTH_SHORT).show();
+
+                            if(month<10) {
+                                chequeMont="0" + month;
+                            }
+                            else {
+                                chequeMont=String.valueOf(month);
+                            }
+
+                            chequeYear=String.valueOf(year);
+                            dateItem[0] =chequeDate = chequeMont + "/" + chequeYear;
+                            ArrayAdapter<String> chequeAdapter = new ArrayAdapter<String>(getActivity(), R.layout.spinner_item_bold, dateItem);
+                            chequeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                            dateSelector.setAdapter(chequeAdapter);
+                        });
+                        pickerDialog.show(requireActivity().getSupportFragmentManager(), "MonthYearPickerDialog");
+
+                    }
+                }
+
+                return true;
+            }
+        });
+
+
+        chequeAmount.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                paidByCheque = 0;
+                setPendingAmount();
+                payModeData.remove("CX");
+
+                if(s.toString().trim().isEmpty()){
+                    return;
+                }
+
+                try {
+                    if(pendingAmount<=0){
+                        Toast.makeText(getContext(),"No Amount is Pending!",Toast.LENGTH_LONG).show();
+                        Vibration.Companion.vibrate(300);
+                        return;
+                    }
+
+
+                    String chequeReceived = s.toString();
+                    if(chequeReceived.trim().isEmpty()) {
+                        chequeReceived = "0.00";
+                    }
+
+                    double received =  Double.parseDouble(chequeReceived);
+
+
+                    if(received<=pendingAmount && received >0) {
+                        paidByCheque = received;
+                        setPendingAmount();
+
+                        chequeNumber = chequeNumberEditText.getText().toString();
+                            payModeData.put("CX", new String[]{payModeId.get("CX"), "", String.valueOf(paidByCheque), chequeNumber, chequeDate, checkBankName});
+                    }else {
+                        paidByCheque = 0;
+                        setPendingAmount();
+                        Toast.makeText(getContext(),"Incorrect Amount!",Toast.LENGTH_LONG).show();
+                        Vibration.Companion.vibrate(300);
+                    }
+                } catch (NumberFormatException e) {
+                    Toast.makeText(getContext(), "Incorrect Amount!", Toast.LENGTH_LONG).show();
+                    Vibration.Companion.vibrate(300);
+                    e.printStackTrace();
+                }
+            }
+        });
+
+
+
+        bankNameSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+        {
+            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id)
+            {
+                StringWithTag spinnerSelected = (StringWithTag) parent.getItemAtPosition(pos);
+                checkBankGuid = spinnerSelected.tag;
+                checkBankName= spinnerSelected.string;
+                Log.d("SpinnerSelected", "onItemSelected: Tag= "+checkBankGuid);
+
+            }
+            public void onNothingSelected(AdapterView<?> parent)
+            {
+
+            }
+        });
+    }
+
+
+
+
 
     private  void initOnlinePayLayout(View viewPger) {
 
@@ -1138,7 +1306,7 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
 
     private void setPendingAmount(){
 
-        List<Double> allAmount = new ArrayList<>(Arrays.asList(paidByCash, paidByCard, paidByOnline,paidByPaytm,paidByGpay,paidByWhatsapp,paidByAmazon,paidByBhim,paidByCredit));
+        List<Double> allAmount = new ArrayList<>(Arrays.asList(paidByCash, paidByCard, paidByOnline,paidByPaytm,paidByGpay,paidByWhatsapp,paidByAmazon,paidByBhim,paidByCredit,paidByCheque));
         pendingAmount = Double.parseDouble(amountToPay);
         for(Double paid: allAmount){
 

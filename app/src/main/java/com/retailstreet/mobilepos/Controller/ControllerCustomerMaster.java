@@ -151,7 +151,6 @@ public class ControllerCustomerMaster {
         ADDRESSSTATUS = "1";
         CREATEDDATETIME = getDateAndTime();
 
-
         PAYMENTID = IDGenerator.getTimeStamp();;
         STORE_GUID = getFromRetailStore("STORE_GUID");
         CUSTOMERNAME = custName;
@@ -160,21 +159,18 @@ public class ControllerCustomerMaster {
         RECEIVEAMOUNT = "0.00";
         DUEAMOUNT = "0.00";
         TOTALGST ="0.00";
-        
-        
-        
 
         CustomerMaster customerMaster = new CustomerMaster(  CUSTOMERTYPE,  CUSTOMERCATEGORY,  CUST_ID,  CUSTOMERGUID,  NAME,  E_MAIL,  GENDER,  AGE,  ISEMAILVALIDATED,  MOBILE_NO,  ISMOBILEVALIDATED,  SECONDARYEMAIL,  SECONDARYMOBILE,  CUSTOMERDISCOUNTPERCENTAGE,  LASTOTP,  OTPVALIDATEDDATETIME,  EMAILVALIDATEDDATETIME,  UPDATEDBY,  LAST_MODIFIED,  TOTALORDERS,  CREDIT_CUST,  REGISTEREDFROM,  REGISTEREDFROMSTOREID,  PANNO,  GSTNO,  CPASSWORD,  CUSTOMERSTATUS,  MASTER_CUSTOMER_TYPE,  MASTER_CUSTOMERCATEGORY,  ADVANCE_AMOUNT,  BALANCE_AMOUNT,  CUSTOMERSTOREKEY,  STORE_ID,  MASTER_CUSTOMERCATEGORYID,  PERCENTAGE,  CREATEDBY,  ISSYNCED,  CREDITLIMIT);
         CustomerCredit customerCredit= new CustomerCredit( PAYMENTID,  STORE_GUID,  CUSTOMERNAME,  CUSTOMERMOBILENO,  GRANDTOTAL,  CUSTOMERSTATUS,  RECEIVEAMOUNT,  DUEAMOUNT,  CUSTOMERGUID,  TOTALGST);
-
+        new ControllerCreditPay().updateCustAdditionLedger(CUSTOMERGUID,advance);
         InsertRetailCust(customerMaster);
-
         InsertCustomerCredit(customerCredit);
 
         if(isAddressUpdate){
             CustomerAddress customerAddress = new CustomerAddress( CUSTOMERADDRESSID,  MASTERCUSTOMERID,  ADDRESSTYPE,  CONTACTPERSONNAME,  ADDRESSLINE1,  ADDRESSLINE2,  STREET_AREA,  PINCODE,  CITY,  MASTERSTATEID,  ADDRESSSTATUS,  CREATEDBY,  CREATEDDATETIME);
             InsertCustomerAddress(customerAddress);
         }
+        new ControllerCreditPay().updateCustAdditionLedger(CUSTOMERGUID,advance);
 
         try {
             new WorkManagerSync(5);

@@ -1,4 +1,4 @@
-package com.retailstreet.mobilepos.View.PaymentPagerAdapter;
+package com.retailstreet.mobilepos.View.ui.Payment;
 
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,6 +49,8 @@ public class PaymentPagerAdapter extends PagerAdapter {
                 case 2:
                     return "ONLINE";
                 case 3:
+                    return "CHEQUE";
+                case 4:
                     return "REDEEM";
                 default:
                     return "TAB "+(position+1);

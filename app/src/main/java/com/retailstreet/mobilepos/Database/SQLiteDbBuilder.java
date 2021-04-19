@@ -88,6 +88,8 @@ public class SQLiteDbBuilder {
     private final ArrayList<String> customerLedger;
     private final ArrayList<String> customerLedger_pk;
     private final ArrayList<String> retail_credit_bill_details;
+    private final ArrayList<String> stock_register;
+    private final ArrayList<String> stock_register_pk;
 
 
 
@@ -163,6 +165,10 @@ public class SQLiteDbBuilder {
         customerLedger =  new ArrayList<>();
         customerLedger_pk =  new ArrayList<>();
         retail_credit_bill_details =  new ArrayList<>();
+        stock_register  =  new ArrayList<>();
+        stock_register_pk  =  new ArrayList<>();
+
+
 
         cartList= new ArrayList<>(Arrays.asList("STOCK_ID","PROD_NM","count","MRP","S_PRICE","SALESDISCOUNTBYAMOUNT","GST","SGST","CGST","QTY" ));
         cartList_Pk= new ArrayList<>(Collections.singletonList("STOCK_ID"));
@@ -760,6 +766,23 @@ public class SQLiteDbBuilder {
 
             }
 
+            JSONArray stock_register_json = jsonObject.getJSONArray("stock_register");
+            for (int i = 0; i < stock_register_json.length(); i++) {
+                JSONObject obj = (JSONObject) stock_register_json.get(i);
+                String id = obj.getString("Field");
+                stock_register.add(id);
+                // Log.d("retail_store", "id:" + id);
+
+            }
+
+            JSONArray stock_register_pk_JSON = jsonObject.getJSONArray("stock_register_pk");
+            for (int i = 0; i < stock_register_pk_JSON.length(); i++) {
+                JSONObject obj = (JSONObject) stock_register_pk_JSON.get(i);
+                String constraint = obj.getString("Constraint");
+                stock_register_pk.add(constraint);
+                //Log.d("retail_store_pk", "constraint:" + constraint);
+            }
+
             createDynamicDatabase(context, "group_user_master", user_master, user_master_pk);
             createDynamicDatabase(context, "retail_cust", retail_cust, retail_cust_pk);
             createDynamicDatabase(context, "retail_store_prod_com", retail_store_prod_com, retail_store_prod_com_pk);
@@ -794,6 +817,7 @@ public class SQLiteDbBuilder {
             createDynamicDatabase(context, "customerReturnMaster", customerReturnMaster, customerReturnMaster_pk);
             createDynamicDatabase(context, "customerLedger", customerLedger, customerLedger_pk);
             createDynamicDatabaseWithoutKey(context, "retail_credit_bill_details", retail_credit_bill_details);
+            createDynamicDatabase(context, "stock_register", stock_register,stock_register_pk);
 
             dbOk=true;
             //loadingDialog.cancelDialog();

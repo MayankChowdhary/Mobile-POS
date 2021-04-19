@@ -35,6 +35,7 @@ import com.retailstreet.mobilepos.Model.RetailStore;
 import com.retailstreet.mobilepos.Model.ShiftMaster;
 import com.retailstreet.mobilepos.Model.ShiftTrans;
 import com.retailstreet.mobilepos.Model.StockMaster;
+import com.retailstreet.mobilepos.Model.StockRegister;
 import com.retailstreet.mobilepos.Model.StoreConfiguration;
 import com.retailstreet.mobilepos.Model.TerminalConfiguration;
 import com.retailstreet.mobilepos.Model.TerminalUserAllocation;
@@ -87,11 +88,12 @@ public class TableDataInjector {
     private List<CustomerCredit> customerCreditList = null;
     private List<CustomerLedger> customerLedgerList = null;
     private List<CreditBillDetails> creditBillDetails = null;
+    private List<StockRegister> stockRegisterList = null;
 
     private LoadingDialog loadingDialog;
 
     public static int status =0;
-    private final int tableConstant=30;
+    private final int tableConstant=31;
 
     public TableDataInjector(Context context, String storeid,DBReadyCallback callback) {
 
@@ -132,6 +134,8 @@ public class TableDataInjector {
         getCustomerCredit();
         getCustomerLedger();
         getCreditBillDetails();
+        getStockRegister();
+
 
     }
 
@@ -872,6 +876,73 @@ public class TableDataInjector {
             });
         } catch (Exception e) {
             Log.i("autolog", "Exception");
+        }
+    }
+
+    public void getStockRegister() {
+        try {
+            Retrofit retrofit = getRetroInstance(baseUrl);
+            assert retrofit != null;
+            ApiInterface service = retrofit.create(ApiInterface.class);
+            Call<List<StockRegister>> call = service.getStockRegister(generateTableUrl("stock_register",storeId));
+            call.enqueue(new Callback<List<StockRegister>>() {
+                @Override
+                public void onResponse(Call<List<StockRegister>> call, Response<List<StockRegister>> response) {
+                    stockRegisterList= response.body();
+                    Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
+                    InsertStockRegister(stockRegisterList);
+                }
+
+                @Override
+                public void onFailure(Call<List<StockRegister>> call, Throwable t) {
+                    Log.i("autolog", t.getMessage());
+                }
+            });
+        } catch (Exception e) {
+            Log.i("autolog", "Exception");
+        }
+    }
+
+    public void InsertStockRegister(List<StockRegister> list) {
+        if (list == null) {
+            return;
+        }
+        try {
+            SQLiteDatabase myDataBase = context.openOrCreateDatabase(dbname, Context.MODE_PRIVATE, null);
+            myDataBase.delete("stock_register", null, null);
+            for (StockRegister prod : list) {
+                ContentValues contentValues = new ContentValues();
+                contentValues.put("REGISTERGUID", prod.getREGISTERGUID());
+                contentValues.put("MASTERORG_GUID", prod.getMASTERORG_GUID());
+                contentValues.put("STORE_GUID", prod.getSTORE_GUID());
+                contentValues.put("VENDOR_GUID", prod.getVENDOR_GUID());
+                contentValues.put("LINETYPE", prod.getLINETYPE());
+                contentValues.put("TRANSACTIONTYPE", prod.getTRANSACTIONTYPE());
+                contentValues.put("TRANSACTIONNUMBER", prod.getTRANSACTIONNUMBER());
+                contentValues.put("TRANSACTIONDATE", prod.getTRANSACTIONDATE());
+                contentValues.put("ITEM_GUID", prod.getITEM_GUID());
+                contentValues.put("UOM_GUID", prod.getUOM_GUID());
+                contentValues.put("QUANTITY", prod.getQUANTITY());
+                contentValues.put("BATCHNO", prod.getBATCHNO());
+                contentValues.put("BARCODE", prod.getBARCODE());
+                contentValues.put("SALESPRICE", prod.getSALESPRICE());
+                contentValues.put("WHOLESALEPRICE", prod.getWHOLESALEPRICE());
+                contentValues.put("INTERNETPRICE", prod.getINTERNETPRICE());
+                contentValues.put("SPECIALPRICE", prod.getSPECIALPRICE());
+                contentValues.put("ISSYNCED", prod.getISSYNCED());
+                myDataBase.insert("stock_register", null, contentValues);
+
+            }
+
+            myDataBase.close();
+            status+=1;
+            if(status==tableConstant){
+                loadingDialog.cancelDialog();
+                dbReadyCallback.onDBReady();
+            }
+            Log.d("Insertion Successful", "CreditBillDetails: "+status);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -2264,6 +2335,9 @@ public class TableDataInjector {
 
             case "retail_credit_bill_details":
                 return "ApiTest/RetailCreditBillDetails?STORE_ID="+storeid;
+
+            case "stock_register":
+                return "ApiTest/StockRegister?STORE_ID="+storeid;
 
             default:
                 return "";

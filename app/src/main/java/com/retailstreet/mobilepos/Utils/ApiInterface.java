@@ -30,6 +30,7 @@ import com.retailstreet.mobilepos.Model.SalesReturnDetails;
 import com.retailstreet.mobilepos.Model.ShiftMaster;
 import com.retailstreet.mobilepos.Model.ShiftTrans;
 import com.retailstreet.mobilepos.Model.StockMaster;
+import com.retailstreet.mobilepos.Model.StockRegister;
 import com.retailstreet.mobilepos.Model.StoreConfiguration;
 import com.retailstreet.mobilepos.Model.SyncResponse;
 import com.retailstreet.mobilepos.Model.TerminalConfiguration;
@@ -145,7 +146,8 @@ public interface ApiInterface {
     @GET
     Call<List<CreditBillDetails>> getCreditBillDetails(@Url String url);
 
-
+    @GET
+    Call<List<StockRegister>> getStockRegister(@Url String url);
 
 
 
@@ -175,5 +177,7 @@ public interface ApiInterface {
 
     @POST("/APIManagers/api/PullPOSRegualarSync/PushCustomerLedger")
     Call<SyncResponse> UploadcustomerladgersRecords(@Header("Authorization")String Authorization, @Body RequestBody body);
+
+
 
 }

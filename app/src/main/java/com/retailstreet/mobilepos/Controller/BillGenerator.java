@@ -111,7 +111,7 @@ public class BillGenerator {
             context = ApplicationContextProvider.getContext();
         }
 
-    public BillGenerator( String customerID, String receivedCash,String balanceCash, String deliveryTypeGuid, HashMap<String , String[]> payModeData, String additionDisc, String redeemNumber) {
+    public BillGenerator( String customerID, String receivedCash,String balanceCash, String deliveryTypeGuid, HashMap<String , String[]> payModeData, String additionDisc, String redeemNumber,double advanceAmount) {
         context = ApplicationContextProvider.getContext();
         GetSetFromPrefs();
         initMap();
@@ -139,6 +139,10 @@ public class BillGenerator {
 
        GenerateBillMaster(customerID, additionDisc);
         GenerateBillPayDetail(payModeData);
+        if(advanceAmount>0){
+            new ControllerCreditPay().updateAdvanceSettlement(String.valueOf(advanceAmount),CUSTOMERGUID,BILLNO);
+        }
+
         if(redeemNumber!=null && !redeemNumber.trim().isEmpty()){
 
                 updateRetunMaster(redeemNumber,billNumber);
@@ -306,6 +310,8 @@ public class BillGenerator {
                 new ControllerCreditPay().updateCustLedger(PAYAMOUNT,CUSTOMERGUID,BILLNO);
             }
             BILLPAYDETAILID = getTimeStamp();
+
+            if(!entry.getKey().equals("RX"))
             new ControllerBillPayDetail().createBillPayDetail( BILLPAYDETAILID,  BILLMASTERID,  MASTERPAYMODEGUID,  PAYAMOUNT,  TRANSACTIONNUMBER,  ADDITIONALPARAM1,  ADDITIONALPARAM2,  ADDITIONALPARAM3,  BILLPAYDETAIL_STATUS);
 
         }

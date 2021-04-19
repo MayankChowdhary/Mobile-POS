@@ -18,6 +18,7 @@ import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.labters.lottiealertdialoglibrary.DialogTypes
+import com.retailstreet.mobilepos.Controller.ControllerCreditPay
 import com.retailstreet.mobilepos.Controller.ControllerCustomerMaster
 import com.retailstreet.mobilepos.R
 import com.retailstreet.mobilepos.Utils.StringWithTag
@@ -173,6 +174,7 @@ class CustomerUpdateFragment : Fragment() {
                     }
 
                     updateAdvanceCash(custGuid, custAdvance)
+                    ControllerCreditPay().updateCustAdditionLedger(custGuid, advanceText)
                     custSearchSelector.setSelection(0)
                     try {
                         WorkManagerSync(5)
@@ -237,7 +239,7 @@ class CustomerUpdateFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            ControllerCustomerMaster(custId, custMobile, custName, custEmail, custPAN, custGST, custType, custTypeGuid, custGuid, custCreditLImit,custCreditType)
+            ControllerCustomerMaster(custId, custMobile, custName, custEmail, custPAN, custGST, custType, custTypeGuid, custGuid, custCreditLImit, custCreditType)
             val alertDialog = LottieAlertDialogs.Builder(context, DialogTypes.TYPE_SUCCESS)
                     .setTitle("Customer Updated")
                     .setDescription("Successful!")
