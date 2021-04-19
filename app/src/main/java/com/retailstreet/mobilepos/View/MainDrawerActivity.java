@@ -61,7 +61,7 @@ public class MainDrawerActivity extends AppCompatActivity  {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_sales, R.id.nav_dayopen, R.id.nav_dayclose, R.id.nav_products, R.id.nav_customer, R.id.nav_customer_update, R.id.nav_sales_refund, R.id.nav_credit_pay, R.id.nav_home, R.id.nav_sales_report)
+                R.id.nav_sales, R.id.nav_dayopen, R.id.nav_dayclose, R.id.nav_products, R.id.nav_customer, R.id.nav_customer_update, R.id.nav_sales_refund, R.id.nav_credit_pay, R.id.nav_home, R.id.nav_sales_report,R.id.nav_vendor_update)
                 .setOpenableLayout(drawer)
                 .build();
 
@@ -120,6 +120,8 @@ public class MainDrawerActivity extends AppCompatActivity  {
         headerList.add(menuModel);
         childModelsList = new ArrayList<>();
         childModel = new MenuModel("Add Product", false, false, R.drawable.add_product);
+        childModelsList.add(childModel);
+        childModel = new MenuModel("Vendor Info", false, false, R.drawable.vendor);
         childModelsList.add(childModel);
 
         if (menuModel.hasChildren) {
@@ -232,32 +234,38 @@ public class MainDrawerActivity extends AppCompatActivity  {
                     if (childList.get(headerList.get(groupPosition)) != null) {
                         MenuModel model = Objects.requireNonNull(childList.get(headerList.get(groupPosition))).get(childPosition);
 
+                        Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).popBackStack();
+                        Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.nav_home);
+
                         if (groupPosition==1 && childPosition==0) {
-                            Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.nav_sales);
+                            Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_nav_sales);
                             drawer.closeDrawer(GravityCompat.START);
                         }else if (groupPosition==1 && childPosition==1) {
-                            Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.nav_sales_refund);
+                            Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_nav_sales_refund);
                             drawer.closeDrawer(GravityCompat.START);
                         }else if (groupPosition==2 && childPosition==0) {
-                            Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.nav_products);
+                            Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_nav_products);
                             drawer.closeDrawer(GravityCompat.START);
                         }else if (groupPosition==3 && childPosition==0) {
-                            Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.nav_credit_pay);
+                            Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_nav_credit_pay);
                             drawer.closeDrawer(GravityCompat.START);
                         }else if (groupPosition==3 && childPosition==1) {
-                            Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.nav_customer);
+                            Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_nav_customer);
                             drawer.closeDrawer(GravityCompat.START);
                         }else if (groupPosition==3 && childPosition==2) {
-                            Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.nav_customer_update);
+                            Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_nav_customer_update);
                             drawer.closeDrawer(GravityCompat.START);
                         }else if (groupPosition==4 && childPosition==0) {
-                            Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.nav_dayopen);
+                            Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_nav_dayopen);
                             drawer.closeDrawer(GravityCompat.START);
                         }else if (groupPosition==4 && childPosition==1) {
-                            Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.nav_dayclose);
+                            Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_nav_dayclose);
                             drawer.closeDrawer(GravityCompat.START);
                         }else if (groupPosition==5 && childPosition==0) {
-                            Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.nav_sales_report);
+                            Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_nav_sales_report);
+                            drawer.closeDrawer(GravityCompat.START);
+                        }else if (groupPosition==2 && childPosition==1) {
+                            Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_nav_vendor_update);
                             drawer.closeDrawer(GravityCompat.START);
                         }
 

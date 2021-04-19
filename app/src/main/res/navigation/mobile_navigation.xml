@@ -186,7 +186,38 @@
         android:id="@+id/nav_home"
         android:name="com.retailstreet.mobilepos.View.ui.Home.HomeFragment"
         android:label="Reception"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_nav_home_to_nav_sales_refund"
+            app:destination="@id/nav_sales_refund" />
+        <action
+            android:id="@+id/action_nav_home_to_nav_sales"
+            app:destination="@id/nav_sales" />
+        <action
+            android:id="@+id/action_nav_home_to_nav_customer_update"
+            app:destination="@id/nav_customer_update" />
+        <action
+            android:id="@+id/action_nav_home_to_nav_customer"
+            app:destination="@id/nav_customer" />
+        <action
+            android:id="@+id/action_nav_home_to_nav_dayclose"
+            app:destination="@id/nav_dayclose" />
+        <action
+            android:id="@+id/action_nav_home_to_nav_dayopen"
+            app:destination="@id/nav_dayopen" />
+        <action
+            android:id="@+id/action_nav_home_to_nav_credit_pay"
+            app:destination="@id/nav_credit_pay" />
+        <action
+            android:id="@+id/action_nav_home_to_nav_products"
+            app:destination="@id/nav_products" />
+        <action
+            android:id="@+id/action_nav_home_to_nav_sales_report"
+            app:destination="@id/nav_sales_report" />
+        <action
+            android:id="@+id/action_nav_home_to_nav_vendor_update"
+            app:destination="@id/nav_vendor_update" />
+    </fragment>
     <fragment
         android:id="@+id/nav_sales_report"
         android:name="com.retailstreet.mobilepos.View.ui.SalesReport.SalesReportFragment"
@@ -212,4 +243,9 @@
             android:name="masterId"
             app:argType="string" />
     </fragment>
+    <fragment
+        android:id="@+id/nav_vendor_update"
+        android:name="com.retailstreet.mobilepos.View.ui.VendorInfo.VendorInfoFragment"
+        android:label="Vendor Info"
+        tools:layout="@layout/fragment_vendor_info" />
 </navigation>
