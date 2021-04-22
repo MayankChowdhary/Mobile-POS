@@ -10,6 +10,7 @@ import android.util.Log;
 import com.retailstreet.mobilepos.Model.StockMaster;
 import com.retailstreet.mobilepos.Model.StockMasterSync;
 import com.retailstreet.mobilepos.Utils.IDGenerator;
+import com.retailstreet.mobilepos.Utils.WorkManagerSync;
 import com.retailstreet.mobilepos.View.ApplicationContextProvider;
 
 import java.text.SimpleDateFormat;
@@ -172,6 +173,41 @@ public class ControllerStockMaster extends SQLiteOpenHelper {
                 db.close();
             Log.d("Insertion Successful", "InsertStockMaster: ");
         } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateStockMaster(String stockid,String VENDOR_GUID,String VENDOR_NAME, String  PROD_NM,String  EXTERNALPRODUCTID,String  BARCODE,String  EXP_DATE,String  MRP,String S_PRICE,String P_PRICE,String QTY,String CGST,String SGST){
+        try{
+            db = getWritableDatabase();
+            ContentValues contentValues = new ContentValues();
+            contentValues.put("VENDOR_GUID", VENDOR_GUID);
+            contentValues.put("VENDOR_NAME", VENDOR_NAME);
+            contentValues.put("PROD_NM", PROD_NM);
+            contentValues.put("EXTERNALPRODUCTID", EXTERNALPRODUCTID);
+            contentValues.put("BARCODE", BARCODE);
+            contentValues.put("EXP_DATE", EXP_DATE);
+            contentValues.put("MRP", MRP);
+            contentValues.put("S_PRICE", S_PRICE);
+            contentValues.put("P_PRICE", P_PRICE);
+            contentValues.put("QTY", QTY);
+            contentValues.put("CGST", CGST);
+            contentValues.put("SGST", SGST);
+            contentValues.put("ISSYNCED", "0");
+
+            String where = "STOCK_ID=?";
+            String[] whereArgs = new String[] {String.valueOf(stockid)};
+            db.update("retail_str_stock_master", contentValues, where, whereArgs);
+            db.close();
+            Log.d("Updation Successful", "UpdateStockMaster: ");
+
+            try {
+                new WorkManagerSync(4);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        catch (Exception e){
             e.printStackTrace();
         }
     }

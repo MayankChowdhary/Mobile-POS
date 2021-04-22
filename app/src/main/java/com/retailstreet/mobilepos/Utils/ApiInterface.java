@@ -14,9 +14,11 @@ import com.retailstreet.mobilepos.Model.CustomerReject;
 import com.retailstreet.mobilepos.Model.CustomerReturnDetails;
 import com.retailstreet.mobilepos.Model.CustomerReturnMaster;
 import com.retailstreet.mobilepos.Model.DeliveryTypeMaster;
+import com.retailstreet.mobilepos.Model.DownloadcheckPojo;
 import com.retailstreet.mobilepos.Model.GroupUserMaster;
 import com.retailstreet.mobilepos.Model.HSNMaster;
 import com.retailstreet.mobilepos.Model.InvoiceSyncResponse;
+import com.retailstreet.mobilepos.Model.LicenceModulePojo;
 import com.retailstreet.mobilepos.Model.MasterCategory;
 import com.retailstreet.mobilepos.Model.MasterCustomerType;
 import com.retailstreet.mobilepos.Model.MasterState;
@@ -45,6 +47,7 @@ import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 import retrofit2.http.Url;
 
 
@@ -150,6 +153,13 @@ public interface ApiInterface {
     Call<List<StockRegister>> getStockRegister(@Url String url);
 
 
+
+    //***************Installation Validator************************
+
+    @GET("/APIManagers/api/GetAllMasterDataForSync/GetStoreLicenseandActiveData/{Storeguid}")
+    Call<LicenceModulePojo> Store_Licence_Checked(@Header("Authorization")String Authorization, @Path("Storeguid") String Storeguid);
+    @POST("/APIManagers/api/PostStoreFinalStatus/PostRegistration")
+    Call<DownloadcheckPojo> Check_Before_Download_Data(@Header("Authorization") String Authorization, @Body RequestBody body);
 
     //****************************Upload API*****************************
 

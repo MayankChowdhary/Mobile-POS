@@ -547,7 +547,6 @@ class ProductsFragment : Fragment() , DatePickerDialog.OnDateSetListener {
         val expiryAdapter = ArrayAdapter(requireContext(), R.layout.spinner_layout_centre, expiryItem)
         expiryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         expirySelector.adapter = expiryAdapter
-
         expiryDate = year.toString()+"-"+monthOfYear.toString()+"-"+dayOfMonth.toString()+" 00:00:00"
         Log.d("ExpiryDateSelected", "onDateSet: "+expiryDate)
 

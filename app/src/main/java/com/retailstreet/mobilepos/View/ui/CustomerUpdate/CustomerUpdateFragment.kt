@@ -79,7 +79,6 @@ class CustomerUpdateFragment : Fragment() {
 
 
 
-
         val custNameArray:List<StringWithTag> = getCustomerName()
         val custSearchSelector: SearchableSpinner = view.findViewById(R.id.cu_search_value)
         val custSearchAdapter: ArrayAdapter<StringWithTag> = context?.let { ArrayAdapter(it, R.layout.spinner_layout, custNameArray) }!!

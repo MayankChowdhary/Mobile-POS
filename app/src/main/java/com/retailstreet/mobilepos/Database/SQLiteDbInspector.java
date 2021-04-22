@@ -87,12 +87,18 @@ public class SQLiteDbInspector {
 
     public  static boolean isTableNotEmpty(String tableName, Context context, String dbname){
 
-        SQLiteDatabase myDataBase = context.openOrCreateDatabase(dbname, Context.MODE_PRIVATE, null);
-        String count = "SELECT * FROM "+tableName;
-        Cursor mcursor = myDataBase.rawQuery(count, null);
-        boolean isEmpty= mcursor.moveToFirst();
-        mcursor.close();
-        myDataBase.close();
+        boolean isEmpty= false;
+        try {
+            SQLiteDatabase myDataBase = context.openOrCreateDatabase(dbname, Context.MODE_PRIVATE, null);
+            String count = "SELECT * FROM "+tableName;
+            Cursor mcursor = myDataBase.rawQuery(count, null);
+            isEmpty = mcursor.moveToFirst();
+            mcursor.close();
+            myDataBase.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            isEmpty = false;
+        }
         return isEmpty;
 
 

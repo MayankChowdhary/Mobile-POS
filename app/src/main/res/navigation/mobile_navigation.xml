@@ -217,6 +217,12 @@
         <action
             android:id="@+id/action_nav_home_to_nav_vendor_update"
             app:destination="@id/nav_vendor_update" />
+        <action
+            android:id="@+id/action_nav_home_to_stockUpdateFragment"
+            app:destination="@id/nav_stock_update" />
+        <action
+            android:id="@+id/action_nav_home_to_purchaseInvoiceFragment"
+            app:destination="@id/nav_purchase_Invoice" />
     </fragment>
     <fragment
         android:id="@+id/nav_sales_report"
@@ -246,6 +252,16 @@
     <fragment
         android:id="@+id/nav_vendor_update"
         android:name="com.retailstreet.mobilepos.View.ui.VendorInfo.VendorInfoFragment"
-        android:label="Vendor Info"
+        android:label="Vendor Details"
         tools:layout="@layout/fragment_vendor_info" />
+    <fragment
+        android:id="@+id/nav_stock_update"
+        android:name="com.retailstreet.mobilepos.View.ui.StockUpdate.StockUpdateFragment"
+        android:label="Stock Update"
+        tools:layout="@layout/fragment_stock_update" />
+    <fragment
+        android:id="@+id/nav_purchase_Invoice"
+        android:name="com.retailstreet.mobilepos.View.ui.PurchaseInvoice.PurchaseInvoiceFragment"
+        android:label="Purchase Invoice"
+        tools:layout="@layout/fragment_purchase_invoice" />
 </navigation>
