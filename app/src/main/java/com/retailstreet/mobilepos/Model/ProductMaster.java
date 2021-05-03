@@ -45,6 +45,7 @@ public class ProductMaster {
     String ADDITIONALPARAM3;
 
     public ProductMaster() {
+
     }
 
     public ProductMaster(String ACTIVE, String BARCODE, String CATEGORY, String CATEGORY_GUID, String CESS1, String CESS2, String CGST, String EXTERNALPRODUCTID, String GENERIC_NAME, String GST, String HSN, String IGST, String ITEM_CODE, String ITEM_GUID, String item_Type, String MASTERBRAND, String MASTERCATEGORY_id, String POS_USER, String PRINT_NAME, String PROD_ID, String PROD_NM, String PRODUCTRELEVANCE, String SGST, String STORE_ID, String STORE_NUMBER, String SUB_CATEGORYGUID, String SUBCATEGORY_DESCRIPTION, String SUBCATEGORY_ID, String UOM, String UOM_GUID, String uoMID, String ISSYNCED, String ISPRODUCTRETURNABLE, String ISLOOSEITEM, String ADDITIONALPARAM1, String ADDITIONALPARAM2, String ADDITIONALPARAM3) {

@@ -122,7 +122,7 @@ class CustomerFragment : Fragment() {
         custCatAdapter.setDropDownViewResource(R.layout.spinner_layout_centre)
         custCatSelector.adapter = custCatAdapter
 
-        val creditCustArray:Array<String> = arrayOf("0","1")
+        val creditCustArray:Array<String> = arrayOf("NO","YES")
         val creditCustSelector: Spinner = view.findViewById(R.id.c_credit_type_value)
         val creditCustAdapter: ArrayAdapter<String> = context?.let { ArrayAdapter(it, R.layout.spinner_layout_center_box,creditCustArray) }!!
         creditCustAdapter.setDropDownViewResource(R.layout.spinner_layout_centre)
@@ -172,6 +172,11 @@ class CustomerFragment : Fragment() {
         creditCustSelector.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
                 custCreditType = parent.getItemAtPosition(position) as String
+                custCreditType = if(custCreditType == "NO"){
+                    "0"
+                }else{
+                    "1"
+                }
                 Log.d("CreditTypeSelected", "onItemSelected: Tag= $custCreditType")
             }
             override fun onNothingSelected(parent: AdapterView<*>?) {}

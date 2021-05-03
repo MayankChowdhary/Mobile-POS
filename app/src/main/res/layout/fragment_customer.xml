@@ -14,6 +14,7 @@
         tools:ignore="HardcodedText"
         android:layout_margin="@dimen/_10sdp">
 
+
         <ScrollView
             android:id="@+id/scroll_view_customer"
             android:layout_width="0dp"
@@ -195,6 +196,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:ems="10"
+                        android:maxLength="15"
                         android:inputType="text"
                         android:textColor="?colorOnSurface" />
                 </LinearLayout>
@@ -224,6 +226,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:ems="10"
+                        android:maxLength="10"
                         android:inputType="text"
                         android:textColor="?colorOnSurface" />
                 </LinearLayout>

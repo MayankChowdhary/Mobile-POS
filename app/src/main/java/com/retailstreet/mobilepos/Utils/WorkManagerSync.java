@@ -17,11 +17,13 @@ import androidx.work.WorkManager;
 import com.retailstreet.mobilepos.Database.CustomerLedgerUploader;
 import com.retailstreet.mobilepos.Database.CustomerMasterUploader;
 import com.retailstreet.mobilepos.Database.CustomerReturnUploader;
+import com.retailstreet.mobilepos.Database.GRNUploader;
 import com.retailstreet.mobilepos.Database.InvoiceUploader;
 import com.retailstreet.mobilepos.Database.ProductMasterUploader;
 import com.retailstreet.mobilepos.Database.SalesDataUploader;
 import com.retailstreet.mobilepos.Database.ShiftTransDataUploader;
 import com.retailstreet.mobilepos.Database.StockMasterUploader;
+import com.retailstreet.mobilepos.Database.StockRegisterUploader;
 import com.retailstreet.mobilepos.View.ApplicationContextProvider;
 
 import java.util.HashSet;
@@ -182,7 +184,37 @@ public class WorkManagerSync {
             );
         }
 
+        if(index == 9 || index ==0) {
+            PeriodicWorkRequest GRNSyncWork =
+                    new PeriodicWorkRequest.Builder(GRNUploader.class, 15, TimeUnit.MINUTES)
+                            .addTag("GRN_SYNC_REQUEST")
+                            .setConstraints(constraints)
+                            // setting a backoff on case the work needs to retry
+                            .setBackoffCriteria(BackoffPolicy.LINEAR, PeriodicWorkRequest.MIN_BACKOFF_MILLIS, TimeUnit.MILLISECONDS)
+                            .setInitialDelay(3, TimeUnit.SECONDS)
+                            .build();
+            mWorkManager.enqueueUniquePeriodicWork(
+                    "GRN_DETAILS_SYNC",
+                    ExistingPeriodicWorkPolicy.REPLACE, //Existing Periodic Work policy
+                    GRNSyncWork //work request
+            );
+        }
 
+        if(index == 10 || index ==0) {
+            PeriodicWorkRequest StockRegisterSyncWork =
+                    new PeriodicWorkRequest.Builder(StockRegisterUploader.class, 15, TimeUnit.MINUTES)
+                            .addTag("STOCK_REGISTER_SYNC_REQUEST")
+                            .setConstraints(constraints)
+                            // setting a backoff on case the work needs to retry
+                            .setBackoffCriteria(BackoffPolicy.LINEAR, PeriodicWorkRequest.MIN_BACKOFF_MILLIS, TimeUnit.MILLISECONDS)
+                            .setInitialDelay(3, TimeUnit.SECONDS)
+                            .build();
+            mWorkManager.enqueueUniquePeriodicWork(
+                    "STOCK_REGISTER_SYNC",
+                    ExistingPeriodicWorkPolicy.REPLACE, //Existing Periodic Work policy
+                    StockRegisterSyncWork //work request
+            );
+        }
 
     }
 }

@@ -12,6 +12,7 @@ import android.widget.Toast;
 import com.retailstreet.mobilepos.Model.CustomerReturnDetails;
 import com.retailstreet.mobilepos.Model.CustomerReturnMaster;
 import com.retailstreet.mobilepos.Model.SalesReturnManage;
+import com.retailstreet.mobilepos.Model.StockRegister;
 import com.retailstreet.mobilepos.Utils.IDGenerator;
 import com.retailstreet.mobilepos.Utils.WorkManagerSync;
 import com.retailstreet.mobilepos.View.ApplicationContextProvider;
@@ -25,6 +26,7 @@ import java.util.Locale;
 import java.util.Objects;
 
 import static android.content.Context.MODE_PRIVATE;
+import static com.retailstreet.mobilepos.Utils.Constants.DBNAME;
 
 public class ControllerCustomerReturn {
 
@@ -70,7 +72,7 @@ public class ControllerCustomerReturn {
 
         for (String key:returnList.keySet()) {
             String num = Objects.requireNonNull(returnList.get(key));
-            GenerateSalesReturnDetails(key,num);
+            GenerateSalesReturnDetails(key,num,false);
             UpdateQuantity(num,key);
         }
 
@@ -79,6 +81,11 @@ public class ControllerCustomerReturn {
 
         try {
             new WorkManagerSync(7);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            new WorkManagerSync(10);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -93,7 +100,7 @@ public class ControllerCustomerReturn {
         for (String key:returnList.keySet()) {
             String num = Objects.requireNonNull(returnList.get(key));
             String stockId = getFromStockMaster2(key,"STOCK_ID");
-            GenerateSalesReturnDetails(stockId,num);
+            GenerateSalesReturnDetails(stockId,num,true);
             UpdateQuantity(num,stockId);
         }
 
@@ -109,9 +116,14 @@ public class ControllerCustomerReturn {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        try {
+            new WorkManagerSync(10);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    public void GenerateSalesReturnDetails(String key,String count){
+    public void GenerateSalesReturnDetails(String key,String count,boolean isWithBill){
 
         CUSTOMER_RETURNS_DETAILID = IDGenerator.getTimeStamp();
         MASTER_PRODUCT_ITEM_ID = getFromStockMaster(key,"ITEM_GUID");
@@ -121,6 +133,67 @@ public class ControllerCustomerReturn {
         CUSTOMER_RETURN_DETAIL_STATUS="1";
         CustomerReturnDetails customerReturnDetails = new CustomerReturnDetails( CUSTOMER_RETURNS_DETAILID,  CUSTOMERRETURNGUID,  MASTER_PRODUCT_ITEM_ID,  BATCHNO,  RETURNQUANTITY,  EXPIRYDATE, CUSTOMER_RETURN_DETAIL_STATUS);
         InsertCustomerReturnDetails(customerReturnDetails);
+
+
+        String REGISTERGUID = IDGenerator.getUUID();
+        String MASTERORG_GUID = getFromRetailStore("MASTERORG_GUID");
+        String VENDOR_GUID = getFromStockMaster(key,"VENDOR_GUID");
+        String LINETYPE = "DEBIT";
+        String TRANSACTIONTYPE = "SALE";
+        String TRANSACTIONNUMBER = CUSTOMER_RETURNS_DETAILID;
+        String TRANSACTIONDATE = getCurrentDateAndTime();
+        String BARCODE = getFromStockMaster(key,"BARCODE");
+
+        String Price;
+        if(isWithBill){
+            String itemGuid = getFromStockMaster(key, "ITEM_GUID");
+            Price = getFrom_tmp_sales_return(itemGuid, "MRP");
+        }else {
+            Price = getFromStockMaster(key, "S_PRICE");
+        }
+        String SALESPRICE = String.valueOf( Double.parseDouble(Price)*Double.parseDouble(count) );
+        String QTY = count;
+        String WHOLESALEPRICE = getFromStockMaster(key, "WHOLE_SPRICE");
+        String INTERNETPRICE = getFromStockMaster(key, "INTERNET_PRICE");
+        String SPECIALPRICE = getFromStockMaster(key, "SPEC_PRICE");
+        String STORE_GUID = getFromRetailStore("STORE_GUID");
+        String ITEM_GUID = getFromStockMaster(key, "ITEM_GUID");
+        String UOM_GUID = getFromStockMaster(key, "SALE_UOMID");
+        ISSYNCED ="0";
+        StockRegister stockRegister = new StockRegister(REGISTERGUID, MASTERORG_GUID, STORE_GUID, VENDOR_GUID, LINETYPE, TRANSACTIONTYPE, TRANSACTIONNUMBER, TRANSACTIONDATE, ITEM_GUID, UOM_GUID, QTY, BATCHNO, BARCODE, SALESPRICE, WHOLESALEPRICE, INTERNETPRICE, SPECIALPRICE, ISSYNCED);
+        InsertStockRegister(stockRegister);
+    }
+
+    public void InsertStockRegister(StockRegister prod) {
+        try {
+
+            SQLiteDatabase myDataBase = context.openOrCreateDatabase(DBNAME, Context.MODE_PRIVATE, null);
+            ContentValues contentValues = new ContentValues();
+            contentValues.put("REGISTERGUID", prod.getREGISTERGUID());
+            contentValues.put("MASTERORG_GUID", prod.getMASTERORG_GUID());
+            contentValues.put("STORE_GUID", prod.getSTORE_GUID());
+            contentValues.put("VENDOR_GUID", prod.getVENDOR_GUID());
+            contentValues.put("LINETYPE", prod.getLINETYPE());
+            contentValues.put("TRANSACTIONTYPE", prod.getTRANSACTIONTYPE());
+            contentValues.put("TRANSACTIONNUMBER", prod.getTRANSACTIONNUMBER());
+            contentValues.put("TRANSACTIONDATE", prod.getTRANSACTIONDATE());
+            contentValues.put("ITEM_GUID", prod.getITEM_GUID());
+            contentValues.put("UOM_GUID", prod.getUOM_GUID());
+            contentValues.put("QUANTITY", prod.getQUANTITY());
+            contentValues.put("BATCHNO", prod.getBATCHNO());
+            contentValues.put("BARCODE", prod.getBARCODE());
+            contentValues.put("SALESPRICE", prod.getSALESPRICE());
+            contentValues.put("WHOLESALEPRICE", prod.getWHOLESALEPRICE());
+            contentValues.put("INTERNETPRICE", prod.getINTERNETPRICE());
+            contentValues.put("SPECIALPRICE", prod.getSPECIALPRICE());
+            contentValues.put("ISSYNCED", prod.getISSYNCED());
+            myDataBase.insert("stock_register", null, contentValues);
+
+            myDataBase.close();
+            Log.d("Insertion Successful", "StockRegisters: ");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void GenerateReturnMaster(String billno, String reasonGuid, String custGuid, String reason,String amount, String creditNoteNum){
@@ -188,7 +261,6 @@ public class ControllerCustomerReturn {
                 contentValues.put("CREATEDON", prod.getCREATEDON());
                 contentValues.put("ISSYNCED", prod.getISSYNCED());
                 contentValues.put("CREDITNOTENUMBER", prod.getCREDITNOTENUMBER());
-
                 myDataBase.insert("customerReturnMaster", null, contentValues);
             myDataBase.close();
             Log.d("Insertion Successful", "InsertcustomerReturnMaster: ");
@@ -218,6 +290,27 @@ public class ControllerCustomerReturn {
             e.printStackTrace();
         }
         return null;
+    }
+
+    private String getFrom_tmp_sales_return(String itemGuid, String column) {
+        String result = null;
+        try {
+            SQLiteDatabase mydb = context.openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
+            result = "";
+            String selectQuery = "SELECT " + column + " FROM tmp_sales_return where ITEM_GUID ='" + itemGuid + "'";
+            Cursor cursor = mydb.rawQuery(selectQuery, null);
+            if (cursor.moveToFirst()) {
+
+                result = cursor.getString(0);
+            }
+            cursor.close();
+            mydb.close();
+            Log.d("DataRetrieved", "getFrom_tmp_sales_return: " + result);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+
     }
 
     public Cursor refreshSalesReturnCursor() {

@@ -122,7 +122,52 @@ public class ControllerStockMaster extends SQLiteOpenHelper {
         StockMaster stockMaster = new StockMaster(STOCK_ID, STORE_GUID, ITEM_GUID, QTY, SALE_UOMID, UOM, BATCH_NO, BARCODE, P_PRICE, MRP, S_PRICE, INTERNET_PRICE, MIN_QUANTITY, MAX_QUANTITY, WHOLE_SPRICE, SPEC_PRICE, GENERIC_NAME, EXTERNALPRODUCTID, GST, SGST, CGST, IGST, CESS1, CESS2, EXP_DATE, PROD_NM, ITEM_CODE, CREATED_BY, UPDATEDBY, CREATED_ON, UPDATEDON, SALESDISCOUNTBYPERCENTAGE, SALESDISCOUNTBYAMOUNT, GRN_GUID, GRNNO, VENDOR_GUID, VENDOR_NAME, ISSYNCED, GRNDETAILGUID);
         InsertStockMaster(stockMaster);
 
+    }
 
+    public void  InjectIntoStockMasterFromPurcaheInvoice(String vendor_name, String vendor_guid, String userGuid, String itemCode, String prodName, String ExpDate, String cess1, String cess2, String gst, String sgst, String igst, String cgst, String extProdId, String genricName, String spec_price, String wholePrice, String minQty, String maxQty, String internetPrice, String s_price, String mrp, String p_price, String barcode, String batch_no, String uom, String itemGuid, String qty, String uomGuid,String grnDetailGuid,String grnguid,String grnno){
+        this.context =ApplicationContextProvider.getContext();
+        STOCK_ID= IDGenerator.getTimeStamp();
+        STORE_GUID = getFromRetailStore("STORE_GUID");
+        ITEM_GUID = itemGuid;
+        QTY = qty;
+        SALE_UOMID  = uomGuid;
+        UOM = uom;
+        BATCH_NO = batch_no;
+        BARCODE = barcode;
+        P_PRICE = p_price;
+        MRP = mrp;
+        S_PRICE = s_price;
+        INTERNET_PRICE  = internetPrice;
+        MIN_QUANTITY = minQty;
+        MAX_QUANTITY = maxQty;
+        WHOLE_SPRICE = wholePrice;
+        SPEC_PRICE = spec_price;
+        GENERIC_NAME = " ";
+        EXTERNALPRODUCTID = extProdId;
+        GST = gst;
+        SGST= sgst;
+        IGST = igst;
+        CGST = cgst;
+        CESS1 =cess1;
+        CESS2 = cess2;
+        EXP_DATE = ExpDate;
+        PROD_NM = prodName;
+        ITEM_CODE = itemCode;
+        CREATED_BY = userGuid;
+        UPDATEDBY = userGuid;
+        CREATED_ON = getStockDateAndTime();
+        UPDATEDON = getStockDateAndTime();
+        SALESDISCOUNTBYPERCENTAGE = "0.00";
+        SALESDISCOUNTBYAMOUNT = "0.00";
+        GRN_GUID = grnguid ;
+        GRNNO = grnno;
+        VENDOR_GUID = vendor_guid;
+        VENDOR_NAME = vendor_name;
+        ISSYNCED ="0";
+        GRNDETAILGUID = grnDetailGuid;
+
+        StockMaster stockMaster = new StockMaster(STOCK_ID, STORE_GUID, ITEM_GUID, QTY, SALE_UOMID, UOM, BATCH_NO, BARCODE, P_PRICE, MRP, S_PRICE, INTERNET_PRICE, MIN_QUANTITY, MAX_QUANTITY, WHOLE_SPRICE, SPEC_PRICE, GENERIC_NAME, EXTERNALPRODUCTID, GST, SGST, CGST, IGST, CESS1, CESS2, EXP_DATE, PROD_NM, ITEM_CODE, CREATED_BY, UPDATEDBY, CREATED_ON, UPDATEDON, SALESDISCOUNTBYPERCENTAGE, SALESDISCOUNTBYAMOUNT, GRN_GUID, GRNNO, VENDOR_GUID, VENDOR_NAME, ISSYNCED, GRNDETAILGUID);
+        InsertStockMaster(stockMaster);
 
     }
 
@@ -193,6 +238,47 @@ public class ControllerStockMaster extends SQLiteOpenHelper {
             contentValues.put("QTY", QTY);
             contentValues.put("CGST", CGST);
             contentValues.put("SGST", SGST);
+            contentValues.put("ISSYNCED", "0");
+
+            String where = "STOCK_ID=?";
+            String[] whereArgs = new String[] {String.valueOf(stockid)};
+            db.update("retail_str_stock_master", contentValues, where, whereArgs);
+            db.close();
+            Log.d("Updation Successful", "UpdateStockMaster: ");
+
+            try {
+                new WorkManagerSync(4);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void updateStockMasterFromPurchaseInvoice(String stockid,String VENDOR_GUID,String VENDOR_NAME, String  PROD_NM,String  EXTERNALPRODUCTID,String  BARCODE,String  EXP_DATE,String  MRP,String S_PRICE,String P_PRICE,String QTY,String CGST,String SGST,String USER_GUID,String GrndetailGuid, String grnGuid,String grnno){
+        try{
+            db = getWritableDatabase();
+            UPDATEDON = getStockDateAndTime();
+            ContentValues contentValues = new ContentValues();
+            contentValues.put("VENDOR_GUID", VENDOR_GUID);
+            contentValues.put("VENDOR_NAME", VENDOR_NAME);
+            contentValues.put("PROD_NM", PROD_NM);
+            contentValues.put("EXTERNALPRODUCTID", EXTERNALPRODUCTID);
+            contentValues.put("BARCODE", BARCODE);
+            contentValues.put("EXP_DATE", EXP_DATE);
+            contentValues.put("MRP", MRP);
+            contentValues.put("S_PRICE", S_PRICE);
+            contentValues.put("P_PRICE", P_PRICE);
+            contentValues.put("QTY", QTY);
+            contentValues.put("CGST", CGST);
+            contentValues.put("SGST", SGST);
+            contentValues.put("GRNNO", grnno);
+            contentValues.put("GRN_GUID", grnGuid);
+            contentValues.put("UPDATEDBY",USER_GUID);
+            contentValues.put("UPDATEDON",UPDATEDON);
+            contentValues.put("GRNDETAILGUID",GrndetailGuid);
             contentValues.put("ISSYNCED", "0");
 
             String where = "STOCK_ID=?";

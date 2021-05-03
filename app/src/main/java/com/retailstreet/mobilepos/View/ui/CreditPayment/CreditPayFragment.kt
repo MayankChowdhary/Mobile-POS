@@ -58,6 +58,7 @@ class CreditPayFragment : Fragment() {
         val custBalanceTv: TextView = view.findViewById(R.id.cp_balance_value)
         val settleBtn: Button = view.findViewById(R.id.cp_settle_submit)
         val ledgerButton: Button = view.findViewById(R.id.cp_option_leger)
+        val billDetailsBtn: Button = view.findViewById(R.id.cp_option_bills)
 
         ledgerButton.setOnClickListener {
             val actionNavLedgerFragment = CreditPayFragmentDirections.actionNavCreditPayToCustomerLedgerFragment(custGuid)
@@ -65,6 +66,10 @@ class CreditPayFragment : Fragment() {
 
         }
 
+        billDetailsBtn.setOnClickListener {
+            val actionNavSalesReport = CreditPayFragmentDirections.actionNavCreditPayToNavSalesReport(custGuid)
+            Navigation.findNavController(requireActivity(), R.id.nav_host_fragment).navigate(actionNavSalesReport)
+        }
 
 
         settleBtn.setOnClickListener {

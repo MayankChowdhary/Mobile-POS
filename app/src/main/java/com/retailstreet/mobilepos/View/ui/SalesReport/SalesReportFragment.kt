@@ -36,6 +36,7 @@ class SalesReportFragment : Fragment() , TableViewInterface {
     private var endDate:String = ""
     lateinit var spinner: Spinner
     private var isResume: Boolean = false
+    private var custGuid:String = ""
 
 
 
@@ -58,6 +59,12 @@ class SalesReportFragment : Fragment() , TableViewInterface {
         mTableView = view.findViewById(R.id.my_TableView)
         mProgressBar = view.findViewById(R.id.progressBar)
         emptyReport = view.findViewById(R.id.empty_report_view)
+
+        val myArgs = SalesReportFragmentArgs.fromBundle(requireArguments())
+        custGuid = myArgs.custGuid
+        if(custGuid.isNotEmpty() && filterType!=2){
+            filterType=1
+        }
 
     }
 
@@ -131,10 +138,21 @@ class SalesReportFragment : Fragment() , TableViewInterface {
 
 
 
+
     private fun getSalesData(): List<User> {
         val list: MutableList<User> = ArrayList()
         val mydb = requireActivity().openOrCreateDatabase("MasterDB", Context.MODE_PRIVATE, null)
-        val query = "select um.USER_NAME, sm.BILLNO,sm.SALEDATE,sm.NETDISCOUNT,sm.TOTAL_AMOUNT,sm.TAXVALUE, sm.BILLMASTERID from retail_str_sales_master sm INNER JOIN group_user_master um ON sm.USER_GUID=um.USER_GUID Where SALEDATE = DATE()"
+        var query =""
+       if(custGuid.isNotEmpty()){
+
+           query = "select um.USER_NAME, sm.BILLNO,sm.SALEDATE,sm.NETDISCOUNT,sm.TOTAL_AMOUNT,sm.TAXVALUE, sm.BILLMASTERID from retail_str_sales_master sm INNER JOIN group_user_master um ON sm.USER_GUID=um.USER_GUID Where SALEDATE = DATE() AND sm.MASTERCUSTOMERGUID = '$custGuid'"
+
+           Log.d("SalesReportSingle", "getSalesData: CustID "+custGuid)
+       }else {
+           query = "select um.USER_NAME, sm.BILLNO,sm.SALEDATE,sm.NETDISCOUNT,sm.TOTAL_AMOUNT,sm.TAXVALUE, sm.BILLMASTERID from retail_str_sales_master sm INNER JOIN group_user_master um ON sm.USER_GUID=um.USER_GUID Where SALEDATE = DATE()"
+
+           Log.d("SalesReportMulti", "getSalesData: CustID "+custGuid)
+       }
         val cursor = mydb.rawQuery(query, null)
         if (cursor.moveToFirst()) {
             while (!cursor.isAfterLast) {
@@ -152,7 +170,15 @@ class SalesReportFragment : Fragment() , TableViewInterface {
         val list: MutableList<User> = ArrayList()
         try {
             val mydb = requireActivity().openOrCreateDatabase("MasterDB", Context.MODE_PRIVATE, null)
-            val query = "select um.USER_NAME, sm.BILLNO,sm.SALEDATE,sm.NETDISCOUNT,sm.TOTAL_AMOUNT,sm.TAXVALUE,sm.BILLMASTERID from retail_str_sales_master sm INNER JOIN group_user_master um ON sm.USER_GUID=um.USER_GUID Where sm.SALEDATE  BETWEEN '$startDate' AND  '$endDate'";
+            var query=""
+            if(custGuid.isNotEmpty()) {
+                query = "select um.USER_NAME, sm.BILLNO,sm.SALEDATE,sm.NETDISCOUNT,sm.TOTAL_AMOUNT,sm.TAXVALUE,sm.BILLMASTERID from retail_str_sales_master sm INNER JOIN group_user_master um ON sm.USER_GUID=um.USER_GUID Where sm.SALEDATE  BETWEEN '$startDate' AND  '$endDate' AND sm.MASTERCUSTOMERGUID = '$custGuid'";
+                Log.d("SalesReportSingle", "getSalesData: CustID "+custGuid)
+            }else{
+
+                query = "select um.USER_NAME, sm.BILLNO,sm.SALEDATE,sm.NETDISCOUNT,sm.TOTAL_AMOUNT,sm.TAXVALUE,sm.BILLMASTERID from retail_str_sales_master sm INNER JOIN group_user_master um ON sm.USER_GUID=um.USER_GUID Where sm.SALEDATE  BETWEEN '$startDate' AND  '$endDate'";
+                Log.d("SalesReportMulti", "getSalesData: CustID "+custGuid)
+            }
             val cursor = mydb.rawQuery(query, null)
             if (cursor.moveToFirst()) {
                 while (!cursor.isAfterLast) {
@@ -173,7 +199,15 @@ class SalesReportFragment : Fragment() , TableViewInterface {
     private fun getSalesAllData(): List<User> {
         val list: MutableList<User> = ArrayList()
         val mydb = requireActivity().openOrCreateDatabase("MasterDB", Context.MODE_PRIVATE, null)
-        val query = "select um.USER_NAME, sm.BILLNO,sm.SALEDATE,sm.NETDISCOUNT,sm.TOTAL_AMOUNT,sm.TAXVALUE,sm.BILLMASTERID from retail_str_sales_master sm INNER JOIN group_user_master um ON sm.USER_GUID=um.USER_GUID";
+        var query =""
+        if(custGuid.isNotEmpty()) {
+             query = "select um.USER_NAME, sm.BILLNO,sm.SALEDATE,sm.NETDISCOUNT,sm.TOTAL_AMOUNT,sm.TAXVALUE,sm.BILLMASTERID from retail_str_sales_master sm INNER JOIN group_user_master um ON sm.USER_GUID=um.USER_GUID Where sm.MASTERCUSTOMERGUID = '$custGuid'";
+            Log.d("SalesReportSingle", "getSalesData: CustID "+custGuid)
+        }else{
+
+            query = "select um.USER_NAME, sm.BILLNO,sm.SALEDATE,sm.NETDISCOUNT,sm.TOTAL_AMOUNT,sm.TAXVALUE,sm.BILLMASTERID from retail_str_sales_master sm INNER JOIN group_user_master um ON sm.USER_GUID=um.USER_GUID";
+            Log.d("SalesReportMulti", "getSalesData: CustID "+custGuid)
+        }
         val cursor = mydb.rawQuery(query, null)
         if (cursor.moveToFirst()) {
             while (!cursor.isAfterLast) {

@@ -29,6 +29,7 @@ import com.retailstreet.mobilepos.Utils.WorkManagerSync;
 import com.retailstreet.mobilepos.View.ExpandableNavigation.ExpandableListAdapter;
 import com.retailstreet.mobilepos.View.ExpandableNavigation.MenuModel;
 import com.retailstreet.mobilepos.View.dialog.LottieAlertDialogs;
+import com.retailstreet.mobilepos.View.ui.Home.HomeFragmentDirections;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -266,7 +267,8 @@ public class MainDrawerActivity extends AppCompatActivity  {
                             Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_nav_dayclose);
                             drawer.closeDrawer(GravityCompat.START);
                         }else if (groupPosition==5 && childPosition==0) {
-                            Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_nav_sales_report);
+                            HomeFragmentDirections.ActionNavHomeToNavSalesReport actionNavSalesReport = HomeFragmentDirections.actionNavHomeToNavSalesReport("");
+                            Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(actionNavSalesReport);
                             drawer.closeDrawer(GravityCompat.START);
                         }else if (groupPosition==2 && childPosition==3) {
                             Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_nav_vendor_update);

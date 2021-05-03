@@ -11,6 +11,8 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.retailstreet.mobilepos.Model.CreditBillDetails;
+import com.retailstreet.mobilepos.Model.StockRegister;
+import com.retailstreet.mobilepos.Utils.IDGenerator;
 import com.retailstreet.mobilepos.Utils.WorkManagerSync;
 import com.retailstreet.mobilepos.View.ApplicationContextProvider;
 
@@ -166,6 +168,11 @@ public class BillGenerator {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        try {
+            new WorkManagerSync(10);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         }
 
@@ -224,20 +231,64 @@ public class BillGenerator {
                     ITEM_GUID = itemGuid;
                     SELLINGPRICE = String.valueOf(Double.parseDouble(NETVALUE) / Double.parseDouble(QTY));
                     ITEM_NAME = getFromStockMaster(orderid,"PROD_NM");
-
-
                     Log.d("CreditInsert", "GenerateCreditBillDetails: ");
-
                     CreditBillDetails creditBillDetails = new CreditBillDetails( STORE_GUID,  CUSTOMERMOBILENO,  CUSTOMERGUID,  BILLNO,  BILLDATE,  ITEM_GUID,  ITEM_NAME,  MRP,  SELLINGPRICE,  QTY,  TOTALVALUE,  TOTALGST,  CGST,  SGST,  IGST,  DISCOUNT_PERC, DISCOUNT_VALUE);
                     InsertCreditBillDetails(creditBillDetails);
                 } catch (NumberFormatException e) {
                     e.printStackTrace();
                 }
             }
+       String  REGISTERGUID = IDGenerator.getUUID();
+       String  MASTERORG_GUID = getFromRetailStore("MASTERORG_GUID");
+       String VENDOR_GUID = getFromStockMaster(orderid,"VENDOR_GUID");
+       String LINETYPE = "DEBIT";
+       String TRANSACTIONTYPE = "SALE";
+       TRANSACTIONNUMBER = billNumber;
+       String TRANSACTIONDATE = BILLDATE;
+       String BARCODE = getFromStockMaster(orderid,"BARCODE");
+       String SALESPRICE = TOTALVALUE ;
+       String  WHOLESALEPRICE = getFromStockMaster(orderid, "WHOLE_SPRICE");
+       String INTERNETPRICE = getFromStockMaster(orderid, "INTERNET_PRICE");
+       String SPECIALPRICE = getFromStockMaster(orderid, "SPEC_PRICE");
+        ISSYNCED ="0";
+        StockRegister stockRegister = new StockRegister(REGISTERGUID, MASTERORG_GUID, STORE_GUID, VENDOR_GUID, LINETYPE, TRANSACTIONTYPE, TRANSACTIONNUMBER, TRANSACTIONDATE, ITEM_GUID, UOM_GUID, QTY, BATCHNO, BARCODE, SALESPRICE, WHOLESALEPRICE, INTERNETPRICE, SPECIALPRICE, ISSYNCED);
+        InsertStockRegister(stockRegister);
+
+    }
+
+    public void InsertStockRegister(StockRegister prod) {
+        try {
+
+            SQLiteDatabase myDataBase = context.openOrCreateDatabase(DBNAME, Context.MODE_PRIVATE, null);
+            ContentValues contentValues = new ContentValues();
+            contentValues.put("REGISTERGUID", prod.getREGISTERGUID());
+            contentValues.put("MASTERORG_GUID", prod.getMASTERORG_GUID());
+            contentValues.put("STORE_GUID", prod.getSTORE_GUID());
+            contentValues.put("VENDOR_GUID", prod.getVENDOR_GUID());
+            contentValues.put("LINETYPE", prod.getLINETYPE());
+            contentValues.put("TRANSACTIONTYPE", prod.getTRANSACTIONTYPE());
+            contentValues.put("TRANSACTIONNUMBER", prod.getTRANSACTIONNUMBER());
+            contentValues.put("TRANSACTIONDATE", prod.getTRANSACTIONDATE());
+            contentValues.put("ITEM_GUID", prod.getITEM_GUID());
+            contentValues.put("UOM_GUID", prod.getUOM_GUID());
+            contentValues.put("QUANTITY", prod.getQUANTITY());
+            contentValues.put("BATCHNO", prod.getBATCHNO());
+            contentValues.put("BARCODE", prod.getBARCODE());
+            contentValues.put("SALESPRICE", prod.getSALESPRICE());
+            contentValues.put("WHOLESALEPRICE", prod.getWHOLESALEPRICE());
+            contentValues.put("INTERNETPRICE", prod.getINTERNETPRICE());
+            contentValues.put("SPECIALPRICE", prod.getSPECIALPRICE());
+            contentValues.put("ISSYNCED", prod.getISSYNCED());
+            myDataBase.insert("stock_register", null, contentValues);
+
+            myDataBase.close();
+            Log.d("Insertion Successful", "StockRegisters: ");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+    }
 
     public void GenerateBillMaster( String custId, String additionDiscount) {
-
 
         try {
             SALEDATE = getSaleDate();

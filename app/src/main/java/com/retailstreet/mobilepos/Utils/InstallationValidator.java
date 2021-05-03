@@ -75,6 +75,7 @@ public class InstallationValidator  {
                     }
                 }
                 else {
+                    new TableDataInjector(context, StoreID,activity);
                     if(response.code()==417) {
                         Gson gson = new Gson();
                         Type type = new TypeToken<DownloadcheckPojo>() {

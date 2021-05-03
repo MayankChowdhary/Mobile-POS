@@ -15,6 +15,8 @@ import com.retailstreet.mobilepos.Model.CustomerReturnDetails;
 import com.retailstreet.mobilepos.Model.CustomerReturnMaster;
 import com.retailstreet.mobilepos.Model.DeliveryTypeMaster;
 import com.retailstreet.mobilepos.Model.DownloadcheckPojo;
+import com.retailstreet.mobilepos.Model.GRNDetails;
+import com.retailstreet.mobilepos.Model.GRNMaster;
 import com.retailstreet.mobilepos.Model.GroupUserMaster;
 import com.retailstreet.mobilepos.Model.HSNMaster;
 import com.retailstreet.mobilepos.Model.InvoiceSyncResponse;
@@ -151,6 +153,11 @@ public interface ApiInterface {
 
     @GET
     Call<List<StockRegister>> getStockRegister(@Url String url);
+    @GET
+    Call<List<GRNDetails>> getGrnDetails(@Url String url);
+
+    @GET
+    Call<List<GRNMaster>> getGrnMaster(@Url String url);
 
 
 
@@ -188,6 +195,9 @@ public interface ApiInterface {
     @POST("/APIManagers/api/PullPOSRegualarSync/PushCustomerLedger")
     Call<SyncResponse> UploadcustomerladgersRecords(@Header("Authorization")String Authorization, @Body RequestBody body);
 
+    @POST("/APIManagers/api/PullPOSRegualarSync/PullGRNDetails")
+    Call<SyncResponse> UploadGRNRecords(@Header("Authorization")String Authorization, @Body RequestBody body);
 
-
+    @POST("/APIManagers/api/PullPOSRegualarSync/PushInventoryLedger")
+    Call<SyncResponse> UploadInventoryLedgerRecords(@Header("Authorization")String Authorization, @Body RequestBody body);
 }

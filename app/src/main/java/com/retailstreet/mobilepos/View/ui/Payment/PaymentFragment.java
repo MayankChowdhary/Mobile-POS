@@ -1,5 +1,6 @@
 package com.retailstreet.mobilepos.View.ui.Payment;
 
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -50,6 +51,7 @@ import org.jetbrains.annotations.NotNull;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -766,7 +768,7 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
         bankNameSpinner.setGravity(Gravity.START);
 
         Spinner dateSelector = viewPager.findViewById(R.id.pay_cheque_date_value);
-        String[] dateItem = new String[] {"MM/YYYY"};
+        String[] dateItem = new String[] {"DD/MM/YYYY"};
         ArrayAdapter<String> dateAdapter = new ArrayAdapter<String>(getActivity(), R.layout.spinner_item_bold, dateItem);
         dateAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         dateSelector.setAdapter(dateAdapter);
@@ -777,25 +779,27 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
             public boolean onTouch(View v, MotionEvent event) {
                 if (event != null) {
                     if(event.getAction() ==MotionEvent.ACTION_UP) {
-                        MonthYearPickerDialog pickerDialog = new MonthYearPickerDialog();
-                        pickerDialog.setListener((datePicker, year, month, i2) -> {
-                            //Toast.makeText(getContext(), year + "-" + month, Toast.LENGTH_SHORT).show();
 
-                            if(month<10) {
-                                chequeMont="0" + month;
-                            }
-                            else {
-                                chequeMont=String.valueOf(month);
-                            }
+                        Calendar c = Calendar.getInstance();
+                        int year = c.get(Calendar.YEAR);
+                        int month = c.get(Calendar.MONTH);
+                        int day = c.get(Calendar.DAY_OF_MONTH);
+                        DatePickerDialog dpx = new DatePickerDialog(requireContext(),
+                                (view, year1, monthOfYear, dayOfMonth) -> {
 
-                            chequeYear=String.valueOf(year);
-                            dateItem[0] =chequeDate = chequeMont + "/" + chequeYear;
-                            ArrayAdapter<String> chequeAdapter = new ArrayAdapter<String>(getActivity(), R.layout.spinner_item_bold, dateItem);
-                            chequeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                            dateSelector.setAdapter(chequeAdapter);
-                        });
-                        pickerDialog.show(requireActivity().getSupportFragmentManager(), "MonthYearPickerDialog");
-
+                                    if(month<10) {
+                                        chequeMont="0" + (monthOfYear+1);
+                                    }
+                                    else {
+                                        chequeMont=String.valueOf(monthOfYear+1);
+                                    }
+                                    chequeYear=String.valueOf(year1);
+                                    dateItem[0] =chequeDate = dayOfMonth+"/"+chequeMont + "/" + chequeYear;
+                                    ArrayAdapter<String> chequeAdapter = new ArrayAdapter<String>(getActivity(), R.layout.spinner_item_bold, dateItem);
+                                    chequeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                                    dateSelector.setAdapter(chequeAdapter);
+                                }, year, month, day);
+                        dpx.show();
                     }
                 }
 

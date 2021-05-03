@@ -22,6 +22,8 @@ import com.retailstreet.mobilepos.Model.CustomerReject;
 import com.retailstreet.mobilepos.Model.CustomerReturnDetails;
 import com.retailstreet.mobilepos.Model.CustomerReturnMaster;
 import com.retailstreet.mobilepos.Model.DeliveryTypeMaster;
+import com.retailstreet.mobilepos.Model.GRNDetails;
+import com.retailstreet.mobilepos.Model.GRNMaster;
 import com.retailstreet.mobilepos.Model.GroupUserMaster;
 import com.retailstreet.mobilepos.Model.HSNMaster;
 import com.retailstreet.mobilepos.Model.MasterCategory;
@@ -89,11 +91,13 @@ public class TableDataInjector {
     private List<CustomerLedger> customerLedgerList = null;
     private List<CreditBillDetails> creditBillDetails = null;
     private List<StockRegister> stockRegisterList = null;
+    private List<GRNDetails> grnDetailsList = null;
+    private List<GRNMaster> grnMasterList = null;
 
     private LoadingDialog loadingDialog;
 
     public static int status =0;
-    private final int tableConstant=31;
+    private final int tableConstant=33;
 
     public TableDataInjector(Context context, String storeid,DBReadyCallback callback) {
 
@@ -135,6 +139,8 @@ public class TableDataInjector {
         getCustomerLedger();
         getCreditBillDetails();
         getStockRegister();
+        getGrnDetails();
+        getGrnMasters();
 
 
     }
@@ -902,6 +908,138 @@ public class TableDataInjector {
             Log.i("autolog", "Exception");
         }
     }
+    public void getGrnDetails() {
+        try {
+            Retrofit retrofit = getRetroInstance(baseUrl);
+            assert retrofit != null;
+            ApiInterface service = retrofit.create(ApiInterface.class);
+            Call<List<GRNDetails>> call = service.getGrnDetails(generateTableUrl("retail_str_grn_detail",storeId));
+            call.enqueue(new Callback<List<GRNDetails>>() {
+                @Override
+                public void onResponse(Call<List<GRNDetails>> call, Response<List<GRNDetails>> response) {
+                    grnDetailsList= response.body();
+                    Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
+                    InsertGrnDetails(grnDetailsList);
+                }
+
+                @Override
+                public void onFailure(Call<List<GRNDetails>> call, Throwable t) {
+                    Log.i("autolog", t.getMessage());
+                }
+            });
+        } catch (Exception e) {
+            Log.i("autolog", "Exception");
+        }
+    }
+
+
+    public void getGrnMasters() {
+        try {
+            Retrofit retrofit = getRetroInstance(baseUrl);
+            assert retrofit != null;
+            ApiInterface service = retrofit.create(ApiInterface.class);
+            Call<List<GRNMaster>> call = service.getGrnMaster(generateTableUrl("retail_str_grn_master",storeId));
+            call.enqueue(new Callback<List<GRNMaster>>() {
+                @Override
+                public void onResponse(Call<List<GRNMaster>> call, Response<List<GRNMaster>> response) {
+                    grnMasterList= response.body();
+                    Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
+                    InsertGrnMasters(grnMasterList);
+                }
+
+                @Override
+                public void onFailure(Call<List<GRNMaster>> call, Throwable t) {
+                    Log.i("autolog", t.getMessage());
+                }
+            });
+        } catch (Exception e) {
+            Log.i("autolog", "Exception");
+        }
+    }
+
+    public void InsertGrnMasters(List<GRNMaster> list) {
+        if (list == null) {
+            return;
+        }
+        try {
+            SQLiteDatabase myDataBase = context.openOrCreateDatabase(dbname, Context.MODE_PRIVATE, null);
+            myDataBase.delete("retail_str_grn_master", null, null);
+            for (GRNMaster prod : list) {
+                ContentValues contentValues = new ContentValues();
+                contentValues.put("GRN_GUID", prod.getGRN_GUID());
+                contentValues.put("GRNNO", prod.getGRNNO());
+                contentValues.put("GRNDate", prod.getGRNDate());
+                contentValues.put("GRANDAMOUNT", prod.getGRANDAMOUNT());
+                contentValues.put("INVOICENO", prod.getINVOICENO());
+                contentValues.put("INVOICEDATE", prod.getINVOICEDATE());
+                contentValues.put("INVOICEDISCOUNT", prod.getINVOICEDISCOUNT());
+                contentValues.put("GRNPRINT", prod.getGRNPRINT());
+                contentValues.put("GRNRECON", prod.getGRNRECON());
+                contentValues.put("GRN_STATUS", prod.getGRN_STATUS());
+                contentValues.put("CREATEDBY", prod.getCREATEDBY());
+                contentValues.put("GRNTYPE", prod.getGRNTYPE());
+                contentValues.put("USER_GUID", prod.getUSER_GUID());
+                contentValues.put("VENDOR_GUID", prod.getVENDOR_GUID());
+                contentValues.put("STORE_GUID", prod.getSTORE_GUID());
+                contentValues.put("ISSYNCED", prod.getISSYNCED());
+                myDataBase.insert("retail_str_grn_master", null, contentValues);
+
+            }
+
+            myDataBase.close();
+            status+=1;
+            if(status==tableConstant){
+                loadingDialog.cancelDialog();
+                dbReadyCallback.onDBReady();
+            }
+            Log.d("Insertion Successful", "GRNMaster: "+status);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public void InsertGrnDetails(List<GRNDetails> list) {
+        if (list == null) {
+            return;
+        }
+        try {
+            SQLiteDatabase myDataBase = context.openOrCreateDatabase(dbname, Context.MODE_PRIVATE, null);
+            myDataBase.delete("retail_str_grn_detail", null, null);
+            for (GRNDetails prod : list) {
+                ContentValues contentValues = new ContentValues();
+                contentValues.put("GRNDETAILID", prod.getGRNDETAILID());
+                contentValues.put("GRN_QTY", prod.getGRN_QTY());
+                contentValues.put("BATCHNO", prod.getBATCHNO());
+                contentValues.put("EXP_DATE", prod.getEXP_DATE());
+                contentValues.put("PUR_PRICE", prod.getPUR_PRICE());
+                contentValues.put("TAX_AMOUNT", prod.getTAX_AMOUNT());
+                contentValues.put("GRN_VALUE", prod.getGRN_VALUE());
+                contentValues.put("MRP", prod.getMRP());
+                contentValues.put("ISFREEGOODS", prod.getISFREEGOODS());
+                contentValues.put("FREE_QUANTITY", prod.getFREE_QUANTITY());
+                contentValues.put("PURCHASEDISCOUNTPERCENTAGE", prod.getPURCHASEDISCOUNTPERCENTAGE());
+                contentValues.put("PURCHASEDISCOUNTBYAMOUNT", prod.getPURCHASEDISCOUNTBYAMOUNT());
+                contentValues.put("GRN_GUID", prod.getGRN_GUID());
+                contentValues.put("ITEM_GUID", prod.getITEM_GUID());
+                contentValues.put("STORE_GUID", prod.getSTORE_GUID());
+                contentValues.put("UOM_GUID", prod.getUOM_GUID());
+                contentValues.put("GRNDETAILGUID", prod.getGRNDETAILGUID());
+                myDataBase.insert("retail_str_grn_detail", null, contentValues);
+
+            }
+
+            myDataBase.close();
+            status+=1;
+            if(status==tableConstant){
+                loadingDialog.cancelDialog();
+                dbReadyCallback.onDBReady();
+            }
+            Log.d("Insertion Successful", "GRNDetails: "+status);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     public void InsertStockRegister(List<StockRegister> list) {
         if (list == null) {
@@ -940,7 +1078,7 @@ public class TableDataInjector {
                 loadingDialog.cancelDialog();
                 dbReadyCallback.onDBReady();
             }
-            Log.d("Insertion Successful", "CreditBillDetails: "+status);
+            Log.d("Insertion Successful", "StockRegisters: "+status);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -2338,6 +2476,12 @@ public class TableDataInjector {
 
             case "stock_register":
                 return "ApiTest/StockRegister?STORE_ID="+storeid;
+
+            case "retail_str_grn_detail":
+                return "ApiTest/GrnDetail?STORE_ID="+storeid;
+
+            case "retail_str_grn_master":
+                return "ApiTest/GrnMaster?STORE_ID="+storeid;
 
             default:
                 return "";
