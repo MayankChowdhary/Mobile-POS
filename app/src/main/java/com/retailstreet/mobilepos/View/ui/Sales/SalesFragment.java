@@ -71,12 +71,13 @@ public class SalesFragment extends Fragment implements UpdateRecyclerView {
 
         root.setFocusableInTouchMode(true);
         root.requestFocus();
+
+
         root.setOnKeyListener((v, keyCode, event) -> {
             if( keyCode == KeyEvent.KEYCODE_BACK && event.getAction()== KeyEvent.ACTION_DOWN)
             {
                 if (!mSearchView.isIconified()) {
                     mSearchView.setIconified(true);
-                    return true;
                 }
 
                 if (doubleBackToExitPressedOnce) {
@@ -95,6 +96,7 @@ public class SalesFragment extends Fragment implements UpdateRecyclerView {
             }
             return false;
         });
+
         return root;
     }
 
@@ -196,6 +198,7 @@ public class SalesFragment extends Fragment implements UpdateRecyclerView {
             }
 
         });
+
 
 
         mSearchView.setOnCloseListener(() -> {

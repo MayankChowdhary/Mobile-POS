@@ -306,7 +306,7 @@ class PurchaseInvoiceFragment : Fragment() , TableViewInterface, PurchaseInvoice
                         }
                     })
                     .build()
-            alertDialog.setCancelable(true)
+            alertDialog.setCancelable(false)
             alertDialog.show()
 
         }

@@ -62,7 +62,7 @@ public class MainDrawerActivity extends AppCompatActivity  {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_sales, R.id.nav_dayopen, R.id.nav_dayclose, R.id.nav_products, R.id.nav_customer, R.id.nav_customer_update, R.id.nav_sales_refund, R.id.nav_credit_pay, R.id.nav_home, R.id.nav_sales_report,R.id.nav_vendor_update,R.id.nav_stock_update,R.id.nav_purchase_Invoice)
+                R.id.nav_sales, R.id.nav_dayopen, R.id.nav_dayclose, R.id.nav_products, R.id.nav_customer, R.id.nav_customer_update, R.id.nav_sales_refund, R.id.nav_credit_pay, R.id.nav_home, R.id.nav_sales_report,R.id.nav_vendor_update,R.id.nav_stock_update,R.id.nav_purchase_Invoice,R.id.nav_vendor_Payment,R.id.nav_vi_payment_fragment)
                 .setOpenableLayout(drawer)
                 .build();
 
@@ -125,6 +125,10 @@ public class MainDrawerActivity extends AppCompatActivity  {
         childModel = new MenuModel("Stock Update", false, false, R.drawable.stockupdate);
         childModelsList.add(childModel);
         childModel = new MenuModel("Purchase Invoice", false, false, R.drawable.invoice);
+        childModelsList.add(childModel);
+        childModel = new MenuModel("Petty Cash", false, false, R.drawable.petty_cash);
+        childModelsList.add(childModel);
+        childModel = new MenuModel("Vendor Payment", false, false, R.drawable.vendor_payment);
         childModelsList.add(childModel);
         childModel = new MenuModel("Vendor Details", false, false, R.drawable.vendor);
         childModelsList.add(childModel);
@@ -270,7 +274,7 @@ public class MainDrawerActivity extends AppCompatActivity  {
                             HomeFragmentDirections.ActionNavHomeToNavSalesReport actionNavSalesReport = HomeFragmentDirections.actionNavHomeToNavSalesReport("");
                             Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(actionNavSalesReport);
                             drawer.closeDrawer(GravityCompat.START);
-                        }else if (groupPosition==2 && childPosition==3) {
+                        }else if (groupPosition==2 && childPosition==5) {
                             Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_nav_vendor_update);
                             drawer.closeDrawer(GravityCompat.START);
                         }else if (groupPosition==2 && childPosition==1) {
@@ -279,7 +283,13 @@ public class MainDrawerActivity extends AppCompatActivity  {
                         }else if (groupPosition==2 && childPosition==2) {
                         Navigation.findNavController(MainDrawerActivity.this, R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_purchaseInvoiceFragment);
                         drawer.closeDrawer(GravityCompat.START);
-                    }
+                    } else if (groupPosition==2 && childPosition==3) {
+                        Navigation.findNavController(MainDrawerActivity.this, R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_vi_payment_fragment);
+                        drawer.closeDrawer(GravityCompat.START);
+                    }else if (groupPosition==2 && childPosition==4) {
+                            Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_vendorPaymentFragment);
+                            drawer.closeDrawer(GravityCompat.START);
+                        }
 
                     }
 

@@ -231,6 +231,12 @@
         <action
             android:id="@+id/action_nav_home_to_purchaseInvoiceFragment"
             app:destination="@id/nav_purchase_Invoice" />
+        <action
+            android:id="@+id/action_nav_home_to_vi_payment_fragment"
+            app:destination="@id/nav_vi_payment_fragment" />
+        <action
+            android:id="@+id/action_nav_home_to_vendorPaymentFragment"
+            app:destination="@id/nav_vendor_Payment" />
     </fragment>
     <fragment
         android:id="@+id/nav_sales_report"
@@ -275,4 +281,14 @@
         android:name="com.retailstreet.mobilepos.View.ui.PurchaseInvoice.PurchaseInvoiceFragment"
         android:label="Purchase Invoice"
         tools:layout="@layout/fragment_purchase_invoice" />
+    <fragment
+        android:id="@+id/nav_vi_payment_fragment"
+        android:name="com.retailstreet.mobilepos.View.ui.VendorIndirectPayment.VendorIndirectPaymentFragment"
+        android:label="Petty Cash"
+        tools:layout="@layout/fragment_vendor_indirect_payment" />
+    <fragment
+        android:id="@+id/nav_vendor_Payment"
+        android:name="com.retailstreet.mobilepos.View.ui.VendorPayment.VendorPaymentFragment"
+        android:label="Vendor Payment"
+        tools:layout="@layout/fragment_vendor_payment" />
 </navigation>

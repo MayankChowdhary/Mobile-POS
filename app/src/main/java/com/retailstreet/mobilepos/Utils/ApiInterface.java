@@ -40,6 +40,8 @@ import com.retailstreet.mobilepos.Model.SyncResponse;
 import com.retailstreet.mobilepos.Model.TerminalConfiguration;
 import com.retailstreet.mobilepos.Model.TerminalUserAllocation;
 import com.retailstreet.mobilepos.Model.VendorMaster;
+import com.retailstreet.mobilepos.Model.VendorPayDetail;
+import com.retailstreet.mobilepos.Model.VendorPayMaster;
 
 import java.util.List;
 
@@ -159,6 +161,12 @@ public interface ApiInterface {
     @GET
     Call<List<GRNMaster>> getGrnMaster(@Url String url);
 
+    @GET
+    Call<List<VendorPayDetail>> getVendorPayDetail(@Url String url);
+
+    @GET
+    Call<List<VendorPayMaster>> getVendorPayMaster(@Url String url);
+
 
 
     //***************Installation Validator************************
@@ -200,4 +208,7 @@ public interface ApiInterface {
 
     @POST("/APIManagers/api/PullPOSRegualarSync/PushInventoryLedger")
     Call<SyncResponse> UploadInventoryLedgerRecords(@Header("Authorization")String Authorization, @Body RequestBody body);
+
+    @POST("/APIManagers/api/PullPOSRegualarSync/PushVendorPayments")
+    Call<SyncResponse> UploadvendorpaymentRecords(@Header("Authorization")String Authorization, @Body RequestBody body);
 }

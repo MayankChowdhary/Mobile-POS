@@ -1,6 +1,8 @@
 package com.retailstreet.mobilepos.Utils;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.UUID;
 
 public class IDGenerator {
@@ -16,5 +18,11 @@ public class IDGenerator {
         //This method returns the time in millis
         long timeMilli = date.getTime();
         return String.valueOf(timeMilli);
+    }
+
+    public static String getDateAndTime(){
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+        Date date = new Date();
+        return formatter.format(date);
     }
 }

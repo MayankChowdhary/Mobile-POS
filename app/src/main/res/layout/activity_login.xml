@@ -78,9 +78,8 @@
                 android:id="@+id/terminal_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:autofillHints="username"
                 android:enabled="false"
-                android:text="000000000"
+                android:text="XXXXXXXXXX"
                 android:hint="Terminal ID"
                 android:inputType="text" />
         </com.google.android.material.textfield.TextInputLayout>

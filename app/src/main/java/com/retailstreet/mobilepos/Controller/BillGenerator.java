@@ -86,6 +86,7 @@ public class BillGenerator {
         String BALANCE_CASH;
         String ROUND_OFF ;
         String NETDISCOUNT="0.00";
+        String BILLMASTERGUID;
 
 
         String BILLPAYDETAILID;
@@ -121,6 +122,7 @@ public class BillGenerator {
         NO_OF_ITEMS = String.valueOf(orderList.size());
         billNumber = getBillNumber();
         billMasterId = getTimeStamp();
+        BILLMASTERGUID = IDGenerator.getUUID();
         RECEIVED_CASH = receivedCash;
         BALANCE_CASH=balanceCash;
         DELIVERY_TYPE_GUID = deliveryTypeGuid;
@@ -306,7 +308,7 @@ public class BillGenerator {
             ROUND_OFF ="0.00";
             NETDISCOUNT = String.valueOf(Double.parseDouble(NETDISCOUNT)+Double.parseDouble(additionDiscount));
 
-            new ControllerBillMaster().createBillMasterData(billMasterId, billNumber, SALEDATETIME, SALEDATE, SALETIME, MASTERCUSTOMERGUID, MASTERSTOREGUID, MASTERTERMINALGUID, MASTERSHIFTGUID, USER_GUID, CUST_MOBILENO, NETVALUEM, TAXVALUE, TOTAL_AMOUNT, DELIVERY_TYPE_GUID, BILL_PRINT, TOTAL_BILL_AMOUNT, NO_OF_ITEMS, BILLSTATUS, ISSYNCED, RECEIVED_CASH, BALANCE_CASH, ROUND_OFF, NETDISCOUNT);
+            new ControllerBillMaster().createBillMasterData(billMasterId, billNumber, SALEDATETIME, SALEDATE, SALETIME, MASTERCUSTOMERGUID, MASTERSTOREGUID, MASTERTERMINALGUID, MASTERSHIFTGUID, USER_GUID, CUST_MOBILENO, NETVALUEM, TAXVALUE, TOTAL_AMOUNT, DELIVERY_TYPE_GUID, BILL_PRINT, TOTAL_BILL_AMOUNT, NO_OF_ITEMS, BILLSTATUS, ISSYNCED, RECEIVED_CASH, BALANCE_CASH, ROUND_OFF, NETDISCOUNT,BILLMASTERGUID);
         } catch (NumberFormatException e) {
             e.printStackTrace();
         }

@@ -50,6 +50,7 @@ public class PurchaseInvoiceEditDialog extends DialogFragment implements DatePic
             public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
                 getDialog().setTitle("Enter Row Data");
+                setCancelable(false);
                 return inflater.inflate(R.layout.dialog_fragment_purchase_invoice, container, false);
 
             }

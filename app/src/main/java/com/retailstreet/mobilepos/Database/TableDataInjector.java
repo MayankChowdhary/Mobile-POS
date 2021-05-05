@@ -42,6 +42,8 @@ import com.retailstreet.mobilepos.Model.StoreConfiguration;
 import com.retailstreet.mobilepos.Model.TerminalConfiguration;
 import com.retailstreet.mobilepos.Model.TerminalUserAllocation;
 import com.retailstreet.mobilepos.Model.VendorMaster;
+import com.retailstreet.mobilepos.Model.VendorPayDetail;
+import com.retailstreet.mobilepos.Model.VendorPayMaster;
 import com.retailstreet.mobilepos.Utils.ApiInterface;
 import com.retailstreet.mobilepos.View.ApplicationContextProvider;
 import com.retailstreet.mobilepos.View.dialog.LoadingDialog;
@@ -93,11 +95,13 @@ public class TableDataInjector {
     private List<StockRegister> stockRegisterList = null;
     private List<GRNDetails> grnDetailsList = null;
     private List<GRNMaster> grnMasterList = null;
+    private List<VendorPayDetail> vendorPayDetailList = null;
+    private List<VendorPayMaster> vendorPayMasterList = null;
 
     private LoadingDialog loadingDialog;
 
     public static int status =0;
-    private final int tableConstant=33;
+    private final int tableConstant=35;
 
     public TableDataInjector(Context context, String storeid,DBReadyCallback callback) {
 
@@ -141,7 +145,8 @@ public class TableDataInjector {
         getStockRegister();
         getGrnDetails();
         getGrnMasters();
-
+        getVendorPayDetails();
+        getVendorPayMaster();
 
     }
 
@@ -957,6 +962,134 @@ public class TableDataInjector {
         }
     }
 
+    public void getVendorPayDetails() {
+        try {
+            Retrofit retrofit = getRetroInstance(baseUrl);
+            assert retrofit != null;
+            ApiInterface service = retrofit.create(ApiInterface.class);
+            Call<List<VendorPayDetail>> call = service.getVendorPayDetail(generateTableUrl("VendorPayDetail",storeId));
+            call.enqueue(new Callback<List<VendorPayDetail>>() {
+                @Override
+                public void onResponse(Call<List<VendorPayDetail>> call, Response<List<VendorPayDetail>> response) {
+                    vendorPayDetailList= response.body();
+                    Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
+                  InsertVendorPayDetails(vendorPayDetailList);
+                }
+
+                @Override
+                public void onFailure(Call<List<VendorPayDetail>> call, Throwable t) {
+                    Log.i("autolog", t.getMessage());
+                }
+            });
+        } catch (Exception e) {
+            Log.i("autolog", "Exception");
+        }
+    }
+
+    public void getVendorPayMaster() {
+        try {
+            Retrofit retrofit = getRetroInstance(baseUrl);
+            assert retrofit != null;
+            ApiInterface service = retrofit.create(ApiInterface.class);
+            Call<List<VendorPayMaster>> call = service.getVendorPayMaster(generateTableUrl("VendorPayMaster",storeId));
+            call.enqueue(new Callback<List<VendorPayMaster>>() {
+                @Override
+                public void onResponse(Call<List<VendorPayMaster>> call, Response<List<VendorPayMaster>> response) {
+                    vendorPayMasterList= response.body();
+                    Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
+                    InsertVendorPayMaster(vendorPayMasterList);
+                }
+
+                @Override
+                public void onFailure(Call<List<VendorPayMaster>> call, Throwable t) {
+                    Log.i("autolog", t.getMessage());
+                }
+            });
+        } catch (Exception e) {
+            Log.i("autolog", "Exception");
+        }
+    }
+
+
+    public void InsertVendorPayMaster(List<VendorPayMaster> list) {
+        if (list == null) {
+            return;
+        }
+        try {
+            SQLiteDatabase myDataBase = context.openOrCreateDatabase(dbname, Context.MODE_PRIVATE, null);
+            myDataBase.delete("VendorPayMaster", null, null);
+            for (VendorPayMaster prod : list) {
+
+                ContentValues contentValues = new ContentValues();
+                contentValues.put("VENDOR_PAYID", prod.getVENDOR_PAYID());
+                contentValues.put("VENDOR_PAYGUID", prod.getVENDOR_PAYGUID());
+                contentValues.put("VENDOR_GUID", prod.getVENDOR_GUID());
+                contentValues.put("STORE_GUID", prod.getSTORE_GUID());
+                contentValues.put("INVOICENO", prod.getINVOICENO());
+                contentValues.put("INVOICEDATE", prod.getINVOICEDATE());
+                contentValues.put("INVOICEAMOUNT", prod.getINVOICEAMOUNT());
+                contentValues.put("CREATEDBY", prod.getCREATEDBY());
+                contentValues.put("UPDATEDBY", prod.getUPDATEDBY());
+                contentValues.put("CREATEDON", prod.getCREATEDON());
+                contentValues.put("UPDATEDON", prod.getUPDATEDON());
+                contentValues.put("DUEAMOUNT", prod.getDUEAMOUNT());
+                contentValues.put("PAIDFOR", prod.getPAIDFOR());
+                contentValues.put("TYPEOFINVOICE", prod.getTYPEOFINVOICE());
+                contentValues.put("ISYNCED", prod.getISYNCED());
+                contentValues.put("VENDORPAY_STATUS", prod.getVENDORPAY_STATUS());
+
+                myDataBase.insert("VendorPayMaster", null, contentValues);
+
+            }
+
+            myDataBase.close();
+            status+=1;
+            if(status==tableConstant){
+                loadingDialog.cancelDialog();
+                dbReadyCallback.onDBReady();
+            }
+            Log.d("Insertion Successful", "VendorPayMaster: "+status);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public void InsertVendorPayDetails(List<VendorPayDetail> list) {
+        if (list == null) {
+            return;
+        }
+        try {
+            SQLiteDatabase myDataBase = context.openOrCreateDatabase(dbname, Context.MODE_PRIVATE, null);
+            myDataBase.delete("VendorPayDetail", null, null);
+            for (VendorPayDetail prod : list) {
+
+                ContentValues contentValues = new ContentValues();
+                contentValues.put("VENDOR_PAYDETAIL_ID", prod.getVENDOR_PAYDETAIL_ID());
+                contentValues.put("VENDOR_PAYGUID", prod.getVENDOR_PAYGUID());
+                contentValues.put("BANK_GUID", prod.getBANK_GUID());
+                contentValues.put("AMOUNTPAID", prod.getAMOUNTPAID());
+                contentValues.put("PAYMENTDATE", prod.getPAYMENTDATE());
+                contentValues.put("PAYMODE", prod.getPAYMODE());
+                contentValues.put("CHEQUENO", prod.getCHEQUENO());
+                contentValues.put("CHEQUEDATE", prod.getCHEQUEDATE());
+                myDataBase.insert("VendorPayDetail", null, contentValues);
+
+            }
+
+            myDataBase.close();
+            status+=1;
+            if(status==tableConstant){
+                loadingDialog.cancelDialog();
+                dbReadyCallback.onDBReady();
+            }
+            Log.d("Insertion Successful", "VendorPayDetail: "+status);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
     public void InsertGrnMasters(List<GRNMaster> list) {
         if (list == null) {
             return;
@@ -976,7 +1109,7 @@ public class TableDataInjector {
                 contentValues.put("GRNPRINT", prod.getGRNPRINT());
                 contentValues.put("GRNRECON", prod.getGRNRECON());
                 contentValues.put("GRN_STATUS", prod.getGRN_STATUS());
-                contentValues.put("CREATEDBY", prod.getCREATEDBY());
+                contentValues.put("CREATEDBY", prod.getCREATEDON());
                 contentValues.put("GRNTYPE", prod.getGRNTYPE());
                 contentValues.put("USER_GUID", prod.getUSER_GUID());
                 contentValues.put("VENDOR_GUID", prod.getVENDOR_GUID());
@@ -2061,6 +2194,7 @@ public class TableDataInjector {
                 contentValues.put("BALANCE_CASH", prod.getBALANCE_CASH());
                 contentValues.put("ROUND_OFF", prod.getROUND_OFF());
                 contentValues.put("NETDISCOUNT", prod.getNETDISCOUNT());
+                contentValues.put("BILLMASTERGUID", prod.getBILLMASTERGUID());
 
 
                 myDataBase.insert("retail_str_sales_master", null, contentValues);
@@ -2482,6 +2616,12 @@ public class TableDataInjector {
 
             case "retail_str_grn_master":
                 return "ApiTest/GrnMaster?STORE_ID="+storeid;
+
+            case "VendorPayMaster":
+                return "ApiTest/VendorPayMaster?STORE_ID="+storeid;
+
+            case "VendorPayDetail":
+                return "ApiTest/VendorPayDetail?STORE_ID="+storeid;
 
             default:
                 return "";

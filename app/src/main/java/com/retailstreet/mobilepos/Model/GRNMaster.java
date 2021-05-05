@@ -12,7 +12,7 @@ public class GRNMaster {
     String GRNPRINT;
     String GRNRECON;
     String GRN_STATUS;
-    String CREATEDBY;
+    String CREATEDON;
     String GRNTYPE;
     String USER_GUID;
     String VENDOR_GUID;
@@ -23,7 +23,7 @@ public class GRNMaster {
 
     }
 
-    public GRNMaster(String GRN_GUID, String GRNNO, String GRNDate, String GRANDAMOUNT, String INVOICENO, String INVOICEDATE, String INVOICEDISCOUNT, String GRNPRINT, String GRNRECON, String GRN_STATUS, String CREATEDBY, String GRNTYPE, String USER_GUID, String VENDOR_GUID, String STORE_GUID, String ISSYNCED) {
+    public GRNMaster(String GRN_GUID, String GRNNO, String GRNDate, String GRANDAMOUNT, String INVOICENO, String INVOICEDATE, String INVOICEDISCOUNT, String GRNPRINT, String GRNRECON, String GRN_STATUS, String CREATEDON, String GRNTYPE, String USER_GUID, String VENDOR_GUID, String STORE_GUID, String ISSYNCED) {
         this.GRN_GUID = GRN_GUID;
         this.GRNNO = GRNNO;
         this.GRNDate = GRNDate;
@@ -34,7 +34,7 @@ public class GRNMaster {
         this.GRNPRINT = GRNPRINT;
         this.GRNRECON = GRNRECON;
         this.GRN_STATUS = GRN_STATUS;
-        this.CREATEDBY = CREATEDBY;
+        this.CREATEDON = CREATEDON;
         this.GRNTYPE = GRNTYPE;
         this.USER_GUID = USER_GUID;
         this.VENDOR_GUID = VENDOR_GUID;
@@ -122,12 +122,12 @@ public class GRNMaster {
         this.GRN_STATUS = GRN_STATUS;
     }
 
-    public String getCREATEDBY() {
-        return CREATEDBY;
+    public String getCREATEDON() {
+        return CREATEDON;
     }
 
-    public void setCREATEDBY(String CREATEDBY) {
-        this.CREATEDBY = CREATEDBY;
+    public void setCREATEDON(String CREATEDON) {
+        this.CREATEDON = CREATEDON;
     }
 
     public String getGRNTYPE() {

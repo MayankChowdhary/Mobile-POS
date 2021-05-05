@@ -321,7 +321,7 @@ public class ControllerPurchaseInvoice {
             contentValues.put("GRNPRINT", prod.getGRNPRINT());
             contentValues.put("GRNRECON", prod.getGRNRECON());
             contentValues.put("GRN_STATUS", prod.getGRN_STATUS());
-            contentValues.put("CREATEDBY", prod.getCREATEDBY());
+            contentValues.put("CREATEDBY", prod.getCREATEDON());
             contentValues.put("GRNTYPE", prod.getGRNTYPE());
             contentValues.put("USER_GUID", prod.getUSER_GUID());
             contentValues.put("VENDOR_GUID", prod.getVENDOR_GUID());

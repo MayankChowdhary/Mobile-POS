@@ -94,6 +94,10 @@ public class SQLiteDbBuilder {
     private final ArrayList<String> retail_str_grn_detail_pk;
     private final ArrayList<String> retail_str_grn_master;
     private final ArrayList<String> retail_str_grn_master_pk;
+    private final ArrayList<String> VendorPayDetail;
+    private final ArrayList<String> VendorPayDetail_pk;
+    private final ArrayList<String> VendorPayMaster;
+    private final ArrayList<String> VendorPayMaster_pk;
 
 
    static String dbname = "MasterDB";
@@ -174,10 +178,10 @@ public class SQLiteDbBuilder {
         retail_str_grn_detail_pk =  new ArrayList<>();
         retail_str_grn_master  =  new ArrayList<>();
         retail_str_grn_master_pk  =  new ArrayList<>();
-
-
-
-
+        VendorPayDetail  =  new ArrayList<>();
+        VendorPayDetail_pk  =  new ArrayList<>();
+        VendorPayMaster   =  new ArrayList<>();
+        VendorPayMaster_pk  =  new ArrayList<>();
 
         cartList= new ArrayList<>(Arrays.asList("STOCK_ID","PROD_NM","count","MRP","S_PRICE","SALESDISCOUNTBYAMOUNT","GST","SGST","CGST","QTY" ));
         cartList_Pk= new ArrayList<>(Collections.singletonList("STOCK_ID"));
@@ -826,6 +830,42 @@ public class SQLiteDbBuilder {
                 //Log.d("retail_store_pk", "constraint:" + constraint);
             }
 
+            JSONArray VendorPayDetail_json = jsonObject.getJSONArray("VendorPayDetail");
+            for (int i = 0; i < VendorPayDetail_json.length(); i++) {
+                JSONObject obj = (JSONObject) VendorPayDetail_json.get(i);
+                String id = obj.getString("Field");
+                VendorPayDetail.add(id);
+                // Log.d("retail_store", "id:" + id);
+
+            }
+
+            JSONArray VendorPayDetail_pk_JSON = jsonObject.getJSONArray("VendorPayDetail_pk");
+            for (int i = 0; i < VendorPayDetail_pk_JSON.length(); i++) {
+                JSONObject obj = (JSONObject) VendorPayDetail_pk_JSON.get(i);
+                String constraint = obj.getString("Constraint");
+                VendorPayDetail_pk.add(constraint);
+                //Log.d("retail_store_pk", "constraint:" + constraint);
+            }
+
+            JSONArray VendorPayMaster_json = jsonObject.getJSONArray("VendorPayMaster");
+            for (int i = 0; i < VendorPayMaster_json.length(); i++) {
+                JSONObject obj = (JSONObject) VendorPayMaster_json.get(i);
+                String id = obj.getString("Field");
+                VendorPayMaster.add(id);
+                // Log.d("retail_store", "id:" + id);
+
+            }
+
+            JSONArray VendorPayMaster_pk_JSON = jsonObject.getJSONArray("VendorPayMaster_pk");
+            for (int i = 0; i < VendorPayMaster_pk_JSON.length(); i++) {
+                JSONObject obj = (JSONObject) VendorPayMaster_pk_JSON.get(i);
+                String constraint = obj.getString("Constraint");
+                VendorPayMaster_pk.add(constraint);
+                //Log.d("retail_store_pk", "constraint:" + constraint);
+            }
+
+
+
 
             createDynamicDatabase(context, "group_user_master", user_master, user_master_pk);
             createDynamicDatabase(context, "retail_cust", retail_cust, retail_cust_pk);
@@ -864,6 +904,8 @@ public class SQLiteDbBuilder {
             createDynamicDatabase(context, "stock_register", stock_register,stock_register_pk);
             createDynamicDatabase(context, "retail_str_grn_detail", retail_str_grn_detail,retail_str_grn_detail_pk);
             createDynamicDatabase(context, "retail_str_grn_master", retail_str_grn_master,retail_str_grn_master_pk);
+            createDynamicDatabase(context, "VendorPayDetail", VendorPayDetail,VendorPayDetail_pk);
+            createDynamicDatabase(context, "VendorPayMaster", VendorPayMaster,VendorPayMaster_pk);
 
             dbOk=true;
             //loadingDialog.cancelDialog();

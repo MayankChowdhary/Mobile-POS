@@ -36,6 +36,21 @@
         <item>NO</item>
         <item>YES</item>
     </string-array>
+    <string-array name="vendorIndirectPaymentType">
+        <item>Tea or Coffee</item>
+        <item>Snacks</item>
+        <item>Employee Salary</item>
+        <item>Electricity Bill</item>
+        <item>DTH Payment</item>
+        <item>Entertainment</item>
+        <item>Mobile Payment</item>
+        <item>Collection</item>
+        <item>Extra Discount</item>
+        <item>Home Expenses</item>
+        <item>Bank Deposits</item>
+        <item>Rent</item>
+        <item>Others</item>
+    </string-array>
     <string-array name="addressType">
         <item>HOME</item>
         <item>OFFICE</item>
