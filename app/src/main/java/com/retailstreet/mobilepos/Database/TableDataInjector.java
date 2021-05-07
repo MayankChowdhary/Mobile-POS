@@ -44,6 +44,7 @@ import com.retailstreet.mobilepos.Model.TerminalUserAllocation;
 import com.retailstreet.mobilepos.Model.VendorMaster;
 import com.retailstreet.mobilepos.Model.VendorPayDetail;
 import com.retailstreet.mobilepos.Model.VendorPayMaster;
+import com.retailstreet.mobilepos.Model.VendorRejectReason;
 import com.retailstreet.mobilepos.Utils.ApiInterface;
 import com.retailstreet.mobilepos.View.ApplicationContextProvider;
 import com.retailstreet.mobilepos.View.dialog.LoadingDialog;
@@ -55,6 +56,13 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+
+
+/**
+ * Created by Mayank Choudhary on 07-05-2021.
+ * mayankchoudhary00@gmail.com
+ */
+
 
 public class TableDataInjector {
     String dbname = "MasterDB";
@@ -97,11 +105,12 @@ public class TableDataInjector {
     private List<GRNMaster> grnMasterList = null;
     private List<VendorPayDetail> vendorPayDetailList = null;
     private List<VendorPayMaster> vendorPayMasterList = null;
+    private List<VendorRejectReason> vendorRejectReasonList = null;
 
     private LoadingDialog loadingDialog;
 
     public static int status =0;
-    private final int tableConstant=35;
+    private final int tableConstant=36;
 
     public TableDataInjector(Context context, String storeid,DBReadyCallback callback) {
 
@@ -147,6 +156,7 @@ public class TableDataInjector {
         getGrnMasters();
         getVendorPayDetails();
         getVendorPayMaster();
+        getVendorRejectReason();
 
     }
 
@@ -1010,6 +1020,63 @@ public class TableDataInjector {
         }
     }
 
+    public void getVendorRejectReason() {
+        try {
+            Retrofit retrofit = getRetroInstance(baseUrl);
+            assert retrofit != null;
+            ApiInterface service = retrofit.create(ApiInterface.class);
+            Call<List<VendorRejectReason>> call = service.getVendorRejectReason(generateTableUrl("retail_store_vend_reject",storeId));
+            call.enqueue(new Callback<List<VendorRejectReason>>() {
+                @Override
+                public void onResponse(Call<List<VendorRejectReason>> call, Response<List<VendorRejectReason>> response) {
+                    vendorRejectReasonList= response.body();
+                    Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
+                    InsertVendorReject(vendorRejectReasonList);
+                }
+
+                @Override
+                public void onFailure(Call<List<VendorRejectReason>> call, Throwable t) {
+                    Log.i("autolog", t.getMessage());
+                }
+            });
+        } catch (Exception e) {
+            Log.i("autolog", "Exception");
+        }
+    }
+
+    public void InsertVendorReject(List<VendorRejectReason> list) {
+        if (list == null) {
+            return;
+        }
+        try {
+            SQLiteDatabase myDataBase = context.openOrCreateDatabase(dbname, Context.MODE_PRIVATE, null);
+            myDataBase.delete("retail_store_vend_reject", null, null);
+            for (VendorRejectReason prod : list) {
+
+                ContentValues contentValues = new ContentValues();
+                contentValues.put("ID", prod.getID());
+                contentValues.put("REASONFOR", prod.getREASONFOR());
+                contentValues.put("ACTIVE", prod.getACTIVE());
+                contentValues.put("REASONGUID", prod.getREASONGUID());
+                contentValues.put("STORE_ID", prod.getSTORE_ID());
+                contentValues.put("LAST_MODIFIED", prod.getLAST_MODIFIED());
+                contentValues.put("REASON_FOR_REJECTION", prod.getREASON_FOR_REJECTION());
+                contentValues.put("CREATEDBY", prod.getCREATEDBY());
+                myDataBase.insert("retail_store_vend_reject", null, contentValues);
+
+            }
+
+            myDataBase.close();
+            status+=1;
+            if(status==tableConstant){
+                loadingDialog.cancelDialog();
+                dbReadyCallback.onDBReady();
+            }
+            Log.d("Insertion Successful", "retail_store_vend_reject: "+status);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     public void InsertVendorPayMaster(List<VendorPayMaster> list) {
         if (list == null) {
@@ -2622,6 +2689,9 @@ public class TableDataInjector {
 
             case "VendorPayDetail":
                 return "ApiTest/VendorPayDetail?STORE_ID="+storeid;
+
+            case "retail_store_vend_reject":
+                return "ApiTest/RetailStoreVendReject?STORE_ID="+storeid;
 
             default:
                 return "";

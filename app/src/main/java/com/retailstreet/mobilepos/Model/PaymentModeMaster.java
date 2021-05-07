@@ -4,6 +4,11 @@ import androidx.annotation.Keep;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+/**
+ * Created by Mayank Choudhary on 07-05-2021.
+ * mayankchoudhary00@gmail.com
+ */
+
 @Keep
 public class PaymentModeMaster {
     @SerializedName("PAYMODE_GUID")

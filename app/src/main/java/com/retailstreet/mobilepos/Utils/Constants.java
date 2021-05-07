@@ -1,4 +1,8 @@
 package com.retailstreet.mobilepos.Utils;
+/**
+ * Created by Mayank Choudhary on 07-05-2021.
+ * mayankchoudhary00@gmail.com
+ */
 
 public final class Constants {
    public static final String  DBNAME = "MasterDB";

@@ -18,6 +18,11 @@ import com.airbnb.lottie.LottieDrawable
 import com.labters.lottiealertdialoglibrary.DialogTypes
 import com.retailstreet.mobilepos.R
 
+/**
+ * Created by Mayank Choudhary on 07-05-2021.
+ * mayankchoudhary00@gmail.com
+ */
+
 class LottieAlertDialogs private constructor(context: Context, type: Int?, title: String?, description: String?, positiveText: String?, negativeText: String?, noneText: String?, positiveListener: ClickListeners?, negativeListener: ClickListeners?, noneListener: ClickListeners?, private var positiveBtnColor: Int?, private var positiveTextColor: Int?, private var negativeBtnColor: Int?, private var negativeTextColor: Int?, private var noneBtnColor: Int?, private var noneTextColor: Int?) : AlertDialog(context)
         {
 private var mContext : Context = context

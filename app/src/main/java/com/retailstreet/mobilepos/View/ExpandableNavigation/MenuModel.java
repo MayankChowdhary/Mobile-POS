@@ -4,6 +4,11 @@ package com.retailstreet.mobilepos.View.ExpandableNavigation;
  * Created by anupamchugh on 22/12/17.
  */
 
+/**
+ * Modified by Mayank Choudhary on 07-05-2021.
+ * mayankchoudhary00@gmail.com
+ */
+
 public class MenuModel {
 
     public String menuName;

@@ -28,6 +28,11 @@ import com.retailstreet.mobilepos.View.ApplicationContextProvider;
 import com.retailstreet.mobilepos.View.CartRecyclerView.CartListAdapter;
 import com.retailstreet.mobilepos.View.dialog.LottieAlertDialogs;
 
+/**
+ * Created by Mayank Choudhary on 07-05-2021.
+ * mayankchoudhary00@gmail.com
+ */
+
 public class CartFragment extends Fragment {
 
     private CartViewModel cartViewModel;

@@ -35,7 +35,10 @@ import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+ * Created by Mayank Choudhary on 07-05-2021.
+ * mayankchoudhary00@gmail.com
+ */
 @SuppressWarnings("unchecked")
 public class CheckoutFragment extends Fragment {
 

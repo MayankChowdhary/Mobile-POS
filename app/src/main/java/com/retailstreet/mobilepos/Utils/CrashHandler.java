@@ -8,6 +8,10 @@ import androidx.annotation.NonNull;
 import com.jakewharton.processphoenix.ProcessPhoenix;
 import com.retailstreet.mobilepos.View.ApplicationContextProvider;
 import com.retailstreet.mobilepos.View.LoginActivity;
+/**
+ * Created by Mayank Choudhary on 07-05-2021.
+ * mayankchoudhary00@gmail.com
+ */
 
 public class CrashHandler implements Thread.UncaughtExceptionHandler {
 

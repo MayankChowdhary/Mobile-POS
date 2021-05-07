@@ -30,7 +30,8 @@ import java.text.DecimalFormat;
 import java.util.HashMap;
 
 /**
- * Created by skyfishjy on 10/31/14.
+ * Created by Mayank Choudhary on 07-05-2021.
+ * mayankchoudhary00@gmail.com
  */
 public class SalesReturnListAdapter extends CustomRecyclerViewAdapter2<SalesReturnListAdapter.ViewHolder> implements RefreshRecyclerView {
 
@@ -227,6 +228,7 @@ public class SalesReturnListAdapter extends CustomRecyclerViewAdapter2<SalesRetu
             product_detail_2.setText("BARCODE: "+myListItem.getProduct_detail_2());
             product_detail_5.setText(myListItem.getProduct_detail_5());
             qtyView.setText(qtyRound);
+            qtyView.setSelected(true);
         }
     }
     @NonNull

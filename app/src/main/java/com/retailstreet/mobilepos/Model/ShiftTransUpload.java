@@ -1,9 +1,10 @@
 package com.retailstreet.mobilepos.Model;
 
-import androidx.annotation.Keep;
+/**
+ * Created by Mayank Choudhary on 07-05-2021.
+ * mayankchoudhary00@gmail.com
+ */
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
 
 public class ShiftTransUpload {
 

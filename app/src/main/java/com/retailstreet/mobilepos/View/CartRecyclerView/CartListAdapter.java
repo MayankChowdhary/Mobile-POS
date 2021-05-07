@@ -34,8 +34,11 @@ import java.util.HashMap;
 import static android.content.Context.MODE_PRIVATE;
 
 /**
- * Created by skyfishjy on 10/31/14.
+ * Created by Mayank Choudhary on 07-05-2021.
+ * mayankchoudhary00@gmail.com
  */
+
+
 public class CartListAdapter extends CustomRecyclerViewAdapter<CartListAdapter.ViewHolder> implements RefreshRecyclerView {
 
 
@@ -318,6 +321,7 @@ public class CartListAdapter extends CustomRecyclerViewAdapter<CartListAdapter.V
             else {
                 sales_qty.setVisibility(View.VISIBLE);
                 order_count.setText(orderList.get(myListItem.getPrimary()));
+                order_count.setSelected(true);
 
             }
         }

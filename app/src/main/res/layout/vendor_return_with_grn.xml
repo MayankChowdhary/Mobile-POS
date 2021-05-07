@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+    <androidx.core.widget.NestedScrollView android:id="@+id/vendor_return_grn_scroll_view"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/item_box_border"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="@dimen/_10sdp"
+        android:layout_marginStart="@dimen/_3sdp"
+        android:layout_marginEnd="@dimen/_3sdp"
+        android:padding="@dimen/_6sdp"
+        android:elevation="2dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+            android:id="@+id/sr_vendor_search_value"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_6sdp"
+            android:layout_weight="1"
+            android:gravity="start" />
+
+        <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+            android:id="@+id/vr_invoice_number"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_6sdp"
+            android:layout_weight="1"
+            android:gravity="start" />
+
+        <Spinner
+            android:id="@+id/vendor_reason_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_6sdp"
+            android:layout_weight="1"
+            android:gravity="start"/>
+
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/vendor_return_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="6dp"
+            android:overScrollMode="never"
+            android:background="#FFFFFF" />
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>
+

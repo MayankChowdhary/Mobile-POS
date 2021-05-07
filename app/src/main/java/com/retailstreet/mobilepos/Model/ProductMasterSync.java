@@ -5,6 +5,11 @@ import androidx.annotation.NonNull;
 /**
  * Created by rspl-rahul on 9/10/20.
  */
+/**
+ * Modified by Mayank Choudhary on 07-05-2021.
+ * mayankchoudhary00@gmail.com
+ */
+
 public class ProductMasterSync {
     String ISACTIVE;
     String BARCODE;

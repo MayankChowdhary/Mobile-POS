@@ -10,6 +10,7 @@
         android:name="com.retailstreet.mobilepos.View.ui.Sales.SalesFragment"
         android:label="@string/menu_sales"
         tools:layout="@layout/fragment_sales" >
+
         <action
             android:id="@+id/action_nav_sales_to_nav_cart"
             app:destination="@id/nav_cart"
@@ -237,6 +238,9 @@
         <action
             android:id="@+id/action_nav_home_to_vendorPaymentFragment"
             app:destination="@id/nav_vendor_Payment" />
+        <action
+            android:id="@+id/action_nav_home_to_nav_vendor_return"
+            app:destination="@id/nav_vendor_return" />
     </fragment>
     <fragment
         android:id="@+id/nav_sales_report"
@@ -291,4 +295,9 @@
         android:name="com.retailstreet.mobilepos.View.ui.VendorPayment.VendorPaymentFragment"
         android:label="Vendor Payment"
         tools:layout="@layout/fragment_vendor_payment" />
+    <fragment
+        android:id="@+id/nav_vendor_return"
+        android:name="com.retailstreet.mobilepos.View.ui.VendorReturn.VendorReturnFragment"
+        android:label="Vendor Return"
+        tools:layout="@layout/fragment_vendor_return" />
 </navigation>

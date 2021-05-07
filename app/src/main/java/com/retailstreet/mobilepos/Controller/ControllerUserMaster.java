@@ -11,7 +11,10 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.retailstreet.mobilepos.Model.GroupUserMaster;
-
+/**
+ * Created by Mayank Choudhary on 07-05-2021.
+ * mayankchoudhary00@gmail.com
+ */
 public class ControllerUserMaster extends SQLiteOpenHelper {
 
     private Context context;

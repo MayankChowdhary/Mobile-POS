@@ -1,5 +1,11 @@
 package com.retailstreet.mobilepos.Model;
 
+/**
+ * Modified by Mayank Choudhary on 07-05-2021.
+ * mayankchoudhary00@gmail.com
+ */
+
+
 public class LicenceModulePojo {
     private String StoreNumber;
     private String LicenseStatus;

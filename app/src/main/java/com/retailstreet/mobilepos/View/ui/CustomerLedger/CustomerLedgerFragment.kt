@@ -14,6 +14,11 @@ import com.levitnudi.legacytableview.LegacyTableView.OCEAN
 import com.retailstreet.mobilepos.R
 
 
+/**
+ * Created by Mayank Choudhary on 07-05-2021.
+ * mayankchoudhary00@gmail.com
+ */
+
 class CustomerLedgerFragment : Fragment() {
 
     companion object {

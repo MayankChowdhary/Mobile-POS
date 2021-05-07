@@ -2,13 +2,11 @@ package com.retailstreet.mobilepos.View.SalesRecyclerView;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -32,8 +30,10 @@ import com.retailstreet.mobilepos.View.ApplicationContextProvider;
 import java.util.HashMap;
 
 /**
- * Created by skyfishjy on 10/31/14.
+ * Created by Mayank Choudhary on 07-05-2021.
+ * mayankchoudhary00@gmail.com
  */
+
 public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter.ViewHolder>  {
 
     Activity myParentActivity;
@@ -104,6 +104,7 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
                 sales_qty.setVisibility(View.VISIBLE);
                 order_count.setText(orderList.get(myListItem.getPrimary()));
                 add_to_cart.setVisibility(View.GONE);
+                order_count.setSelected(true);
 
             }
 

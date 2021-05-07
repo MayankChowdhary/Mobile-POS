@@ -2,6 +2,11 @@ package com.retailstreet.mobilepos.View.CartRecyclerView;
 
 import android.database.Cursor;
 
+/**
+ * Created by Mayank Choudhary on 07-05-2021.
+ * mayankchoudhary00@gmail.com
+ */
+
 public class CartListItem {
     private String name;
     private String product_detail_2;

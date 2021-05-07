@@ -27,6 +27,10 @@ import com.retailstreet.mobilepos.View.dialog.ClickListeners
 import com.retailstreet.mobilepos.View.dialog.LottieAlertDialogs
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner
 
+/**
+ * Created by Mayank Choudhary on 07-05-2021.
+ * mayankchoudhary00@gmail.com
+ */
 
 class CustomerUpdateFragment : Fragment() {
 

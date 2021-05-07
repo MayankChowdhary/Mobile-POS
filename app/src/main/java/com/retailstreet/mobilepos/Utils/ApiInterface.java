@@ -42,6 +42,7 @@ import com.retailstreet.mobilepos.Model.TerminalUserAllocation;
 import com.retailstreet.mobilepos.Model.VendorMaster;
 import com.retailstreet.mobilepos.Model.VendorPayDetail;
 import com.retailstreet.mobilepos.Model.VendorPayMaster;
+import com.retailstreet.mobilepos.Model.VendorRejectReason;
 
 import java.util.List;
 
@@ -54,6 +55,10 @@ import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Url;
 
+/**
+ * Created by Mayank Choudhary on 07-05-2021.
+ * mayankchoudhary00@gmail.com
+ */
 
 public interface ApiInterface {
 
@@ -167,6 +172,9 @@ public interface ApiInterface {
     @GET
     Call<List<VendorPayMaster>> getVendorPayMaster(@Url String url);
 
+    @GET
+    Call<List<VendorRejectReason>> getVendorRejectReason(@Url String url);
+
 
 
     //***************Installation Validator************************
@@ -211,4 +219,5 @@ public interface ApiInterface {
 
     @POST("/APIManagers/api/PullPOSRegualarSync/PushVendorPayments")
     Call<SyncResponse> UploadvendorpaymentRecords(@Header("Authorization")String Authorization, @Body RequestBody body);
+
 }

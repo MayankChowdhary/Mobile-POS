@@ -31,6 +31,10 @@ import java.text.DecimalFormat
 import java.util.*
 import kotlin.math.abs
 
+/**
+ * Created by Mayank Choudhary on 07-05-2021.
+ * mayankchoudhary00@gmail.com
+ */
 
 class SalesRefundFragment : Fragment() {
 
@@ -197,9 +201,7 @@ class SalesRefundFragment : Fragment() {
         val billNoEditText:EditText = root.findViewById(R.id.sales_return_bill_input)
         val balanceText:TextView = root.findViewById(R.id.sr_billno_balance)
 
-
         salesReturnRecyclerView = root.findViewById(R.id.sales_return_recycler_view)
-
 
         val rejectReasonArray:List<StringWithTag> = getReturnReasons()
         val rejectReasonSelector: Spinner = root.findViewById(R.id.sales_reason_spinner)

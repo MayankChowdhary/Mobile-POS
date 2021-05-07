@@ -12,6 +12,11 @@ import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+/**
+ * Created by Mayank Choudhary on 07-05-2021.
+ * mayankchoudhary00@gmail.com
+ */
+
 public class RetroSync {
 
     public static final String BASE_URL_Sync = "https://aequmazuresites.azurewebsites.net/";//https://www.mplan.in/api/Dthinfo.php

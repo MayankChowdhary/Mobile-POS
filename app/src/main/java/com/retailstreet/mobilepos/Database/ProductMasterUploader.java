@@ -30,6 +30,11 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+/**
+ * Created by Mayank Choudhary on 07-05-2021.
+ * mayankchoudhary00@gmail.com
+ */
+
 public class ProductMasterUploader extends Worker {
         private ArrayList<ProductMasterSync> getProductToSync;
         private ControllerProductMaster controllerProductMaster;

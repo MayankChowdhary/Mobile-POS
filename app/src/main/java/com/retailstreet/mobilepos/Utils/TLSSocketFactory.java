@@ -21,6 +21,11 @@ import javax.net.ssl.X509TrustManager;
 /*
 Created by rspl-rahul on 27/10/20.*/
 
+/**
+ * Modified by Mayank Choudhary on 07-05-2021.
+ * mayankchoudhary00@gmail.com
+ */
+
 public class TLSSocketFactory extends SSLSocketFactory {
 
     private final SSLSocketFactory delegate;

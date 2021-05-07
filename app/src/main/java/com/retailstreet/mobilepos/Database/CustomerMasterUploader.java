@@ -30,6 +30,10 @@ import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+/**
+ * Created by Mayank Choudhary on 07-05-2021.
+ * mayankchoudhary00@gmail.com
+ */
 
 public class CustomerMasterUploader extends Worker {
         private ArrayList<CustomerMasterUpload> GetCustomerMasterToSync;

@@ -5,7 +5,11 @@ import androidx.annotation.Keep;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.UUID;
+/**
+ * Created by Mayank Choudhary on 07-05-2021.
+ * mayankchoudhary00@gmail.com
+ */
+
 @Keep
 public class ShiftTrans {
     @SerializedName("SHIFT_TRANS_ID")

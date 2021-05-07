@@ -14,10 +14,15 @@ import static android.content.ContentValues.TAG;
 
 public class SQLiteDbInspector {
 
+    /**
+     * Created by Mayank Choudhary on 07-05-2021.
+     * mayankchoudhary00@gmail.com
+     */
+
     /*
      *
      * This Method is used to print names of All the tables
-     * and its Schema details contains in Database only in log
+     * and its Schema details contains in Database.
      *
      */
      public static void PrintTableSchema(Context context, String dbname) {

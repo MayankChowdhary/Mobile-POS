@@ -33,6 +33,11 @@ import retrofit2.Response;
 
 import static android.content.Context.MODE_PRIVATE;
 
+/**
+ * Created by Mayank Choudhary on 07-05-2021.
+ * mayankchoudhary00@gmail.com
+ */
+
 public class CustomerLedgerUploader extends Worker {
     private ArrayList<CustomerLedgerUpload> getCustomer_lagger_synv;
 

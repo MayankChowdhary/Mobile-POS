@@ -18,6 +18,11 @@ import java.util.Arrays;
 import java.util.Collections;
 
 
+/**
+ * Created by Mayank Choudhary on 07-05-2021.
+ * mayankchoudhary00@gmail.com
+ */
+
 @SuppressWarnings("deprecation")
 public class SQLiteDbBuilder {
     private final Context context;
@@ -98,6 +103,12 @@ public class SQLiteDbBuilder {
     private final ArrayList<String> VendorPayDetail_pk;
     private final ArrayList<String> VendorPayMaster;
     private final ArrayList<String> VendorPayMaster_pk;
+    private final ArrayList<String> retail_store_vend_reject;
+    private final ArrayList<String> retail_store_vend_reject_pk;
+    private final ArrayList<String> retail_str_vendor_detail_return;
+    private final ArrayList<String> retail_str_vendor_detail_return_pk;
+    private final ArrayList<String> retail_str_vendor_master_return;
+    private final ArrayList<String> retail_str_vendor_master_return_pk;
 
 
    static String dbname = "MasterDB";
@@ -182,6 +193,14 @@ public class SQLiteDbBuilder {
         VendorPayDetail_pk  =  new ArrayList<>();
         VendorPayMaster   =  new ArrayList<>();
         VendorPayMaster_pk  =  new ArrayList<>();
+        retail_store_vend_reject   =  new ArrayList<>();
+        retail_store_vend_reject_pk  =  new ArrayList<>();
+        retail_str_vendor_detail_return = new ArrayList<>();
+        retail_str_vendor_detail_return_pk = new ArrayList<>();
+        retail_str_vendor_master_return = new ArrayList<>();
+        retail_str_vendor_master_return_pk = new ArrayList<>();
+
+
 
         cartList= new ArrayList<>(Arrays.asList("STOCK_ID","PROD_NM","count","MRP","S_PRICE","SALESDISCOUNTBYAMOUNT","GST","SGST","CGST","QTY" ));
         cartList_Pk= new ArrayList<>(Collections.singletonList("STOCK_ID"));
@@ -865,6 +884,59 @@ public class SQLiteDbBuilder {
             }
 
 
+            JSONArray vendorReject_json = jsonObject.getJSONArray("retail_store_vend_reject");
+            for (int i = 0; i < vendorReject_json.length(); i++) {
+                JSONObject obj = (JSONObject) vendorReject_json.get(i);
+                String id = obj.getString("Field");
+                retail_store_vend_reject.add(id);
+                // Log.d("retail_store", "id:" + id);
+
+            }
+
+            JSONArray vendorReject_pk_JSON = jsonObject.getJSONArray("retail_store_vend_reject_pk");
+            for (int i = 0; i < vendorReject_pk_JSON.length(); i++) {
+                JSONObject obj = (JSONObject) vendorReject_pk_JSON.get(i);
+                String constraint = obj.getString("Constraint");
+                retail_store_vend_reject_pk.add(constraint);
+                //Log.d("retail_store_pk", "constraint:" + constraint);
+            }
+
+            JSONArray vendor_detail_return_json = jsonObject.getJSONArray("retail_str_vendor_detail_return");
+            for (int i = 0; i < vendor_detail_return_json.length(); i++) {
+                JSONObject obj = (JSONObject) vendor_detail_return_json.get(i);
+                String id = obj.getString("Field");
+                retail_str_vendor_detail_return.add(id);
+                // Log.d("retail_store", "id:" + id);
+
+            }
+
+            JSONArray vendor_detail_return_pk_JSON = jsonObject.getJSONArray("retail_str_vendor_detail_return_pk");
+            for (int i = 0; i < vendor_detail_return_pk_JSON.length(); i++) {
+                JSONObject obj = (JSONObject) vendor_detail_return_pk_JSON.get(i);
+                String constraint = obj.getString("Constraint");
+                retail_str_vendor_detail_return_pk.add(constraint);
+                //Log.d("retail_store_pk", "constraint:" + constraint);
+
+            }
+
+
+            JSONArray vendor_master_return_json = jsonObject.getJSONArray("retail_str_vendor_master_return");
+            for (int i = 0; i < vendor_master_return_json.length(); i++) {
+                JSONObject obj = (JSONObject) vendor_master_return_json.get(i);
+                String id = obj.getString("Field");
+                retail_str_vendor_master_return.add(id);
+                // Log.d("retail_store", "id:" + id);
+
+            }
+
+            JSONArray vendor_master_return_pk_JSON = jsonObject.getJSONArray("retail_str_vendor_master_return_pk");
+            for (int i = 0; i < vendor_master_return_pk_JSON.length(); i++) {
+                JSONObject obj = (JSONObject) vendor_master_return_pk_JSON.get(i);
+                String constraint = obj.getString("Constraint");
+                retail_str_vendor_master_return_pk.add(constraint);
+                //Log.d("retail_store_pk", "constraint:" + constraint);
+
+            }
 
 
             createDynamicDatabase(context, "group_user_master", user_master, user_master_pk);
@@ -906,6 +978,9 @@ public class SQLiteDbBuilder {
             createDynamicDatabase(context, "retail_str_grn_master", retail_str_grn_master,retail_str_grn_master_pk);
             createDynamicDatabase(context, "VendorPayDetail", VendorPayDetail,VendorPayDetail_pk);
             createDynamicDatabase(context, "VendorPayMaster", VendorPayMaster,VendorPayMaster_pk);
+            createDynamicDatabase(context, "retail_store_vend_reject", retail_store_vend_reject,retail_store_vend_reject_pk);
+            createDynamicDatabase(context, "retail_str_vendor_detail_return", retail_str_vendor_detail_return,retail_str_vendor_detail_return_pk);
+            createDynamicDatabase(context, "retail_str_vendor_master_return", retail_str_vendor_master_return,retail_str_vendor_master_return_pk);
 
             dbOk=true;
             //loadingDialog.cancelDialog();
@@ -926,23 +1001,23 @@ public class SQLiteDbBuilder {
       //  Log.d("PrintingTableReceived", "createDynamicDatabase: "+title.toString());
         try {
             int i;
-            String querryString;
+            StringBuilder querryString;
             SQLiteDatabase myDataBase = context.openOrCreateDatabase(dbname,Context.MODE_PRIVATE, null);          //Opens database in writable mode.
             //myDataBase.execSQL("PRAGMA key ='Anaconda'");          //Opens database in writable mode.
 
             //Opens database in writable mode.
-            querryString = title.get(0) + " NVARCHAR(30),";
+            querryString = new StringBuilder(title.get(0) + " NVARCHAR(30),");
             Log.d("**createDynamicDatabase", "in oncreate");
             for (i = 1; i < title.size() - 1; i++) {
-                querryString += title.get(i);
-                querryString += " NVARCHAR(30) ";
-                querryString += ",";
+                querryString.append(title.get(i));
+                querryString.append(" NVARCHAR(30) ");
+                querryString.append(",");
             }
             String constraintString = constraint.toString().replace("[", "(").replace("]", ")");
-            querryString += title.get(i) + " NVARCHAR(30) ";
-            querryString = "CREATE TABLE IF NOT EXISTS " + tableName + "(" + querryString + ", CONSTRAINT store_pk PRIMARY KEY " + constraintString + " );";
+            querryString.append(title.get(i)).append(" NVARCHAR(30) ");
+            querryString = new StringBuilder("CREATE TABLE IF NOT EXISTS " + tableName + "(" + querryString + ", CONSTRAINT store_pk PRIMARY KEY " + constraintString + " );");
           //  System.out.println("Create Table Stmt : " + querryString);
-            myDataBase.execSQL(querryString);
+            myDataBase.execSQL(querryString.toString());
             myDataBase.close();
 
         } catch (SQLException ex) {

@@ -25,6 +25,7 @@ import androidx.navigation.ui.NavigationUI;
 import com.google.android.material.navigation.NavigationView;
 import com.labters.lottiealertdialoglibrary.DialogTypes;
 import com.retailstreet.mobilepos.R;
+import com.retailstreet.mobilepos.Utils.CrashHandler;
 import com.retailstreet.mobilepos.Utils.WorkManagerSync;
 import com.retailstreet.mobilepos.View.ExpandableNavigation.ExpandableListAdapter;
 import com.retailstreet.mobilepos.View.ExpandableNavigation.MenuModel;
@@ -34,7 +35,10 @@ import com.retailstreet.mobilepos.View.ui.Home.HomeFragmentDirections;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
+/**
+ * Created by Mayank Choudhary on 07-05-2021.
+ * mayankchoudhary00@gmail.com
+ */
 
 public class MainDrawerActivity extends AppCompatActivity  {
 
@@ -52,7 +56,7 @@ public class MainDrawerActivity extends AppCompatActivity  {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getWindow().setBackgroundDrawable(null);
-        //Thread.setDefaultUncaughtExceptionHandler(new CrashHandler(this));
+        Thread.setDefaultUncaughtExceptionHandler(new CrashHandler(this));
         expandableListView = findViewById(R.id.expandableListView);
         prepareMenuData();
         populateExpandableList();
@@ -62,7 +66,7 @@ public class MainDrawerActivity extends AppCompatActivity  {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_sales, R.id.nav_dayopen, R.id.nav_dayclose, R.id.nav_products, R.id.nav_customer, R.id.nav_customer_update, R.id.nav_sales_refund, R.id.nav_credit_pay, R.id.nav_home, R.id.nav_sales_report,R.id.nav_vendor_update,R.id.nav_stock_update,R.id.nav_purchase_Invoice,R.id.nav_vendor_Payment,R.id.nav_vi_payment_fragment)
+                R.id.nav_sales, R.id.nav_dayopen, R.id.nav_dayclose, R.id.nav_products, R.id.nav_customer, R.id.nav_customer_update, R.id.nav_sales_refund, R.id.nav_credit_pay, R.id.nav_home, R.id.nav_sales_report,R.id.nav_vendor_update,R.id.nav_stock_update,R.id.nav_purchase_Invoice,R.id.nav_vendor_Payment,R.id.nav_vi_payment_fragment,R.id.nav_vendor_return)
                 .setOpenableLayout(drawer)
                 .build();
 
@@ -130,6 +134,8 @@ public class MainDrawerActivity extends AppCompatActivity  {
         childModelsList.add(childModel);
         childModel = new MenuModel("Vendor Payment", false, false, R.drawable.vendor_payment);
         childModelsList.add(childModel);
+        childModel = new MenuModel("Vendor Return", false, false, R.drawable.vendor_return);
+        childModelsList.add(childModel);
         childModel = new MenuModel("Vendor Details", false, false, R.drawable.vendor);
         childModelsList.add(childModel);
 
@@ -191,110 +197,107 @@ public class MainDrawerActivity extends AppCompatActivity  {
             expandableListAdapter = new ExpandableListAdapter(this, headerList, childList);
             expandableListView.setAdapter(expandableListAdapter);
 
-            expandableListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
-                @Override
-                public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
+            expandableListView.setOnGroupClickListener((parent, v, groupPosition, id) -> {
 
-                    if (headerList.get(groupPosition).isGroup) {
-                        if (!headerList.get(groupPosition).hasChildren) {
-                            /*NavController navController = Navigation.findNavController(MainDrawerActivity.this, R.id.nav_host_fragment);
-                            navController.popBackStack();*/
-                            if(groupPosition==0){
-                                Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.nav_home);
-                                drawer.closeDrawer(GravityCompat.START);
-                            } if(groupPosition==6){
-                                LottieAlertDialogs alertDialog = new LottieAlertDialogs.Builder(MainDrawerActivity.this, DialogTypes.TYPE_WARNING)
-                                        .setTitle("Logout")
-                                        .setDescription("Confirm Logout?")
-                                        .setPositiveText("Yes")
-                                        .setPositiveButtonColor(Color.parseColor("#297999"))
-                                        .setPositiveTextColor(Color.parseColor("#ffffff"))
-                                        .setNegativeText("No")
-                                        .setNegativeButtonColor(Color.parseColor("#297999"))
-                                        .setNegativeTextColor(Color.parseColor("#ffffff"))
-                                        .setPositiveListener(lottieAlertDialog -> {
-                                            SharedPreferences sharedPreferences = getSharedPreferences("com.retailstreet.mobilepos", MODE_PRIVATE);
-                                            SharedPreferences.Editor myEdit = sharedPreferences.edit();
-                                            myEdit.remove("username");
-                                            myEdit.remove("password");
-                                            myEdit.apply();
-                                            Intent loginIntent = new Intent(MainDrawerActivity.this, LoginActivity.class);
-                                            startActivity(loginIntent);
-                                            lottieAlertDialog.dismiss();
-                                            finish();
+                if (headerList.get(groupPosition).isGroup) {
+                    if (!headerList.get(groupPosition).hasChildren) {
+                        /*NavController navController = Navigation.findNavController(MainDrawerActivity.this, R.id.nav_host_fragment);
+                        navController.popBackStack();*/
+                        if(groupPosition==0){
+                            Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.nav_home);
+                            drawer.closeDrawer(GravityCompat.START);
+                        } if(groupPosition==6){
+                            LottieAlertDialogs alertDialog = new LottieAlertDialogs.Builder(MainDrawerActivity.this, DialogTypes.TYPE_WARNING)
+                                    .setTitle("Logout")
+                                    .setDescription("Confirm Logout?")
+                                    .setPositiveText("Yes")
+                                    .setPositiveButtonColor(Color.parseColor("#297999"))
+                                    .setPositiveTextColor(Color.parseColor("#ffffff"))
+                                    .setNegativeText("No")
+                                    .setNegativeButtonColor(Color.parseColor("#297999"))
+                                    .setNegativeTextColor(Color.parseColor("#ffffff"))
+                                    .setPositiveListener(lottieAlertDialog -> {
+                                        SharedPreferences sharedPreferences = getSharedPreferences("com.retailstreet.mobilepos", MODE_PRIVATE);
+                                        SharedPreferences.Editor myEdit = sharedPreferences.edit();
+                                        myEdit.remove("username");
+                                        myEdit.remove("password");
+                                        myEdit.apply();
+                                        Intent loginIntent = new Intent(MainDrawerActivity.this, LoginActivity.class);
+                                        startActivity(loginIntent);
+                                        lottieAlertDialog.dismiss();
+                                        finish();
 
-                                        })
-                                        .setNegativeListener(Dialog::dismiss)
-                                        .build();
-                                alertDialog.setCancelable(true);
-                                alertDialog.show();
-                            }
+                                    })
+                                    .setNegativeListener(Dialog::dismiss)
+                                    .build();
+                            alertDialog.setCancelable(true);
+                            alertDialog.show();
                         }
                     }
-
-                    return false;
                 }
+
+                return false;
             });
 
-            expandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
-                @Override
-                public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+            expandableListView.setOnChildClickListener((parent, v, groupPosition, childPosition, id) -> {
 
-                    if (childList.get(headerList.get(groupPosition)) != null) {
-                        MenuModel model = Objects.requireNonNull(childList.get(headerList.get(groupPosition))).get(childPosition);
+                if (childList.get(headerList.get(groupPosition)) != null) {
+                    //MenuModel model = Objects.requireNonNull(childList.get(headerList.get(groupPosition))).get(childPosition);
 
-                        Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).popBackStack();
-                        Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.nav_home);
+                    Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).popBackStack();
+                    Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.nav_home);
 
-                        if (groupPosition==1 && childPosition==0) {
-                            Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_nav_sales);
-                            drawer.closeDrawer(GravityCompat.START);
-                        }else if (groupPosition==1 && childPosition==1) {
-                            Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_nav_sales_refund);
-                            drawer.closeDrawer(GravityCompat.START);
-                        }else if (groupPosition==2 && childPosition==0) {
-                            Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_nav_products);
-                            drawer.closeDrawer(GravityCompat.START);
-                        }else if (groupPosition==3 && childPosition==0) {
-                            Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_nav_credit_pay);
-                            drawer.closeDrawer(GravityCompat.START);
-                        }else if (groupPosition==3 && childPosition==1) {
-                            Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_nav_customer);
-                            drawer.closeDrawer(GravityCompat.START);
-                        }else if (groupPosition==3 && childPosition==2) {
-                            Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_nav_customer_update);
-                            drawer.closeDrawer(GravityCompat.START);
-                        }else if (groupPosition==4 && childPosition==0) {
-                            Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_nav_dayopen);
-                            drawer.closeDrawer(GravityCompat.START);
-                        }else if (groupPosition==4 && childPosition==1) {
-                            Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_nav_dayclose);
-                            drawer.closeDrawer(GravityCompat.START);
-                        }else if (groupPosition==5 && childPosition==0) {
-                            HomeFragmentDirections.ActionNavHomeToNavSalesReport actionNavSalesReport = HomeFragmentDirections.actionNavHomeToNavSalesReport("");
-                            Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(actionNavSalesReport);
-                            drawer.closeDrawer(GravityCompat.START);
-                        }else if (groupPosition==2 && childPosition==5) {
-                            Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_nav_vendor_update);
-                            drawer.closeDrawer(GravityCompat.START);
-                        }else if (groupPosition==2 && childPosition==1) {
-                            Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_stockUpdateFragment);
-                            drawer.closeDrawer(GravityCompat.START);
-                        }else if (groupPosition==2 && childPosition==2) {
-                        Navigation.findNavController(MainDrawerActivity.this, R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_purchaseInvoiceFragment);
+                    if (groupPosition==1 && childPosition==0) {
+                        Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_nav_sales);
                         drawer.closeDrawer(GravityCompat.START);
-                    } else if (groupPosition==2 && childPosition==3) {
-                        Navigation.findNavController(MainDrawerActivity.this, R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_vi_payment_fragment);
+                    }else if (groupPosition==1 && childPosition==1) {
+                        Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_nav_sales_refund);
                         drawer.closeDrawer(GravityCompat.START);
-                    }else if (groupPosition==2 && childPosition==4) {
-                            Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_vendorPaymentFragment);
-                            drawer.closeDrawer(GravityCompat.START);
-                        }
-
+                    }else if (groupPosition==2 && childPosition==0) {
+                        Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_nav_products);
+                        drawer.closeDrawer(GravityCompat.START);
+                    }else if (groupPosition==3 && childPosition==0) {
+                        Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_nav_credit_pay);
+                        drawer.closeDrawer(GravityCompat.START);
+                    }else if (groupPosition==3 && childPosition==1) {
+                        Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_nav_customer);
+                        drawer.closeDrawer(GravityCompat.START);
+                    }else if (groupPosition==3 && childPosition==2) {
+                        Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_nav_customer_update);
+                        drawer.closeDrawer(GravityCompat.START);
+                    }else if (groupPosition==4 && childPosition==0) {
+                        Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_nav_dayopen);
+                        drawer.closeDrawer(GravityCompat.START);
+                    }else if (groupPosition==4 && childPosition==1) {
+                        Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_nav_dayclose);
+                        drawer.closeDrawer(GravityCompat.START);
+                    }else if (groupPosition==5 && childPosition==0) {
+                        HomeFragmentDirections.ActionNavHomeToNavSalesReport actionNavSalesReport = HomeFragmentDirections.actionNavHomeToNavSalesReport("");
+                        Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(actionNavSalesReport);
+                        drawer.closeDrawer(GravityCompat.START);
+                    }else if (groupPosition==2 && childPosition==6) {
+                        Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_nav_vendor_update);
+                        drawer.closeDrawer(GravityCompat.START);
+                    }else if (groupPosition==2 && childPosition==1) {
+                        Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_stockUpdateFragment);
+                        drawer.closeDrawer(GravityCompat.START);
+                    }else if (groupPosition==2 && childPosition==2) {
+                    Navigation.findNavController(MainDrawerActivity.this, R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_purchaseInvoiceFragment);
+                    drawer.closeDrawer(GravityCompat.START);
+                } else if (groupPosition==2 && childPosition==3) {
+                    Navigation.findNavController(MainDrawerActivity.this, R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_vi_payment_fragment);
+                    drawer.closeDrawer(GravityCompat.START);
+                }else if (groupPosition==2 && childPosition==4) {
+                        Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_vendorPaymentFragment);
+                        drawer.closeDrawer(GravityCompat.START);
+                    }else if (groupPosition==2 && childPosition==5) {
+                        Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_nav_vendor_return);
+                        drawer.closeDrawer(GravityCompat.START);
                     }
 
-                    return false;
                 }
+
+                return false;
             });
 
 
@@ -344,15 +347,16 @@ public class MainDrawerActivity extends AppCompatActivity  {
                 subtitle= cursor.getString(1).toLowerCase();
 
             }
+            cursor.close();
         } catch (Exception e) {
 
             e.printStackTrace();
         }
         NavigationView navigationView = findViewById(R.id.nav_view);
         View hView =  navigationView.getHeaderView(0);
-        TextView nav_user = (TextView)hView.findViewById(R.id.nav_title);
+        TextView nav_user = hView.findViewById(R.id.nav_title);
         nav_user.setText(title);
-        TextView nav_subuser = (TextView)hView.findViewById(R.id.nav_subtitle);
+        TextView nav_subuser = hView.findViewById(R.id.nav_subtitle);
         nav_subuser.setText(subtitle);
     }
 

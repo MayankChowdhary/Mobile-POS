@@ -39,6 +39,11 @@ import com.retailstreet.mobilepos.View.dialog.LottieAlertDialogs;
 
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Created by Mayank Choudhary on 07-05-2021.
+ * mayankchoudhary00@gmail.com
+ */
+
 public class SalesFragment extends Fragment implements UpdateRecyclerView {
 
     //private SalesViewModel homeViewModel;

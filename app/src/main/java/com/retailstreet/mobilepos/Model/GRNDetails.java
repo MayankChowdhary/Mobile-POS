@@ -1,5 +1,11 @@
 package com.retailstreet.mobilepos.Model;
 
+/**
+ * Created by Mayank Choudhary on 07-05-2021.
+ * mayankchoudhary00@gmail.com
+ */
+
+
 public class GRNDetails {
 
     String GRNDETAILID;
@@ -23,6 +29,7 @@ public class GRNDetails {
 
 
     public GRNDetails() {
+
     }
 
     public GRNDetails(String GRNDETAILID, String GRN_QTY, String BATCHNO, String EXP_DATE, String PUR_PRICE, String TAX_AMOUNT, String GRN_VALUE, String MRP, String ISFREEGOODS, String FREE_QUANTITY, String PURCHASEDISCOUNTPERCENTAGE, String PURCHASEDISCOUNTBYAMOUNT, String GRN_GUID, String ITEM_GUID, String STORE_GUID, String UOM_GUID, String GRNDETAILGUID) {

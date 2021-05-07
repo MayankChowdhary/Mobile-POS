@@ -7,7 +7,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 
 /**
- * Created by skyfishjy on 10/31/14.
+ * Created by Mayank Choudhary on 07-05-2021.
+ * mayankchoudhary00@gmail.com
  */
 
 public abstract class CustomRecyclerViewAdapter<VH extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<VH> {

@@ -1,5 +1,11 @@
 package com.retailstreet.mobilepos.Model;
 
+/**
+ * Created by Mayank Choudhary on 07-05-2021.
+ * mayankchoudhary00@gmail.com
+ */
+
+
 public class CustomerReject {
     String ID;
     String REASONGUID;

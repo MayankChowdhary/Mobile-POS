@@ -37,6 +37,11 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 
+/**
+ * Created by Mayank Choudhary on 07-05-2021.
+ * mayankchoudhary00@gmail.com
+ */
+
 public class LoginActivity extends AppCompatActivity implements DBReadyCallback {
 
     EditText userName;

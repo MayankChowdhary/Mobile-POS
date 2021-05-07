@@ -4,6 +4,12 @@ import android.content.Context;
 
 import com.labters.lottiealertdialoglibrary.DialogTypes;
 
+/**
+ * Created by Mayank Choudhary on 07-05-2021.
+ * mayankchoudhary00@gmail.com
+ */
+
+
 public class LoadingDialog {
 
      LottieAlertDialogs progressDialog;

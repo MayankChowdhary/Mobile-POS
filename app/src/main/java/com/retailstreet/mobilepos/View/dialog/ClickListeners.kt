@@ -1,6 +1,9 @@
 package com.retailstreet.mobilepos.View.dialog
 
-import com.retailstreet.mobilepos.View.dialog.LottieAlertDialogs
+/**
+ * Created by Mayank Choudhary on 07-05-2021.
+ * mayankchoudhary00@gmail.com
+ */
 
 interface ClickListeners {
     fun onClick(dialog : LottieAlertDialogs)

@@ -1,10 +1,6 @@
 package com.retailstreet.mobilepos.Utils;
 
 import android.util.Log;
-import android.widget.Toast;
-
-import com.retailstreet.mobilepos.View.ApplicationContextProvider;
-import com.retailstreet.mobilepos.View.dialog.LoadingDialog;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,6 +18,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
+
+/**
+ * Created by Mayank Choudhary on 07-05-2021.
+ * mayankchoudhary00@gmail.com
+ */
+
 
 public class JSONParserSync {
     static JSONObject jsonObj ;

@@ -1,5 +1,11 @@
 package com.retailstreet.mobilepos.Model;
 
+/**
+ * Created by Mayank Choudhary on 07-05-2021.
+ * mayankchoudhary00@gmail.com
+ */
+
+
 public class StockRegister {
 
     String REGISTERGUID;
@@ -23,6 +29,7 @@ public class StockRegister {
 
 
     public StockRegister() {
+
 
     }
 

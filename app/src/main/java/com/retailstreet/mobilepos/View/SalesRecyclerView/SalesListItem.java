@@ -2,6 +2,11 @@ package com.retailstreet.mobilepos.View.SalesRecyclerView;
 
 import android.database.Cursor;
 
+/**
+ * Created by Mayank Choudhary on 07-05-2021.
+ * mayankchoudhary00@gmail.com
+ */
+
 public class SalesListItem {
     private String name;
     private String product_detail_2;

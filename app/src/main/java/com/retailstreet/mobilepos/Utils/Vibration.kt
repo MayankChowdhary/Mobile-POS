@@ -6,6 +6,10 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import com.retailstreet.mobilepos.View.ApplicationContextProvider
 
+/**
+ * Created by Mayank Choudhary on 07-05-2021.
+ * mayankchoudhary00@gmail.com
+ */
 class Vibration {
 
     companion object {

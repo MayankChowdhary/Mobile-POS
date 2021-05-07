@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/sales_list_item_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="4dp"
+    android:background="@drawable/item_box_border"
+    android:elevation="2dp"
+    android:padding="@dimen/_8sdp">
+
+    <LinearLayout
+        android:id="@+id/sales_items_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/product_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="listItems"
+            android:textAlignment="viewStart"
+            android:textColor="?colorOnSecondary"
+            android:textSize="@dimen/_12ssp" />
+
+        <TextView
+            android:id="@+id/product_detail_II"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="listItems"
+            android:textAlignment="viewStart"
+            android:textColor="?colorOnBackground"
+            android:textSize="@dimen/_10ssp"
+            android:visibility="visible" />
+
+
+        <TextView
+            android:id="@+id/product_detail_III"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="listItems"
+            android:textAlignment="viewStart"
+            android:textColor="?colorOnBackground"
+            android:textSize="@dimen/_10ssp"
+            android:visibility="visible" />
+
+        <TextView
+            android:id="@+id/product_detail_V"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="listItemsV"
+            android:textAlignment="viewStart"
+            android:textColor="?colorOnBackground"
+            android:textSize="@dimen/_10ssp"
+            android:visibility="visible" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/addremovewrapper"
+        android:layout_width="@dimen/_74sdp"
+        android:layout_height="@dimen/_26sdp"
+        android:background="@drawable/broderplusminus"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageButton
+            android:id="@+id/btn_order_remove"
+            android:layout_width="@dimen/_17sdp"
+            android:layout_height="@dimen/_17sdp"
+            android:layout_weight="1"
+            android:background="#FFFFFF"
+            android:scaleType="centerInside"
+            android:tint="?colorPrimary"
+            app:srcCompat="@drawable/remove_order" />
+
+        <TextView
+            android:id="@+id/textview_order_count"
+            android:layout_width="@dimen/_27sdp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/_6sdp"
+            android:layout_marginEnd="@dimen/_6sdp"
+            android:layout_weight="2"
+            android:background="?colorPrimary"
+            android:backgroundTint="?colorPrimary"
+            android:ellipsize="marquee"
+            android:focusable="auto"
+            android:focusableInTouchMode="true"
+            android:gravity="center"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:singleLine="true"
+            android:text="0"
+            android:textAlignment="center"
+            android:textColor="#FFFFFF"
+            android:textSize="@dimen/_14ssp" />
+
+        <ImageButton
+            android:id="@+id/btn_order_add"
+            android:layout_width="@dimen/_17sdp"
+            android:layout_height="@dimen/_17sdp"
+            android:layout_weight="1"
+            android:background="#FFFFFF"
+            android:scaleType="centerInside"
+            android:tint="?colorPrimary"
+            app:srcCompat="@drawable/add_order" />
+    </LinearLayout>
+    <ImageButton
+        android:id="@+id/clear_order"
+        android:layout_width="@dimen/_10sdp"
+        android:layout_height="@dimen/_10sdp"
+        android:background="?colorSurface"
+        android:scaleType="centerInside"
+        android:tint="?colorOnBackground"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/cancel" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

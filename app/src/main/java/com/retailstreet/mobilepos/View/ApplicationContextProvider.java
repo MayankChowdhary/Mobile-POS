@@ -3,6 +3,11 @@ package com.retailstreet.mobilepos.View;
 import android.app.Application;
 import android.content.Context;
 
+/**
+ * Created by Mayank Choudhary on 07-05-2021.
+ * mayankchoudhary00@gmail.com
+ */
+
 public class ApplicationContextProvider extends Application {
 
     private static ApplicationContextProvider instance;

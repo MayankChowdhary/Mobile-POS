@@ -18,6 +18,11 @@ import com.retailstreet.mobilepos.R
 import com.retailstreet.mobilepos.Utils.StringWithTag
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner
 
+/**
+ * Created by Mayank Choudhary on 07-05-2021.
+ * mayankchoudhary00@gmail.com
+ */
+
 class VendorInfoFragment : Fragment() {
 
     companion object {
