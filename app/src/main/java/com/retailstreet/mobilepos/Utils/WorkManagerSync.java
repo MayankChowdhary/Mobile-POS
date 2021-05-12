@@ -25,6 +25,7 @@ import com.retailstreet.mobilepos.Database.ShiftTransDataUploader;
 import com.retailstreet.mobilepos.Database.StockMasterUploader;
 import com.retailstreet.mobilepos.Database.StockRegisterUploader;
 import com.retailstreet.mobilepos.Database.VendorPaymentUploader;
+import com.retailstreet.mobilepos.Database.VendorReturnUploader;
 import com.retailstreet.mobilepos.View.ApplicationContextProvider;
 
 import java.util.HashSet;
@@ -235,6 +236,22 @@ public class WorkManagerSync {
                     "VENDOR_PAYMENT_SYNC",
                     ExistingPeriodicWorkPolicy.REPLACE, //Existing Periodic Work policy
                     VendorPaymentSyncWork //work request
+            );
+        }
+
+        if(index == 12 || index ==0) {
+            PeriodicWorkRequest VendorReturnSyncWork =
+                    new PeriodicWorkRequest.Builder(VendorReturnUploader.class, 15, TimeUnit.MINUTES)
+                            .addTag("VENDOR_RETURN_SYNC_REQUEST")
+                            .setConstraints(constraints)
+                            //setting a backoff on case the work needs to retry
+                            .setBackoffCriteria(BackoffPolicy.LINEAR, PeriodicWorkRequest.MIN_BACKOFF_MILLIS, TimeUnit.MILLISECONDS)
+                            .setInitialDelay(3, TimeUnit.SECONDS)
+                            .build();
+            mWorkManager.enqueueUniquePeriodicWork(
+                    "VENDOR_RETURN_SYNC",
+                    ExistingPeriodicWorkPolicy.REPLACE, //Existing Periodic Work policy
+                    VendorReturnSyncWork //work request
             );
         }
 

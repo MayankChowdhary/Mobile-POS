@@ -356,8 +356,10 @@ public class MainDrawerActivity extends AppCompatActivity  {
         View hView =  navigationView.getHeaderView(0);
         TextView nav_user = hView.findViewById(R.id.nav_title);
         nav_user.setText(title);
+        nav_user.setSelected(true);
         TextView nav_subuser = hView.findViewById(R.id.nav_subtitle);
         nav_subuser.setText(subtitle);
+        nav_subuser.setSelected(true);
     }
 
 

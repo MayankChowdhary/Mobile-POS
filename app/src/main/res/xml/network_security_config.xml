@@ -3,5 +3,6 @@
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="true">www.99retailstreet.com</domain>
         <domain includeSubdomains="true">99retailstreet.com</domain>
+        <domain includeSubdomains="true">web.99mithuro.com</domain>
     </domain-config>
 </network-security-config>

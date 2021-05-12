@@ -28,10 +28,18 @@ public class MyTableViewListener implements ITableViewListener {
     @Override
     public void onCellClicked(@NonNull RecyclerView.ViewHolder cellView, int column, int row) {
         Log.d(LOG_TAG, "onCellClicked has been clicked for x= " + column + " y= " + row);
-        CellViewHolder viewHolder = (CellViewHolder) cellView;
-        //Toast.makeText(ApplicationContextProvider.getContext(),viewHolder.masterID,Toast.LENGTH_LONG).show();
-        Log.d("Cell Bill ID Retrieved", "onCellClicked: "+viewHolder.cellId);
-        tableViewInterface.openDialogInterface(row,((CellViewHolder) cellView).cellId,((CellViewHolder) cellView).masterID,((CellViewHolder) cellView).cell_textview.getText().toString());
+
+        try {
+            CellViewHolder viewHolder = (CellViewHolder) cellView;
+            //Toast.makeText(ApplicationContextProvider.getContext(),viewHolder.masterID,Toast.LENGTH_LONG).show();
+            Log.d("Cell Bill ID Retrieved", "onCellClicked: "+viewHolder.cellId);
+            tableViewInterface.openDialogInterface(row,((CellViewHolder) cellView).cellId,((CellViewHolder) cellView).masterID,((CellViewHolder) cellView).cell_textview.getText().toString());
+        } catch (Exception e) {
+            RemoveCellViewHolder viewHolder = (RemoveCellViewHolder) cellView;
+            Log.d("Cell Bill ID Retrieved", "onCellClicked: "+viewHolder.cellId);
+            tableViewInterface.cellToRowSelector(row, viewHolder.cellId,"-1");
+            e.printStackTrace();
+        }
     }
 
     @Override

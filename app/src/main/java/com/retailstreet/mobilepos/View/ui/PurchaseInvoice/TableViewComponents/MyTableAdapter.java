@@ -41,22 +41,13 @@ public class MyTableAdapter extends AbstractTableAdapter<ColumnHeaderModel, RowH
         switch (viewType) {
             case MyTableViewModel.GENDER_TYPE:
                 // Get gender cell xml Layout
-                /*layout = LayoutInflater.from(mContext).inflate(R.layout
-                        .tableview_gender_cell_layout, parent, false);
+                layout = LayoutInflater.from(mContext).inflate(R.layout.table_view_image_cell_layout, parent, false);
 
-                return new GenderCellViewHolder(layout);*/
+                return new RemoveCellViewHolder(layout);
 
-
-            case MyTableViewModel.MONEY_TYPE:
-              /*  // Get money cell xml Layout
-                layout = LayoutInflater.from(mContext).inflate(R.layout
-                        .tableview_money_cell_layout, parent, false);
-
-                // Create the relevant view holder
-                return new MoneyCellViewHolder(layout);*/
             default:
                 // Get default Cell xml Layout
-                layout = LayoutInflater.from(mContext).inflate(R.layout.tableview_edit_cell_layout,
+                layout = LayoutInflater.from(mContext).inflate(R.layout.tableview_cell_layout,
                         parent, false);
 
                 // Create a Cell ViewHolder
@@ -72,11 +63,9 @@ public class MyTableAdapter extends AbstractTableAdapter<ColumnHeaderModel, RowH
             // Get the holder to update cell item text
             ((CellViewHolder) holder).setCellModel(cell,columnPosition);
 
-        } /*else if (holder instanceof GenderCellViewHolder) {
-            ((GenderCellViewHolder) holder).setCellModel(cell);
-        } else if (holder instanceof MoneyCellViewHolder) {
-            ((MoneyCellViewHolder) holder).setCellModel(cell);
-        }*/
+        } else if (holder instanceof RemoveCellViewHolder) {
+            ((RemoveCellViewHolder) holder).setCellModel(cell,columnPosition);
+        }
     }
 
 

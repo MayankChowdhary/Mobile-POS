@@ -90,7 +90,7 @@ public class VendorReturnListItem {
         salesReturnListItem.setProduct_detail_5("PRICE: "+cursor.getString(5)+"  TOTAL: "+cursor.getString(6));
         salesReturnListItem.setQty(cursor.getString(3));
        salesReturnListItem.setPrimary(cursor.getString(9));
-        salesReturnListItem.setMaxQty(cursor.getString(10));
+        salesReturnListItem.setMaxQty(cursor.getString(13));
         return salesReturnListItem;
     }
 

@@ -28,12 +28,9 @@ import com.retailstreet.mobilepos.Utils.StringWithTag
 import com.retailstreet.mobilepos.Utils.Vibration
 import com.retailstreet.mobilepos.View.dialog.ClickListeners
 import com.retailstreet.mobilepos.View.dialog.LottieAlertDialogs
-import com.retailstreet.mobilepos.View.ui.PurchaseInvoice.PurchaseInvoiceEditDialog
-import com.retailstreet.mobilepos.View.ui.PurchaseInvoice.PurchaseInvoiceViewModel
 import com.retailstreet.mobilepos.View.ui.PurchaseInvoice.TableViewComponents.MyTableAdapter
 import com.retailstreet.mobilepos.View.ui.PurchaseInvoice.TableViewComponents.MyTableViewListener
 import com.retailstreet.mobilepos.View.ui.PurchaseInvoice.TableViewComponents.User
-import com.retailstreet.mobilepos.View.ui.PurchaseInvoice.TableViewInterface
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner
 import java.text.DecimalFormat
 import java.util.*
@@ -549,6 +546,7 @@ class PurchaseInvoiceFragment : Fragment() , TableViewInterface, PurchaseInvoice
     }
 
     override fun cellToRowSelector(rowId: Int, cellId: String?, masterID: String?) {
+        if(!masterID.equals("-1"))
         mTableView?.selectedRow  = rowId
 
         val alertDialog = LottieAlertDialogs.Builder(context, DialogTypes.TYPE_WARNING)

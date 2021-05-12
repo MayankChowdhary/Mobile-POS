@@ -39,7 +39,9 @@ import com.retailstreet.mobilepos.Model.StoreConfiguration;
 import com.retailstreet.mobilepos.Model.SyncResponse;
 import com.retailstreet.mobilepos.Model.TerminalConfiguration;
 import com.retailstreet.mobilepos.Model.TerminalUserAllocation;
+import com.retailstreet.mobilepos.Model.VendorDetailReturn;
 import com.retailstreet.mobilepos.Model.VendorMaster;
+import com.retailstreet.mobilepos.Model.VendorMasterReturn;
 import com.retailstreet.mobilepos.Model.VendorPayDetail;
 import com.retailstreet.mobilepos.Model.VendorPayMaster;
 import com.retailstreet.mobilepos.Model.VendorRejectReason;
@@ -175,49 +177,56 @@ public interface ApiInterface {
     @GET
     Call<List<VendorRejectReason>> getVendorRejectReason(@Url String url);
 
+    @GET
+    Call<List<VendorMasterReturn>> getVendorMasterReturn(@Url String url);
+
+    @GET
+    Call<List<VendorDetailReturn>> getVendorDetailReturn(@Url String url);
 
 
     //***************Installation Validator************************
 
-    @GET("/APIManagers/api/GetAllMasterDataForSync/GetStoreLicenseandActiveData/{Storeguid}")
+    @GET("api/GetAllMasterDataForSync/GetStoreLicenseandActiveData/{Storeguid}")
     Call<LicenceModulePojo> Store_Licence_Checked(@Header("Authorization")String Authorization, @Path("Storeguid") String Storeguid);
-    @POST("/APIManagers/api/PostStoreFinalStatus/PostRegistration")
+    @POST("api/PostStoreFinalStatus/PostRegistration")
     Call<DownloadcheckPojo> Check_Before_Download_Data(@Header("Authorization") String Authorization, @Body RequestBody body);
 
     //****************************Upload API*****************************
 
-   @POST("/APIManagers/api/PullPOSRegualarSync/PullBillHeaderDetails")
+   @POST("api/PullPOSRegualarSync/PullBillHeaderDetails")
    Call<SyncResponse> UploadSaleRecords(@Header("Authorization")String Authorization, @Body RequestBody body);
 
 
-    @POST("/APIManagers/api/PullPOSRegualarSync/PushShiftTransactions")
+    @POST("api/PullPOSRegualarSync/PushShiftTransactions")
     Call<SyncResponse> UploadShifttransRecords(@Header("Authorization")String Authorization, @Body RequestBody body);
 
-    @POST("/APIManagers/api/PullPOSRegualarSync/PullLocalProductDetails")
+    @POST("api/PullPOSRegualarSync/PullLocalProductDetails")
     Call<SyncResponse> UploadproductRecords(@Header("Authorization")String Authorization, @Body RequestBody body);
 
-    @POST("/APIManagers/api/PullPOSRegualarSync/PullStockonHandDetails")
+    @POST("api/PullPOSRegualarSync/PullStockonHandDetails")
     Call<SyncResponse> UploadStockRecords(@Header("Authorization")String Authorization, @Body RequestBody body);
 
-    @POST("/APIManagers/api/PullPOSRegualarSync/PushCustomerMasterDetails")
+    @POST("api/PullPOSRegualarSync/PushCustomerMasterDetails")
     Call<SyncResponse> UploadCustomerRecords(@Header("Authorization")String Authorization, @Body RequestBody body);
 
-    @POST("/ApiTest/Invoice")
+    @POST("ApiTest/Invoice")
     Call<List<InvoiceSyncResponse>> UploadSaleRecordsSMS(@Body RequestBody body);
 
-    @POST("/APIManagers/api/PullPOSRegualarSync/PushCustomerReturns")
+    @POST("api/PullPOSRegualarSync/PushCustomerReturns")
     Call<SyncResponse> UploadSalesReturnRecords(@Header("Authorization")String Authorization, @Body RequestBody body);
 
-    @POST("/APIManagers/api/PullPOSRegualarSync/PushCustomerLedger")
+    @POST("api/PullPOSRegualarSync/PushCustomerLedger")
     Call<SyncResponse> UploadcustomerladgersRecords(@Header("Authorization")String Authorization, @Body RequestBody body);
 
-    @POST("/APIManagers/api/PullPOSRegualarSync/PullGRNDetails")
+    @POST("api/PullPOSRegualarSync/PullGRNDetails")
     Call<SyncResponse> UploadGRNRecords(@Header("Authorization")String Authorization, @Body RequestBody body);
 
-    @POST("/APIManagers/api/PullPOSRegualarSync/PushInventoryLedger")
+    @POST("api/PullPOSRegualarSync/PushInventoryLedger")
     Call<SyncResponse> UploadInventoryLedgerRecords(@Header("Authorization")String Authorization, @Body RequestBody body);
 
-    @POST("/APIManagers/api/PullPOSRegualarSync/PushVendorPayments")
+    @POST("api/PullPOSRegualarSync/PushVendorPayments")
     Call<SyncResponse> UploadvendorpaymentRecords(@Header("Authorization")String Authorization, @Body RequestBody body);
 
+    @POST("api/PullPOSRegualarSync/PushVendorReturns")
+    Call<SyncResponse> UploadVendor_Return_Records(@Header("Authorization") String Authorization, @Body RequestBody body);
 }

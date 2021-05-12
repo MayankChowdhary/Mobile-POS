@@ -21,12 +21,10 @@ public class MyTableViewModel {
     public int getCellItemViewType(int column) {
 
         switch (column) {
-            case 5:
+            case 12:
                 // 5. column header is gender.
                 return GENDER_TYPE;
-            case 8:
-                // 8. column header is Salary.
-                return MONEY_TYPE;
+
             default:
                 return 0;
         }
@@ -55,7 +53,7 @@ public class MyTableViewModel {
         switch (column) {
             // Id
             case 0:
-                return Gravity.CENTER;
+                return Gravity.LEFT;
             // Name
             case 1:
                 return Gravity.LEFT;
@@ -91,7 +89,7 @@ public class MyTableViewModel {
                 return Gravity.LEFT;
             // Zip Code
             case 12:
-                return Gravity.RIGHT;
+                return Gravity.CENTER;
             // Phone
             case 13:
                 return Gravity.RIGHT;
@@ -99,10 +97,11 @@ public class MyTableViewModel {
             case 14:
                 return Gravity.RIGHT;
             default:
-                return Gravity.CENTER;
+                return Gravity.LEFT;
         }
 
     }
+
 
     private List<ColumnHeaderModel> createColumnHeaderModelList() {
         List<ColumnHeaderModel> list = new ArrayList<>();
@@ -120,6 +119,7 @@ public class MyTableViewModel {
         list.add(new ColumnHeaderModel("DISCOUNT"));
         list.add(new ColumnHeaderModel("UOM"));
         list.add(new ColumnHeaderModel("TOTAL"));
+        list.add(new ColumnHeaderModel("  "));
 
         return list;
     }
@@ -148,6 +148,7 @@ public class MyTableViewModel {
             list.add(new CellModel(user.ITEM_GUID , user.DISC));
             list.add(new CellModel(user.ITEM_GUID , user.UOM));
             list.add(new CellModel(user.ITEM_GUID , user.TOTAL));
+            list.add(new CellModel(user.ITEM_GUID , ""));
 
             // Add
             lists.add(list);

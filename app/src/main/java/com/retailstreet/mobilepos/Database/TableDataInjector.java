@@ -41,7 +41,9 @@ import com.retailstreet.mobilepos.Model.StockRegister;
 import com.retailstreet.mobilepos.Model.StoreConfiguration;
 import com.retailstreet.mobilepos.Model.TerminalConfiguration;
 import com.retailstreet.mobilepos.Model.TerminalUserAllocation;
+import com.retailstreet.mobilepos.Model.VendorDetailReturn;
 import com.retailstreet.mobilepos.Model.VendorMaster;
+import com.retailstreet.mobilepos.Model.VendorMasterReturn;
 import com.retailstreet.mobilepos.Model.VendorPayDetail;
 import com.retailstreet.mobilepos.Model.VendorPayMaster;
 import com.retailstreet.mobilepos.Model.VendorRejectReason;
@@ -106,11 +108,13 @@ public class TableDataInjector {
     private List<VendorPayDetail> vendorPayDetailList = null;
     private List<VendorPayMaster> vendorPayMasterList = null;
     private List<VendorRejectReason> vendorRejectReasonList = null;
+    private List<VendorDetailReturn> vendorDetailReturnList = null;
+    private List<VendorMasterReturn> vendorMasterReturnList = null;
 
     private LoadingDialog loadingDialog;
 
     public static int status =0;
-    private final int tableConstant=36;
+    private final int tableConstant=38;
 
     public TableDataInjector(Context context, String storeid,DBReadyCallback callback) {
 
@@ -157,6 +161,8 @@ public class TableDataInjector {
         getVendorPayDetails();
         getVendorPayMaster();
         getVendorRejectReason();
+        getVendorDetailReturn();
+        getVendorMasterReturn();
 
     }
 
@@ -1041,6 +1047,124 @@ public class TableDataInjector {
             });
         } catch (Exception e) {
             Log.i("autolog", "Exception");
+        }
+    }
+
+    public void getVendorDetailReturn() {
+        try {
+            Retrofit retrofit = getRetroInstance(baseUrl);
+            assert retrofit != null;
+            ApiInterface service = retrofit.create(ApiInterface.class);
+            Call<List<VendorDetailReturn>> call = service.getVendorDetailReturn(generateTableUrl("retail_str_vendor_detail_return",storeId));
+            call.enqueue(new Callback<List<VendorDetailReturn>>() {
+                @Override
+                public void onResponse(Call<List<VendorDetailReturn>> call, Response<List<VendorDetailReturn>> response) {
+                    vendorDetailReturnList= response.body();
+                    Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
+                    InsertVendorDetailReturn(vendorDetailReturnList);
+                }
+                @Override
+                public void onFailure(Call<List<VendorDetailReturn>> call, Throwable t) {
+                    Log.i("autolog", t.getMessage());
+                }
+            });
+        } catch (Exception e) {
+            Log.i("autolog", "Exception");
+        }
+    }
+
+    public void getVendorMasterReturn() {
+        try {
+            Retrofit retrofit = getRetroInstance(baseUrl);
+            assert retrofit != null;
+            ApiInterface service = retrofit.create(ApiInterface.class);
+            Call<List<VendorMasterReturn>> call = service.getVendorMasterReturn(generateTableUrl("retail_str_vendor_master_return",storeId));
+            call.enqueue(new Callback<List<VendorMasterReturn>>() {
+                @Override
+                public void onResponse(Call<List<VendorMasterReturn>> call, Response<List<VendorMasterReturn>> response) {
+                    vendorMasterReturnList= response.body();
+                    Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
+                    InsertVendorMasterReturn(vendorMasterReturnList);
+                }
+                @Override
+                public void onFailure(Call<List<VendorMasterReturn>> call, Throwable t) {
+                    Log.i("autolog", t.getMessage());
+                }
+            });
+        } catch (Exception e) {
+            Log.i("autolog", "Exception");
+        }
+    }
+
+
+    public void InsertVendorMasterReturn(List<VendorMasterReturn> list) {
+        if (list == null) {
+            return;
+        }
+        try {
+            SQLiteDatabase myDataBase = context.openOrCreateDatabase(dbname, Context.MODE_PRIVATE, null);
+            myDataBase.delete("retail_str_vendor_master_return", null, null);
+            for (VendorMasterReturn prod : list) {
+
+                ContentValues contentValues = new ContentValues();
+                contentValues.put("VENDOR_RETURN_MASTERID", prod.getVENDOR_RETURN_MASTERID());
+                contentValues.put("VENDOR_RETURNGUID", prod.getVENDOR_RETURNGUID());
+                contentValues.put("VENDOR_GUID", prod.getVENDOR_GUID());
+                contentValues.put("STORE_GUID", prod.getSTORE_GUID());
+                contentValues.put("INVOICENO", prod.getINVOICENO());
+                contentValues.put("INVOICEDATE", prod.getINVOICEDATE());
+                contentValues.put("RETURN_DATE", prod.getRETURN_DATE());
+                contentValues.put("REASON", prod.getREASON());
+                contentValues.put("GRNNO", prod.getGRNNO());
+                contentValues.put("GRNDATE", prod.getGRNDATE());
+                contentValues.put("CREATEDBY", prod.getCREATEDBY());
+                contentValues.put("UPDATEDBY", prod.getUPDATEDBY());
+                contentValues.put("CREATEDON", prod.getCREATEDON());
+                contentValues.put("UPDATEDON", prod.getUPDATEDON());
+                contentValues.put("ISSYNCED", prod.getISSYNCED());
+
+                myDataBase.insert("retail_str_vendor_master_return", null, contentValues);
+            }
+
+            myDataBase.close();
+            status+=1;
+            if(status==tableConstant){
+                loadingDialog.cancelDialog();
+                dbReadyCallback.onDBReady();
+            }
+            Log.d("Insertion Successful", "retail_str_vendor_master_return: "+status);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public void InsertVendorDetailReturn(List<VendorDetailReturn> list) {
+        if (list == null) {
+            return;
+        }
+        try {
+            SQLiteDatabase myDataBase = context.openOrCreateDatabase(dbname, Context.MODE_PRIVATE, null);
+            myDataBase.delete("retail_str_vendor_detail_return", null, null);
+            for (VendorDetailReturn prod : list) {
+                ContentValues contentValues = new ContentValues();
+                contentValues.put("VENDOR_RETURN_DETAILID", prod.getVENDOR_RETURN_DETAILID());
+                contentValues.put("VENDOR_RETURNGUID", prod.getVENDOR_RETURNGUID());
+                contentValues.put("ITEM_GUID", prod.getITEM_GUID());
+                contentValues.put("BATCHNO", prod.getBATCHNO());
+                contentValues.put("QTY", prod.getQTY());
+                contentValues.put("UOM_GUID", prod.getUOM_GUID());
+                myDataBase.insert("retail_str_vendor_detail_return", null, contentValues);
+            }
+            myDataBase.close();
+            status+=1;
+            if(status==tableConstant){
+                loadingDialog.cancelDialog();
+                dbReadyCallback.onDBReady();
+            }
+            Log.d("Insertion Successful", "retail_str_vendor_detail_return: "+status);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -2692,6 +2816,12 @@ public class TableDataInjector {
 
             case "retail_store_vend_reject":
                 return "ApiTest/RetailStoreVendReject?STORE_ID="+storeid;
+
+            case "retail_str_vendor_detail_return":
+                return "ApiTest/VendorReturnDetail?STORE_ID="+storeid;
+
+            case "retail_str_vendor_master_return":
+                return "ApiTest/VendorReturnMaster?STORE_ID="+storeid;
 
             default:
                 return "";

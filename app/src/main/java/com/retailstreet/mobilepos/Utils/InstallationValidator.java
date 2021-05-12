@@ -28,8 +28,6 @@ import retrofit2.Response;
 
 public class InstallationValidator  {
 
-
-
     public void Check_Before_Download(final String StoreID, String UserNm, final String Password, String Terminal, DBReadyCallback activity, Context context) {
         ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
         JSONObject jsonObject2 = new JSONObject();

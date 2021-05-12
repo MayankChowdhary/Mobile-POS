@@ -17,9 +17,10 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * mayankchoudhary00@gmail.com
  */
 
+
 public class RetroSync {
 
-    public static final String BASE_URL_Sync = "https://aequmazuresites.azurewebsites.net/";//https://www.mplan.in/api/Dthinfo.php
+    public static final String BASE_URL_Sync = "http://web.99mithuro.com/APIMANAGER/";//https://www.mplan.in/api/Dthinfo.php
     static Retrofit retrofit;
 
     public static Retrofit getSyncBase() {

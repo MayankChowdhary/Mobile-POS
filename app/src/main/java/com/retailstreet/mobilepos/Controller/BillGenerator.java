@@ -104,14 +104,17 @@ public class BillGenerator {
         String BILLPAYDETAIL_STATUS ;
 
 
-    String STORE_GUID;
-    String CUSTOMERMOBILENO;
-    String CUSTOMERGUID;
-    String BILLNO;
-    String BILLDATE;
-    String ITEM_GUID;
-    String ITEM_NAME;
-    String SELLINGPRICE;
+        String STORE_GUID;
+        String CUSTOMERMOBILENO;
+        String CUSTOMERGUID;
+        String BILLNO;
+        String BILLDATE;
+        String ITEM_GUID;
+        String ITEM_NAME;
+        String SELLINGPRICE;
+
+
+
 
 
         public  BillGenerator(){
@@ -463,7 +466,7 @@ public class BillGenerator {
         try {
             SQLiteDatabase  mydb  = context.openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
             result = "";
-            String selectQuery = "SELECT "+column+" FROM retail_str_stock_master where STOCK_ID ="+stockid;
+            String selectQuery = "SELECT "+column+" FROM retail_str_stock_master where STOCK_ID = '"+stockid+"'";
             Cursor cursor = mydb.rawQuery(selectQuery, null);
             if (cursor.moveToFirst()) {
 

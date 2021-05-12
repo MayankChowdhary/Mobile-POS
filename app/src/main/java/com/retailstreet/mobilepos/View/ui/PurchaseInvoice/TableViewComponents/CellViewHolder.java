@@ -1,29 +1,20 @@
 package com.retailstreet.mobilepos.View.ui.PurchaseInvoice.TableViewComponents;
 
 import android.content.Context;
-import android.database.Cursor;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import androidx.core.content.ContextCompat;
 
 import com.evrencoskun.tableview.adapter.recyclerview.holder.AbstractViewHolder;
 import com.retailstreet.mobilepos.R;
-import com.retailstreet.mobilepos.Utils.Vibration;
 import com.retailstreet.mobilepos.View.ApplicationContextProvider;
 import com.retailstreet.mobilepos.View.ui.PurchaseInvoice.TableViewInterface;
 import com.tsongkha.spinnerdatepicker.DatePicker;
 import com.tsongkha.spinnerdatepicker.DatePickerDialog;
-import com.tsongkha.spinnerdatepicker.SpinnerDatePickerDialogBuilder;
-
-import java.util.Calendar;
-import java.util.Date;
 
 
 /**
@@ -31,7 +22,7 @@ import java.util.Date;
  */
 
 public class CellViewHolder extends AbstractViewHolder implements DatePickerDialog.OnDateSetListener {
-    public final EditText cell_textview;
+    public final TextView cell_textview;
     public final LinearLayout cell_container;
     public  String cellId = "";
     public String masterID = "";
@@ -52,14 +43,13 @@ public class CellViewHolder extends AbstractViewHolder implements DatePickerDial
         // Change textView align by column
         cellId = p_jModel.getId();
         masterID = String.valueOf(pColumnPosition);
-        cell_textview.setGravity(ColumnHeaderViewHolder.COLUMN_TEXT_ALIGNS[pColumnPosition] |
-                Gravity.CENTER_VERTICAL);
+        cell_textview.setGravity( Gravity.START | Gravity.CENTER_VERTICAL);
 
         // Set text
         cell_textview.setText(String.valueOf(p_jModel.getData()));
 
-        FocusListener focusListener = new FocusListener(cellId,masterID);
-        cell_textview.setOnFocusChangeListener(focusListener);
+        /*FocusListener focusListener = new FocusListener(cellId,masterID);
+        cell_textview.setOnFocusChangeListener(focusListener);*/
         // It is necessary to remeasure itself.
         cell_container.getLayoutParams().width = LinearLayout.LayoutParams.WRAP_CONTENT;
         cell_textview.requestLayout();
@@ -104,7 +94,7 @@ public class CellViewHolder extends AbstractViewHolder implements DatePickerDial
 
     }
 
-    public class FocusListener implements View.OnFocusChangeListener{
+    /*public class FocusListener implements View.OnFocusChangeListener{
 
         String cellId, columnPOs;
 
@@ -212,9 +202,9 @@ public class CellViewHolder extends AbstractViewHolder implements DatePickerDial
             }
         }
     }
+*/
 
-
-    private double getTotal(String guid){
+   /* private double getTotal(String guid){
         double totalAmount=0.00;
 
         try {
@@ -233,6 +223,6 @@ public class CellViewHolder extends AbstractViewHolder implements DatePickerDial
         }
 
         return totalAmount;
-    }
+    }*/
 
 }

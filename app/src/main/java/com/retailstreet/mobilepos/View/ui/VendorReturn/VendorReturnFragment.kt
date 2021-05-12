@@ -2,6 +2,7 @@ package com.retailstreet.mobilepos.View.ui.VendorReturn
 
 import android.content.Context
 import android.database.Cursor
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
@@ -14,10 +15,13 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.labters.lottiealertdialoglibrary.DialogTypes
 import com.retailstreet.mobilepos.Controller.ControllerVendorReturn
 import com.retailstreet.mobilepos.R
 import com.retailstreet.mobilepos.Utils.StringWithTag
 import com.retailstreet.mobilepos.Utils.Vibration
+import com.retailstreet.mobilepos.View.dialog.ClickListeners
+import com.retailstreet.mobilepos.View.dialog.LottieAlertDialogs
 import com.retailstreet.mobilepos.View.ui.VendorReturn.VendorReturnRecyclerView.VendorReturnListAdapter
 import com.retailstreet.mobilepos.View.ui.VendorReturn.VendorReturnRecyclerView.VendorReturnListAdapter2
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner
@@ -27,6 +31,8 @@ import java.util.*
  * Created by Mayank Choudhary on 07-05-2021.
  * mayankchoudhary00@gmail.com
  */
+
+
 
 class VendorReturnFragment : Fragment() {
 
@@ -45,6 +51,7 @@ class VendorReturnFragment : Fragment() {
     var rejectTypeGuid = " "
     var   rejectTypeName = " "
     private var GrnNumer:String = " "
+    private var InvoiceNum:String = " "
     private var vendorGuid:String = " "
     lateinit var vendorSearchSelector: SearchableSpinner
     lateinit var vendorRecyclerAdapter2:VendorReturnListAdapter2
@@ -77,7 +84,7 @@ class VendorReturnFragment : Fragment() {
 
                 inflateWithGRNLayout(mainFrame)
             }else{
-                inflateNoBillLayout(mainFrame)
+                inflateNoGrnLayout(mainFrame)
             }
             returnSubmitLayout.visibility = View.GONE
 
@@ -92,7 +99,7 @@ class VendorReturnFragment : Fragment() {
 
                 inflateWithGRNLayout(mainFrame)
             }else{
-                inflateNoBillLayout(mainFrame)
+                inflateNoGrnLayout(mainFrame)
 
             }
              //salesReturnRecyclerView.adapter = null;
@@ -101,6 +108,52 @@ class VendorReturnFragment : Fragment() {
             Vibration.vibrate(300)
         }
 
+        returnSubmitBtn.setOnClickListener {
+            checkedId = vendorReturnRadioGroup.checkedRadioButtonId
+
+            if(vendorGuid.isEmpty()){
+                Toast.makeText(context, "Please Select Vendor First!", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+
+            if(rejectTypeGuid.isEmpty()){
+                Toast.makeText(context, "Please Select Return Reason First!", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+
+            if(checkedId==R.id.vendor_return_billno_radio){
+
+                if(InvoiceNum.isEmpty()){
+                    Toast.makeText(context, "Please Select an invoice Number First!", Toast.LENGTH_LONG).show()
+                    return@setOnClickListener
+                }
+                ControllerVendorReturn(vendorGuid,InvoiceNum,rejectTypeName)
+                inflateWithGRNLayout(mainFrame)
+            }else{
+
+                ControllerVendorReturn(vendorGuid,rejectTypeName)
+                inflateNoGrnLayout(mainFrame)
+            }
+
+            returnSubmitLayout.visibility = View.GONE
+
+            val alertDialog = LottieAlertDialogs.Builder(activity, DialogTypes.TYPE_SUCCESS)
+                .setTitle("Return Completed")
+                .setDescription("Thank You!")
+                .setPositiveText("Back")
+                .setPositiveButtonColor(Color.parseColor("#297999"))
+                .setPositiveTextColor(Color.parseColor("#ffffff"))
+                .setPositiveListener(object : ClickListeners {
+                    override fun onClick(dialog: LottieAlertDialogs) {
+                        dialog.dismiss()
+
+                    }
+                })
+                .build()
+            alertDialog.setCancelable(false)
+            alertDialog.show()
+
+        }
     }
 
 
@@ -147,6 +200,7 @@ class VendorReturnFragment : Fragment() {
         invoiceSearchSelector.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, views: View?, position: Int, id: Long) {
                 val invoiceSelected = parent.getItemAtPosition(position) as StringWithTag
+                InvoiceNum = invoiceSelected.string
                 GrnNumer = invoiceSelected.tag
 
                /* if(GrnNumer.trim().isEmpty())
@@ -168,6 +222,9 @@ class VendorReturnFragment : Fragment() {
 
                 } catch (e: Exception) {
                     e.printStackTrace()
+                    if(GrnNumer.isNotEmpty()){
+                        Toast.makeText(context,"GRN Or Returnable Item Not Found!",Toast.LENGTH_LONG).show();
+                    }
                     vendorReturnRecyclerView.adapter = null
                     returnSubmitLayout.visibility = View.GONE
                 }
@@ -202,7 +259,7 @@ class VendorReturnFragment : Fragment() {
     }
 
 
-    private fun inflateNoBillLayout(root: ViewGroup){
+    private fun inflateNoGrnLayout(root: ViewGroup){
         root.removeAllViews()
         val inflater = requireContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         inflater.inflate(R.layout.vendor_return_without_grn, root)
