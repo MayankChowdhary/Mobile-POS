@@ -52,7 +52,6 @@ class PurchaseInvoiceFragment : Fragment() , TableViewInterface, PurchaseInvoice
     private var mTableView: TableView? = null
     private var mTableAdapter: MyTableAdapter? = null
     private var mProgressBar: ProgressBar? = null
-    lateinit var emptyReport: LinearLayout
     lateinit var resetBtn:Button
     private  var  userList:List<User> = emptyList()
     private var MasterView:View? = null
@@ -120,15 +119,12 @@ class PurchaseInvoiceFragment : Fragment() , TableViewInterface, PurchaseInvoice
         })
     }
 
-
-
     @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         MasterView = view;
         mTableView = view.findViewById(R.id.my_TableView)
         mProgressBar = view.findViewById(R.id.progressBar)
-        emptyReport = view.findViewById(R.id.empty_report_view)
         val submit:Button = view.findViewById(R.id.pi_submit_btn)
         totalItemText = view.findViewById(R.id.pi_total_items_value)
         beforeTaxText = view.findViewById(R.id.pi_before_tax_value)
@@ -313,7 +309,7 @@ class PurchaseInvoiceFragment : Fragment() , TableViewInterface, PurchaseInvoice
         }
 
 
-        initializeTableView(mTableView);
+        initializeTableView(view as ViewGroup);
 
        /* Handler(Looper.myLooper()!!).postDelayed({
 
@@ -515,13 +511,12 @@ class PurchaseInvoiceFragment : Fragment() , TableViewInterface, PurchaseInvoice
         mydb.close()
     }
 
-    private fun initializeTableView(tableView: TableView?) {
+    private fun initializeTableView(root: ViewGroup) {
 
-        // Create TableView Adapter
+        mTableView = root.findViewById(R.id.my_TableView)
         mTableAdapter = MyTableAdapter(context, this)
-        tableView?.setAdapter(mTableAdapter)
-        tableView?.tableViewListener = MyTableViewListener(tableView, this)
-
+        mTableView!!.setAdapter(mTableAdapter)
+        mTableView!!.tableViewListener = MyTableViewListener(mTableView, this)
     }
 
 
@@ -529,13 +524,28 @@ class PurchaseInvoiceFragment : Fragment() , TableViewInterface, PurchaseInvoice
     private fun reloadTableView(){
             userList = getInvoiceData()
             mTableAdapter!!.setUserList(userList)
-
             if(userList.isEmpty()){
                 mTableView?.visibility= View.GONE
             }else{
                 mTableView?.visibility= View.VISIBLE
             }
-            setTotalViews()
+
+           // mTableAdapter!!.notifyDataSetChanged()
+        mTableView!!.setColumnWidth(0,500)
+        mTableView!!.setColumnWidth(1,300)
+        mTableView!!.setColumnWidth(2,300)
+        mTableView!!.setColumnWidth(3,400)
+        mTableView!!.setColumnWidth(4,200)
+        mTableView!!.setColumnWidth(5,200)
+        mTableView!!.setColumnWidth(6,200)
+        mTableView!!.setColumnWidth(7,200)
+        mTableView!!.setColumnWidth(8,200)
+        mTableView!!.setColumnWidth(9,250)
+        mTableView!!.setColumnWidth(10,200)
+        mTableView!!.setColumnWidth(11,200)
+        mTableView!!.setColumnWidth(12,120)
+        setTotalViews()
+
         }
 
 

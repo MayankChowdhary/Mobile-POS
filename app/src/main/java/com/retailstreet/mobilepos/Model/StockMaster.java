@@ -10,6 +10,7 @@ import com.google.gson.annotations.SerializedName;
  * mayankchoudhary00@gmail.com
  */
 
+
 @Keep
 public class StockMaster {
     @SerializedName("STOCK_ID")

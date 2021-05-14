@@ -2,19 +2,13 @@ package com.retailstreet.mobilepos.Utils;
 
 import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.retailstreet.mobilepos.Controller.DBReadyCallback;
 import com.retailstreet.mobilepos.Database.TableDataInjector;
 import com.retailstreet.mobilepos.Model.DownloadcheckPojo;
-import com.retailstreet.mobilepos.View.ApplicationContextProvider;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.lang.reflect.Type;
 
 import okhttp3.RequestBody;
 import retrofit2.Call;
@@ -40,6 +34,7 @@ public class InstallationValidator  {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), jsonObject2.toString());
         Call<DownloadcheckPojo> call1 = apiService.Check_Before_Download_Data(Constants.Authorization, body);
         call1.enqueue(new Callback<DownloadcheckPojo>() {
@@ -79,7 +74,7 @@ public class InstallationValidator  {
                 }
                 else {
                     new TableDataInjector(context, StoreID,activity);
-                    if(response.code()==417) {
+                   /* if(response.code()==417) {
                         Gson gson = new Gson();
                         Type type = new TypeToken<DownloadcheckPojo>() {
                         }.getType();
@@ -93,7 +88,7 @@ public class InstallationValidator  {
                         }
                         else
                             Toast.makeText(ApplicationContextProvider.getContext(), "Unknown Error", Toast.LENGTH_SHORT).show();
-                    }
+                    }*/
 
                 }
             }

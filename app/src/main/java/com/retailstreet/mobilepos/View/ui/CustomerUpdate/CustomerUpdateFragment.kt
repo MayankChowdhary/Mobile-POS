@@ -101,7 +101,7 @@ class CustomerUpdateFragment : Fragment() {
 
         val creditCustTitle: TextView = view.findViewById(R.id.cu_credit_type_title)
         creditCustTitle.isSelected = true
-        val creditCustArray:Array<String> = arrayOf("0", "1")
+        val creditCustArray:Array<String> = arrayOf("NO","YES")
         val creditCustSelector: Spinner = view.findViewById(R.id.cu_credit_type_value)
         val creditCustAdapter: ArrayAdapter<String> = context?.let { ArrayAdapter(it, R.layout.spinner_layout_center_box, creditCustArray) }!!
         creditCustAdapter.setDropDownViewResource(R.layout.spinner_layout_centre)
@@ -143,7 +143,7 @@ class CustomerUpdateFragment : Fragment() {
                     custPanEdtText.setText(customerData[3])
                     custGstEdtText.setText(customerData[4])
                     custTypeSelector.setSelection(getIndex(custTypeSelector, customerData[5]))
-                    val spinnerPosition: Int = creditCustAdapter.getPosition(customerData[6])
+                    val spinnerPosition: Int =customerData[6].toInt()
                     creditCustSelector.setSelection(spinnerPosition)
                     custGuid = customerData[7]
                     custAdvanceOld = customerData[8]
@@ -215,6 +215,11 @@ class CustomerUpdateFragment : Fragment() {
         creditCustSelector.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
                 custCreditType = parent.getItemAtPosition(position) as String
+                custCreditType = if(custCreditType == "NO"){
+                    "0"
+                }else{
+                    "1"
+                }
                 Log.d("CreditTypeSelected", "onItemSelected: Tag= $custCreditType")
             }
             override fun onNothingSelected(parent: AdapterView<*>?) {}

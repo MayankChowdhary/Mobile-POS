@@ -202,7 +202,7 @@ public class SQLiteDbBuilder {
 
 
 
-        cartList= new ArrayList<>(Arrays.asList("STOCK_ID","PROD_NM","count","MRP","S_PRICE","SALESDISCOUNTBYAMOUNT","GST","SGST","CGST","QTY" ));
+        cartList= new ArrayList<>(Arrays.asList("STOCK_ID","PROD_NM","count","MRP","S_PRICE","SALESDISCOUNTBYPERCENTAGE","GST","SGST","CGST","QTY" ));
         cartList_Pk= new ArrayList<>(Collections.singletonList("STOCK_ID"));
         getJSON();
 

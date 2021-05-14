@@ -221,8 +221,11 @@ public class ControllerPurchaseInvoice {
             String  SALE_UOMID  = getFromProductMaster(itemGuid,"UOM_GUID");
             String  UOM = getFromProductMaster(itemGuid,"UOM");
             String  BATCH_NO = getFromStockMaster(itemGuid,"BATCH_NO");
+            String DiscAmount = getFromTempPurchase(itemGuid,"DISC");
             String  P_PRICE = getFromTempPurchase(itemGuid, "P_PRICE");
             String  S_PRICE = getFromTempPurchase(itemGuid, "MRP");
+            String DiscByPer = new DecimalFormat("#.##").format((Double.parseDouble(DiscAmount)/ Double.parseDouble(S_PRICE))*100);
+
             String  INTERNET_PRICE  = getFromStockMaster(itemGuid,"INTERNET_PRICE");
             if(INTERNET_PRICE.trim().isEmpty()){
                 INTERNET_PRICE = S_PRICE;
@@ -265,11 +268,11 @@ public class ControllerPurchaseInvoice {
 
             if(stockID.isEmpty())
             {
-                new ControllerStockMaster(context).InjectIntoStockMasterFromPurcaheInvoice(vendor_name, VENDOR_GUID, USER_GUID, ITEM_CODE, PROD_NM,EXP_DATE, CESS1, CESS2, GST, SGST, IGST, CGST, EXTERNALPRODUCTID, GENERIC_NAME, SPEC_PRICE, WHOLE_SPRICE,MIN_QUANTITY, MAX_QUANTITY, INTERNET_PRICE, S_PRICE, MRP, P_PRICE,BARCODE, BATCH_NO, UOM, itemGuid, QTY, SALE_UOMID,GRNDETAILGUID,GRN_GUID,GRNNO);
+                new ControllerStockMaster(context).InjectIntoStockMasterFromPurcaheInvoice(vendor_name, VENDOR_GUID, USER_GUID, ITEM_CODE, PROD_NM,EXP_DATE, CESS1, CESS2, GST, SGST, IGST, CGST, EXTERNALPRODUCTID, GENERIC_NAME, SPEC_PRICE, WHOLE_SPRICE,MIN_QUANTITY, MAX_QUANTITY, INTERNET_PRICE, S_PRICE, MRP, P_PRICE,BARCODE, BATCH_NO, UOM, itemGuid, QTY, SALE_UOMID,GRNDETAILGUID,GRN_GUID,GRNNO,DiscByPer,DiscAmount);
             }else{
                 String oldQty = getFromStockMaster1(stockID,"QTY" );
                 String newQty = String.valueOf(Double.parseDouble(oldQty)+Double.parseDouble(QTY));
-                new ControllerStockMaster(context).updateStockMasterFromPurchaseInvoice(stockID,VENDOR_GUID,vendor_name,PROD_NM,EXTERNALPRODUCTID,BARCODE,EXP_DATE,MRP,S_PRICE,P_PRICE,newQty,CGST,SGST,USER_GUID,GRNDETAILGUID,GRN_GUID,GRNNO);
+                new ControllerStockMaster(context).updateStockMasterFromPurchaseInvoice(stockID,VENDOR_GUID,vendor_name,PROD_NM,EXTERNALPRODUCTID,BARCODE,EXP_DATE,MRP,S_PRICE,P_PRICE,newQty,CGST,SGST,USER_GUID,GRNDETAILGUID,GRN_GUID,GRNNO,DiscByPer,DiscAmount);
             }
         } catch (Exception e) {
             e.printStackTrace();

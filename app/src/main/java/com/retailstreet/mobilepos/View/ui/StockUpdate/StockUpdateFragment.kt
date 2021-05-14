@@ -278,7 +278,9 @@ class StockUpdateFragment : Fragment() , DatePickerDialog.OnDateSetListener {
                 Toast.makeText(context, "Please fill up all Mandatory (*) fields first!", Toast.LENGTH_LONG).show();
                 return@setOnClickListener
             }
+
             ControllerStockMaster(context).updateStockMaster(stockId,vendorGuid,vendorName,productName,extProdId,barcode,expiryDate,mrp,sprice,pprice,quantity,cgst,sgst)
+            ControllerStockMaster(context).generateStockRegister(stockId,quantity)
             val alertDialog = LottieAlertDialogs.Builder(context, DialogTypes.TYPE_SUCCESS)
                     .setTitle("Stock Updated")
                     .setDescription("Successful!")
@@ -289,17 +291,13 @@ class StockUpdateFragment : Fragment() , DatePickerDialog.OnDateSetListener {
                         override fun onClick(dialog: LottieAlertDialogs) {
                             dialog.dismiss()
                             stockSearchSelector.setSelection(0)
-
                         }
-
                     })
                     .build()
             alertDialog.setCancelable(false)
             alertDialog.show()
 
         }
-
-
 
 
     }

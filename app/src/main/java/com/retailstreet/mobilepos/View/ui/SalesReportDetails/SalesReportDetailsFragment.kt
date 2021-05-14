@@ -39,6 +39,7 @@ class SalesReportDetailsFragment : Fragment() {
     private var billno:String = ""
     private var masterId:String =""
     var billPayData:HashMap<String, String> = HashMap<String, String>()
+    var PayLedgerData:HashMap<String, String> = HashMap<String, String>()
 
     private lateinit var viewModel: SalesReportDetailsViewModel
 
@@ -67,7 +68,6 @@ class SalesReportDetailsFragment : Fragment() {
         emptyReport = view.findViewById(R.id.empty_report_view)
         initializeTableView(mTableView)
 
-
     }
 
     private fun initializeTableView(tableView: TableView?) {
@@ -80,6 +80,8 @@ class SalesReportDetailsFragment : Fragment() {
         thread {
             userList = getSalesDetailsData(billno)
             billPayData=getPayModeDetails(masterId)
+            PayLedgerData = getPayLedgerDetails(billno)
+
             requireActivity().runOnUiThread(Runnable {
                 // Stuff that updates the UI
                 mTableAdapter!!.setUserList(userList)
@@ -95,6 +97,15 @@ class SalesReportDetailsFragment : Fragment() {
                     tv.layoutParams = lparams
                     tv.setTextColor(color);
                     tv.text = getPayMode(key) + "\n" + billPayData[key] + " ₹"
+                    payModeLayout!!.addView(tv)
+                }
+
+                for (key in PayLedgerData.keys) {
+                    println("Element at key $key = ${PayLedgerData[key]}")
+                    val tv = TextView(context)
+                    tv.layoutParams = lparams
+                    tv.setTextColor(color);
+                    tv.text = key+ "\n" + PayLedgerData[key] + " ₹"
                     payModeLayout!!.addView(tv)
                 }
 
@@ -154,6 +165,46 @@ class SalesReportDetailsFragment : Fragment() {
             while (!cursor.isAfterLast) {
                 hashMap.put(cursor.getString(0), cursor.getString(1))
                 Log.d("PayMoodeRetrieved", "getCreditDetails: " + cursor.getString(0))
+                cursor.moveToNext()
+            }
+        }
+        cursor.close()
+        mydb.close()
+        return hashMap
+    }
+
+    private fun getPayLedgerDetails(billNo: String): HashMap<String, String> {
+        val hashMap:HashMap<String, String> = HashMap<String, String>()
+        val mydb = requireContext().openOrCreateDatabase("MasterDB", Context.MODE_PRIVATE, null)
+        val cursor = mydb.rawQuery("select ADDITIONALPARAM6, GRANDTOTAL from customerLedger where BILLNO = '$billNo'", null)
+        if (cursor.moveToFirst()) {
+            while (!cursor.isAfterLast) {
+                val advance:String = cursor.getString(0)
+                val credit:String = cursor.getString(1)
+
+                if(advance.trim().isNotEmpty()){
+
+                    try {
+                        if(advance.toDouble()>0){
+                            hashMap.put("ADVANCE", advance)
+                            Log.d("PayMoodeRetrieved", "getCreditDetails: ADVANACE $advance")
+                        }
+                    } catch (e: Exception) {
+                    }
+
+                }
+
+                if(credit.trim().isNotEmpty()){
+
+                    try {
+                        if(credit.toDouble()>0){
+                            hashMap.put("CREDIT", credit)
+                            Log.d("PayMoodeRetrieved", "getCreditDetails: CREDIT $credit")
+                        }
+                    } catch (e: Exception) {
+                    }
+                }
+
                 cursor.moveToNext()
             }
         }

@@ -86,16 +86,10 @@ public class MyTableViewModel {
                 return Gravity.CENTER;
             // Address
             case 11:
-                return Gravity.LEFT;
+                return Gravity.CENTER;
             // Zip Code
             case 12:
                 return Gravity.CENTER;
-            // Phone
-            case 13:
-                return Gravity.RIGHT;
-            // Fax
-            case 14:
-                return Gravity.RIGHT;
             default:
                 return Gravity.LEFT;
         }
@@ -114,8 +108,8 @@ public class MyTableViewModel {
         list.add(new ColumnHeaderModel("MRP"));
         list.add(new ColumnHeaderModel("S.PRICE"));
         list.add(new ColumnHeaderModel("P.PRICE"));
-        list.add(new ColumnHeaderModel("QUANTITY"));
-        list.add(new ColumnHeaderModel("F.QUANTITY"));
+        list.add(new ColumnHeaderModel("QTY"));
+        list.add(new ColumnHeaderModel("F.QTY"));
         list.add(new ColumnHeaderModel("DISCOUNT"));
         list.add(new ColumnHeaderModel("UOM"));
         list.add(new ColumnHeaderModel("TOTAL"));

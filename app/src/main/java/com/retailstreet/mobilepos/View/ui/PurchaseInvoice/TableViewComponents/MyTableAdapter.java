@@ -117,6 +117,8 @@ public class MyTableAdapter extends AbstractTableAdapter<ColumnHeaderModel, RowH
 
     }
 
+
+
     @Override
     public int getColumnHeaderItemViewType(int position) {
         return 0;

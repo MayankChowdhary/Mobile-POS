@@ -27,6 +27,7 @@ import com.mikepenz.iconics.typeface.library.fontawesome.FontAwesome;
 import com.retailstreet.mobilepos.R;
 import com.retailstreet.mobilepos.View.ApplicationContextProvider;
 
+import java.text.DecimalFormat;
 import java.util.HashMap;
 
 /**
@@ -77,22 +78,22 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
             String mrp ="MRP: "+myListItem.getProduct_detail_2()+" ₹";
             String sp ="Price: "+myListItem.getProduct_detail_4()+" ₹";
             double discount = Double.parseDouble(myListItem.getProduct_detail_3());
-            String discountString = "Discount: "+myListItem.getProduct_detail_3()+" ₹";
+            String discountString = "Disc: "+new DecimalFormat("#.##").format(Double.parseDouble(myListItem.getProduct_detail_3()))+" %";
             qty = (int)Double.parseDouble(myListItem.getQty());
+            product_detail_3.setVisibility(View.GONE);
             if(discount==0){
-               product_detail_3.setVisibility(View.GONE);
-            }else {
+               //product_detail_3.setVisibility(View.GONE);
+                discountString = "";
+            }/*else {
                 product_detail_3.setText(discountString);
                 product_detail_3.setVisibility(View.VISIBLE);
-            }
+            }*/
 
             productTitle.setText(myListItem.getName());
             product_detail_2.setText(mrp);
-            product_detail_4.setText(sp);
+            product_detail_4.setText(sp+"   "+discountString);
             product_detail_V.setText(myListItem.getProduct_detail_v());
             sales_qty.setText("Avail: "+qty);
-
-
 
             String oc = orderList.get(myListItem.getPrimary());
             if(oc ==null) {
@@ -108,7 +109,7 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
 
             }
 
-            if(qty==0){
+            if(qty<=0){
 
                 sales_qty.setText("Unavailable!");
                 sales_qty.setVisibility(View.VISIBLE);
@@ -156,10 +157,12 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
                     int count= Integer.parseInt(countText);
 
                     if(count==qty) {
+
                         if(count==1)
                             Toast.makeText(ApplicationContextProvider.getContext(),"Sorry only "+qty+" quantity is available!",Toast.LENGTH_SHORT).show();
                         else
                             Toast.makeText(ApplicationContextProvider.getContext(),"Sorry only "+qty+" quantities are available!",Toast.LENGTH_SHORT).show();
+
                         return;
                     }
 
@@ -228,7 +231,7 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
             add_to_cart.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (qty==0){
+                    if (qty<=0){
 
                         Toast.makeText(ApplicationContextProvider.getContext(),"Sorry Item Unavailable!", Toast.LENGTH_SHORT).show();
                         return;
@@ -294,9 +297,9 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
 
     }
 
-    public static void putCartData(String id,String PROD_NM,String count,String MRP, String S_PRICE,String SALESDISCOUNTBYAMOUNT,String GST, String SGST, String CGST,String Qty){
+    public static void putCartData(String id,String PROD_NM,String count,String MRP, String S_PRICE,String SALESDISCOUNTBYPERCENTAGE,String GST, String SGST, String CGST,String Qty){
         try {
-            String query = "INSERT INTO cart (STOCK_ID,PROD_NM,count,MRP,S_PRICE,SALESDISCOUNTBYAMOUNT,GST,SGST,CGST,QTY ) VALUES('"+id+"', '"+PROD_NM+"','"+count+"','"+MRP+"', '"+S_PRICE+"','"+SALESDISCOUNTBYAMOUNT+"','"+GST+"','"+SGST+"','"+CGST+"','"+Qty+"');";
+            String query = "INSERT INTO cart (STOCK_ID,PROD_NM,count,MRP,S_PRICE,SALESDISCOUNTBYPERCENTAGE,GST,SGST,CGST,QTY ) VALUES('"+id+"', '"+PROD_NM+"','"+count+"','"+MRP+"', '"+S_PRICE+"','"+SALESDISCOUNTBYPERCENTAGE+"','"+GST+"','"+SGST+"','"+CGST+"','"+Qty+"');";
             SQLiteDatabase db = ApplicationContextProvider.getContext().openOrCreateDatabase("MasterDB", Context.MODE_PRIVATE, null);
             db.execSQL(query);
             db.close();

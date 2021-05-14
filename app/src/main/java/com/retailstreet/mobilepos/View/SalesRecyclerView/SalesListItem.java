@@ -117,7 +117,7 @@ public class SalesListItem {
         SalesListItem salesListItem = new SalesListItem();
         salesListItem.setName(cursor.getString(25));
         salesListItem.setProduct_detail_2(cursor.getString(9));
-        salesListItem.setProduct_detail_3(cursor.getString(32));
+        salesListItem.setProduct_detail_3(cursor.getString(31));
         salesListItem.setProduct_detail_4(cursor.getString(10));
         salesListItem.setPrimary(cursor.getString(0));
         salesListItem.setProduct_detail_v("GST: "+cursor.getString(18)+"  SGST: "+cursor.getString(19)+"  CGST: "+cursor.getString(20));

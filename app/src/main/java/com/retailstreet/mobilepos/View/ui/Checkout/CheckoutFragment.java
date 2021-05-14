@@ -102,6 +102,20 @@ public class CheckoutFragment extends Fragment {
         payement.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+               String  discTemp =addDiscEditText.getText().toString().trim();
+
+               if(!discTemp.isEmpty()){
+
+                   if(Double.parseDouble(discTemp) != Double.parseDouble(addDiscount)){
+
+                       Toast.makeText(getContext(),"Incorrect Addition Discount",Toast.LENGTH_LONG).show();
+                       Vibration.Companion.vibrate(300);
+                       return;
+                   }
+               }
+
+
                 CheckoutFragmentDirections.ActionNavCheckoutToPayment actionNavCheckoutToPayment= CheckoutFragmentDirections.actionNavCheckoutToPayment(totalAmount,customerId,DeliveryGuidString,false,creditBalance,addDiscount);
                 Navigation.findNavController(requireActivity(),R.id.nav_host_fragment).navigate(actionNavCheckoutToPayment);
 

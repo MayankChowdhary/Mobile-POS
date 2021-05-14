@@ -129,7 +129,6 @@ public class BillGenerator {
         NO_OF_ITEMS = String.valueOf(orderList.size());
         billNumber = getBillNumber();
         billMasterId = getTimeStamp();
-        BILLMASTERGUID = IDGenerator.getUUID();
         RECEIVED_CASH = receivedCash;
         BALANCE_CASH=balanceCash;
         DELIVERY_TYPE_GUID = deliveryTypeGuid;
@@ -146,7 +145,6 @@ public class BillGenerator {
             GenerateBillDetails(key,count,isCreditBill);
             setNewQuantity(key);
         }
-
 
        GenerateBillMaster(customerID, additionDisc);
         GenerateBillPayDetail(payModeData);
@@ -223,6 +221,7 @@ public class BillGenerator {
             if(SGST.isEmpty()) {
                 SGST = "0.00";
             }
+
             if(CGST.isEmpty()){
                 CGST="0.00";
             }
@@ -255,7 +254,7 @@ public class BillGenerator {
        TRANSACTIONNUMBER = billNumber;
        String TRANSACTIONDATE = BILLDATE;
        String BARCODE = getFromStockMaster(orderid,"BARCODE");
-       String SALESPRICE = TOTALVALUE ;
+       String SALESPRICE = getFromStockMaster(orderid, "S_PRICE");
        String  WHOLESALEPRICE = getFromStockMaster(orderid, "WHOLE_SPRICE");
        String INTERNETPRICE = getFromStockMaster(orderid, "INTERNET_PRICE");
        String SPECIALPRICE = getFromStockMaster(orderid, "SPEC_PRICE");
@@ -301,6 +300,7 @@ public class BillGenerator {
 
         try {
             SALEDATE = getSaleDate();
+            BILLMASTERGUID = IDGenerator.getUUID();
             SALETIME = getSaleTime();
             if(custId!=null && !custId.isEmpty())
             MASTERCUSTOMERGUID = custId;
@@ -727,7 +727,7 @@ public class BillGenerator {
         double total = 0; // Your default if none is found
         try {
             SQLiteDatabase  mydb  = context.openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
-            String query = "select SALESDISCOUNTBYAMOUNT, count from cart WHERE STOCK_ID = '"+stockID+"'";
+            String query = "select SALESDISCOUNTBYPERCENTAGE, count, S_PRICE from cart WHERE STOCK_ID = '"+stockID+"'";
             Cursor result = mydb.rawQuery( query, null );
 
             if(result==null)
@@ -736,7 +736,11 @@ public class BillGenerator {
             total = 0.0;
             for (result.moveToFirst(); !result.isAfterLast(); result.moveToNext()) {
                 double discount = Double.parseDouble(result.getString(0));
+                Log.d("Disc Calcu", "getDiscountValue: "+discount);
+                double sprice = Double.parseDouble(result.getString(2));
+                Log.d("Disc Calcu", "getDiscountValue: "+sprice);
                 int itemcount= Integer.parseInt(result.getString(1));
+                discount =  Math.floor(((discount*sprice)/100) * 100) / 100;
                 total += discount*itemcount;
             }
             result.close();

@@ -156,7 +156,7 @@ public class ControllerCustomerReturn {
         }else {
             Price = getFromStockMaster(key, "S_PRICE");
         }
-        String SALESPRICE = String.valueOf( Double.parseDouble(Price)*Double.parseDouble(count) );
+        String SALESPRICE = Price;
         String QTY = count;
         String WHOLESALEPRICE = getFromStockMaster(key, "WHOLE_SPRICE");
         String INTERNETPRICE = getFromStockMaster(key, "INTERNET_PRICE");

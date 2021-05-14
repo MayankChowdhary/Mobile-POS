@@ -67,15 +67,13 @@ public class CartListAdapter extends CustomRecyclerViewAdapter<CartListAdapter.V
         totalItems_view.setText(orderList.size()+" Item(s)");*/
 
 
-
-
         checkout_btn.setOnClickListener(v -> {
 
             String totalItem = String.valueOf(orderList.size());
             String amntBefore = getAmountBefore() ;
             String discount = getTotalDiscount();
             String gst = getTotalGST();
-            String grand = String.valueOf(Double.parseDouble(amntBefore)-Double.parseDouble(discount)+Double.parseDouble(gst));
+            String grand = new DecimalFormat("#.##").format(Double.parseDouble(amntBefore)-Double.parseDouble(discount)+Double.parseDouble(gst));
 
             CartFragmentDirections.ActionNavCartToCheckoutFragment action= CartFragmentDirections.actionNavCartToCheckoutFragment(totalItem, amntBefore, discount,gst,grand);
             Navigation.findNavController(myActivity,R.id.nav_host_fragment).navigate(action);
@@ -296,18 +294,16 @@ public class CartListAdapter extends CustomRecyclerViewAdapter<CartListAdapter.V
             String mrp ="MRP: "+myListItem.getProduct_detail_2()+" ₹";
             String sp ="Price: "+myListItem.getProduct_detail_4()+" ₹";
             double discount = Double.parseDouble(myListItem.getProduct_detail_3());
-            String discountString = "Discount: "+myListItem.getProduct_detail_3()+" ₹";
-            int qty = (int)Double.parseDouble(myListItem.getQty());
+            String discountString = "Disc: "+new DecimalFormat("#.##").format(Double.parseDouble(myListItem.getProduct_detail_3()))+" %";
 
+            int qty = (int)Double.parseDouble(myListItem.getQty());
+            product_detail_3.setVisibility(View.GONE);
             if(discount==0){
-                product_detail_3.setVisibility(View.GONE);
-            }else {
-                product_detail_3.setText(discountString);
-               product_detail_3.setVisibility(View.VISIBLE);
+                discountString = "";
             }
             productTitle.setText(myListItem.getName());
             product_detail_2.setText(mrp);
-            product_detail_4.setText(sp);
+            product_detail_4.setText(sp+"   "+discountString);
             product_detail_5.setText(myListItem.getProduct_detail_5());
             sales_qty.setText("Avail: "+qty);
 
@@ -414,6 +410,7 @@ public class CartListAdapter extends CustomRecyclerViewAdapter<CartListAdapter.V
                 int itemcount= Integer.parseInt(count);
                 total += itemprice*itemcount;
             return String.valueOf(total);
+
         } catch (NumberFormatException e) {
             e.printStackTrace();
         }
@@ -427,7 +424,7 @@ public class CartListAdapter extends CustomRecyclerViewAdapter<CartListAdapter.V
             String dis = new BillGenerator().getDiscountValue(key);
             totalDis += Double.parseDouble(dis);
         }
-        return String.valueOf(totalDis);
+        return new DecimalFormat("#.##").format(totalDis);
 
     }
     public String getTotalGST(){

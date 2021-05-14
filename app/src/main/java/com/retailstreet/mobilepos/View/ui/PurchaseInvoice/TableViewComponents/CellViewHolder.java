@@ -43,7 +43,12 @@ public class CellViewHolder extends AbstractViewHolder implements DatePickerDial
         // Change textView align by column
         cellId = p_jModel.getId();
         masterID = String.valueOf(pColumnPosition);
-        cell_textview.setGravity( Gravity.START | Gravity.CENTER_VERTICAL);
+        if(pColumnPosition==0||pColumnPosition==1||pColumnPosition==2||pColumnPosition==3) {
+            cell_textview.setGravity(Gravity.START | Gravity.CENTER_VERTICAL);
+        }
+        else {
+            cell_textview.setGravity(Gravity.CENTER);
+        }
 
         // Set text
         cell_textview.setText(String.valueOf(p_jModel.getData()));

@@ -9,6 +9,7 @@ import android.util.Log;
 
 import com.retailstreet.mobilepos.Model.StockMaster;
 import com.retailstreet.mobilepos.Model.StockMasterSync;
+import com.retailstreet.mobilepos.Model.StockRegister;
 import com.retailstreet.mobilepos.Utils.IDGenerator;
 import com.retailstreet.mobilepos.Utils.WorkManagerSync;
 import com.retailstreet.mobilepos.View.ApplicationContextProvider;
@@ -19,6 +20,8 @@ import java.util.Date;
 import java.util.Locale;
 
 import static android.content.Context.MODE_PRIVATE;
+import static com.retailstreet.mobilepos.Utils.Constants.DBNAME;
+
 /**
  * Created by Mayank Choudhary on 07-05-2021.
  * mayankchoudhary00@gmail.com
@@ -127,7 +130,7 @@ public class ControllerStockMaster extends SQLiteOpenHelper {
 
     }
 
-    public void  InjectIntoStockMasterFromPurcaheInvoice(String vendor_name, String vendor_guid, String userGuid, String itemCode, String prodName, String ExpDate, String cess1, String cess2, String gst, String sgst, String igst, String cgst, String extProdId, String genricName, String spec_price, String wholePrice, String minQty, String maxQty, String internetPrice, String s_price, String mrp, String p_price, String barcode, String batch_no, String uom, String itemGuid, String qty, String uomGuid,String grnDetailGuid,String grnguid,String grnno){
+    public void  InjectIntoStockMasterFromPurcaheInvoice(String vendor_name, String vendor_guid, String userGuid, String itemCode, String prodName, String ExpDate, String cess1, String cess2, String gst, String sgst, String igst, String cgst, String extProdId, String genricName, String spec_price, String wholePrice, String minQty, String maxQty, String internetPrice, String s_price, String mrp, String p_price, String barcode, String batch_no, String uom, String itemGuid, String qty, String uomGuid,String grnDetailGuid,String grnguid,String grnno, String discByPer, String discByAmount){
         this.context =ApplicationContextProvider.getContext();
         STOCK_ID= IDGenerator.getTimeStamp();
         STORE_GUID = getFromRetailStore("STORE_GUID");
@@ -160,8 +163,8 @@ public class ControllerStockMaster extends SQLiteOpenHelper {
         UPDATEDBY = userGuid;
         CREATED_ON = getStockDateAndTime();
         UPDATEDON = getStockDateAndTime();
-        SALESDISCOUNTBYPERCENTAGE = "0.00";
-        SALESDISCOUNTBYAMOUNT = "0.00";
+        SALESDISCOUNTBYPERCENTAGE = discByPer;
+        SALESDISCOUNTBYAMOUNT = discByAmount;
         GRN_GUID = grnguid ;
         GRNNO = grnno;
         VENDOR_GUID = vendor_guid;
@@ -248,7 +251,6 @@ public class ControllerStockMaster extends SQLiteOpenHelper {
             db.update("retail_str_stock_master", contentValues, where, whereArgs);
             db.close();
             Log.d("Updation Successful", "UpdateStockMaster: ");
-
             try {
                 new WorkManagerSync(4);
             } catch (Exception e) {
@@ -260,8 +262,72 @@ public class ControllerStockMaster extends SQLiteOpenHelper {
         }
     }
 
-    public void updateStockMasterFromPurchaseInvoice(String stockid,String VENDOR_GUID,String VENDOR_NAME, String  PROD_NM,String  EXTERNALPRODUCTID,String  BARCODE,String  EXP_DATE,String  MRP,String S_PRICE,String P_PRICE,String QTY,String CGST,String SGST,String USER_GUID,String GrndetailGuid, String grnGuid,String grnno){
+
+    public void generateStockRegister(String orderid , String count){
+
+        String  REGISTERGUID = IDGenerator.getUUID();
+        String  MASTERORG_GUID = getFromRetailStore("MASTERORG_GUID");
+        String VENDOR_GUID = getFromStockMaster(orderid,"VENDOR_GUID");
+        String LINETYPE = "CREDIT";
+        QTY = count;
+        ITEM_GUID = getFromStockMaster(orderid,"ITEM_GUID");
+        String BATCHNO = getFromStockMaster(orderid,"BATCH_NO");
+        String UOM_GUID = getFromProductMaster(ITEM_GUID,"UOM_GUID");
+        STORE_GUID  = getFromRetailStore("STORE_GUID");
+        String TRANSACTIONTYPE = "STOCK ADJUSTMENT";
+        String TRANSACTIONNUMBER = IDGenerator.getTimeStamp();
+        String TRANSACTIONDATE = getStockDateAndTime();
+        String BARCODE = getFromStockMaster(orderid,"BARCODE");
+        String SALESPRICE = getFromStockMaster(orderid, "S_PRICE");
+        String  WHOLESALEPRICE = getFromStockMaster(orderid, "WHOLE_SPRICE");
+        String INTERNETPRICE = getFromStockMaster(orderid, "INTERNET_PRICE");
+        String SPECIALPRICE = getFromStockMaster(orderid, "SPEC_PRICE");
+        ISSYNCED ="0";
+        StockRegister stockRegister = new StockRegister(REGISTERGUID, MASTERORG_GUID, STORE_GUID, VENDOR_GUID, LINETYPE, TRANSACTIONTYPE, TRANSACTIONNUMBER, TRANSACTIONDATE, ITEM_GUID, UOM_GUID, QTY, BATCHNO, BARCODE, SALESPRICE, WHOLESALEPRICE, INTERNETPRICE, SPECIALPRICE, ISSYNCED);
+        InsertStockRegister(stockRegister);
+        try {
+            new WorkManagerSync(10);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public void InsertStockRegister(StockRegister prod) {
+        try {
+
+            SQLiteDatabase myDataBase = context.openOrCreateDatabase(DBNAME, Context.MODE_PRIVATE, null);
+            ContentValues contentValues = new ContentValues();
+            contentValues.put("REGISTERGUID", prod.getREGISTERGUID());
+            contentValues.put("MASTERORG_GUID", prod.getMASTERORG_GUID());
+            contentValues.put("STORE_GUID", prod.getSTORE_GUID());
+            contentValues.put("VENDOR_GUID", prod.getVENDOR_GUID());
+            contentValues.put("LINETYPE", prod.getLINETYPE());
+            contentValues.put("TRANSACTIONTYPE", prod.getTRANSACTIONTYPE());
+            contentValues.put("TRANSACTIONNUMBER", prod.getTRANSACTIONNUMBER());
+            contentValues.put("TRANSACTIONDATE", prod.getTRANSACTIONDATE());
+            contentValues.put("ITEM_GUID", prod.getITEM_GUID());
+            contentValues.put("UOM_GUID", prod.getUOM_GUID());
+            contentValues.put("QUANTITY", prod.getQUANTITY());
+            contentValues.put("BATCHNO", prod.getBATCHNO());
+            contentValues.put("BARCODE", prod.getBARCODE());
+            contentValues.put("SALESPRICE", prod.getSALESPRICE());
+            contentValues.put("WHOLESALEPRICE", prod.getWHOLESALEPRICE());
+            contentValues.put("INTERNETPRICE", prod.getINTERNETPRICE());
+            contentValues.put("SPECIALPRICE", prod.getSPECIALPRICE());
+            contentValues.put("ISSYNCED", prod.getISSYNCED());
+            myDataBase.insert("stock_register", null, contentValues);
+
+            myDataBase.close();
+            Log.d("Insertion Successful", "StockRegisters: ");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateStockMasterFromPurchaseInvoice(String stockid,String VENDOR_GUID,String VENDOR_NAME, String  PROD_NM,String  EXTERNALPRODUCTID,String  BARCODE,String  EXP_DATE,String  MRP,String S_PRICE,String P_PRICE,String QTY,String CGST,String SGST,String USER_GUID,String GrndetailGuid, String grnGuid,String grnno,String discByPer, String discByAmount){
         try{
+
             db = getWritableDatabase();
             UPDATEDON = getStockDateAndTime();
             ContentValues contentValues = new ContentValues();
@@ -282,6 +348,8 @@ public class ControllerStockMaster extends SQLiteOpenHelper {
             contentValues.put("UPDATEDBY",USER_GUID);
             contentValues.put("UPDATEDON",UPDATEDON);
             contentValues.put("GRNDETAILGUID",GrndetailGuid);
+            contentValues.put("SALESDISCOUNTBYPERCENTAGE",discByPer);
+            contentValues.put("SALESDISCOUNTBYAMOUNT", discByAmount);
             contentValues.put("ISSYNCED", "0");
 
             String where = "STOCK_ID=?";
@@ -365,6 +433,26 @@ public class ControllerStockMaster extends SQLiteOpenHelper {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
         Date date = new Date();
         return formatter.format(date);
+    }
+
+    private String getFromStockMaster( String stockid,String column) {
+        String result= null;
+        try {
+            SQLiteDatabase  mydb  = context.openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
+            result = "";
+            String selectQuery = "SELECT "+column+" FROM retail_str_stock_master where STOCK_ID = '"+stockid+"'";
+            Cursor cursor = mydb.rawQuery(selectQuery, null);
+            if (cursor.moveToFirst()) {
+
+                result= cursor.getString(0);
+            }
+            cursor.close();
+            mydb.close();
+            Log.d("DataRetrieved", "getFromStockMaster: "+column+": "+result);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
 
@@ -501,6 +589,28 @@ public class ControllerStockMaster extends SQLiteOpenHelper {
         }
         db.close();
         return returnval;
+    }
+
+    private String getFromProductMaster( String itemGuid, String column) {
+
+        String result = null;
+        try {
+            SQLiteDatabase mydb  = context.openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
+            result = "";
+            String selectQuery = "SELECT "+column+" FROM retail_store_prod_com where ITEM_GUID ='"+itemGuid+"'";
+            Cursor cursor = mydb.rawQuery(selectQuery, null);
+
+            if (cursor.moveToFirst()) {
+
+                result = cursor.getString(0);
+            }
+            cursor.close();
+            Log.d("DataRetrieved", "getFromProductMaster: "+column+":"+result);
+            mydb.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
     }
     
 }

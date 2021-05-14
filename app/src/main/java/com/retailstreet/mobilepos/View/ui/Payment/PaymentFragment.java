@@ -304,11 +304,8 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
             }
 
             if(!isCreditPay && Double.parseDouble(advance_amount)>0.00) {
-
                 updateCustomerAdvance(newAdvance,customerId);
             }
-
-
 
         });
     }
@@ -1413,5 +1410,8 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
         }
 
     }
+
+
+
 
 }

@@ -67,6 +67,7 @@ public class ControllerBillMaster {
         contentValues.put("BALANCE_CASH", billMaster.getBALANCE_CASH());
         contentValues.put("ROUND_OFF", billMaster.getROUND_OFF());
         contentValues.put("NETDISCOUNT", billMaster.getNETDISCOUNT());
+        contentValues.put("BILLMASTERGUID", billMaster.getBILLMASTERGUID());
         myDataBase.insert("retail_str_sales_master", null, contentValues);
         myDataBase.close(); // Closing database connection
     }

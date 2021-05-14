@@ -98,7 +98,7 @@ public class ControllerVendorReturn {
             String stockId = getFromStockMaster(itemGuid,"STOCK_ID");
             genearteVendorDetailReturn(key, itemGuid);
             UpdateQuantity(qty,stockId );
-            generateStockRegister(stockId,getLineTotalItemsAmount(qty,key),vendorGuid,qty);
+            generateStockRegister(stockId,vendorGuid,qty);
         }
 
         GRN_GUID = getFrom_tmp_vendor_return(lastKey,"GRN_GUID");
@@ -131,7 +131,7 @@ public class ControllerVendorReturn {
         for (String key : returnList.keySet()) {
             String  num = returnList.get(key);
             genearteVendorDetailReturn2(key);
-            generateStockRegister(key,getTotalAmountNoGRN(key),vendorGuid,num);
+            generateStockRegister(key,vendorGuid,num);
            UpdateQuantity(num, key);
         }
 
@@ -169,7 +169,7 @@ public class ControllerVendorReturn {
         InsertVendorDetailReturn(vendorDetailReturn);
     }
 
-    public void generateStockRegister(String orderid, String totalAmount, String vendorGuid, String quantity){
+    public void generateStockRegister(String orderid, String vendorGuid, String quantity){
 
         REGISTERGUID = IDGenerator.getUUID();
         MASTERORG_GUID = getFromRetailStore("MASTERORG_GUID");
@@ -184,8 +184,7 @@ public class ControllerVendorReturn {
         TRANSACTIONNUMBER = VENDOR_RETURNGUID;
          TRANSACTIONDATE = getCurrentDateAndTime();
          BARCODE = getFromStockMasterByID(orderid,"BARCODE");
-         //SALESPRICE = getFromStockMasterByID(orderid, "S_PRICE");
-        SALESPRICE = totalAmount;
+         SALESPRICE = getFromStockMasterByID(orderid, "S_PRICE");
           WHOLESALEPRICE = getFromStockMasterByID(orderid, "WHOLE_SPRICE");
          INTERNETPRICE = getFromStockMasterByID(orderid, "INTERNET_PRICE");
          SPECIALPRICE = getFromStockMasterByID(orderid, "SPEC_PRICE");
