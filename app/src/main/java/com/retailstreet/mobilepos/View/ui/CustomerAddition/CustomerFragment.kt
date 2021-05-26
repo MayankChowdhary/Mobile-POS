@@ -47,7 +47,6 @@ class CustomerFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         val custNameEdtText: EditText = view.findViewById(R.id.c_name__value)
         val custMobileEdtText: EditText = view.findViewById(R.id.c_mobile_value)
         val custEmailEdtText: EditText = view.findViewById(R.id.c_email_value)
@@ -301,7 +300,7 @@ class CustomerFragment : Fragment() {
 
        
     }
-    
+
 
     private fun getCustomerType(): List<StringWithTag> {
         val list: MutableList<StringWithTag> = ArrayList()

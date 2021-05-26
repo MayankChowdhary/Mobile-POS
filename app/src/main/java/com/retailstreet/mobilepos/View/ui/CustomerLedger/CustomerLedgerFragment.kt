@@ -48,7 +48,6 @@ class CustomerLedgerFragment : Fragment() {
         custGuid = myArgs.custGuid
         getLedgerDetails(custGuid,getFromMasterCustomer(custGuid,"NAME"))
 
-
         LegacyTableView.insertLegacyTitle("NAME", "DATE", "PAYMODE","ADVANCE AMOUNT", "CREDIT AMOUNT","DEBIT AMOUNT")
         //set table contents as string arrays
         //set table contents as string arrays

@@ -121,13 +121,13 @@ public class BillGenerator {
             context = ApplicationContextProvider.getContext();
         }
 
-    public BillGenerator( String customerID, String receivedCash,String balanceCash, String deliveryTypeGuid, HashMap<String , String[]> payModeData, String additionDisc, String redeemNumber,double advanceAmount) {
+    public BillGenerator( String customerID, String receivedCash,String balanceCash, String deliveryTypeGuid, HashMap<String , String[]> payModeData, String additionDisc, String redeemNumber,double advanceAmount, String billnum) {
         context = ApplicationContextProvider.getContext();
         GetSetFromPrefs();
         initMap();
         context = ApplicationContextProvider.getContext();
         NO_OF_ITEMS = String.valueOf(orderList.size());
-        billNumber = getBillNumber();
+        billNumber = billnum;
         billMasterId = getTimeStamp();
         RECEIVED_CASH = receivedCash;
         BALANCE_CASH=balanceCash;
@@ -190,7 +190,7 @@ public class BillGenerator {
             CATEGORY_GUID = getFromProductMaster(itemGuid,"CATEGORY_GUID");
             SUBCAT_GUID = getFromProductMaster(itemGuid,"SUB_CATEGORYGUID");
             ITEM_CODE = getFromProductMaster(itemGuid,"ITEM_CODE");
-            QTY = count+".0000";
+            QTY = count+".00";
             UOM_GUID = getFromProductMaster(itemGuid,"UOM_GUID");
             BATCHNO = getFromStockMaster(orderid,"BATCH_NO");
             COST_PRICE = getFromStockMaster(orderid,"P_PRICE");
@@ -246,6 +246,11 @@ public class BillGenerator {
                     e.printStackTrace();
                 }
             }
+
+            String prodName =  getFromProductMaster(itemGuid,"PROD_NM");
+            String S_PRICE = getSalePrice(orderid);
+            InsertBillPreviewTable(prodName,MRP,S_PRICE,QTY,TOTALVALUE);
+
        String  REGISTERGUID = IDGenerator.getUUID();
        String  MASTERORG_GUID = getFromRetailStore("MASTERORG_GUID");
        String VENDOR_GUID = getFromStockMaster(orderid,"VENDOR_GUID");
@@ -418,7 +423,7 @@ public class BillGenerator {
         return String.valueOf(timeMilli);
     }
 
-    private String getBillNumber() {
+    public String getBillNumber() {
 
         int count= 0;
         try {
@@ -752,6 +757,26 @@ public class BillGenerator {
 
     }
 
+    public String getSalePrice(String stockID){
+        String  sprice = "0.00"; // Your default if none is found
+        try {
+            SQLiteDatabase  mydb  = context.openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
+            String query = "select S_PRICE from cart WHERE STOCK_ID = '"+stockID+"'";
+            Cursor result = mydb.rawQuery( query, null );
+
+            if(result.moveToFirst())
+                sprice = result.getString(0);
+
+            result.close();
+            mydb.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return sprice;
+
+    }
+
     private void initMap(){
         try {
             orderList.clear();
@@ -868,4 +893,12 @@ public class BillGenerator {
 
         return creditLimit;
     }
+
+    private void InsertBillPreviewTable(String prodName, String MRP, String SPRICE, String QTY, String TOTAL){
+        SQLiteDatabase mydb = ApplicationContextProvider.getContext().openOrCreateDatabase("MasterDB", Context.MODE_PRIVATE, null);
+        String sql = "INSERT INTO tmp_bill_preview VALUES('"+prodName+"','"+MRP+"','"+SPRICE+"','"+QTY+"','"+TOTAL+"')";
+        mydb.execSQL(sql);
+         mydb.close();
+    }
+
 }

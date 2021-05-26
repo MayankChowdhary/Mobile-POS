@@ -3,6 +3,7 @@ package com.retailstreet.mobilepos.View.ui.Checkout;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -11,6 +12,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -72,6 +74,7 @@ public class CheckoutFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         checkoutViewModel = new ViewModelProvider(this).get(CheckoutViewModel.class);
         View root = inflater.inflate(R.layout.fragment_checkout, container, false);
+        setHasOptionsMenu(true); // Add this!
         spinnerSelected = new StringWithTag("","");
         totalItemView = root.findViewById(R.id.item_value);
         amountBeforeView= root.findViewById(R.id.amount_before_value);
@@ -260,10 +263,23 @@ public class CheckoutFragment extends Fragment {
 
         super.onCreateOptionsMenu(menu, inflater);
 
+        MenuItem mAddCust = menu.findItem(R.id.addCust);
+        mAddCust.setVisible(true);
+        mAddCust.getIcon().setTint(Color.parseColor("#ffffff"));
+
     }
 
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.addCust) {
+            Navigation.findNavController(requireActivity(),R.id.nav_host_fragment).navigate(R.id.action_nav_checkout_to_nav_customer);
+            return true;
+        }else {
+            return super.onOptionsItemSelected(item);
+        }
 
 
+    }
 
     private List<StringWithTag> getSpinnerItems(){
         List<StringWithTag> list = new ArrayList<StringWithTag>();

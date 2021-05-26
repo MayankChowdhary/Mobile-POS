@@ -28,9 +28,12 @@ import com.retailstreet.mobilepos.Utils.StringWithTag
 import com.retailstreet.mobilepos.Utils.Vibration
 import com.retailstreet.mobilepos.View.dialog.ClickListeners
 import com.retailstreet.mobilepos.View.dialog.LottieAlertDialogs
+import com.retailstreet.mobilepos.View.ui.PurchaseInvoice.PurchaseInvoiceEditDialog
+import com.retailstreet.mobilepos.View.ui.PurchaseInvoice.PurchaseInvoiceViewModel
 import com.retailstreet.mobilepos.View.ui.PurchaseInvoice.TableViewComponents.MyTableAdapter
 import com.retailstreet.mobilepos.View.ui.PurchaseInvoice.TableViewComponents.MyTableViewListener
 import com.retailstreet.mobilepos.View.ui.PurchaseInvoice.TableViewComponents.User
+import com.retailstreet.mobilepos.View.ui.PurchaseInvoice.TableViewInterface
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner
 import java.text.DecimalFormat
 import java.util.*
@@ -209,7 +212,19 @@ class PurchaseInvoiceFragment : Fragment() , TableViewInterface, PurchaseInvoice
                     val day = c.get(Calendar.DAY_OF_MONTH)
                     val dpd = DatePickerDialog(requireContext(), { view, year, monthOfYear, dayOfMonth ->
 
-                        invoiceDate = "$year-$monthOfYear-$dayOfMonth"
+                        var monthx:String = (monthOfYear+1).toString()
+                        var dayx:String = dayOfMonth.toString()
+
+                        if(monthOfYear+1 < 10){
+
+                            monthx = "0"+(monthOfYear+1)
+                        }
+                        if(dayOfMonth < 10){
+
+                            dayx  = "0$dayOfMonth";
+                        }
+
+                        invoiceDate = "$year-$monthx-$dayx"
                         invoiceDateSelector.setText(invoiceDate)
 
                         //Toast.makeText(context,"Day"+ dayOfMonth + "MOnth: " + monthOfYear + "Year" + year,Toast.LENGTH_LONG).show()
@@ -224,6 +239,7 @@ class PurchaseInvoiceFragment : Fragment() , TableViewInterface, PurchaseInvoice
             }
             true
         }
+
 
         fun doViewsEmpty() {
             userList= emptyList();
@@ -318,6 +334,7 @@ class PurchaseInvoiceFragment : Fragment() , TableViewInterface, PurchaseInvoice
         }, 400)*/
 
     }
+
 
     private fun setTotalViews(){
 
@@ -477,7 +494,7 @@ class PurchaseInvoiceFragment : Fragment() , TableViewInterface, PurchaseInvoice
                     cursor.moveToNext()
                 }
             }
-            Log.d("SalesTable", "getSalesDetails: Successfully Fetched: " + cursor.count)
+            Log.d("PurTable", "getPuchaseDetails: Successfully Fetched: Size " + cursor.count)
             cursor.close()
             mydb.close()
         } catch (e: Exception) {
@@ -530,20 +547,29 @@ class PurchaseInvoiceFragment : Fragment() , TableViewInterface, PurchaseInvoice
                 mTableView?.visibility= View.VISIBLE
             }
 
-           // mTableAdapter!!.notifyDataSetChanged()
-        mTableView!!.setColumnWidth(0,500)
-        mTableView!!.setColumnWidth(1,300)
-        mTableView!!.setColumnWidth(2,300)
-        mTableView!!.setColumnWidth(3,400)
-        mTableView!!.setColumnWidth(4,200)
-        mTableView!!.setColumnWidth(5,200)
-        mTableView!!.setColumnWidth(6,200)
-        mTableView!!.setColumnWidth(7,200)
-        mTableView!!.setColumnWidth(8,200)
-        mTableView!!.setColumnWidth(9,250)
-        mTableView!!.setColumnWidth(10,200)
-        mTableView!!.setColumnWidth(11,200)
-        mTableView!!.setColumnWidth(12,120)
+        mTableAdapter!!.notifyDataSetChanged()
+
+        val dimen1:Int = resources.getDimension(R.dimen._160sdp).toInt()
+        val dimen2:Int = resources.getDimension(R.dimen._100sdp).toInt()
+        val dimen3:Int = resources.getDimension(R.dimen._120sdp).toInt()
+        val dimen4:Int = resources.getDimension(R.dimen._60sdp).toInt()
+        val dimen5:Int = resources.getDimension(R.dimen._50sdp).toInt()
+        val dimen6:Int = resources.getDimension(R.dimen._40sdp).toInt()
+
+
+        mTableView!!.setColumnWidth(0,dimen1)
+        mTableView!!.setColumnWidth(1,dimen2)
+        mTableView!!.setColumnWidth(2,dimen2)
+        mTableView!!.setColumnWidth(3,dimen3)
+        mTableView!!.setColumnWidth(4,dimen4)
+        mTableView!!.setColumnWidth(5,dimen4)
+        mTableView!!.setColumnWidth(6,dimen4)
+        mTableView!!.setColumnWidth(7,dimen4)
+        mTableView!!.setColumnWidth(8,dimen4)
+        mTableView!!.setColumnWidth(9,dimen5)
+        mTableView!!.setColumnWidth(10,dimen4)
+        mTableView!!.setColumnWidth(11,dimen4)
+        mTableView!!.setColumnWidth(12,dimen6)
         setTotalViews()
 
         }

@@ -20,12 +20,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.mikepenz.actionitembadge.library.ActionItemBadge;
 import com.mikepenz.iconics.typeface.library.fontawesome.FontAwesome;
 import com.retailstreet.mobilepos.R;
 import com.retailstreet.mobilepos.View.ApplicationContextProvider;
+import com.retailstreet.mobilepos.View.ui.Sales.SalesFragmentDirections;
 
 import java.text.DecimalFormat;
 import java.util.HashMap;
@@ -37,7 +39,7 @@ import java.util.HashMap;
 
 public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter.ViewHolder>  {
 
-    Activity myParentActivity;
+    static Activity myParentActivity;
      static HashMap<String, String> orderList = new HashMap<>();
      Context context;
      public static UpdateRecyclerView updateRecyclerView;
@@ -68,13 +70,13 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
         public Button add_to_cart;
         public TextView sales_qty;
         LinearLayout addRemoveWrapper;
+        public ImageButton edit_sales;
         Animation  FadeIn, FadeOut,FadeInX, FadeOutX;
         SalesListItem myListItem;
         int qty;
 
         public void setMyListItem(Cursor cursor) {
             this.myListItem = SalesListItem.fromCursor(cursor);
-
             String mrp ="MRP: "+myListItem.getProduct_detail_2()+" ₹";
             String sp ="Price: "+myListItem.getProduct_detail_4()+" ₹";
             double discount = Double.parseDouble(myListItem.getProduct_detail_3());
@@ -133,6 +135,7 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
             order_count = view.findViewById(R.id.textview_order_count);
             add_to_cart = view.findViewById(R.id.add_cart_botton);
             addRemoveWrapper = view.findViewById(R.id.addremovewrapper);
+            edit_sales = view.findViewById(R.id.edit_sales);
             FadeIn = AnimationUtils.loadAnimation(view.getContext(),
                     R.anim.slide_in_left);
             FadeOut = AnimationUtils.loadAnimation(view.getContext(),
@@ -145,6 +148,15 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
             FadeOut.setAnimationListener(this);
             FadeInX.setAnimationListener(this);
             FadeOutX.setAnimationListener(this);
+
+            edit_sales.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    SalesFragmentDirections.ActionNavSalesToNavStockUpdate actionNavSalesUpdate = SalesFragmentDirections.actionNavSalesToNavStockUpdate(myListItem.getPrimary());
+                    Navigation.findNavController(myParentActivity,R.id.nav_host_fragment).navigate(actionNavSalesUpdate);
+                }
+            });
 
           add_order.setOnClickListener(new View.OnClickListener() {
                 @Override

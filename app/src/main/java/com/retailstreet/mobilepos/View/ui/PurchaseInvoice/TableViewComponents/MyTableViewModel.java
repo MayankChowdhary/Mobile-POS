@@ -53,16 +53,16 @@ public class MyTableViewModel {
         switch (column) {
             // Id
             case 0:
-                return Gravity.LEFT;
+                return Gravity.CENTER;
             // Name
             case 1:
-                return Gravity.LEFT;
+                return Gravity.CENTER;
             // Nickname
             case 2:
-                return Gravity.LEFT;
+                return Gravity.CENTER;
             // Email
             case 3:
-                return Gravity.LEFT;
+                return Gravity.CENTER;
             // BirthDay
             case 4:
                 return Gravity.CENTER;
@@ -74,7 +74,7 @@ public class MyTableViewModel {
                 return Gravity.CENTER;
             // Job
             case 7:
-                return Gravity.LEFT;
+                return Gravity.CENTER;
             // Salary
             case 8:
                 return Gravity.CENTER;
@@ -110,7 +110,7 @@ public class MyTableViewModel {
         list.add(new ColumnHeaderModel("P.PRICE"));
         list.add(new ColumnHeaderModel("QTY"));
         list.add(new ColumnHeaderModel("F.QTY"));
-        list.add(new ColumnHeaderModel("DISCOUNT"));
+        list.add(new ColumnHeaderModel("DISC"));
         list.add(new ColumnHeaderModel("UOM"));
         list.add(new ColumnHeaderModel("TOTAL"));
         list.add(new ColumnHeaderModel("  "));

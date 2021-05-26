@@ -8,7 +8,7 @@
             android:id="@+id/nav_home"
             android:icon="@drawable/reception"
             android:visible="true"
-            android:title="Reception" />
+            android:title="Store Info" />
         <item
             android:id="@+id/nav_dayopen"
             android:icon="@drawable/open"

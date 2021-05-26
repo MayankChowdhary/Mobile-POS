@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/_200sdp"
+    android:layout_height="@dimen/_220sdp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/dialog_back_box"
+    android:layout_gravity="center"
+    android:gravity="center"
+    android:elevation="4dp"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/progress_status"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_80sdp"
+        android:layout_gravity="center"
+        android:layout_margin="6dp"
+        android:layout_weight="2"
+        android:gravity="center"
+        android:text="Initializing Download..."
+        android:textColor="#1A237E"
+        android:textSize="@dimen/_12ssp"
+        android:textStyle="italic" />
+
+    <com.ramijemli.percentagechartview.PercentageChartView
+        android:id="@+id/dload_progress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/_10sdp"
+        android:layout_weight="1"
+        android:background="#FFFFFF"
+        app:pcv_animDuration="800"
+        app:pcv_animInterpolator="anticipate_overshoot"
+        app:pcv_backgroundBarColor="#6F7BF1"
+        app:pcv_mode="ring"
+        app:pcv_orientation="clockwise"
+        app:pcv_progress="0"
+        app:pcv_progressColor="#1A237E"
+        app:pcv_startAngle="90"
+        app:pcv_backgroundColor="#6F7BF1"
+        app:pcv_textColor="#1A237E"
+        app:pcv_textSize="@dimen/_20sdp" />
+
+</LinearLayout>

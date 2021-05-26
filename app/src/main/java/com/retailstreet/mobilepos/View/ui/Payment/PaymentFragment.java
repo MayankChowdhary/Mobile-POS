@@ -1,11 +1,12 @@
 package com.retailstreet.mobilepos.View.ui.Payment;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -30,23 +31,19 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
-import com.labters.lottiealertdialoglibrary.DialogTypes;
 import com.retailstreet.mobilepos.Controller.BillGenerator;
 import com.retailstreet.mobilepos.Controller.ControllerCreditPay;
 import com.retailstreet.mobilepos.R;
 import com.retailstreet.mobilepos.Utils.StringWithTag;
 import com.retailstreet.mobilepos.Utils.Vibration;
-import com.retailstreet.mobilepos.View.dialog.ClickListeners;
-import com.retailstreet.mobilepos.View.dialog.LottieAlertDialogs;
 import com.retailstreet.mobilepos.View.dialog.MonthYearPickerDialog;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -66,6 +63,8 @@ import static android.content.Context.MODE_PRIVATE;
 public class PaymentFragment extends Fragment implements View.OnClickListener {
 
     private PaymentViewModel mViewModel;
+    BillPreviewDialog dialogFragment;
+    private String billNumber = new BillGenerator().getBillNumber();
     private String amountToPay;
     private String customerId;
     private EditText received_amnt;
@@ -132,7 +131,7 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
     String chequeMont;
     String chequeYear ;
 
-
+    int DIALOG_FRAGMENT =1;
 
     public static PaymentFragment newInstance() {
         return new PaymentFragment();
@@ -159,6 +158,7 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
         creditBalance = myArgs.getCreditBalance();
         addDiscount = myArgs.getAddDiscount();
 
+        createBillPreviewTable();
 
         if(!customerId.trim().isEmpty()){
 
@@ -270,36 +270,11 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
             payButton.setClickable(false);
             String balanceCash = String.valueOf(pendingAmount);
 
-         LottieAlertDialogs alertDialog= new LottieAlertDialogs.Builder(getContext(), DialogTypes.TYPE_SUCCESS)
-                            .setTitle(message)
-                            .setDescription("Thank You!")
-                            .setPositiveText("Back")
-                            .setPositiveButtonColor(Color.parseColor("#297999"))
-                            .setPositiveTextColor(Color.parseColor("#ffffff"))
-                             .setPositiveListener(new ClickListeners() {
-                                @Override
-                                public void onClick(@NotNull LottieAlertDialogs lottieAlertDialog) {
-                                    if(!isCreditPay)
-                                        {
-                                            Navigation.findNavController(requireActivity(), R.id.nav_host_fragment).navigate(R.id.nav_sales);
-                                        }else {
-
-                                        Navigation.findNavController(requireActivity(), R.id.nav_host_fragment).popBackStack();
-
-                                    }
-                                    lottieAlertDialog.dismiss();
-                                }
-                            })
-                    .build();
-                     alertDialog.setCancelable(false);
-                     alertDialog.show();
-
-
             if(isCreditPay){
 
                 new ControllerCreditPay(customerId,payModeData);
             }else {
-                new BillGenerator(customerId, receivedcash, balanceCash, deliveryGuid, payModeData,addDiscount,redeemNumber,paidByAdvance);
+                new BillGenerator(customerId, receivedcash, balanceCash, deliveryGuid, payModeData,addDiscount,redeemNumber,paidByAdvance,billNumber);
                 EmptyCart();
             }
 
@@ -307,8 +282,36 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
                 updateCustomerAdvance(newAdvance,customerId);
             }
 
+            Log.d("Billing_DONE", "onViewCreated: Showing Dialog");
+            showEditDialog(billNumber,customerId);
+
         });
     }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == DIALOG_FRAGMENT) {
+            if (resultCode == Activity.RESULT_OK) {
+                if(dialogFragment!=null ){
+                    dialogFragment.dismiss();
+                }
+                if (!isCreditPay) {
+                    Navigation.findNavController(requireActivity(), R.id.nav_host_fragment).navigate(R.id.nav_sales);
+                } else {
+
+                    Navigation.findNavController(requireActivity(), R.id.nav_host_fragment).popBackStack();
+
+                }
+
+
+            }
+        }
+    }
+
+
 
     @Override
     public void onClick(View v) {
@@ -1411,7 +1414,31 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
 
     }
 
+    private void showEditDialog(String billNum, String custId) {
+         dialogFragment= new  BillPreviewDialog();
+        Bundle bundle = new Bundle();
+        bundle.putBoolean("notAlertDialog",true);
+        bundle.putBoolean("fullScreen",false);
+        bundle.putString("BILLNum", billNum);
+        bundle.putString("CUSTID", custId);
+        dialogFragment.setArguments(bundle);
+        dialogFragment.setTargetFragment(this, DIALOG_FRAGMENT);
+        //val ft: FragmentTransaction = requireActivity().supportFragmentManager.beginTransaction()
+        FragmentTransaction ft = requireFragmentManager().beginTransaction();
+        Fragment prev = requireFragmentManager().findFragmentByTag("dialog");
+
+        if (prev != null) {
+            ft.remove(prev);
+        }
+        ft.addToBackStack(null);
+        dialogFragment.show(ft, "dialog");
+    }
 
 
-
+    private void createBillPreviewTable(){
+        SQLiteDatabase mydb = requireContext().openOrCreateDatabase("MasterDB", Context.MODE_PRIVATE, null);
+        mydb.execSQL("DROP TABLE IF EXISTS tmp_bill_preview");
+        mydb.execSQL("CREATE TABLE IF NOT EXISTS tmp_bill_preview (PROD_NM text, MRP text, SPRICE  text, QTY  text, TOTAL text)");
+        mydb.close();
+    }
 }

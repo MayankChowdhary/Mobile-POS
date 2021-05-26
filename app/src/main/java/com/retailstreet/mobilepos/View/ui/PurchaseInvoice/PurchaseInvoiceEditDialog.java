@@ -266,6 +266,7 @@ public class PurchaseInvoiceEditDialog extends DialogFragment implements DatePic
 
     }
 
+
     public interface DialogListener {
                 void onFinishEditDialog(String inputText);
             }

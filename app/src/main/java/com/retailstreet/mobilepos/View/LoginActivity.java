@@ -120,8 +120,6 @@ public class LoginActivity extends AppCompatActivity implements DBReadyCallback 
 
                 }else {
                     new InstallationValidator().Check_Before_Download(store_id,user_id,pass,terminal_id,LoginActivity.this,LoginActivity.this);
-                    Toast.makeText(getApplicationContext(), "Please Wait...", Toast.LENGTH_SHORT).show();
-
 
                 }
 
@@ -252,39 +250,43 @@ public class LoginActivity extends AppCompatActivity implements DBReadyCallback 
         call1.enqueue(new Callback<LicenceModulePojo>() {
             @Override
             public void onResponse(Call<LicenceModulePojo> call, Response<LicenceModulePojo> response) {
-                Log.e("RC Response",response.body().toString());
-                if(response.isSuccessful()){
-                    if (response.code()==200){
-                        Log.d("LicenceCheckSuccessful","Calling Activity Login");
-                        String ActiveStatus =response.body().getActiveStatus();
-                      //  PersistenceManager.saveLicense(SplashScreenActivity.this,response.body().getLicenseStatus());
-                        String Severity =response.body().getSeverity();
-                        if( ActiveStatus.equalsIgnoreCase("True") && Severity.equalsIgnoreCase("SEVERITY-S4")){
+                try {
+                    if(response.isSuccessful()){
+                        Log.e("RC Response",response.body().toString());
+                        if (response.code()==200){
+                            Log.d("LicenceCheckSuccessful","Calling Activity Login");
+                            String ActiveStatus =response.body().getActiveStatus();
+                          //  PersistenceManager.saveLicense(SplashScreenActivity.this,response.body().getLicenseStatus());
+                            String Severity =response.body().getSeverity();
+                            if( ActiveStatus.equalsIgnoreCase("True") && Severity.equalsIgnoreCase("SEVERITY-S4")){
 
-                            liscenceCheck =1;
-                            loadingDialog.cancelDialog();
-                            doLogin();
+                                liscenceCheck =1;
+                                loadingDialog.cancelDialog();
+                                doLogin();
+                            }
+                            else {
+                                liscenceCheck=0;
+                                loadingDialog.cancelDialog();
+                              LottieAlertDialogs  progressDialog= new LottieAlertDialogs.Builder(LoginActivity.this, DialogTypes.TYPE_ERROR)
+                                        .setTitle("Licence check failed!")
+                                        .setDescription("Contact Administrator")
+                                        .build();
+                                progressDialog.setCancelable(false);
+                                progressDialog.show();
+                            }
                         }
-                        else {
-                            liscenceCheck=0;
-                            loadingDialog.cancelDialog();
-                          LottieAlertDialogs  progressDialog= new LottieAlertDialogs.Builder(LoginActivity.this, DialogTypes.TYPE_ERROR)
-                                    .setTitle("Licence check failed!")
-                                    .setDescription("Contact Administrator")
-                                    .build();
-                            progressDialog.setCancelable(false);
-                            progressDialog.show();
-                        }
+                    } else {
+                        liscenceCheck=0;
+                        loadingDialog.cancelDialog();
+                        LottieAlertDialogs  progressDialog= new LottieAlertDialogs.Builder(LoginActivity.this, DialogTypes.TYPE_ERROR)
+                                .setTitle("Licence check failed!")
+                                .setDescription("Unknown Error")
+                                .build();
+                        progressDialog.setCancelable(false);
+                        progressDialog.show();
                     }
-                } else {
-                    liscenceCheck=0;
-                    loadingDialog.cancelDialog();
-                    LottieAlertDialogs  progressDialog= new LottieAlertDialogs.Builder(LoginActivity.this, DialogTypes.TYPE_ERROR)
-                            .setTitle("Licence check failed!")
-                            .setDescription("Unknown Error")
-                            .build();
-                    progressDialog.setCancelable(false);
-                    progressDialog.show();
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
             @Override

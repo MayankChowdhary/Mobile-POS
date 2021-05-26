@@ -10,6 +10,7 @@ import android.widget.*
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.Navigation
 import com.labters.lottiealertdialoglibrary.DialogTypes
 import com.retailstreet.mobilepos.Controller.ControllerStockMaster
 import com.retailstreet.mobilepos.R
@@ -40,9 +41,12 @@ class StockUpdateFragment : Fragment() , DatePickerDialog.OnDateSetListener {
     private var stockId = ""
     lateinit var expirySelector:Spinner
     private var expiryDate =""
+    private var argEnabled= false
+    private var isfromSales = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
+
         return inflater.inflate(R.layout.fragment_stock_update, container, false)
     }
 
@@ -56,8 +60,14 @@ class StockUpdateFragment : Fragment() , DatePickerDialog.OnDateSetListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val myArgs: StockUpdateFragmentArgs = StockUpdateFragmentArgs.fromBundle(requireArguments())
+        stockId = myArgs.stockId
+        if(stockId.isNotEmpty()){
+            argEnabled=true
+            isfromSales=true
+        }
+
         var stockPosition=0
-        val productNameEdtText: EditText = view.findViewById(R.id.su_name__value)
         val extProdIdEditText: EditText = view.findViewById(R.id.su_extid__value)
         val barcodeEdtText: EditText = view.findViewById(R.id.su_barcode_value)
         val mrpEdtText: EditText = view.findViewById(R.id.su_mrp_value)
@@ -69,7 +79,7 @@ class StockUpdateFragment : Fragment() , DatePickerDialog.OnDateSetListener {
         val sgstEdtText: EditText = view.findViewById(R.id.su_sgst_value)
         val submitStockUpdate: Button = view.findViewById(R.id.submit_update_stock)
 
-        var productName = " "
+
         var extProdId = " "
         var barcode = " "
         var mrp = " "
@@ -92,7 +102,6 @@ class StockUpdateFragment : Fragment() , DatePickerDialog.OnDateSetListener {
         stockSearchSelector.setPositiveButton("OK")
         stockSearchSelector.gravity = Gravity.START
 
-
         val vendorNameArray:List<StringWithTag> = getVendorName()
         val vendorSearchSelector: SearchableSpinner = view.findViewById(R.id.su_vendor_value)
         val vendorSearchAdapter: ArrayAdapter<StringWithTag> = context?.let { ArrayAdapter(it, R.layout.spinner_layout, vendorNameArray) }!!
@@ -104,7 +113,6 @@ class StockUpdateFragment : Fragment() , DatePickerDialog.OnDateSetListener {
 
         fun doViewsEmpty() {
 
-             productNameEdtText.setText("")
              extProdIdEditText.setText("")
              barcodeEdtText.setText("")
              mrpEdtText.setText("")
@@ -138,8 +146,15 @@ class StockUpdateFragment : Fragment() , DatePickerDialog.OnDateSetListener {
         stockSearchSelector.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, views: View?, position: Int, id: Long) {
                 val stockSelected = parent.getItemAtPosition(position) as StringWithTag
-                stockId = stockSelected.tag
                 Log.d("StockSelected", "onItemSelected: Tag= $stockId")
+
+                if(argEnabled){
+                    stockSearchSelector.setSelection(getIndex(stockSearchSelector, stockId))
+                    argEnabled=false
+                    return
+                }else{
+                    stockId = stockSelected.tag
+                }
 
                 if (stockId.isBlank()){
                     enableDisableView(view, false, search)
@@ -150,16 +165,17 @@ class StockUpdateFragment : Fragment() , DatePickerDialog.OnDateSetListener {
                     stockPosition = position
                     enableDisableView(view, true, search)
                     val StockData =  getFromStockMaster(stockId)
-
-                    productNameEdtText.setText(StockData[1])
                     extProdIdEditText.setText(StockData[2])
                     barcodeEdtText.setText(StockData[3])
                     mrpEdtText.setText(StockData[5])
+                    mrpEdtText.isEnabled=false
                     spriceEdtText.setText(StockData[6])
                     ppriceEdtText.setText(StockData[7])
                     quantityEdtText.setText(StockData[8])
                     cgstEdtText.setText(StockData[9])
+                    cgstEdtText.isEnabled=false
                     sgstEdtText.setText(StockData[10])
+                    sgstEdtText.isEnabled=false
 
                     try {
                         Log.d("dateReceived", "onItemSelected: " + StockData[4])
@@ -184,7 +200,7 @@ class StockUpdateFragment : Fragment() , DatePickerDialog.OnDateSetListener {
                     }
 
                     vendorSearchSelector.setSelection(getIndex(vendorSearchSelector, StockData[0]))
-
+                    vendorSearchSelector.isEnabled = false
                     try {
                         totalEdtText.setText((StockData[6].toDouble() * StockData[8].toDouble()).toString())
 
@@ -260,7 +276,6 @@ class StockUpdateFragment : Fragment() , DatePickerDialog.OnDateSetListener {
 
         submitStockUpdate.setOnClickListener{
 
-             productName = productNameEdtText.text.toString()
              extProdId = extProdIdEditText.text.toString()
              barcode = barcodeEdtText.text.toString()
              mrp = mrpEdtText.text.toString()
@@ -271,7 +286,7 @@ class StockUpdateFragment : Fragment() , DatePickerDialog.OnDateSetListener {
              cgst = cgstEdtText.text.toString()
              sgst = sgstEdtText.text.toString()
 
-            val allStringsArray: Array<String> = arrayOf(productName,barcode,expiryDate,mrp,vendorGuid,pprice, sprice,quantity,cgst,sgst);
+            val allStringsArray: Array<String> = arrayOf(barcode,expiryDate,mrp,vendorGuid,pprice, sprice,quantity,cgst,sgst);
 
             if(!validateStrings(allStringsArray)){
 
@@ -279,7 +294,7 @@ class StockUpdateFragment : Fragment() , DatePickerDialog.OnDateSetListener {
                 return@setOnClickListener
             }
 
-            ControllerStockMaster(context).updateStockMaster(stockId,vendorGuid,vendorName,productName,extProdId,barcode,expiryDate,mrp,sprice,pprice,quantity,cgst,sgst)
+            ControllerStockMaster(context).updateStockMaster(stockId,extProdId,barcode,expiryDate,sprice,pprice,quantity)
             ControllerStockMaster(context).generateStockRegister(stockId,quantity)
             val alertDialog = LottieAlertDialogs.Builder(context, DialogTypes.TYPE_SUCCESS)
                     .setTitle("Stock Updated")
@@ -290,7 +305,11 @@ class StockUpdateFragment : Fragment() , DatePickerDialog.OnDateSetListener {
                     .setPositiveListener(object : ClickListeners {
                         override fun onClick(dialog: LottieAlertDialogs) {
                             dialog.dismiss()
-                            stockSearchSelector.setSelection(0)
+                            if(isfromSales){
+                                Navigation.findNavController(requireActivity(), R.id.nav_host_fragment).navigateUp()
+                            }else {
+                                stockSearchSelector.setSelection(0)
+                            }
                         }
                     })
                     .build()
@@ -420,5 +439,8 @@ private fun validateStrings(fields: Array<String>): Boolean {
         }
         return viewData
     }
+
+
+
 
 }

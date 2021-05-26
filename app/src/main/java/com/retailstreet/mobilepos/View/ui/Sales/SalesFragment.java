@@ -44,6 +44,7 @@ import org.jetbrains.annotations.NotNull;
  * mayankchoudhary00@gmail.com
  */
 
+
 public class SalesFragment extends Fragment implements UpdateRecyclerView {
 
     //private SalesViewModel homeViewModel;
@@ -172,7 +173,10 @@ public class SalesFragment extends Fragment implements UpdateRecyclerView {
         MenuItem mSearch = menu.findItem(R.id.appSearchBar);
         mSearch.setVisible(true);
         MenuItem mCart = menu.findItem(R.id.appCart);
+        MenuItem mAddProd = menu.findItem(R.id.addProd);
         mCart.setVisible(true);
+        mAddProd.setVisible(true);
+       mAddProd.getIcon().setTint(Color.parseColor("#ffffff"));
        mSearchView = (SearchView) mSearch.getActionView();
         mSearchView.setQueryHint("Search");
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -223,7 +227,10 @@ public class SalesFragment extends Fragment implements UpdateRecyclerView {
         if (item.getItemId() == R.id.appCart) {
             Navigation.findNavController(requireActivity(),R.id.nav_host_fragment).navigate(R.id.action_nav_sales_to_nav_cart);
             return true;
-        }else {
+        }else if(item.getItemId() == R.id.addProd){
+            Navigation.findNavController(requireActivity(),R.id.nav_host_fragment).navigate(R.id.action_nav_sales_to_nav_products);
+            return true;
+        } else {
             return super.onOptionsItemSelected(item);
         }
     }

@@ -237,6 +237,9 @@ class SalesRefundFragment : Fragment() {
                 if(custGuid.isNotEmpty()) {
                     balance = getCustBalance(custGuid)
                     balanceText.setText("Balance:\n" + balance + " ₹")
+                }else{
+                    balance = "0.00"
+                    balanceText.setText("Balance:\n" + balance + " ₹")
                 }
                 Log.d("CustomerSelected", "onItemSelected: Tag= $custGuid")
 

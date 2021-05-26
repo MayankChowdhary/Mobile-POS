@@ -17,10 +17,8 @@
     <ScrollView
         android:id="@+id/scroll_view_stock_update"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_margin="4dp"
-        android:paddingTop="@dimen/_20sdp"
-        android:paddingBottom="@dimen/_40sdp"
         app:layout_constraintBottom_toTopOf="@id/submit_update_stock"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -92,34 +90,6 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/su_name_title_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_6sdp"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/su_name_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="start"
-                    android:text="Product Name*"
-                    android:textColor="?colorOnBackground"
-                    android:textSize="@dimen/_14ssp" />
-
-                <EditText
-                    android:id="@+id/su_name__value"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:ems="15"
-                    android:includeFontPadding="false"
-                    android:inputType="text"
-                    android:textColor="?colorOnSurface" />
-            </LinearLayout>
-
-            <LinearLayout
                 android:id="@+id/su_extid_title_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -174,8 +144,7 @@
                     android:ems="15"
                     android:includeFontPadding="false"
                     android:inputType="number"
-                    android:maxLength="40"
-                    />
+                    android:maxLength="40" />
             </LinearLayout>
 
             <LinearLayout
@@ -414,7 +383,6 @@
                     android:textColor="?colorOnSurface" />
             </LinearLayout>
 
-
         </LinearLayout>
     </ScrollView>
 
@@ -422,7 +390,9 @@
         android:id="@+id/submit_update_stock"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/_20sdp"
+        android:layout_marginStart="@dimen/_20sdp"
+        android:layout_marginEnd="@dimen/_20sdp"
+        android:layout_marginBottom="@dimen/_8sdp"
         android:text="Update Stock"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

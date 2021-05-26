@@ -11,6 +11,16 @@
     android:padding="@dimen/_8sdp">
 
 
+    <ImageButton
+        android:id="@+id/edit_sales"
+        android:layout_width="@dimen/_15sdp"
+        android:layout_height="@dimen/_15sdp"
+        android:scaleType="centerCrop"
+        android:background="@null"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:tint="?colorPrimary"
+        app:srcCompat="@drawable/edit_sales" />
 
     <FrameLayout
         android:id="@+id/frameLayout"
@@ -101,12 +111,14 @@
 
     <LinearLayout
         android:id="@+id/sales_items_layout"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="match_parent"
         android:gravity="center_vertical"
         android:orientation="vertical"
+        android:layout_marginEnd="@dimen/_6sdp"
+        android:layout_marginStart="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/edit_sales"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -115,6 +127,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="listItems"
+            android:ellipsize="end"
+            android:maxLines="2"
             android:textAlignment="viewStart"
             android:textColor="?colorOnSecondary"
             android:textSize="@dimen/_12ssp" />

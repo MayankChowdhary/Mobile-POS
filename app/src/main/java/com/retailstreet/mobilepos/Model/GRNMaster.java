@@ -6,7 +6,6 @@ package com.retailstreet.mobilepos.Model;
  * mayankchoudhary00@gmail.com
  */
 
-
 public class GRNMaster {
 
     String GRN_GUID;
@@ -27,6 +26,7 @@ public class GRNMaster {
     String ISSYNCED;
 
     public GRNMaster() {
+
 
     }
 

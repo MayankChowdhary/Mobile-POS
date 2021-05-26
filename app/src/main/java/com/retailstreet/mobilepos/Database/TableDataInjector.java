@@ -1,8 +1,11 @@
 package com.retailstreet.mobilepos.Database;
 
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -48,16 +51,17 @@ import com.retailstreet.mobilepos.Model.VendorPayDetail;
 import com.retailstreet.mobilepos.Model.VendorPayMaster;
 import com.retailstreet.mobilepos.Model.VendorRejectReason;
 import com.retailstreet.mobilepos.Utils.ApiInterface;
-import com.retailstreet.mobilepos.View.ApplicationContextProvider;
-import com.retailstreet.mobilepos.View.dialog.LoadingDialog;
+import com.retailstreet.mobilepos.Utils.CallbackWithRetry;
+import com.retailstreet.mobilepos.Utils.Constants;
+import com.retailstreet.mobilepos.Utils.RetroSync;
+import com.retailstreet.mobilepos.View.dialog.ProgressBarDialog;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 
 /**
@@ -67,11 +71,13 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 
 public class TableDataInjector {
+    static ExecutorService injectExecutor = Executors.newSingleThreadExecutor();
+    Activity activity;
     String dbname = "MasterDB";
     private Context context;
     String baseUrl = "http://99retailstreet.com:8080/";
     String storeId;
-    private DBReadyCallback dbReadyCallback;
+    private static DBReadyCallback dbReadyCallback;
     private List<GroupUserMaster> groupUserMasterList = null;
     private List<CustomerMaster> retailCustList = null;
     private List<ProductMaster> productMasterList = null;
@@ -111,19 +117,29 @@ public class TableDataInjector {
     private List<VendorDetailReturn> vendorDetailReturnList = null;
     private List<VendorMasterReturn> vendorMasterReturnList = null;
 
-    private LoadingDialog loadingDialog;
+   // private static LoadingDialog loadingDialog;
+
+    private static ProgressBarDialog progressBarDialog;
 
     public static int status =0;
-    private final int tableConstant=38;
+    public static final int tableConstant=38;
 
-    public TableDataInjector(Context context, String storeid,DBReadyCallback callback) {
+    public TableDataInjector(Activity context, String storeid,DBReadyCallback callback) {
 
-        this.context = context;
+        activity = context;
+        this.context = context.getBaseContext();
         this.storeId = storeid;
         dbReadyCallback=callback;
         status=0;
-        loadingDialog=  new LoadingDialog();
-        loadingDialog.showDialog(context, "Please Wait!", "Downloading Database...");
+        progressBarDialog=new ProgressBarDialog(activity);
+        progressBarDialog.show();
+
+        injectAll();
+
+    }
+
+
+    public void injectAll(){
 
         getUserMasterList();
         getRetailCustList();
@@ -163,10 +179,9 @@ public class TableDataInjector {
         getVendorRejectReason();
         getVendorDetailReturn();
         getVendorMasterReturn();
-
     }
 
-    private Retrofit getRetroInstance(String url) {
+    /*private Retrofit getRetroInstance(String url) {
         try {
             Retrofit retrofit = null;
             Log.i("autolog", "retrofit");
@@ -182,35 +197,37 @@ public class TableDataInjector {
             return null;
         }
 
-    }
+    }*/
 
     public void getUserMasterList() {
         try {
-            Retrofit retrofit = getRetroInstance(baseUrl);
-            ApiInterface service = retrofit.create(ApiInterface.class);
-            Call<List<GroupUserMaster>> call = service.getGroupUserMaster(generateTableUrl("GroupUserMaster",storeId));
-            call.enqueue(new Callback<List<GroupUserMaster>>() {
+            ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
+            Call<List<GroupUserMaster>> call1 = apiService.loadGroupUserMaster(Constants.Authorization, storeId);
+            call1.enqueue(new CallbackWithRetry<List<GroupUserMaster>>() {
                 @Override
                 public void onResponse(Call<List<GroupUserMaster>> call, Response<List<GroupUserMaster>> response) {
-                    groupUserMasterList = response.body();
-
-                    Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
-                    GroupUserMaster master = groupUserMasterList.get(0);
-                    String checkData = master.getUSERNAME();
-                    if(checkData ==null || checkData.isEmpty()){
-                       Toast.makeText(context,"Please Insert Valid Store ID!",Toast.LENGTH_LONG).show();
-                             loadingDialog.cancelDialog();
-
-                    }else {
-                        InsertDataGroupUserMaster(groupUserMasterList);
+                    if (response.isSuccessful()) {
+                        if (response.code() == 200) {
+                            try {
+                                groupUserMasterList = response.body();
+                                injectExecutor.submit(() -> InsertDataGroupUserMaster(groupUserMasterList));
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            Log.d("InsertionEmpty", "GroupUserMaster: ");
+                            Toast.makeText(context, "Please Insert Valid Store ID!", Toast.LENGTH_LONG).show();
+                            interruptTask();
+                        }
                     }
                 }
 
                 @Override
                 public void onFailure(Call<List<GroupUserMaster>> call, Throwable t) {
                     Log.i("autolog", t.getMessage());
-                     loadingDialog.cancelDialog();
-                    Toast.makeText(ApplicationContextProvider.getContext(),"Network Error Download Failed !",Toast.LENGTH_LONG).show();
+                      super.onFailure(call,t);
+                     //cancelDialog();
+                    //Toast.makeText(ApplicationContextProvider.getContext(),"Network Error Download Failed !",Toast.LENGTH_LONG).show();
                 }
             });
         } catch (Exception e) {
@@ -220,22 +237,38 @@ public class TableDataInjector {
 
     public void getBillMaster() {
         try {
-            Retrofit retrofit = getRetroInstance(baseUrl);
-            ApiInterface service = retrofit.create(ApiInterface.class);
-            Call<List<BillMaster>> call = service.getBill_Mater(generateTableUrl("BillMaster",storeId));
-            call.enqueue(new Callback<List<BillMaster>>() {
+            ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
+            Call<List<BillMaster>> call = apiService.loadBillMaster(Constants.Authorization, storeId);
+
+            call.enqueue(new CallbackWithRetry<List<BillMaster>>() {
                 @Override
                 public void onResponse(Call<List<BillMaster>> call, Response<List<BillMaster>> response) {
-                    billMasterList = response.body();
-                    Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
-                    InsertBillMaster(billMasterList);
+
+
+                    if (response.isSuccessful()) {
+                        if (response.code() == 200) {
+                            billMasterList = response.body();
+                            Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
+                            try{
+                                injectExecutor.submit(() -> InsertBillMaster(billMasterList));
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            Log.d("InsertionEmpty", "BillMAster: ");
+                            status++;
+                            if (status == tableConstant) {
+                                finishTask();
+                            } else {
+                                updateProgress(status);
+                            }
+                        }
+                    }
                 }
 
                 @Override
                 public void onFailure(Call<List<BillMaster>> call, Throwable t) {
-                    Log.i("autolog", t.getMessage());
-                     loadingDialog.cancelDialog();
-                    Toast.makeText(ApplicationContextProvider.getContext(),"Network Error Download Failed !",Toast.LENGTH_LONG).show();
+                    super.onFailure(call,t);
                 }
             });
         } catch (Exception e) {
@@ -244,20 +277,39 @@ public class TableDataInjector {
     }
     public void getRetailCustList() {
         try {
-            Retrofit retrofit = getRetroInstance(baseUrl);
-            ApiInterface service = retrofit.create(ApiInterface.class);
-            Call<List<CustomerMaster>> call = service.getRetail_Cust(generateTableUrl("MasterCustomer",storeId));
-            call.enqueue(new Callback<List<CustomerMaster>>() {
+            ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
+            Call<List<CustomerMaster>> call = apiService.loadMasterCustomer(Constants.Authorization, storeId);
+            call.enqueue(new CallbackWithRetry<List<CustomerMaster>>() {
                 @Override
                 public void onResponse(Call<List<CustomerMaster>> call, Response<List<CustomerMaster>> response) {
-                    retailCustList = response.body();
-                    Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
-                    InsertRetailCust(retailCustList);
+
+                    if (response.isSuccessful()) {
+                        if (response.code() == 200) {
+                            try{
+                                retailCustList = response.body();
+                                Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
+                                injectExecutor.submit(() -> InsertRetailCust(retailCustList));
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            Log.d("InsertionEmpty", "CustomerMaster: ");
+                            status++;
+                            if (status == tableConstant) {
+                                finishTask();
+                            } else {
+                                updateProgress(status);
+                            }
+                        }
+                    }
+
+
                 }
 
                 @Override
                 public void onFailure(Call<List<CustomerMaster>> call, Throwable t) {
                     Log.i("autolog", t.getMessage());
+                    super.onFailure(call,t);
                 }
             });
         } catch (Exception e) {
@@ -267,20 +319,38 @@ public class TableDataInjector {
 
     public void getProductMasterList() {
         try {
-            Retrofit retrofit = getRetroInstance(baseUrl);
-            ApiInterface service = retrofit.create(ApiInterface.class);
-            Call<List<ProductMaster>> call = service.getProduct_MAster(generateTableUrl("ProductMaster",storeId));
-            call.enqueue(new Callback<List<ProductMaster>>() {
+            ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
+            Call<List<ProductMaster>> call = apiService.loadProductMaster(Constants.Authorization, storeId);
+            call.enqueue(new CallbackWithRetry<List<ProductMaster>>() {
                 @Override
                 public void onResponse(Call<List<ProductMaster>> call, Response<List<ProductMaster>> response) {
-                    productMasterList = response.body();
-                    Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
-                    InsertProductMaster(productMasterList);
+                    if (response.isSuccessful()) {
+                        if (response.code() == 200) {
+                            try{
+                                productMasterList = response.body();
+                                Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
+                                injectExecutor.submit(() -> InsertProductMaster(productMasterList));
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            Log.d("InsertionEmpty", "ProductMaster: ");
+                            status++;
+                            if (status == tableConstant) {
+                                finishTask();
+                            } else {
+                                updateProgress(status);
+                            }
+                        }
+                    }
+
+
                 }
 
                 @Override
                 public void onFailure(Call<List<ProductMaster>> call, Throwable t) {
                     Log.i("autolog", t.getMessage());
+                    super.onFailure(call,t);
                 }
             });
         } catch (Exception e) {
@@ -290,22 +360,40 @@ public class TableDataInjector {
 
     public void getStockMasterList() {
         try {
-            Retrofit retrofit = getRetroInstance(baseUrl);
-            ApiInterface service = retrofit.create(ApiInterface.class);
-            Call<List<StockMaster>> call = service.getStock_Master(generateTableUrl("StockMaster",storeId));
-            call.enqueue(new Callback<List<StockMaster>>() {
+
+            ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
+            Call<List<StockMaster>> call = apiService.loadStockMaster(Constants.Authorization, storeId);
+            call.enqueue(new CallbackWithRetry<List<StockMaster>>() {
                 @Override
                 public void onResponse(Call<List<StockMaster>> call, Response<List<StockMaster>> response) {
-                    stockMasterList = response.body();
-                    Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
-                    InsertStockMaster(stockMasterList);
+
+                    if (response.isSuccessful()) {
+                        if (response.code() == 200) {
+                            try{
+                                stockMasterList = response.body();
+                                Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
+                                injectExecutor.submit(() -> InsertStockMaster(stockMasterList));
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            Log.d("InsertionEmpty", "StockMaster: ");
+                            status++;
+                            if (status == tableConstant) {
+                                finishTask();
+                            } else {
+                                updateProgress(status);
+                            }
+                        }
+                    }
+
                 }
 
                 @Override
                 public void onFailure(Call<List<StockMaster>> call, Throwable t) {
                     Log.i("autolog", t.getMessage());
-                     loadingDialog.cancelDialog();
-                    Toast.makeText(ApplicationContextProvider.getContext(),"Network Error Download Failed !",Toast.LENGTH_LONG).show();
+                    super.onFailure(call,t);
                 }
             });
         } catch (Exception e) {
@@ -315,20 +403,38 @@ public class TableDataInjector {
 
     public void getBillDetails() {
         try {
-            Retrofit retrofit = getRetroInstance(baseUrl);
-            ApiInterface service = retrofit.create(ApiInterface.class);
-            Call<List<BillDetail>> call = service.getBill_Details(generateTableUrl("BillDetail",storeId));
-            call.enqueue(new Callback<List<BillDetail>>() {
+            ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
+            Call<List<BillDetail>> call = apiService.loadBillDetail(Constants.Authorization, storeId);
+            call.enqueue(new CallbackWithRetry<List<BillDetail>>() {
                 @Override
                 public void onResponse(Call<List<BillDetail>> call, Response<List<BillDetail>> response) {
-                    billDetailList = response.body();
-                    Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
-                    InsertBillDetails(billDetailList);
+
+                    if (response.isSuccessful()) {
+                        if (response.code() == 200) {
+                            try{
+                                billDetailList = response.body();
+                                Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
+                                injectExecutor.submit(() -> InsertBillDetails(billDetailList));
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            Log.d("InsertionEmpty", "BillDetail: ");
+                            status++;
+                            if (status == tableConstant) {
+                                finishTask();
+                            } else {
+                                updateProgress(status);
+                            }
+                        }
+                    }
                 }
 
                 @Override
                 public void onFailure(Call<List<BillDetail>> call, Throwable t) {
                     Log.i("autolog", t.getMessage());
+                    super.onFailure(call,t);
                 }
             });
         } catch (Exception e) {
@@ -338,20 +444,33 @@ public class TableDataInjector {
 
     public void getRetailStore() {
         try {
-            Retrofit retrofit = getRetroInstance(baseUrl);
-            ApiInterface service = retrofit.create(ApiInterface.class);
-            Call<List<RetailStore>> call = service.getRetail_store(generateTableUrl("retail_store",storeId));
-            call.enqueue(new Callback<List<RetailStore>>() {
+            ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
+            Call<List<RetailStore>> call = apiService.loadRetailStore(Constants.Authorization, storeId);
+            call.enqueue(new CallbackWithRetry<List<RetailStore>>() {
                 @Override
                 public void onResponse(Call<List<RetailStore>> call, Response<List<RetailStore>> response) {
-                    retailStoreList = response.body();
-                    Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
-                  InsertRetailStore(retailStoreList);
+                    if (response.isSuccessful()) {
+                        if (response.code() == 200) {
+                            try{
+                                retailStoreList = response.body();
+                                Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
+                                injectExecutor.submit(() -> InsertRetailStore(retailStoreList));
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            Log.d("InsertionEmpty", "RetailStore: ");
+                            Toast.makeText(context, "Please Insert Valid Store ID!", Toast.LENGTH_LONG).show();
+                            interruptTask();
+                        }
+                    }
                 }
 
                 @Override
                 public void onFailure(Call<List<RetailStore>> call, Throwable t) {
                     Log.i("autolog", t.getMessage());
+                    super.onFailure(call,t);
                 }
             });
         } catch (Exception e) {
@@ -361,20 +480,38 @@ public class TableDataInjector {
 
     public void getTerminalUserAlloc() {
         try {
-            Retrofit retrofit = getRetroInstance(baseUrl);
-            ApiInterface service = retrofit.create(ApiInterface.class);
-            Call<List<TerminalUserAllocation>> call = service.getTerminalUser_Alloc(generateTableUrl("terminal_user_allocation",storeId));
-            call.enqueue(new Callback<List<TerminalUserAllocation>>() {
+            ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
+            Call<List<TerminalUserAllocation>> call = apiService.loadTerminalUserAllocation(Constants.Authorization, storeId);
+            call.enqueue(new CallbackWithRetry<List<TerminalUserAllocation>>() {
                 @Override
                 public void onResponse(@NonNull Call<List<TerminalUserAllocation>> call, Response<List<TerminalUserAllocation>> response) {
-                    terminalUserAllocations = response.body();
-                    Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
-                   InsertTerminalUserAlloc(terminalUserAllocations);
+
+
+                    if (response.isSuccessful()) {
+                            if (response.code() == 200) {
+                                try{
+                                    terminalUserAllocations = response.body();
+                                    Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
+                                    injectExecutor.submit(() -> InsertTerminalUserAlloc(terminalUserAllocations));
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            } else {
+                                Log.d("InsertionEmpty", "TerminalUserAllocation: ");
+                                status++;
+                                if (status == tableConstant) {
+                                    finishTask();
+                                } else {
+                                    updateProgress(status);
+                                }
+                            }
+                    }
                 }
 
                 @Override
                 public void onFailure(@NonNull Call<List<TerminalUserAllocation>> call, Throwable t) {
                     Log.i("autolog", t.getMessage());
+                    super.onFailure(call,t);
                 }
             });
         } catch (Exception e) {
@@ -384,20 +521,37 @@ public class TableDataInjector {
 
     public void getTerminalConfig() {
         try {
-            Retrofit retrofit = getRetroInstance(baseUrl);
-            ApiInterface service = retrofit.create(ApiInterface.class);
-            Call<List<TerminalConfiguration>> call = service.getTerminal_Config(generateTableUrl("terminal_configuration",storeId));
-            call.enqueue(new Callback<List<TerminalConfiguration>>() {
+            ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
+            Call<List<TerminalConfiguration>> call = apiService.loadTerminalConfiguration(Constants.Authorization, storeId);
+            call.enqueue(new CallbackWithRetry<List<TerminalConfiguration>>() {
                 @Override
                 public void onResponse(Call<List<TerminalConfiguration>> call, Response<List<TerminalConfiguration>> response) {
-                    terminalConfigurations = response.body();
-                    Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
-                   InsertTerminalConnfig(terminalConfigurations);
+
+                    if (response.isSuccessful()) {
+                        if (response.code() == 200) {
+                            try{
+                                terminalConfigurations = response.body();
+                                Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
+                                injectExecutor.submit(() -> InsertTerminalConnfig(terminalConfigurations));
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            Log.d("InsertionEmpty", "TerminalUserAllocation: ");
+                            status++;
+                            if (status == tableConstant) {
+                                finishTask();
+                            } else {
+                                updateProgress(status);
+                            }
+                        }
+                    }
                 }
 
                 @Override
                 public void onFailure(Call<List<TerminalConfiguration>> call, Throwable t) {
                     Log.i("autolog", t.getMessage());
+                    super.onFailure(call,t);
                 }
             });
         } catch (Exception e) {
@@ -407,20 +561,37 @@ public class TableDataInjector {
 
     public void getShiftMaster() {
         try {
-            Retrofit retrofit = getRetroInstance(baseUrl);
-            ApiInterface service = retrofit.create(ApiInterface.class);
-            Call<List<ShiftMaster>> call = service.getShift_Master(generateTableUrl("master_shift",storeId));
-            call.enqueue(new Callback<List<ShiftMaster>>() {
+            ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
+            Call<List<ShiftMaster>> call = apiService.loadShiftMaster(Constants.Authorization, storeId);
+            call.enqueue(new CallbackWithRetry<List<ShiftMaster>>() {
                 @Override
                 public void onResponse(Call<List<ShiftMaster>> call, Response<List<ShiftMaster>> response) {
-                    shiftMasters = response.body();
-                    Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
-                    InsertShiftMaster(shiftMasters);
+
+                    if (response.isSuccessful()) {
+                        if (response.code() == 200) {
+                            try{
+                                shiftMasters = response.body();
+                                Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
+                                injectExecutor.submit(() ->  InsertShiftMaster(shiftMasters));
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            Log.d("InsertionEmpty", "ShiftMaster: ");
+                            status++;
+                            if (status == tableConstant) {
+                                finishTask();
+                            } else {
+                                updateProgress(status);
+                            }
+                        }
+                    }
                 }
 
                 @Override
                 public void onFailure(Call<List<ShiftMaster>> call, Throwable t) {
                     Log.i("autolog", t.getMessage());
+                    super.onFailure(call,t);
                 }
             });
         } catch (Exception e) {
@@ -430,20 +601,39 @@ public class TableDataInjector {
 
     public void getDeliveryType() {
         try {
-            Retrofit retrofit = getRetroInstance(baseUrl);
-            ApiInterface service = retrofit.create(ApiInterface.class);
-            Call<List<DeliveryTypeMaster>> call = service.getDelivery_Type(generateTableUrl("masterdeliverytype",storeId));
-            call.enqueue(new Callback<List<DeliveryTypeMaster>>() {
+            ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
+            Call<List<DeliveryTypeMaster>> call = apiService.loadMasterDeliveryType(Constants.Authorization, storeId);
+
+            call.enqueue(new CallbackWithRetry<List<DeliveryTypeMaster>>() {
                 @Override
                 public void onResponse(Call<List<DeliveryTypeMaster>> call, Response<List<DeliveryTypeMaster>> response) {
-                    deliveryTypeMasters = response.body();
-                    Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
-                    InsertDeliveryType(deliveryTypeMasters);
+
+                    if (response.isSuccessful()) {
+                        if (response.code() == 200) {
+                            try{
+                                deliveryTypeMasters = response.body();
+                                Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
+                                injectExecutor.submit(() -> InsertDeliveryType(deliveryTypeMasters));
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            Log.d("InsertionEmpty", "DeliveryTypeMaster: ");
+                            status++;
+                            if (status == tableConstant) {
+                                finishTask();
+                            } else {
+                                updateProgress(status);
+                            }
+                        }
+                    }
                 }
 
                 @Override
                 public void onFailure(Call<List<DeliveryTypeMaster>> call, Throwable t) {
                     Log.i("autolog", t.getMessage());
+                    super.onFailure(call,t);
                 }
             });
         } catch (Exception e) {
@@ -453,20 +643,39 @@ public class TableDataInjector {
 
     public void getPaymentMode() {
         try {
-            Retrofit retrofit = getRetroInstance(baseUrl);
-            ApiInterface service = retrofit.create(ApiInterface.class);
-            Call<List<PaymentModeMaster>> call = service.getPayemtMode_Master(generateTableUrl("masterpaymode",storeId));
-            call.enqueue(new Callback<List<PaymentModeMaster>>() {
+            ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
+            Call<List<PaymentModeMaster>> call = apiService.loadMasterPayMode(Constants.Authorization, storeId);
+            call.enqueue(new CallbackWithRetry<List<PaymentModeMaster>>() {
                 @Override
                 public void onResponse(Call<List<PaymentModeMaster>> call, Response<List<PaymentModeMaster>> response) {
-                    paymentModeMasters = response.body();
-                    Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
-                    InsertPaymentModeMaster(paymentModeMasters);
+
+
+                    if (response.isSuccessful()) {
+                        if (response.code() == 200) {
+                            try{
+                                paymentModeMasters = response.body();
+                                Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
+                                injectExecutor.submit(() -> InsertPaymentModeMaster(paymentModeMasters));
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            Log.d("InsertionEmpty", "PaymentModeMaster: ");
+                            status++;
+                            if (status == tableConstant) {
+                                finishTask();
+                            } else {
+                                updateProgress(status);
+                            }
+                        }
+                    }
                 }
 
                 @Override
                 public void onFailure(Call<List<PaymentModeMaster>> call, Throwable t) {
                     Log.i("autolog", t.getMessage());
+                    super.onFailure(call,t);
                 }
             });
         } catch (Exception e) {
@@ -476,20 +685,40 @@ public class TableDataInjector {
 
     public void getBillPayDetail() {
         try {
-            Retrofit retrofit = getRetroInstance(baseUrl);
-            ApiInterface service = retrofit.create(ApiInterface.class);
-            Call<List<BillPayDetail>> call = service.getBillPay_Detail(generateTableUrl("billpaydetail",storeId));
-            call.enqueue(new Callback<List<BillPayDetail>>() {
+            ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
+            Call<List<BillPayDetail>> call = apiService.loadBillPayDetail(Constants.Authorization, storeId);
+            call.enqueue(new CallbackWithRetry<List<BillPayDetail>>() {
                 @Override
                 public void onResponse(Call<List<BillPayDetail>> call, Response<List<BillPayDetail>> response) {
-                    billPayDetailList = response.body();
-                    Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
-                    InsertBillPayDetail(billPayDetailList);
+
+
+                    if (response.isSuccessful()) {
+                        if (response.code() == 200) {
+                            try{
+                                billPayDetailList = response.body();
+                                Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
+
+                                injectExecutor.submit(() -> InsertBillPayDetail(billPayDetailList));
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            Log.d("InsertionEmpty", "BillPayDetail: ");
+                            status++;
+                            if (status == tableConstant) {
+                                finishTask();
+                            } else {
+                                updateProgress(status);
+                            }
+                        }
+                    }
                 }
 
                 @Override
                 public void onFailure(Call<List<BillPayDetail>> call, Throwable t) {
                     Log.i("autolog", t.getMessage());
+                    super.onFailure(call,t);
                 }
             });
         } catch (Exception e) {
@@ -499,20 +728,40 @@ public class TableDataInjector {
 
     public void getShiftTransactions() {
         try {
-            Retrofit retrofit = getRetroInstance(baseUrl);
-            ApiInterface service = retrofit.create(ApiInterface.class);
-            Call<List<ShiftTrans>> call = service.getShiftTrans(generateTableUrl("shift_trans",storeId));
-            call.enqueue(new Callback<List<ShiftTrans>>() {
+            ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
+            Call<List<ShiftTrans>> call = apiService.loadShifttrans(Constants.Authorization, storeId);
+            call.enqueue(new CallbackWithRetry<List<ShiftTrans>>() {
                 @Override
                 public void onResponse(Call<List<ShiftTrans>> call, Response<List<ShiftTrans>> response) {
-                    shiftTransList = response.body();
-                    Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
-                    InsertShiftTrans(shiftTransList);
+
+
+                    if (response.isSuccessful()) {
+                        if (response.code() == 200) {
+                            try{
+                                shiftTransList = response.body();
+                                Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
+
+                                injectExecutor.submit(() -> InsertShiftTrans(shiftTransList));
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            Log.d("InsertionEmpty", "ShiftTrans: ");
+                            status++;
+                            if (status == tableConstant) {
+                                finishTask();
+                            } else {
+                                updateProgress(status);
+                            }
+                        }
+                    }
                 }
 
                 @Override
                 public void onFailure(Call<List<ShiftTrans>> call, Throwable t) {
                     Log.i("autolog", t.getMessage());
+                    super.onFailure(call,t);
                 }
             });
         } catch (Exception e) {
@@ -522,20 +771,38 @@ public class TableDataInjector {
 
     public void getMasterCategory() {
         try {
-            Retrofit retrofit = getRetroInstance(baseUrl);
-            ApiInterface service = retrofit.create(ApiInterface.class);
-            Call<List<MasterCategory>> call = service.getMasterCategory(generateTableUrl("master_category",storeId));
-            call.enqueue(new Callback<List<MasterCategory>>() {
+            ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
+            Call<List<MasterCategory>> call = apiService.loadMasterCategory(Constants.Authorization, storeId);
+            call.enqueue(new CallbackWithRetry<List<MasterCategory>>() {
                 @Override
                 public void onResponse(Call<List<MasterCategory>> call, Response<List<MasterCategory>> response) {
-                    masterCategoryList = response.body();
-                    Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
-                    InsertMasterCategory(masterCategoryList);
+
+                    if (response.isSuccessful()) {
+                        if (response.code() == 200) {
+                            try{
+                                masterCategoryList = response.body();
+                                Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
+                                injectExecutor.submit(() -> InsertMasterCategory(masterCategoryList));
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            Log.d("InsertionEmpty", "MasterCategory: ");
+                            status++;
+                            if (status == tableConstant) {
+                                finishTask();
+                            } else {
+                                updateProgress(status);
+                            }
+                        }
+                    }
                 }
 
                 @Override
                 public void onFailure(Call<List<MasterCategory>> call, Throwable t) {
                     Log.i("autolog", t.getMessage());
+                    super.onFailure(call,t);
                 }
             });
         } catch (Exception e) {
@@ -545,20 +812,38 @@ public class TableDataInjector {
 
     public void getMasterSubCategory() {
         try {
-            Retrofit retrofit = getRetroInstance(baseUrl);
-            ApiInterface service = retrofit.create(ApiInterface.class);
-            Call<List<MasterSubcategory>> call = service.getMasterSubCategory(generateTableUrl("master_subcategory",storeId));
-            call.enqueue(new Callback<List<MasterSubcategory>>() {
+            ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
+            Call<List<MasterSubcategory>> call = apiService.loadMasterSubCategory(Constants.Authorization, storeId);
+            call.enqueue(new CallbackWithRetry<List<MasterSubcategory>>() {
                 @Override
                 public void onResponse(Call<List<MasterSubcategory>> call, Response<List<MasterSubcategory>> response) {
-                    masterSubcategoryList = response.body();
-                    Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
-                    InsertMasterSubCategory(masterSubcategoryList);
+
+                    if (response.isSuccessful()) {
+                        if (response.code() == 200) {
+                            try{
+                                masterSubcategoryList = response.body();
+                                Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
+                                injectExecutor.submit(() -> InsertMasterSubCategory(masterSubcategoryList));
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            Log.d("InsertionEmpty", "MasterSubcategory: ");
+                            status++;
+                            if (status == tableConstant) {
+                                finishTask();
+                            } else {
+                                updateProgress(status);
+                            }
+                        }
+                    }
                 }
 
                 @Override
                 public void onFailure(Call<List<MasterSubcategory>> call, Throwable t) {
                     Log.i("autolog", t.getMessage());
+                    super.onFailure(call,t);
                 }
             });
         } catch (Exception e) {
@@ -569,20 +854,38 @@ public class TableDataInjector {
 
     public void getHsnMaster() {
         try {
-            Retrofit retrofit = getRetroInstance(baseUrl);
-            ApiInterface service = retrofit.create(ApiInterface.class);
-            Call<List<HSNMaster>> call = service.getHsnMaster(generateTableUrl("hsn_master",storeId));
-            call.enqueue(new Callback<List<HSNMaster>>() {
+            ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
+            Call<List<HSNMaster>> call = apiService.loadHsnMaster(Constants.Authorization, storeId);
+            call.enqueue(new CallbackWithRetry<List<HSNMaster>>() {
                 @Override
                 public void onResponse(Call<List<HSNMaster>> call, Response<List<HSNMaster>> response) {
-                    hsnMasterList = response.body();
-                    Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
-                    InsertHsnMaster(hsnMasterList);
+
+                    if (response.isSuccessful()) {
+                        if (response.code() == 200) {
+                            try{
+                                hsnMasterList = response.body();
+                                Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
+                                injectExecutor.submit(() -> InsertHsnMaster(hsnMasterList));
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            Log.d("InsertionEmpty", "HSNMaster: ");
+                            status++;
+                            if (status == tableConstant) {
+                                finishTask();
+                            } else {
+                                updateProgress(status);
+                            }
+                        }
+                    }
                 }
 
                 @Override
                 public void onFailure(Call<List<HSNMaster>> call, Throwable t) {
                     Log.i("autolog", t.getMessage());
+                    super.onFailure(call,t);
                 }
             });
         } catch (Exception e) {
@@ -593,20 +896,38 @@ public class TableDataInjector {
 
     public void getVendorMaster() {
         try {
-            Retrofit retrofit = getRetroInstance(baseUrl);
-            ApiInterface service = retrofit.create(ApiInterface.class);
-            Call<List<VendorMaster>> call = service.getVendorMaster(generateTableUrl("retail_str_dstr",storeId));
-            call.enqueue(new Callback<List<VendorMaster>>() {
+            ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
+            Call<List<VendorMaster>> call = apiService.loadVendorMaster(Constants.Authorization, storeId);
+            call.enqueue(new CallbackWithRetry<List<VendorMaster>>() {
                 @Override
                 public void onResponse(Call<List<VendorMaster>> call, Response<List<VendorMaster>> response) {
-                    vendorMasterList = response.body();
-                    Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
-                    InsertVendorMaster(vendorMasterList);
+
+                    if (response.isSuccessful()) {
+                        if (response.code() == 200) {
+                            try{
+                                vendorMasterList = response.body();
+                                Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
+                                injectExecutor.submit(() -> InsertVendorMaster(vendorMasterList));
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            Log.d("InsertionEmpty", "VendorMaster: ");
+                            status++;
+                            if (status == tableConstant) {
+                                finishTask();
+                            } else {
+                                updateProgress(status);
+                            }
+                        }
+                    }
                 }
 
                 @Override
                 public void onFailure(Call<List<VendorMaster>> call, Throwable t) {
                     Log.i("autolog", t.getMessage());
+                    super.onFailure(call,t);
                 }
             });
         } catch (Exception e) {
@@ -617,20 +938,38 @@ public class TableDataInjector {
 
     public void getMasterUom() {
         try {
-            Retrofit retrofit = getRetroInstance(baseUrl);
-            ApiInterface service = retrofit.create(ApiInterface.class);
-            Call<List<MasterUOM>> call = service.getMasterUom(generateTableUrl("master_uom",storeId));
-            call.enqueue(new Callback<List<MasterUOM>>() {
+            ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
+            Call<List<MasterUOM>> call = apiService.loadUomMaster(Constants.Authorization, storeId);
+            call.enqueue(new CallbackWithRetry<List<MasterUOM>>() {
                 @Override
                 public void onResponse(Call<List<MasterUOM>> call, Response<List<MasterUOM>> response) {
-                    masterUOMList = response.body();
-                    Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
-                    InsertMasterUom(masterUOMList);
+
+                    if (response.isSuccessful()) {
+                        if (response.code() == 200) {
+                            try{
+                                masterUOMList = response.body();
+                                Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
+                                injectExecutor.submit(() -> InsertMasterUom(masterUOMList));
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            Log.d("InsertionEmpty", "MasterUOM: ");
+                            status++;
+                            if (status == tableConstant) {
+                                finishTask();
+                            } else {
+                                updateProgress(status);
+                            }
+                        }
+                    }
                 }
 
                 @Override
                 public void onFailure(Call<List<MasterUOM>> call, Throwable t) {
                     Log.i("autolog", t.getMessage());
+                    super.onFailure(call,t);
                 }
             });
         } catch (Exception e) {
@@ -640,21 +979,38 @@ public class TableDataInjector {
 
     public void getMasterCustomerType() {
         try {
-            Retrofit retrofit = getRetroInstance(baseUrl);
-            assert retrofit != null;
-            ApiInterface service = retrofit.create(ApiInterface.class);
-            Call<List<MasterCustomerType>> call = service.getCustomerType(generateTableUrl("master_customer_type",storeId));
-            call.enqueue(new Callback<List<MasterCustomerType>>() {
+            ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
+            Call<List<MasterCustomerType>> call = apiService.loadMasterCustomerType(Constants.Authorization, storeId);
+            call.enqueue(new CallbackWithRetry<List<MasterCustomerType>>() {
                 @Override
                 public void onResponse(Call<List<MasterCustomerType>> call, Response<List<MasterCustomerType>> response) {
-                    masterCustomerTypeList = response.body();
-                    Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
-                    InsertCustomerType(masterCustomerTypeList);
+
+                    if (response.isSuccessful()) {
+                        if (response.code() == 200) {
+                            try{
+                                masterCustomerTypeList = response.body();
+                                Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
+                                injectExecutor.submit(() -> InsertCustomerType(masterCustomerTypeList));
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            Log.d("InsertionEmpty", "MasterCustomerType: ");
+                            status++;
+                            if (status == tableConstant) {
+                                finishTask();
+                            } else {
+                                updateProgress(status);
+                            }
+                        }
+                    }
                 }
 
                 @Override
                 public void onFailure(Call<List<MasterCustomerType>> call, Throwable t) {
                     Log.i("autolog", t.getMessage());
+                    super.onFailure(call,t);
                 }
             });
         } catch (Exception e) {
@@ -664,21 +1020,39 @@ public class TableDataInjector {
 
     public void getCustomerAddress() {
         try {
-            Retrofit retrofit = getRetroInstance(baseUrl);
-            assert retrofit != null;
-            ApiInterface service = retrofit.create(ApiInterface.class);
-            Call<List<CustomerAddress>> call = service.getCustomerAddress(generateTableUrl("retail_cust_address",storeId));
-            call.enqueue(new Callback<List<CustomerAddress>>() {
+            ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
+            Call<List<CustomerAddress>> call = apiService.loadMasterCustomerAddress(Constants.Authorization, storeId);
+            call.enqueue(new CallbackWithRetry<List<CustomerAddress>>() {
                 @Override
                 public void onResponse(Call<List<CustomerAddress>> call, Response<List<CustomerAddress>> response) {
-                    customerAddressList = response.body();
-                    Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
-                    InsertCustomerAddress(customerAddressList);
+
+                    if (response.isSuccessful()) {
+                        if (response.code() == 200) {
+                            try{
+                                customerAddressList = response.body();
+                                Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
+                                injectExecutor.submit(() -> InsertCustomerAddress(customerAddressList));
+
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            Log.d("InsertionEmpty", "CustomerAddress: ");
+                            status++;
+                            if (status == tableConstant) {
+                                finishTask();
+                            } else {
+                                updateProgress(status);
+                            }
+                        }
+                    }
                 }
 
                 @Override
                 public void onFailure(Call<List<CustomerAddress>> call, Throwable t) {
                     Log.i("autolog", t.getMessage());
+                    super.onFailure(call,t);
                 }
             });
         } catch (Exception e) {
@@ -689,21 +1063,40 @@ public class TableDataInjector {
 
     public void getMasterState() {
         try {
-            Retrofit retrofit = getRetroInstance(baseUrl);
-            assert retrofit != null;
-            ApiInterface service = retrofit.create(ApiInterface.class);
-            Call<List<MasterState>> call = service.getMasterState(generateTableUrl("masterState",storeId));
-            call.enqueue(new Callback<List<MasterState>>() {
+
+            ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
+            Call<List<MasterState>> call = apiService.loadmasterstate(Constants.Authorization, storeId);
+
+            call.enqueue(new CallbackWithRetry<List<MasterState>>() {
                 @Override
                 public void onResponse(Call<List<MasterState>> call, Response<List<MasterState>> response) {
-                    masterStateList = response.body();
-                    Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
-                    InsertMasterState(masterStateList);
+
+                    if (response.isSuccessful()) {
+                        if (response.code() == 200) {
+                            try{
+                                masterStateList = response.body();
+                                Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
+                                injectExecutor.submit(() -> InsertMasterState(masterStateList));
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            Log.d("InsertionEmpty", "MasterState: ");
+                            status++;
+                            if (status == tableConstant) {
+                                finishTask();
+                            } else {
+                                updateProgress(status);
+                            }
+                        }
+                    }
                 }
 
                 @Override
                 public void onFailure(Call<List<MasterState>> call, Throwable t) {
                     Log.i("autolog", t.getMessage());
+                    super.onFailure(call,t);
                 }
             });
         } catch (Exception e) {
@@ -713,21 +1106,40 @@ public class TableDataInjector {
 
     public void getBankMaster() {
         try {
-            Retrofit retrofit = getRetroInstance(baseUrl);
-            assert retrofit != null;
-            ApiInterface service = retrofit.create(ApiInterface.class);
-            Call<List<BankDetails>> call = service.getBankDetails(generateTableUrl("bank_details",storeId));
-            call.enqueue(new Callback<List<BankDetails>>() {
+            ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
+            Call<List<BankDetails>> call = apiService.loadBankMaster(Constants.Authorization, storeId);
+
+            call.enqueue(new CallbackWithRetry<List<BankDetails>>() {
                 @Override
                 public void onResponse(Call<List<BankDetails>> call, Response<List<BankDetails>> response) {
-                     bankDetailsList= response.body();
-                    Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
-                    InsertBankMaster(bankDetailsList);
+
+
+                    if (response.isSuccessful()) {
+                        if (response.code() == 200) {
+                            try{
+                                bankDetailsList= response.body();
+                                Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
+                                injectExecutor.submit(() -> InsertBankMaster(bankDetailsList));
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            Log.d("InsertionEmpty", "BankDetails: ");
+                            status++;
+                            if (status == tableConstant) {
+                                finishTask();
+                            } else {
+                                updateProgress(status);
+                            }
+                        }
+                    }
                 }
 
                 @Override
                 public void onFailure(Call<List<BankDetails>> call, Throwable t) {
                     Log.i("autolog", t.getMessage());
+                    super.onFailure(call,t);
                 }
             });
         } catch (Exception e) {
@@ -737,21 +1149,38 @@ public class TableDataInjector {
 
     public void getStoreConfig() {
         try {
-            Retrofit retrofit = getRetroInstance(baseUrl);
-            assert retrofit != null;
-            ApiInterface service = retrofit.create(ApiInterface.class);
-            Call<List<StoreConfiguration>> call = service.getStoreConfiguration(generateTableUrl("store_configuration",storeId));
-            call.enqueue(new Callback<List<StoreConfiguration>>() {
+            ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
+            Call<List<StoreConfiguration>> call = apiService.loadStoreConfiguration(Constants.Authorization, storeId);
+            call.enqueue(new CallbackWithRetry<List<StoreConfiguration>>() {
                 @Override
                 public void onResponse(Call<List<StoreConfiguration>> call, Response<List<StoreConfiguration>> response) {
-                    storeConfigurationList= response.body();
-                    Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
-                    InsertStoreConfig(storeConfigurationList);
+
+                    if (response.isSuccessful()) {
+                        if (response.code() == 200) {
+                            try{
+                                storeConfigurationList= response.body();
+                                Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
+                                injectExecutor.submit(() -> InsertStoreConfig(storeConfigurationList));
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            Log.d("InsertionEmpty", "StoreConfiguration: ");
+                            status++;
+                            if (status == tableConstant) {
+                                finishTask();
+                            } else {
+                                updateProgress(status);
+                            }
+                        }
+                    }
                 }
 
                 @Override
                 public void onFailure(Call<List<StoreConfiguration>> call, Throwable t) {
                     Log.i("autolog", t.getMessage());
+                    super.onFailure(call,t);
                 }
             });
         } catch (Exception e) {
@@ -762,21 +1191,39 @@ public class TableDataInjector {
     }
     public void getCustomerReturnMaster() {
         try {
-            Retrofit retrofit = getRetroInstance(baseUrl);
-            assert retrofit != null;
-            ApiInterface service = retrofit.create(ApiInterface.class);
-            Call<List<CustomerReturnMaster>> call = service.getCustomerReturnMaster(generateTableUrl("customerReturnMaster",storeId));
-            call.enqueue(new Callback<List<CustomerReturnMaster>>() {
+            ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
+            Call<List<CustomerReturnMaster>> call = apiService.loadCustomerReturnMaster(Constants.Authorization, storeId);
+            call.enqueue(new CallbackWithRetry<List<CustomerReturnMaster>>() {
                 @Override
                 public void onResponse(Call<List<CustomerReturnMaster>> call, Response<List<CustomerReturnMaster>> response) {
-                    customerReturnMasterList = response.body();
-                    Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
-                    InsertCustomerReturnMaster(customerReturnMasterList);
+
+
+                    if (response.isSuccessful()) {
+                        if (response.code() == 200) {
+                            try{
+                                customerReturnMasterList = response.body();
+                                Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
+                                injectExecutor.submit(() -> InsertCustomerReturnMaster(customerReturnMasterList));
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            Log.d("InsertionEmpty", "CustomerReturnMaster: ");
+                            status++;
+                            if (status == tableConstant) {
+                                finishTask();
+                            } else {
+                                updateProgress(status);
+                            }
+                        }
+                    }
                 }
 
                 @Override
                 public void onFailure(Call<List<CustomerReturnMaster>> call, Throwable t) {
                     Log.i("autolog", t.getMessage());
+                    super.onFailure(call,t);
                 }
             });
         } catch (Exception e) {
@@ -787,21 +1234,39 @@ public class TableDataInjector {
 
     public void getCustomerReturnDetails() {
         try {
-            Retrofit retrofit = getRetroInstance(baseUrl);
-            assert retrofit != null;
-            ApiInterface service = retrofit.create(ApiInterface.class);
-            Call<List<CustomerReturnDetails>> call = service.getCustomerReturnDetails(generateTableUrl("customerReturnDetail",storeId));
-            call.enqueue(new Callback<List<CustomerReturnDetails>>() {
+            ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
+            Call<List<CustomerReturnDetails>> call = apiService.loadCustomerReturnDetail(Constants.Authorization, storeId);
+            call.enqueue(new CallbackWithRetry<List<CustomerReturnDetails>>() {
                 @Override
                 public void onResponse(Call<List<CustomerReturnDetails>> call, Response<List<CustomerReturnDetails>> response) {
-                    customerReturnDetailsList = response.body();
-                    Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
-                    InsertCustomerReturnDetails(customerReturnDetailsList);
+
+
+                    if (response.isSuccessful()) {
+                        if (response.code() == 200) {
+                            try{
+                                customerReturnDetailsList = response.body();
+                                Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
+                                injectExecutor.submit(() -> InsertCustomerReturnDetails(customerReturnDetailsList));
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            Log.d("InsertionEmpty", "CustomerReturnDetails: ");
+                            status++;
+                            if (status == tableConstant) {
+                                finishTask();
+                            } else {
+                                updateProgress(status);
+                            }
+                        }
+                    }
                 }
 
                 @Override
                 public void onFailure(Call<List<CustomerReturnDetails>> call, Throwable t) {
                     Log.i("autolog", t.getMessage());
+                    super.onFailure(call,t);
                 }
             });
         } catch (Exception e) {
@@ -811,21 +1276,38 @@ public class TableDataInjector {
 
     public void getCustomerReject() {
         try {
-            Retrofit retrofit = getRetroInstance(baseUrl);
-            assert retrofit != null;
-            ApiInterface service = retrofit.create(ApiInterface.class);
-            Call<List<CustomerReject>> call = service.getCustomerReject(generateTableUrl("retail_store_cust_reject",storeId));
-            call.enqueue(new Callback<List<CustomerReject>>() {
+            ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
+            Call<List<CustomerReject>> call = apiService.loadRetailStoreCustReject(Constants.Authorization, storeId);
+            call.enqueue(new CallbackWithRetry<List<CustomerReject>>() {
                 @Override
                 public void onResponse(Call<List<CustomerReject>> call, Response<List<CustomerReject>> response) {
-                    customerRejectList= response.body();
-                    Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
-                    InsertCustomerReject(customerRejectList);
+
+                    if (response.isSuccessful()) {
+                        if (response.code() == 200) {
+                            try{
+                                customerRejectList= response.body();
+                                Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
+                                injectExecutor.submit(() -> InsertCustomerReject(customerRejectList));
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            Log.d("InsertionEmpty", "CustomerReject: ");
+                            status++;
+                            if (status == tableConstant) {
+                                finishTask();
+                            } else {
+                                updateProgress(status);
+                            }
+                        }
+                    }
                 }
 
                 @Override
                 public void onFailure(Call<List<CustomerReject>> call, Throwable t) {
                     Log.i("autolog", t.getMessage());
+                    super.onFailure(call,t);
                 }
             });
         } catch (Exception e) {
@@ -836,21 +1318,39 @@ public class TableDataInjector {
 
     public void getCustomerCredit() {
         try {
-            Retrofit retrofit = getRetroInstance(baseUrl);
-            assert retrofit != null;
-            ApiInterface service = retrofit.create(ApiInterface.class);
-            Call<List<CustomerCredit>> call = service.getCustomerCredit(generateTableUrl("retail_credit_cust",storeId));
-            call.enqueue(new Callback<List<CustomerCredit>>() {
+            ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
+            Call<List<CustomerCredit>> call = apiService.loadRetailCreditCust(Constants.Authorization, storeId);
+            call.enqueue(new CallbackWithRetry<List<CustomerCredit>>() {
                 @Override
                 public void onResponse(Call<List<CustomerCredit>> call, Response<List<CustomerCredit>> response) {
-                    customerCreditList= response.body();
-                    Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
-                    InsertCustomerCredit(customerCreditList);
+
+                    if (response.isSuccessful()) {
+                        if (response.code() == 200) {
+                            try{
+                                customerCreditList= response.body();
+                                Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
+                                injectExecutor.submit(() -> InsertCustomerCredit(customerCreditList));
+
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            Log.d("InsertionEmpty", "CustomerCredit: ");
+                            status++;
+                            if (status == tableConstant) {
+                                finishTask();
+                            } else {
+                                updateProgress(status);
+                            }
+                        }
+                    }
                 }
 
                 @Override
                 public void onFailure(Call<List<CustomerCredit>> call, Throwable t) {
                     Log.i("autolog", t.getMessage());
+                    super.onFailure(call,t);
                 }
             });
         } catch (Exception e) {
@@ -860,21 +1360,38 @@ public class TableDataInjector {
 
     public void getCreditBillDetails() {
         try {
-            Retrofit retrofit = getRetroInstance(baseUrl);
-            assert retrofit != null;
-            ApiInterface service = retrofit.create(ApiInterface.class);
-            Call<List<CreditBillDetails>> call = service.getCreditBillDetails(generateTableUrl("retail_credit_bill_details",storeId));
-            call.enqueue(new Callback<List<CreditBillDetails>>() {
+            ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
+            Call<List<CreditBillDetails>> call = apiService.loadRetailCreditBillDetails(Constants.Authorization, storeId);
+            call.enqueue(new CallbackWithRetry<List<CreditBillDetails>>() {
                 @Override
                 public void onResponse(Call<List<CreditBillDetails>> call, Response<List<CreditBillDetails>> response) {
-                    creditBillDetails= response.body();
-                    Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
-                    InsertCreditBillDetails(creditBillDetails);
+
+                    if (response.isSuccessful()) {
+                        if (response.code() == 200) {
+                            try{
+                                creditBillDetails= response.body();
+                                Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
+                                injectExecutor.submit(() -> InsertCreditBillDetails(creditBillDetails));
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            Log.d("InsertionEmpty", "CreditBillDetails: ");
+                            status++;
+                            if (status == tableConstant) {
+                                finishTask();
+                            } else {
+                                updateProgress(status);
+                            }
+                        }
+                    }
                 }
 
                 @Override
                 public void onFailure(Call<List<CreditBillDetails>> call, Throwable t) {
                     Log.i("autolog", t.getMessage());
+                    super.onFailure(call,t);
                 }
             });
         } catch (Exception e) {
@@ -884,21 +1401,39 @@ public class TableDataInjector {
 
     public void getCustomerLedger() {
         try {
-            Retrofit retrofit = getRetroInstance(baseUrl);
-            assert retrofit != null;
-            ApiInterface service = retrofit.create(ApiInterface.class);
-            Call<List<CustomerLedger>> call = service.getCustomerLedger(generateTableUrl("customerLedger",storeId));
-            call.enqueue(new Callback<List<CustomerLedger>>() {
+            ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
+            Call<List<CustomerLedger>> call = apiService.loadCustomerLedger(Constants.Authorization, storeId);
+            call.enqueue(new CallbackWithRetry<List<CustomerLedger>>() {
                 @Override
                 public void onResponse(Call<List<CustomerLedger>> call, Response<List<CustomerLedger>> response) {
-                    customerLedgerList= response.body();
-                    Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
-                    InsertCustomerLedger(customerLedgerList);
+
+                    if (response.isSuccessful()) {
+                        if (response.code() == 200) {
+                            try{
+                                customerLedgerList= response.body();
+                                Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
+                                injectExecutor.submit(() -> InsertCustomerLedger(customerLedgerList));
+
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            Log.d("InsertionEmpty", "CustomerLedger: ");
+                            status++;
+                            if (status == tableConstant) {
+                                finishTask();
+                            } else {
+                                updateProgress(status);
+                            }
+                        }
+                    }
                 }
 
                 @Override
                 public void onFailure(Call<List<CustomerLedger>> call, Throwable t) {
                     Log.i("autolog", t.getMessage());
+                    super.onFailure(call,t);
                 }
             });
         } catch (Exception e) {
@@ -908,21 +1443,38 @@ public class TableDataInjector {
 
     public void getStockRegister() {
         try {
-            Retrofit retrofit = getRetroInstance(baseUrl);
-            assert retrofit != null;
-            ApiInterface service = retrofit.create(ApiInterface.class);
-            Call<List<StockRegister>> call = service.getStockRegister(generateTableUrl("stock_register",storeId));
-            call.enqueue(new Callback<List<StockRegister>>() {
+            ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
+            Call<List<StockRegister>> call = apiService.loadStockRegister(Constants.Authorization, storeId);
+            call.enqueue(new CallbackWithRetry<List<StockRegister>>() {
                 @Override
                 public void onResponse(Call<List<StockRegister>> call, Response<List<StockRegister>> response) {
-                    stockRegisterList= response.body();
-                    Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
-                    InsertStockRegister(stockRegisterList);
+
+                    if (response.isSuccessful()) {
+                        if (response.code() == 200) {
+                            try{
+                                stockRegisterList= response.body();
+                                Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
+                                injectExecutor.submit(() -> InsertStockRegister(stockRegisterList));
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            Log.d("InsertionEmpty", "StockRegister: ");
+                            status++;
+                            if (status == tableConstant) {
+                                finishTask();
+                            } else {
+                                updateProgress(status);
+                            }
+                        }
+                    }
                 }
 
                 @Override
                 public void onFailure(Call<List<StockRegister>> call, Throwable t) {
                     Log.i("autolog", t.getMessage());
+                    super.onFailure(call,t);
                 }
             });
         } catch (Exception e) {
@@ -931,21 +1483,39 @@ public class TableDataInjector {
     }
     public void getGrnDetails() {
         try {
-            Retrofit retrofit = getRetroInstance(baseUrl);
-            assert retrofit != null;
-            ApiInterface service = retrofit.create(ApiInterface.class);
-            Call<List<GRNDetails>> call = service.getGrnDetails(generateTableUrl("retail_str_grn_detail",storeId));
-            call.enqueue(new Callback<List<GRNDetails>>() {
+            ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
+            Call<List<GRNDetails>> call = apiService.loadGrnDetail(Constants.Authorization, storeId);
+            call.enqueue(new CallbackWithRetry<List<GRNDetails>>() {
                 @Override
                 public void onResponse(Call<List<GRNDetails>> call, Response<List<GRNDetails>> response) {
-                    grnDetailsList= response.body();
-                    Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
-                    InsertGrnDetails(grnDetailsList);
+
+
+                    if (response.isSuccessful()) {
+                        if (response.code() == 200) {
+                            try{
+                                grnDetailsList= response.body();
+                                Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
+                                injectExecutor.submit(() -> InsertGrnDetails(grnDetailsList));
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            Log.d("InsertionEmpty", "GRNDetails: ");
+                            status++;
+                            if (status == tableConstant) {
+                                finishTask();
+                            } else {
+                                updateProgress(status);
+                            }
+                        }
+                    }
                 }
 
                 @Override
                 public void onFailure(Call<List<GRNDetails>> call, Throwable t) {
                     Log.i("autolog", t.getMessage());
+                    super.onFailure(call,t);
                 }
             });
         } catch (Exception e) {
@@ -956,21 +1526,40 @@ public class TableDataInjector {
 
     public void getGrnMasters() {
         try {
-            Retrofit retrofit = getRetroInstance(baseUrl);
-            assert retrofit != null;
-            ApiInterface service = retrofit.create(ApiInterface.class);
-            Call<List<GRNMaster>> call = service.getGrnMaster(generateTableUrl("retail_str_grn_master",storeId));
-            call.enqueue(new Callback<List<GRNMaster>>() {
+            ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
+            Call<List<GRNMaster>> call = apiService.loadGrnMaster(Constants.Authorization, storeId);
+
+            call.enqueue(new CallbackWithRetry<List<GRNMaster>>() {
                 @Override
                 public void onResponse(Call<List<GRNMaster>> call, Response<List<GRNMaster>> response) {
-                    grnMasterList= response.body();
-                    Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
-                    InsertGrnMasters(grnMasterList);
+
+
+                    if (response.isSuccessful()) {
+                        if (response.code() == 200) {
+                            try{
+                                grnMasterList= response.body();
+                                Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
+                                injectExecutor.submit(() -> InsertGrnMasters(grnMasterList));
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            Log.d("InsertionEmpty", "GRNMaster: ");
+                            status++;
+                            if (status == tableConstant) {
+                                finishTask();
+                            } else {
+                                updateProgress(status);
+                            }
+                        }
+                    }
                 }
 
                 @Override
                 public void onFailure(Call<List<GRNMaster>> call, Throwable t) {
                     Log.i("autolog", t.getMessage());
+                    super.onFailure(call,t);
                 }
             });
         } catch (Exception e) {
@@ -980,21 +1569,39 @@ public class TableDataInjector {
 
     public void getVendorPayDetails() {
         try {
-            Retrofit retrofit = getRetroInstance(baseUrl);
-            assert retrofit != null;
-            ApiInterface service = retrofit.create(ApiInterface.class);
-            Call<List<VendorPayDetail>> call = service.getVendorPayDetail(generateTableUrl("VendorPayDetail",storeId));
-            call.enqueue(new Callback<List<VendorPayDetail>>() {
+            ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
+            Call<List<VendorPayDetail>> call = apiService.loadVendorPayDetail(Constants.Authorization, storeId);
+            call.enqueue(new CallbackWithRetry<List<VendorPayDetail>>() {
                 @Override
                 public void onResponse(Call<List<VendorPayDetail>> call, Response<List<VendorPayDetail>> response) {
-                    vendorPayDetailList= response.body();
-                    Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
-                  InsertVendorPayDetails(vendorPayDetailList);
+
+
+                    if (response.isSuccessful()) {
+                        if (response.code() == 200) {
+                            try{
+                                vendorPayDetailList= response.body();
+                                Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
+                                injectExecutor.submit(() -> InsertVendorPayDetails(vendorPayDetailList));
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            Log.d("InsertionEmpty", "VendorPayDetail: ");
+                            status++;
+                            if (status == tableConstant) {
+                                finishTask();
+                            } else {
+                                updateProgress(status);
+                            }
+                        }
+                    }
                 }
 
                 @Override
                 public void onFailure(Call<List<VendorPayDetail>> call, Throwable t) {
                     Log.i("autolog", t.getMessage());
+                    super.onFailure(call,t);
                 }
             });
         } catch (Exception e) {
@@ -1004,21 +1611,38 @@ public class TableDataInjector {
 
     public void getVendorPayMaster() {
         try {
-            Retrofit retrofit = getRetroInstance(baseUrl);
-            assert retrofit != null;
-            ApiInterface service = retrofit.create(ApiInterface.class);
-            Call<List<VendorPayMaster>> call = service.getVendorPayMaster(generateTableUrl("VendorPayMaster",storeId));
-            call.enqueue(new Callback<List<VendorPayMaster>>() {
+            ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
+            Call<List<VendorPayMaster>> call = apiService.loadVendorPayMaster(Constants.Authorization, storeId);
+            call.enqueue(new CallbackWithRetry<List<VendorPayMaster>>() {
                 @Override
                 public void onResponse(Call<List<VendorPayMaster>> call, Response<List<VendorPayMaster>> response) {
-                    vendorPayMasterList= response.body();
-                    Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
-                    InsertVendorPayMaster(vendorPayMasterList);
+
+                    if (response.isSuccessful()) {
+                        if (response.code() == 200) {
+                            try{
+                                vendorPayMasterList= response.body();
+                                Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
+                                injectExecutor.submit(() -> InsertVendorPayMaster(vendorPayMasterList));
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            Log.d("InsertionEmpty", "VendorPayMaster: ");
+                            status++;
+                            if (status == tableConstant) {
+                                finishTask();
+                            } else {
+                                updateProgress(status);
+                            }
+                        }
+                    }
                 }
 
                 @Override
                 public void onFailure(Call<List<VendorPayMaster>> call, Throwable t) {
                     Log.i("autolog", t.getMessage());
+                    super.onFailure(call,t);
                 }
             });
         } catch (Exception e) {
@@ -1028,21 +1652,38 @@ public class TableDataInjector {
 
     public void getVendorRejectReason() {
         try {
-            Retrofit retrofit = getRetroInstance(baseUrl);
-            assert retrofit != null;
-            ApiInterface service = retrofit.create(ApiInterface.class);
-            Call<List<VendorRejectReason>> call = service.getVendorRejectReason(generateTableUrl("retail_store_vend_reject",storeId));
-            call.enqueue(new Callback<List<VendorRejectReason>>() {
+            ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
+            Call<List<VendorRejectReason>> call = apiService.loadRetailStoreVendReject(Constants.Authorization, storeId);
+            call.enqueue(new CallbackWithRetry<List<VendorRejectReason>>() {
                 @Override
                 public void onResponse(Call<List<VendorRejectReason>> call, Response<List<VendorRejectReason>> response) {
-                    vendorRejectReasonList= response.body();
-                    Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
-                    InsertVendorReject(vendorRejectReasonList);
+
+                    if (response.isSuccessful()) {
+                        if (response.code() == 200) {
+                            try{
+                                vendorRejectReasonList= response.body();
+                                Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
+                                injectExecutor.submit(() -> InsertVendorReject(vendorRejectReasonList));
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            Log.d("InsertionEmpty", "VendorRejectReason: ");
+                            status++;
+                            if (status == tableConstant) {
+                                finishTask();
+                            } else {
+                                updateProgress(status);
+                            }
+                        }
+                    }
                 }
 
                 @Override
                 public void onFailure(Call<List<VendorRejectReason>> call, Throwable t) {
                     Log.i("autolog", t.getMessage());
+                    super.onFailure(call,t);
                 }
             });
         } catch (Exception e) {
@@ -1052,20 +1693,39 @@ public class TableDataInjector {
 
     public void getVendorDetailReturn() {
         try {
-            Retrofit retrofit = getRetroInstance(baseUrl);
-            assert retrofit != null;
-            ApiInterface service = retrofit.create(ApiInterface.class);
-            Call<List<VendorDetailReturn>> call = service.getVendorDetailReturn(generateTableUrl("retail_str_vendor_detail_return",storeId));
-            call.enqueue(new Callback<List<VendorDetailReturn>>() {
+            ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
+            Call<List<VendorDetailReturn>> call = apiService.loadVendorReturnDetail(Constants.Authorization, storeId);
+            call.enqueue(new CallbackWithRetry<List<VendorDetailReturn>>() {
                 @Override
                 public void onResponse(Call<List<VendorDetailReturn>> call, Response<List<VendorDetailReturn>> response) {
-                    vendorDetailReturnList= response.body();
-                    Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
-                    InsertVendorDetailReturn(vendorDetailReturnList);
+
+                    if (response.isSuccessful()) {
+                        if (response.code() == 200) {
+                            try{
+                                vendorDetailReturnList= response.body();
+                                Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
+                                injectExecutor.submit(() -> InsertVendorDetailReturn(vendorDetailReturnList));
+
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            Log.d("InsertionEmpty", "VendorDetailReturn: ");
+                            status++;
+                            if (status == tableConstant) {
+                                finishTask();
+                            } else {
+                                updateProgress(status);
+                            }
+                        }
+                    }
+
                 }
                 @Override
                 public void onFailure(Call<List<VendorDetailReturn>> call, Throwable t) {
                     Log.i("autolog", t.getMessage());
+                    super.onFailure(call,t);
                 }
             });
         } catch (Exception e) {
@@ -1075,20 +1735,38 @@ public class TableDataInjector {
 
     public void getVendorMasterReturn() {
         try {
-            Retrofit retrofit = getRetroInstance(baseUrl);
-            assert retrofit != null;
-            ApiInterface service = retrofit.create(ApiInterface.class);
-            Call<List<VendorMasterReturn>> call = service.getVendorMasterReturn(generateTableUrl("retail_str_vendor_master_return",storeId));
-            call.enqueue(new Callback<List<VendorMasterReturn>>() {
+            ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
+            Call<List<VendorMasterReturn>> call = apiService.loadVendorReturnMaster(Constants.Authorization, storeId);
+            call.enqueue(new CallbackWithRetry<List<VendorMasterReturn>>() {
                 @Override
                 public void onResponse(Call<List<VendorMasterReturn>> call, Response<List<VendorMasterReturn>> response) {
-                    vendorMasterReturnList= response.body();
-                    Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
-                    InsertVendorMasterReturn(vendorMasterReturnList);
+
+
+                    if (response.isSuccessful()) {
+                        if (response.code() == 200) {
+                            try{
+                                vendorMasterReturnList= response.body();
+                                Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
+                                injectExecutor.submit(() -> InsertVendorMasterReturn(vendorMasterReturnList));
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            Log.d("InsertionEmpty", "VendorMasterReturn: ");
+                            status++;
+                            if (status == tableConstant) {
+                                finishTask();
+                            } else {
+                                updateProgress(status);
+                            }
+                        }
+                    }
+
                 }
                 @Override
                 public void onFailure(Call<List<VendorMasterReturn>> call, Throwable t) {
                     Log.i("autolog", t.getMessage());
+                    super.onFailure(call,t);
                 }
             });
         } catch (Exception e) {
@@ -1129,8 +1807,9 @@ public class TableDataInjector {
             myDataBase.close();
             status+=1;
             if(status==tableConstant){
-                loadingDialog.cancelDialog();
-                dbReadyCallback.onDBReady();
+                finishTask();
+            }else {
+                updateProgress(status);
             }
             Log.d("Insertion Successful", "retail_str_vendor_master_return: "+status);
         } catch (Exception e) {
@@ -1159,8 +1838,9 @@ public class TableDataInjector {
             myDataBase.close();
             status+=1;
             if(status==tableConstant){
-                loadingDialog.cancelDialog();
-                dbReadyCallback.onDBReady();
+                finishTask();
+            }else {
+                updateProgress(status);
             }
             Log.d("Insertion Successful", "retail_str_vendor_detail_return: "+status);
         } catch (Exception e) {
@@ -1193,8 +1873,9 @@ public class TableDataInjector {
             myDataBase.close();
             status+=1;
             if(status==tableConstant){
-                loadingDialog.cancelDialog();
-                dbReadyCallback.onDBReady();
+                finishTask();
+            }else {
+                updateProgress(status);
             }
             Log.d("Insertion Successful", "retail_store_vend_reject: "+status);
         } catch (Exception e) {
@@ -1236,8 +1917,9 @@ public class TableDataInjector {
             myDataBase.close();
             status+=1;
             if(status==tableConstant){
-                loadingDialog.cancelDialog();
-                dbReadyCallback.onDBReady();
+                finishTask();
+            }else {
+                updateProgress(status);
             }
             Log.d("Insertion Successful", "VendorPayMaster: "+status);
         } catch (Exception e) {
@@ -1271,8 +1953,9 @@ public class TableDataInjector {
             myDataBase.close();
             status+=1;
             if(status==tableConstant){
-                loadingDialog.cancelDialog();
-                dbReadyCallback.onDBReady();
+                finishTask();
+            }else {
+                updateProgress(status);
             }
             Log.d("Insertion Successful", "VendorPayDetail: "+status);
         } catch (Exception e) {
@@ -1313,8 +1996,9 @@ public class TableDataInjector {
             myDataBase.close();
             status+=1;
             if(status==tableConstant){
-                loadingDialog.cancelDialog();
-                dbReadyCallback.onDBReady();
+                finishTask();
+            }else {
+                updateProgress(status);
             }
             Log.d("Insertion Successful", "GRNMaster: "+status);
         } catch (Exception e) {
@@ -1356,8 +2040,9 @@ public class TableDataInjector {
             myDataBase.close();
             status+=1;
             if(status==tableConstant){
-                loadingDialog.cancelDialog();
-                dbReadyCallback.onDBReady();
+                finishTask();
+            }else {
+                updateProgress(status);
             }
             Log.d("Insertion Successful", "GRNDetails: "+status);
         } catch (Exception e) {
@@ -1399,8 +2084,9 @@ public class TableDataInjector {
             myDataBase.close();
             status+=1;
             if(status==tableConstant){
-                loadingDialog.cancelDialog();
-                dbReadyCallback.onDBReady();
+                finishTask();
+            }else {
+                updateProgress(status);
             }
             Log.d("Insertion Successful", "StockRegisters: "+status);
         } catch (Exception e) {
@@ -1442,8 +2128,9 @@ public class TableDataInjector {
             myDataBase.close();
             status+=1;
             if(status==tableConstant){
-                loadingDialog.cancelDialog();
-                dbReadyCallback.onDBReady();
+                finishTask();
+            }else {
+                updateProgress(status);
             }
             Log.d("Insertion Successful", "CreditBillDetails: "+status);
         } catch (Exception e) {
@@ -1486,8 +2173,9 @@ public class TableDataInjector {
             myDataBase.close();
             status+=1;
             if(status==tableConstant){
-                loadingDialog.cancelDialog();
-                dbReadyCallback.onDBReady();
+                finishTask();
+            }else {
+                updateProgress(status);
             }
             Log.d("Insertion Successful", "CustomerLedger: "+status);
         } catch (Exception e) {
@@ -1522,8 +2210,9 @@ public class TableDataInjector {
             myDataBase.close();
             status+=1;
             if(status==tableConstant){
-                loadingDialog.cancelDialog();
-                dbReadyCallback.onDBReady();
+                finishTask();
+            }else {
+                updateProgress(status);
             }
             Log.d("Insertion Successful", "Insert_retail_credit_cust: "+status);
         } catch (Exception e) {
@@ -1555,8 +2244,9 @@ public class TableDataInjector {
             myDataBase.close();
             status+=1;
             if(status==tableConstant){
-                loadingDialog.cancelDialog();
-                dbReadyCallback.onDBReady();
+                finishTask();
+            }else {
+                updateProgress(status);
             }
             Log.d("Insertion Successful", "Insertretail_store_cust_reject: "+status);
         } catch (Exception e) {
@@ -1586,8 +2276,9 @@ public class TableDataInjector {
             myDataBase.close();
             status+=1;
             if(status==tableConstant){
-                loadingDialog.cancelDialog();
-                dbReadyCallback.onDBReady();
+                finishTask();
+            }else {
+                updateProgress(status);
             }
             Log.d("Insertion Successful", "InsertSalesReturnMaster: "+status);
         } catch (Exception e) {
@@ -1630,8 +2321,9 @@ public class TableDataInjector {
             myDataBase.close();
             status+=1;
             if(status==tableConstant){
-                loadingDialog.cancelDialog();
-                dbReadyCallback.onDBReady();
+                finishTask();
+            }else {
+                updateProgress(status);
             }
             Log.d("Insertion Successful", "InsertcustomerReturnMaster: "+status);
         } catch (Exception e) {
@@ -1730,8 +2422,9 @@ public class TableDataInjector {
             myDataBase.close();
             status+=1;
             if(status==tableConstant){
-                loadingDialog.cancelDialog();
-                dbReadyCallback.onDBReady();
+                finishTask();
+            }else {
+                updateProgress(status);
             }
             Log.d("Insertion Successful", "InsertStoreConfiguration: "+status);
         } catch (Exception e) {
@@ -1768,8 +2461,9 @@ public class TableDataInjector {
             myDataBase.close();
             status+=1;
             if(status==tableConstant){
-                loadingDialog.cancelDialog();
-                dbReadyCallback.onDBReady();
+                finishTask();
+            }else {
+                updateProgress(status);
             }
             Log.d("Insertion Successful", "InsertmasterState: "+status);
         } catch (Exception e) {
@@ -1795,8 +2489,9 @@ public class TableDataInjector {
             myDataBase.close();
             status+=1;
             if(status==tableConstant){
-                loadingDialog.cancelDialog();
-                dbReadyCallback.onDBReady();
+                finishTask();
+            }else {
+                updateProgress(status);
             }
             Log.d("Insertion Successful", "InsertmasterState: "+status);
         } catch (Exception e) {
@@ -1838,8 +2533,9 @@ public class TableDataInjector {
             myDataBase.close();
             status+=1;
             if(status==tableConstant){
-                loadingDialog.cancelDialog();
-                dbReadyCallback.onDBReady();
+                finishTask();
+            }else {
+                updateProgress(status);
             }
             Log.d("Insertion Successful", "InsertMasterAddress: "+status);
         } catch (Exception e) {
@@ -1867,8 +2563,9 @@ public class TableDataInjector {
             myDataBase.close();
             status+=1;
             if(status==tableConstant){
-                loadingDialog.cancelDialog();
-                dbReadyCallback.onDBReady();
+                finishTask();
+            }else {
+                updateProgress(status);
             }
             Log.d("Insertion Successful", "InsertMasterCustomerType: "+status);
         } catch (Exception e) {
@@ -1899,8 +2596,9 @@ public class TableDataInjector {
             myDataBase.close();
             status+=1;
             if(status==tableConstant){
-                loadingDialog.cancelDialog();
-                dbReadyCallback.onDBReady();
+                finishTask();
+            }else {
+                updateProgress(status);
             }
             Log.d("Insertion Successful", "InsertMasterUom: "+status);
         } catch (Exception e) {
@@ -1949,8 +2647,9 @@ public class TableDataInjector {
             myDataBase.close();
             status+=1;
             if(status==tableConstant){
-                loadingDialog.cancelDialog();
-                dbReadyCallback.onDBReady();
+                finishTask();
+            }else {
+                updateProgress(status);
             }
             Log.d("Insertion Successful", "InsertVendorMater: "+status);
         } catch (Exception e) {
@@ -1983,8 +2682,9 @@ public class TableDataInjector {
             myDataBase.close();
             status+=1;
             if(status==tableConstant){
-                loadingDialog.cancelDialog();
-                dbReadyCallback.onDBReady();
+                finishTask();
+            }else {
+                updateProgress(status);
             }
             Log.d("Insertion Successful", "InsertHsnMaster: "+status);
         } catch (Exception e) {
@@ -2014,8 +2714,9 @@ public class TableDataInjector {
             myDataBase.close();
             status+=1;
             if(status==tableConstant){
-                loadingDialog.cancelDialog();
-                dbReadyCallback.onDBReady();
+                finishTask();
+            }else {
+                updateProgress(status);
             }
             Log.d("Insertion Successful", "InsertMaster_subcategory: "+status);
         } catch (Exception e) {
@@ -2044,8 +2745,9 @@ public class TableDataInjector {
             myDataBase.close();
             status+=1;
             if(status==tableConstant){
-                loadingDialog.cancelDialog();
-                dbReadyCallback.onDBReady();
+                finishTask();
+            }else {
+                updateProgress(status);
             }
             Log.d("Insertion Successful", "InsertMaster_category: "+status);
         } catch (Exception e) {
@@ -2086,8 +2788,9 @@ public class TableDataInjector {
             myDataBase.close();
             status+=1;
             if(status==tableConstant){
-                 loadingDialog.cancelDialog();
-                dbReadyCallback.onDBReady();
+                finishTask();
+            }else {
+                updateProgress(status);
             }
             Log.d("Insertion Successful", "InsertShiftTrans: "+status);
         } catch (Exception e) {
@@ -2122,8 +2825,9 @@ public class TableDataInjector {
             myDataBase.close();
             status+=1;
             if(status==tableConstant){
-                 loadingDialog.cancelDialog();
-                dbReadyCallback.onDBReady();
+                finishTask();
+            }else {
+                updateProgress(status);
             }
             Log.d("Insertion Successful", "InsertBillPayDetail: "+status);
         } catch (Exception e) {
@@ -2150,8 +2854,9 @@ public class TableDataInjector {
             myDataBase.close();
             status+=1;
             if(status==tableConstant){
-                 loadingDialog.cancelDialog();
-                dbReadyCallback.onDBReady();
+                finishTask();
+            }else {
+                updateProgress(status);
             }
             Log.d("Insertion Successful", "InsertPaymentModeMaster: "+status);
         } catch (Exception e) {
@@ -2178,8 +2883,9 @@ public class TableDataInjector {
             myDataBase.close();
             status+=1;
             if(status==tableConstant){
-                 loadingDialog.cancelDialog();
-                dbReadyCallback.onDBReady();
+                finishTask();
+            }else {
+                updateProgress(status);
             }
             Log.d("Insertion Successful", "InsertDeliveryType: "+status);
         } catch (Exception e) {
@@ -2209,8 +2915,9 @@ public class TableDataInjector {
             myDataBase.close();
             status+=1;
             if(status==tableConstant){
-                 loadingDialog.cancelDialog();
-                dbReadyCallback.onDBReady();
+                finishTask();
+            }else {
+                updateProgress(status);
             }
             Log.d("Insertion Successful", "InsertShiftMaster: "+status);
         } catch (Exception e) {
@@ -2240,8 +2947,9 @@ public class TableDataInjector {
             myDataBase.close();
             status+=1;
             if(status==tableConstant){
-                 loadingDialog.cancelDialog();
-                dbReadyCallback.onDBReady();
+                finishTask();
+            }else {
+                updateProgress(status);
             }
 
             Log.d("Insertion Successful", "InsertTerminalConnfig: "+status);
@@ -2272,8 +2980,9 @@ public class TableDataInjector {
             myDataBase.close();
             status+=1;
             if(status==tableConstant){
-                 loadingDialog.cancelDialog();
-                dbReadyCallback.onDBReady();
+                finishTask();
+            }else {
+                updateProgress(status);
             }
             Log.d("Insertion Successful", "InsertTerminalUserAlloc: "+status);
         } catch (Exception e) {
@@ -2343,8 +3052,9 @@ public class TableDataInjector {
             myDataBase.close();
             status+=1;
             if(status==tableConstant){
-                 loadingDialog.cancelDialog();
-                dbReadyCallback.onDBReady();
+                finishTask();
+            }else {
+                updateProgress(status);
             }
             Log.d("Insertion Successful", "InsertRetailStore: "+status);
         } catch (Exception e) {
@@ -2395,8 +3105,9 @@ public class TableDataInjector {
             myDataBase.close();
             status+=1;
             if(status==tableConstant){
-                 loadingDialog.cancelDialog();
-                dbReadyCallback.onDBReady();
+                finishTask();
+            }else {
+                updateProgress(status);
             }
             Log.d("Insertion Successful", "InsertBillMaster: "+status);
         } catch (Exception e) {
@@ -2450,8 +3161,9 @@ public class TableDataInjector {
             myDataBase.close();
             status+=1;
             if(status==tableConstant){
-                 loadingDialog.cancelDialog();
-                dbReadyCallback.onDBReady();
+                finishTask();
+            }else {
+                updateProgress(status);
             }
             Log.d("Insertion Successful", "InsertBillDetails: "+status);
         } catch (Exception e) {
@@ -2519,8 +3231,9 @@ public class TableDataInjector {
             myDataBase.close();
             status+=1;
             if(status==tableConstant){
-                 loadingDialog.cancelDialog();
-                dbReadyCallback.onDBReady();
+                finishTask();
+            }else {
+                updateProgress(status);
             }
             Log.d("Insertion Successful", "InsertStockMaster: "+status);
         } catch (Exception e) {
@@ -2583,8 +3296,9 @@ public class TableDataInjector {
             myDataBase.close();
             status+=1;
             if(status==tableConstant){
-                 loadingDialog.cancelDialog();
-                dbReadyCallback.onDBReady();
+                finishTask();
+            }else {
+                updateProgress(status);
             }
             Log.d("Insertion Successful", "InsertProductMaster: "+status);
         } catch (Exception e) {
@@ -2619,8 +3333,9 @@ public class TableDataInjector {
             myDataBase.close();
             status+=1;
             if(status==tableConstant){
-                 loadingDialog.cancelDialog();
-                dbReadyCallback.onDBReady();
+                finishTask();
+            }else {
+                updateProgress(status);
             }
             Log.d("Insertion Successful", "InsertDataGroupUserMaster: "+status);
         } catch (Exception e) {
@@ -2686,8 +3401,9 @@ public class TableDataInjector {
             myDataBase.close();
             status+=1;
             if(status==tableConstant){
-                 loadingDialog.cancelDialog();
-                dbReadyCallback.onDBReady();
+               finishTask();
+            }else {
+                updateProgress(status);
             }
             Log.d("Insertion Successful", "InsertRetailCust: "+status);
         } catch (Exception e) {
@@ -2696,136 +3412,44 @@ public class TableDataInjector {
 
     }
 
-    private String generateTableUrl(String tablename , String storeid){
-
-        String defaultstoreid= "9747690001";
-
-        if(storeid.isEmpty() || storeid.equals(""))
-            storeid = defaultstoreid;
-
-        switch (tablename){
-
-            case "GroupUserMaster" :
-                return "ApiTest/GroupUserMaster?STORE_ID="+storeid;
 
 
-            case "MasterCustomer":
-                return "ApiTest/MasterCustomer?STORE_ID="+storeid;
 
 
-            case "ProductMaster":
-                return "ApiTest/ProductMaster?STORE_ID="+storeid;
 
-            case "StockMaster":
-                return "ApiTest/StockMaster?STORE_ID="+storeid;
+    public static void  finishTask(){
+        new Handler(Looper.getMainLooper()).post(() -> {
+            progressBarDialog.cancel();
+            dbReadyCallback.onDBReady();
+        });
+    }
+    public static void  interruptTask(){
+        new Handler(Looper.getMainLooper()).post(() -> {
+            progressBarDialog.cancel();
+
+            if(!injectExecutor.isShutdown())
+                injectExecutor.shutdown();
 
 
-            case "BillDetail":
-                return "ApiTest/BillDetail?STORE_ID="+storeid;
+        });
+    }
 
 
-            case "BillMaster":
-                return "ApiTest/BillMaster?STORE_ID="+storeid;
+    public static void updateProgress(int currentStatus){
 
-            case "retail_store":
-                return "ApiTest/TestData?STORE_ID="+storeid;
+        new Handler(Looper.getMainLooper()).post(() -> {
+            int progress = (currentStatus*100)/tableConstant;
+            progressBarDialog.updateProgress(progress);
+            Log.d("Printing Progress", "updateProgress: "+progress);
+        });
+    }
 
-            case "terminal_user_allocation":
-                return "ApiTest/TerminalUserAllocation?STORE_ID="+storeid;
-
-            case "terminal_configuration":
-                return "ApiTest/TerminalConfiguration?STORE_ID="+storeid;
-
-            case "master_shift":
-                return "ApiTest/ShiftMaster?STORE_ID="+storeid;
-
-            case "masterdeliverytype":
-                return "ApiTest/MasterDeliveryType?STORE_ID="+storeid;
-
-            case "masterpaymode":
-                return "ApiTest/MasterPayMode?STORE_ID="+storeid;
-
-            case "billpaydetail":
-                return "ApiTest/BillPayDetail?STORE_ID="+storeid;
-
-            case "shift_trans":
-                return "ApiTest/ShiftTransactions?STORE_ID="+storeid;
-
-            case "master_category":
-                return "ApiTest/MasterCategory?STORE_ID="+storeid;
-
-            case "master_subcategory":
-                return "ApiTest/MasterSubCategory?STORE_ID="+storeid;
-
-            case "hsn_master":
-                return "ApiTest/HsnMaster?STORE_ID="+storeid;
-
-            case "retail_str_dstr":
-                return "ApiTest/VendorMaster?STORE_ID="+storeid;
-
-            case "master_uom":
-                return "ApiTest/UomMaster?STORE_ID="+storeid;
-
-            case "master_customer_type":
-                return "ApiTest/MasterCustomerType?STORE_ID"+storeid;
-
-            case "retail_cust_address":
-                return "ApiTest/MasterCustomerAddress?STORE_ID="+storeid;
-
-            case "masterState":
-                return "ApiTest/MasterState?STORE_ID="+storeid;
-
-            case "bank_details":
-                return "ApiTest/BankMaster?STORE_ID="+storeid;
-
-            case "store_configuration":
-                return "ApiTest/StoreConfiguration?STORE_ID="+storeid;
-
-            case "customerReturnDetail":
-                return "ApiTest/CustomerReturnDetail?STORE_ID="+storeid;
-
-            case "customerReturnMaster":
-                return "ApiTest/CustomerReturnMaster?STORE_ID="+storeid;
-
-            case "retail_store_cust_reject":
-                return "ApiTest/RetailStoreCustReject?STORE_ID="+storeid;
-
-            case "retail_credit_cust":
-                return "ApiTest/RetailCreditCust?STORE_ID="+storeid;
-
-            case "customerLedger":
-                return "ApiTest/CustomerLedger?STORE_ID="+storeid;
-
-            case "retail_credit_bill_details":
-                return "ApiTest/RetailCreditBillDetails?STORE_ID="+storeid;
-
-            case "stock_register":
-                return "ApiTest/StockRegister?STORE_ID="+storeid;
-
-            case "retail_str_grn_detail":
-                return "ApiTest/GrnDetail?STORE_ID="+storeid;
-
-            case "retail_str_grn_master":
-                return "ApiTest/GrnMaster?STORE_ID="+storeid;
-
-            case "VendorPayMaster":
-                return "ApiTest/VendorPayMaster?STORE_ID="+storeid;
-
-            case "VendorPayDetail":
-                return "ApiTest/VendorPayDetail?STORE_ID="+storeid;
-
-            case "retail_store_vend_reject":
-                return "ApiTest/RetailStoreVendReject?STORE_ID="+storeid;
-
-            case "retail_str_vendor_detail_return":
-                return "ApiTest/VendorReturnDetail?STORE_ID="+storeid;
-
-            case "retail_str_vendor_master_return":
-                return "ApiTest/VendorReturnMaster?STORE_ID="+storeid;
-
-            default:
-                return "";
-        }
+    public static void  cancelDialog(){
+        new Handler(Looper.getMainLooper()).post(() -> {
+            progressBarDialog.cancel();
+        });
 
     }
 }
+
+

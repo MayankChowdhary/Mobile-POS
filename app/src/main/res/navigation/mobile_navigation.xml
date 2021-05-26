@@ -25,6 +25,20 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right"/>
+        <action
+            android:id="@+id/action_nav_sales_to_nav_products"
+            app:destination="@id/nav_products"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+        <action
+            android:id="@+id/action_nav_sales_to_nav_stock_update"
+            app:destination="@id/nav_stock_update"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
 
     <fragment
@@ -67,6 +81,13 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_nav_checkout_to_nav_customer"
+            app:destination="@id/nav_customer"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
     <fragment
         android:id="@+id/nav_payment"
@@ -194,7 +215,7 @@
     <fragment
         android:id="@+id/nav_home"
         android:name="com.retailstreet.mobilepos.View.ui.Home.HomeFragment"
-        android:label="Reception"
+        android:label="Store Information"
         tools:layout="@layout/fragment_home" >
         <action
             android:id="@+id/action_nav_home_to_nav_sales_refund"
@@ -241,6 +262,12 @@
         <action
             android:id="@+id/action_nav_home_to_nav_vendor_return"
             app:destination="@id/nav_vendor_return" />
+        <action
+            android:id="@+id/action_nav_home_to_nav_vendor_reports"
+            app:destination="@id/nav_vendor_reports" />
+        <action
+            android:id="@+id/action_nav_home_to_salesReturnReport"
+            app:destination="@id/nav_sales_return_report" />
     </fragment>
     <fragment
         android:id="@+id/nav_sales_report"
@@ -279,7 +306,11 @@
         android:id="@+id/nav_stock_update"
         android:name="com.retailstreet.mobilepos.View.ui.StockUpdate.StockUpdateFragment"
         android:label="Stock Update"
-        tools:layout="@layout/fragment_stock_update" />
+        tools:layout="@layout/fragment_stock_update" >
+        <argument
+            android:name="stockId"
+            app:argType="string" />
+    </fragment>
     <fragment
         android:id="@+id/nav_purchase_Invoice"
         android:name="com.retailstreet.mobilepos.View.ui.PurchaseInvoice.PurchaseInvoiceFragment"
@@ -300,4 +331,31 @@
         android:name="com.retailstreet.mobilepos.View.ui.VendorReturn.VendorReturnFragment"
         android:label="Vendor Return"
         tools:layout="@layout/fragment_vendor_return" />
+    <fragment
+        android:id="@+id/nav_vendor_reports"
+        android:name="com.retailstreet.mobilepos.View.ui.VendorReport.VendorReportFragment"
+        android:label="Vendor Reports"
+        tools:layout="@layout/fragment_vendor_report" >
+        <action
+            android:id="@+id/action_nav_vendor_reports_to_nav_vendor_report_details"
+            app:destination="@id/nav_vendor_report_details" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_vendor_report_details"
+        android:name="com.retailstreet.mobilepos.View.ui.VendorReportDetails.VendorReportDetailsFragment"
+        android:label="Vendor Details"
+        tools:layout="@layout/fragment_vendor_report_details"
+        app:enterAnim="@anim/slide_in_right"
+        app:exitAnim="@anim/slide_out_left"
+        app:popEnterAnim="@anim/slide_in_left"
+        app:popExitAnim="@anim/slide_out_right">
+        <argument
+            android:name="grnGuid"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_sales_return_report"
+        android:name="com.retailstreet.mobilepos.View.ui.SalesReturnReport.SalesReturnReport"
+        android:label="Sales Return"
+        tools:layout="@layout/fragment_sales_return_report" />
 </navigation>

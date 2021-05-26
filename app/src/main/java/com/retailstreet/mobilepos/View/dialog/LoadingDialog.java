@@ -25,6 +25,11 @@ public class LoadingDialog {
 
     }
 
+    public void updateTitle(String newTitle){
+
+        progressDialog.setTitle(newTitle);
+    }
+
     public void cancelDialog(){
 
         progressDialog.dismiss();

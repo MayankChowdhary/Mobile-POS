@@ -121,11 +121,11 @@ public class ColumnHeaderViewHolder extends AbstractSorterViewHolder {
             // Id
             Gravity.CENTER,
             // Name
-            Gravity.LEFT,
+            Gravity.CENTER,
             // Nickname
-            Gravity.LEFT,
+            Gravity.CENTER,
             // Email
-            Gravity.LEFT,
+            Gravity.CENTER,
             // BirthDay
             Gravity.CENTER,
             // Gender (Sex)
@@ -133,7 +133,7 @@ public class ColumnHeaderViewHolder extends AbstractSorterViewHolder {
             // Age
             Gravity.CENTER,
             // Job
-            Gravity.LEFT,
+            Gravity.CENTER,
             // Salary
             Gravity.CENTER,
             // CreatedAt
@@ -141,13 +141,13 @@ public class ColumnHeaderViewHolder extends AbstractSorterViewHolder {
             // UpdatedAt
             Gravity.CENTER,
             // Address
-            Gravity.LEFT,
+            Gravity.CENTER,
             // Zip Code
-            Gravity.RIGHT,
+            Gravity.CENTER,
             // Phone
-            Gravity.RIGHT,
+            Gravity.CENTER,
             // Fax
-            Gravity.RIGHT};
+            Gravity.CENTER};
 
 
 }
