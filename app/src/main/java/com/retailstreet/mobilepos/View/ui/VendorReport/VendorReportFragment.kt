@@ -91,7 +91,6 @@ class VendorReportFragment : Fragment() , TableViewInterface {
         super.onCreateOptionsMenu(menu, inflater)
         val mSearch = menu.findItem(R.id.appSearchAuto)
         mSearch.isVisible = true
-
         val item: MenuItem = menu.findItem(R.id.filterSpinner)
         item.isVisible = true
         spinner = item.actionView as Spinner
@@ -118,7 +117,6 @@ class VendorReportFragment : Fragment() , TableViewInterface {
                                 emptyReport.visibility = View.VISIBLE
                                 mTableView?.visibility  = View.GONE
                             }else{
-
                                 emptyReport.visibility = View.GONE
                                 mTableView?.visibility  = View.VISIBLE
                             }

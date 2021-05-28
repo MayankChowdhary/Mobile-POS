@@ -66,7 +66,7 @@ public class MainDrawerActivity extends AppCompatActivity  {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_sales, R.id.nav_dayopen, R.id.nav_dayclose, R.id.nav_products, R.id.nav_customer, R.id.nav_customer_update, R.id.nav_sales_refund, R.id.nav_credit_pay, R.id.nav_home, R.id.nav_sales_report,R.id.nav_vendor_update,R.id.nav_stock_update,R.id.nav_purchase_Invoice,R.id.nav_vendor_Payment,R.id.nav_vi_payment_fragment,R.id.nav_vendor_return,R.id.nav_vendor_reports,R.id.nav_sales_return_report)
+                R.id.nav_sales, R.id.nav_dayopen, R.id.nav_dayclose, R.id.nav_products, R.id.nav_customer, R.id.nav_customer_update, R.id.nav_sales_refund, R.id.nav_credit_pay, R.id.nav_home, R.id.nav_sales_report,R.id.nav_vendor_update,R.id.nav_stock_update,R.id.nav_purchase_Invoice,R.id.nav_vendor_Payment,R.id.nav_vi_payment_fragment,R.id.nav_vendor_return,R.id.nav_vendor_reports,R.id.nav_sales_return_report,R.id.nav_summery)
                 .setOpenableLayout(drawer)
                 .build();
 
@@ -180,6 +180,8 @@ public class MainDrawerActivity extends AppCompatActivity  {
         childModelsList.add(childModel);
         childModel = new MenuModel("Sales Return", false, false,  R.drawable.sr_report);
         childModelsList.add(childModel);
+        childModel = new MenuModel("All Summery", false, false,  R.drawable.summery);
+        childModelsList.add(childModel);
 
         if (menuModel.hasChildren) {
             childList.put(menuModel, childModelsList);
@@ -284,7 +286,10 @@ public class MainDrawerActivity extends AppCompatActivity  {
                     }else if (groupPosition==5 && childPosition==2) {
                         Navigation.findNavController(MainDrawerActivity.this, R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_salesReturnReport);
                         drawer.closeDrawer(GravityCompat.START);
-                    }else if (groupPosition==2 && childPosition==6) {
+                    }else if (groupPosition==5 && childPosition==3) {
+                        Navigation.findNavController(MainDrawerActivity.this, R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_summeryFragment);
+                        drawer.closeDrawer(GravityCompat.START);
+                    } else if (groupPosition==2 && childPosition==6) {
                         Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_nav_vendor_update);
                         drawer.closeDrawer(GravityCompat.START);
                     }else if (groupPosition==2 && childPosition==1) {

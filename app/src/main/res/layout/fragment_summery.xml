@@ -1,0 +1,773 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".View.ui.Summery.SummeryFragment">
+
+<androidx.constraintlayout.widget.ConstraintLayout
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:background="@drawable/item_box_border"
+android:elevation="4dp"
+tools:ignore="HardcodedText"
+android:layout_margin="@dimen/_8sdp">
+
+<ScrollView
+    android:id="@+id/scroll_view_customer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="4dp"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/_8sdp">
+
+        <LinearLayout
+            android:id="@+id/s_open_title_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/text_box_border"
+            android:padding="@dimen/_4sdp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/s_open_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="start"
+                android:text="Opening Balance Amount "
+                android:textColor="?colorOnBackground"
+                android:textSize="@dimen/_12ssp" />
+
+            <TextView
+                android:id="@+id/s_open_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:layout_gravity="end"
+                android:text="1000.00"
+                android:textColor="?colorOnBackground"
+                android:textSize="@dimen/_12ssp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/s_total_bill_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/text_box_border"
+            android:padding="@dimen/_4sdp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/s_total_bill_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="start"
+                android:text="Total Bill Count"
+                android:textColor="?colorOnBackground"
+                android:textSize="@dimen/_12ssp" />
+
+            <TextView
+                android:id="@+id/s_total_bill_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:layout_gravity="end"
+                android:text="80.00"
+                android:textColor="?colorOnBackground"
+                android:textSize="@dimen/_12ssp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/s_bill_canceled_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/text_box_border"
+            android:padding="@dimen/_4sdp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/s_bill_canceled_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="start"
+                android:text="Total Bill Canceled "
+                android:textColor="?colorOnBackground"
+                android:textSize="@dimen/_12ssp" />
+
+            <TextView
+                android:id="@+id/s_bill_canceled_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="10.00"
+                android:gravity="end"
+                android:layout_gravity="end"
+                android:textColor="?colorOnBackground"
+                android:textSize="@dimen/_12ssp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/s_sales_return_cash_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/text_box_border"
+            android:padding="@dimen/_4sdp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/s_sales_return_cash_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="start"
+                android:text="Sales Return(Cash) "
+                android:textColor="?colorOnBackground"
+                android:textSize="@dimen/_12ssp" />
+
+            <TextView
+                android:id="@+id/s_sales_return_cash_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:layout_gravity="end"
+                android:text="100.00"
+                android:textColor="?colorOnBackground"
+                android:textSize="@dimen/_12ssp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/s_sales_return_credit_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/text_box_border"
+            android:padding="@dimen/_4sdp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/s_sales_return_credit_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="start"
+                android:text="Sales Return(Credit Note) "
+                android:textColor="?colorOnBackground"
+                android:textSize="@dimen/_12ssp" />
+
+            <TextView
+                android:id="@+id/s_sales_return_credit_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:layout_gravity="end"
+                android:text="100.00"
+                android:textColor="?colorOnBackground"
+                android:textSize="@dimen/_12ssp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/s_credit_payment_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/text_box_border"
+            android:padding="@dimen/_4sdp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/s_credit_payment_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="start"
+                android:text="Total Credit Payment Received"
+                android:textColor="?colorOnBackground"
+                android:textSize="@dimen/_12ssp" />
+
+            <TextView
+                android:id="@+id/s_credit_payment_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:layout_gravity="end"
+                android:text="8000.00"
+                android:textColor="?colorOnBackground"
+                android:textSize="@dimen/_12ssp" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/s_credit_payment_cash_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/text_box_border"
+            android:padding="@dimen/_4sdp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/s_credit_payment_cash_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="start"
+                android:text="Total Credit Payment(Cash) "
+                android:textColor="?colorOnBackground"
+                android:textSize="@dimen/_12ssp" />
+
+            <TextView
+                android:id="@+id/s_credit_payment_cash_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:layout_gravity="end"
+                android:text="100.00"
+                android:textColor="?colorOnBackground"
+                android:textSize="@dimen/_12ssp" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/s_expanses_cash_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/text_box_border"
+            android:padding="@dimen/_4sdp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/s_expanses_cash_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="start"
+                android:text="Expenses(Cash) "
+                android:textColor="?colorOnBackground"
+                android:textSize="@dimen/_12ssp" />
+
+            <TextView
+                android:id="@+id/s_expanses_cash_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:layout_gravity="end"
+                android:text="100.00"
+                android:textColor="?colorOnBackground"
+                android:textSize="@dimen/_12ssp" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/s_expanses_cheque_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/text_box_border"
+            android:padding="@dimen/_4sdp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/s_expanses_cheque_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="start"
+                android:text="Expenses(Cheque)  "
+                android:textColor="?colorOnBackground"
+                android:textSize="@dimen/_12ssp" />
+
+            <TextView
+                android:id="@+id/s_expanses_cheque_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:layout_gravity="end"
+                android:text="10000.00"
+                android:textColor="?colorOnBackground"
+                android:textSize="@dimen/_12ssp" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/s_vendor_pay_cash_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/text_box_border"
+            android:padding="@dimen/_4sdp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/s_vendor_pay_cash_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="start"
+                android:text="Vendor Payment(Cash) "
+                android:textColor="?colorOnBackground"
+                android:textSize="@dimen/_12ssp" />
+
+            <TextView
+                android:id="@+id/s_vendor_pay_cash_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:layout_gravity="end"
+                android:text="100.00"
+                android:textColor="?colorOnBackground"
+                android:textSize="@dimen/_12ssp" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/s_vendor_pay_cheque_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/text_box_border"
+            android:padding="@dimen/_4sdp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/s_vendor_pay_cheque_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="start"
+                android:text="Vendor Payment(Cheque) "
+                android:textColor="?colorOnBackground"
+                android:textSize="@dimen/_12ssp" />
+
+            <TextView
+                android:id="@+id/s_vendor_pay_cheque_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:layout_gravity="end"
+                android:text="100.00"
+                android:textColor="?colorOnBackground"
+                android:textSize="@dimen/_12ssp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/s_total_sale_day_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/text_box_border"
+            android:padding="@dimen/_4sdp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/s_total_sale_day_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="start"
+                android:text="Total Sale Of The Day "
+                android:textColor="?colorOnBackground"
+                android:textSize="@dimen/_12ssp" />
+
+            <TextView
+                android:id="@+id/s_total_sale_day_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:layout_gravity="end"
+                android:text="100.00"
+                android:textColor="?colorOnBackground"
+                android:textSize="@dimen/_12ssp" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/s_cash_in_hand_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/text_box_border"
+            android:padding="@dimen/_4sdp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/s_cash_in_hand_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="start"
+                android:text="Cash In Hand "
+                android:textColor="?colorOnBackground"
+                android:textSize="@dimen/_12ssp" />
+
+            <TextView
+                android:id="@+id/s_cash_in_hand_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:layout_gravity="end"
+                android:text="100.00"
+                android:textColor="?colorOnBackground"
+                android:textSize="@dimen/_12ssp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/s_cash_payment_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/text_box_border"
+            android:padding="@dimen/_4sdp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/s_cash_payment_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="start"
+                android:text="Cash Payment "
+                android:textColor="?colorOnBackground"
+                android:textSize="@dimen/_12ssp" />
+
+            <TextView
+                android:id="@+id/s_cash_payment_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:layout_gravity="end"
+                android:text="100.00"
+                android:textColor="?colorOnBackground"
+                android:textSize="@dimen/_12ssp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/s_card_payment_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/text_box_border"
+            android:padding="@dimen/_4sdp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/s_card_payment_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="start"
+                android:text="Card Payment "
+                android:textColor="?colorOnBackground"
+                android:textSize="@dimen/_12ssp" />
+
+            <TextView
+                android:id="@+id/s_card_payment_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:layout_gravity="end"
+                android:text="100.00"
+                android:textColor="?colorOnBackground"
+                android:textSize="@dimen/_12ssp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/s_credit_sales_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/text_box_border"
+            android:padding="@dimen/_4sdp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/s_credit_sales_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="start"
+                android:text="Credit Sales "
+                android:textColor="?colorOnBackground"
+                android:textSize="@dimen/_12ssp" />
+
+            <TextView
+                android:id="@+id/s_credit_sales_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:layout_gravity="end"
+                android:text="100.00"
+                android:textColor="?colorOnBackground"
+                android:textSize="@dimen/_12ssp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/s_credit_note_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/text_box_border"
+            android:padding="@dimen/_4sdp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/s_credit_note_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="start"
+                android:text="Credit Note "
+                android:textColor="?colorOnBackground"
+                android:textSize="@dimen/_12ssp" />
+
+            <TextView
+                android:id="@+id/s_credit_note_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:layout_gravity="end"
+                android:text="100.00"
+                android:textColor="?colorOnBackground"
+                android:textSize="@dimen/_12ssp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/s_online_payment_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/text_box_border"
+            android:padding="@dimen/_4sdp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/s_online_payment_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="start"
+                android:text="Online Payment "
+                android:textColor="?colorOnBackground"
+                android:textSize="@dimen/_12ssp" />
+
+            <TextView
+                android:id="@+id/s_online_payment_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:layout_gravity="end"
+                android:text="100.00"
+                android:textColor="?colorOnBackground"
+                android:textSize="@dimen/_12ssp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/s_today_advance_colec_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/text_box_border"
+            android:padding="@dimen/_4sdp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/s_today_advance_colec_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="start"
+                android:text="Today's Advance Collection "
+                android:textColor="?colorOnBackground"
+                android:textSize="@dimen/_12ssp" />
+
+            <TextView
+                android:id="@+id/s_today_advance_colec_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:layout_gravity="end"
+                android:text="100.00"
+                android:textColor="?colorOnBackground"
+                android:textSize="@dimen/_12ssp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/s_today_advance_adjst_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/text_box_border"
+            android:padding="@dimen/_4sdp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/s_today_advance_adjst_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="start"
+                android:text="Today's Advance Adjustment "
+                android:textColor="?colorOnBackground"
+                android:textSize="@dimen/_12ssp" />
+
+            <TextView
+                android:id="@+id/s_today_advance_adjst_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:layout_gravity="end"
+                android:text="100.00"
+                android:textColor="?colorOnBackground"
+                android:textSize="@dimen/_12ssp" />
+        </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/s_month_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/text_box_border"
+        android:backgroundTint="?colorPrimary"
+        android:padding="@dimen/_4sdp"
+        android:layout_marginTop="@dimen/_8sdp"
+        android:orientation="horizontal">
+        <TextView
+            android:id="@+id/s_month_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="start"
+            android:text="Monthly Details "
+            android:textColor="?colorOnPrimary"
+            android:textSize="@dimen/_12ssp" />
+
+    </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/s_sale_of_month_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/text_box_border"
+            android:padding="@dimen/_4sdp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/s_sale_of_month_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="start"
+                android:text="Sale Of The Month "
+                android:textColor="?colorOnBackground"
+                android:textSize="@dimen/_12ssp" />
+
+            <TextView
+                android:id="@+id/s_sale_of_month_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:layout_gravity="end"
+                android:text="100.00"
+                android:textColor="?colorOnBackground"
+                android:textSize="@dimen/_12ssp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/s_advance_customer_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/text_box_border"
+            android:padding="@dimen/_4sdp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/s_advance_customer_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="start"
+                android:text="Total Advance By Customers"
+                android:textColor="?colorOnBackground"
+                android:textSize="@dimen/_12ssp" />
+
+            <TextView
+                android:id="@+id/s_advance_customer_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:layout_gravity="end"
+                android:text="100.00"
+                android:textColor="?colorOnBackground"
+                android:textSize="@dimen/_12ssp" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/s_total_credit_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/text_box_border"
+            android:padding="@dimen/_4sdp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/s_total_credit_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="start"
+                android:text="Total Credit"
+                android:textColor="?colorOnBackground"
+                android:textSize="@dimen/_12ssp" />
+
+            <TextView
+                android:id="@+id/s_total_credit_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:layout_gravity="end"
+                android:text="100.00"
+                android:textColor="?colorOnBackground"
+                android:textSize="@dimen/_12ssp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/s_vendor_pay_pending_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/text_box_border"
+            android:padding="@dimen/_4sdp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/s_vendor_pay_pending_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="start"
+                android:text="Vendor Payment Pending"
+                android:textColor="?colorOnBackground"
+                android:textSize="@dimen/_12ssp" />
+
+            <TextView
+                android:id="@+id/s_vendor_pay_pending_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:layout_gravity="end"
+                android:text="1000.00"
+                android:textColor="?colorOnBackground"
+                android:textSize="@dimen/_12ssp" />
+        </LinearLayout>
+
+
+    </LinearLayout>
+</ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>
