@@ -76,7 +76,7 @@ class VendorReportFragment : Fragment() , TableViewInterface {
         activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 if (mSearchView.isSearchOpen) {
-                    mSearchView.closeSearch();
+                    mSearchView.closeSearch()
                 }else{
 
                     NavHostFragment.findNavController(this@VendorReportFragment).navigateUp()
@@ -167,6 +167,7 @@ class VendorReportFragment : Fragment() , TableViewInterface {
         })*/
 
 
+
         mSearchView.setOnQueryTextListener(object : MaterialSearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
 
@@ -191,6 +192,13 @@ class VendorReportFragment : Fragment() , TableViewInterface {
         })
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+
+        if (mSearchView.isSearchOpen) {
+            mSearchView.closeSearch()
+        }
+    }
 
 
     private fun initializeTableView(tableView: TableView?) {
