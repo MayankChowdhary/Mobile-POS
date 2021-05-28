@@ -7,6 +7,7 @@ import android.view.*
 import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.Navigation
 import com.evrencoskun.tableview.TableView
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.retailstreet.mobilepos.R
@@ -57,16 +58,21 @@ class SalesReturnReport : Fragment() , TableViewInterface {
 
         /* val myArgs = SalesReportFragmentArgs.fromBundle(requireArguments())
          custGuid = myArgs.custGuid*/
+
+
         if(vendorGuid.isNotEmpty() && filterType!=2){
             filterType=1
         }
 
         salesReturnRadioGroup.setOnCheckedChangeListener { _, checkedId ->
 
-            withBill = checkedId==R.id.return_report_billno_radio
-            filterType = 0
-            initializeTableView(mTableView)
-            changeFilter(0)
+            if(!isResume) {
+                withBill = checkedId == R.id.return_report_billno_radio
+                filterType = 0
+                initializeTableView(mTableView)
+                changeFilter(0)
+                Log.d("RadioButtonINvoked", "onViewCreated: "+withBill)
+            }
 
         }
     }
@@ -85,7 +91,6 @@ class SalesReturnReport : Fragment() , TableViewInterface {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
 
                 if(isResume && filterType==2){
-                    isResume = false
                     showProgressBar()
                     var userList: List<User>
                     thread {
@@ -99,7 +104,6 @@ class SalesReturnReport : Fragment() , TableViewInterface {
                                 emptyReport.visibility = View.VISIBLE
                                 mTableView?.visibility  = View.GONE
                             }else{
-
                                 emptyReport.visibility = View.GONE
                                 mTableView?.visibility  = View.VISIBLE
                             }
@@ -109,6 +113,7 @@ class SalesReturnReport : Fragment() , TableViewInterface {
                 }else{
                     changeFilter(position)
                 }
+                isResume = false
                 Log.d("ShiftSelected", "onItemSelected: Tag= $position")
             }
 
@@ -147,11 +152,11 @@ class SalesReturnReport : Fragment() , TableViewInterface {
         var query =""
         if(!withBill){
             query =
-                "select um.USER_NAME, cr.CUSTOMER_RETURNS_MASTERID,cr.RETURN_DATE,cr.CREDITNOTENUMBER,cr.AMOUNTREFUNDED, cr.CUSTOMER_RETURNS_MASTERID from customerReturnMaster cr LEFT OUTER JOIN group_user_master um ON cr.CREATEDBYGUID=um.USER_GUID Where BILLNO IS NULL OR BILLNO = ''  AND cr.RETURN_DATE LIKE '$date%'"
+                "select um.USER_NAME, cr.CUSTOMER_RETURNS_MASTERID,cr.RETURN_DATE,cr.CREDITNOTENUMBER,cr.AMOUNTREFUNDED, cr.CUSTOMERRETURNGUID from customerReturnMaster cr LEFT OUTER JOIN group_user_master um ON cr.CREATEDBYGUID=um.USER_GUID Where BILLNO IS NULL OR BILLNO = ''  AND cr.RETURN_DATE LIKE '$date%'"
             Log.d("SalesReportSingle", "getSalesData: ")
         }else {
             query =
-                "select um.USER_NAME, cr.BILLNO,cr.RETURN_DATE,cr.CREDITNOTENUMBER,cr.AMOUNTREFUNDED, cr.CUSTOMER_RETURNS_MASTERID from customerReturnMaster cr LEFT OUTER JOIN group_user_master um ON cr.CREATEDBYGUID=um.USER_GUID Where BILLNO IS NOT NULL AND BILLNO != '' AND cr.RETURN_DATE LIKE '$date%'"
+                "select um.USER_NAME, cr.BILLNO,cr.RETURN_DATE,cr.CREDITNOTENUMBER,cr.AMOUNTREFUNDED, cr.CUSTOMERRETURNGUID from customerReturnMaster cr LEFT OUTER JOIN group_user_master um ON cr.CREATEDBYGUID=um.USER_GUID Where BILLNO IS NOT NULL AND BILLNO != '' AND cr.RETURN_DATE LIKE '$date%'"
             Log.d("SalesReportMulti", "getSalesData: ")
         }
         val cursor = mydb.rawQuery(query, null)
@@ -173,10 +178,10 @@ class SalesReturnReport : Fragment() , TableViewInterface {
             val mydb = requireActivity().openOrCreateDatabase("MasterDB", Context.MODE_PRIVATE, null)
             var query=""
             if(!withBill) {
-                query = "select um.USER_NAME, cr.CUSTOMER_RETURNS_MASTERID,cr.RETURN_DATE,cr.CREDITNOTENUMBER,cr.AMOUNTREFUNDED, cr.CUSTOMER_RETURNS_MASTERID from customerReturnMaster cr LEFT OUTER JOIN group_user_master um ON cr.CREATEDBYGUID=um.USER_GUID Where BILLNO IS NULL OR BILLNO = ''  AND cr.RETURN_DATE  BETWEEN '$startDate' AND  '$endDate'";
+                query = "select um.USER_NAME, cr.CUSTOMER_RETURNS_MASTERID,cr.RETURN_DATE,cr.CREDITNOTENUMBER,cr.AMOUNTREFUNDED, cr.CUSTOMERRETURNGUID from customerReturnMaster cr LEFT OUTER JOIN group_user_master um ON cr.CREATEDBYGUID=um.USER_GUID Where BILLNO IS NULL OR BILLNO = ''  AND cr.RETURN_DATE  BETWEEN '$startDate' AND  '$endDate'";
                 Log.d("SalesReportSingle", "getSalesData:")
             }else{
-                query = "select um.USER_NAME, cr.BILLNO,cr.RETURN_DATE,cr.CREDITNOTENUMBER,cr.AMOUNTREFUNDED, cr.CUSTOMER_RETURNS_MASTERID from customerReturnMaster cr LEFT OUTER JOIN group_user_master um ON cr.CREATEDBYGUID=um.USER_GUID Where BILLNO IS NOT NULL AND BILLNO != '' AND cr.RETURN_DATE  BETWEEN  '$startDate' AND  '$endDate'";
+                query = "select um.USER_NAME, cr.BILLNO,cr.RETURN_DATE,cr.CREDITNOTENUMBER,cr.AMOUNTREFUNDED, cr.CUSTOMERRETURNGUID from customerReturnMaster cr LEFT OUTER JOIN group_user_master um ON cr.CREATEDBYGUID=um.USER_GUID Where BILLNO IS NOT NULL AND BILLNO != '' AND cr.RETURN_DATE  BETWEEN  '$startDate' AND  '$endDate'";
                 Log.d("SalesReportMulti", "getSalesData:")
             }
             val cursor = mydb.rawQuery(query, null)
@@ -201,10 +206,10 @@ class SalesReturnReport : Fragment() , TableViewInterface {
         val mydb = requireActivity().openOrCreateDatabase("MasterDB", Context.MODE_PRIVATE, null)
         val query:String
         if(!withBill) {
-            query = "select um.USER_NAME, cr.CUSTOMER_RETURNS_MASTERID,cr.RETURN_DATE,cr.CREDITNOTENUMBER,cr.AMOUNTREFUNDED, cr.CUSTOMER_RETURNS_MASTERID from customerReturnMaster cr LEFT OUTER JOIN group_user_master um ON cr.CREATEDBYGUID=um.USER_GUID Where BILLNO IS NULL OR BILLNO = '' "
+            query = "select um.USER_NAME, cr.CUSTOMER_RETURNS_MASTERID,cr.RETURN_DATE,cr.CREDITNOTENUMBER,cr.AMOUNTREFUNDED, cr.CUSTOMERRETURNGUID from customerReturnMaster cr LEFT OUTER JOIN group_user_master um ON cr.CREATEDBYGUID=um.USER_GUID Where BILLNO IS NULL OR BILLNO = '' "
             Log.d("SalesReportSingle", "getSalesData:")
         }else{
-            query = "select um.USER_NAME, cr.BILLNO,cr.RETURN_DATE,cr.CREDITNOTENUMBER,cr.AMOUNTREFUNDED, cr.CUSTOMER_RETURNS_MASTERID from customerReturnMaster cr LEFT OUTER JOIN group_user_master um ON cr.CREATEDBYGUID=um.USER_GUID Where BILLNO IS NOT NULL AND BILLNO != '' "
+            query = "select um.USER_NAME, cr.BILLNO,cr.RETURN_DATE,cr.CREDITNOTENUMBER,cr.AMOUNTREFUNDED, cr.CUSTOMERRETURNGUID from customerReturnMaster cr LEFT OUTER JOIN group_user_master um ON cr.CREATEDBYGUID=um.USER_GUID Where BILLNO IS NOT NULL AND BILLNO != '' "
             Log.d("SalesReportMulti", "getSalesData: ")
         }
         val cursor = mydb.rawQuery(query, null)
@@ -225,8 +230,8 @@ class SalesReturnReport : Fragment() , TableViewInterface {
     override fun launchDetailsFragment(id: String, masterId:String) {
         isResume = true
         Log.d("LauncherInvoked", "launchDetailsFragment: ")
-        /*  val actionNavSalesDetailsFragment = SalesReportFragmentDirections.actionNavSalesReportToNavSalesReportDetails(id,masterId)
-          Navigation.findNavController(requireActivity(), R.id.nav_host_fragment).navigate(actionNavSalesDetailsFragment)*/
+          val actionNavSalesDetailsFragment = SalesReturnReportDirections.actionNavSalesReturnReportToNavSalesReturnDetailsReport(masterId)
+          Navigation.findNavController(requireActivity(), R.id.nav_host_fragment).navigate(actionNavSalesDetailsFragment)
 
     }
 
@@ -236,8 +241,8 @@ class SalesReturnReport : Fragment() , TableViewInterface {
             mTableView?.selectedRow  = rowId
             isResume = true
             Log.d("LauncherInvoked", "launchDetailsFragment: ")
-            /*val actionVendorDetailsFragment = VendorReportFragmentDirections.actionNavVendorReportsToNavVendorReportDetails(masterID)
-            Navigation.findNavController(requireActivity(), R.id.nav_host_fragment).navigate(actionVendorDetailsFragment)*/
+            val actionNavSalesDetailsFragment = SalesReturnReportDirections.actionNavSalesReturnReportToNavSalesReturnDetailsReport(masterID)
+            Navigation.findNavController(requireActivity(), R.id.nav_host_fragment).navigate(actionNavSalesDetailsFragment)
         } catch (e: Exception) {
 
         }

@@ -357,5 +357,22 @@
         android:id="@+id/nav_sales_return_report"
         android:name="com.retailstreet.mobilepos.View.ui.SalesReturnReport.SalesReturnReport"
         android:label="Sales Return"
-        tools:layout="@layout/fragment_sales_return_report" />
+        tools:layout="@layout/fragment_sales_return_report" >
+        <action
+            android:id="@+id/action_nav_sales_return_report_to_nav_sales_return_details_report"
+            app:destination="@id/nav_sales_return_details_report"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+    </fragment>
+    <fragment
+        android:id="@+id/nav_sales_return_details_report"
+        android:name="com.retailstreet.mobilepos.View.ui.SalesReturnDetailsReport.SalesReturnDetailsReport"
+        android:label="Sales Return Details"
+        tools:layout="@layout/fragment_sales_return_details">
+        <argument
+            android:name="masterID"
+            app:argType="string" />
+    </fragment>
 </navigation>

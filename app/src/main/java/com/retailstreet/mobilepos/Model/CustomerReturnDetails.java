@@ -16,6 +16,7 @@ public class CustomerReturnDetails {
 
 
     public CustomerReturnDetails() {
+
     }
 
     public CustomerReturnDetails(String CUSTOMER_RETURNS_DETAILID, String CUSTOMER_RETURNS_MASTER_ID, String MASTER_PRODUCT_ITEM_ID, String BATCHNO, String RETURNQUANTITY, String EXPIRYDATE, String CUSTOMER_RETURN_DETAIL_STATUS) {

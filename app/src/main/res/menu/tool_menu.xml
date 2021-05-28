@@ -19,6 +19,13 @@
         app:showAsAction="always"
         android:visible="false" />
     <item
+        android:id="@+id/appSearchAuto"
+        android:icon="@android:drawable/ic_menu_search"
+        android:title="Search"
+        app:showAsAction="always|withText"
+        android:visible="false" />
+
+    <item
         android:id="@+id/appSearchBar"
         android:icon="@android:drawable/ic_menu_search"
         android:title="Search"

@@ -1,4 +1,4 @@
-package com.retailstreet.mobilepos.View.ui.VendorReportDetails
+package com.retailstreet.mobilepos.View.ui.SalesReturnDetailsReport
 
 import android.content.Context
 import android.os.Bundle
@@ -12,20 +12,20 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.evrencoskun.tableview.TableView
 import com.retailstreet.mobilepos.R
-import com.retailstreet.mobilepos.View.ui.VendorReportDetails.TableViewComponents.MyTableAdapter
-import com.retailstreet.mobilepos.View.ui.VendorReportDetails.TableViewComponents.MyTableViewListener
-import com.retailstreet.mobilepos.View.ui.VendorReportDetails.TableViewComponents.User
+import com.retailstreet.mobilepos.View.ui.SalesReturnDetailsReport.TableViewComponents.MyTableAdapter
+import com.retailstreet.mobilepos.View.ui.SalesReturnDetailsReport.TableViewComponents.MyTableViewListener
+import com.retailstreet.mobilepos.View.ui.SalesReturnDetailsReport.TableViewComponents.User
+
 import java.util.*
 import kotlin.concurrent.thread
 
-class VendorReportDetailsFragment : Fragment() {
+class SalesReturnDetailsReport : Fragment() {
 
     companion object {
-        fun newInstance() = VendorReportDetailsFragment()
+        fun newInstance() = SalesReturnDetailsReport()
     }
 
-    private lateinit var viewModelReport: VendorReportDetailsViewModel
-
+    private lateinit var viewModel: SalesReturnDetailsViewModel
     private var mTableView: TableView? = null
     private var mTableAdapter: MyTableAdapter? = null
     private var mProgressBar: ProgressBar? = null
@@ -34,27 +34,26 @@ class VendorReportDetailsFragment : Fragment() {
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_vendor_report_details, container, false)
+        return inflater.inflate(R.layout.fragment_sales_return_details, container, false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModelReport = ViewModelProvider(this).get(VendorReportDetailsViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(SalesReturnDetailsViewModel::class.java)
         // TODO: Use the ViewModel
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        val myArgs = VendorReportDetailsFragmentArgs.fromBundle(requireArguments())
-        masterId = myArgs.grnGuid
+        val myArgs = SalesReturnDetailsReportArgs.fromBundle(requireArguments())
+        masterId = myArgs.masterID
         Log.d("MasterIDReceived", "onViewCreated: $masterId")
         mTableView = view.findViewById(R.id.my_TableView)
         mProgressBar = view.findViewById(R.id.progressBar)
         emptyReport = view.findViewById(R.id.empty_report_view)
         initializeTableView(mTableView)
-
     }
+
     private fun initializeTableView(tableView: TableView?) {
         // Create TableView Adapter
         mTableAdapter = MyTableAdapter(context)
@@ -93,15 +92,14 @@ class VendorReportDetailsFragment : Fragment() {
         mTableView!!.visibility = View.VISIBLE
     }
 
-    private fun getSalesDetailsData(grnID: String): List<User> {
-
+    private fun getSalesDetailsData(masterID: String): List<User> {
         val list: MutableList<User> = ArrayList()
         val mydb = requireActivity().openOrCreateDatabase("MasterDB", Context.MODE_PRIVATE, null)
-        val query = "Select pm.PROD_NM, pm.BARCODE, gd.PUR_PRICE, gd.GRN_QTY, gd.FREE_QUANTITY, gd.GRN_VALUE  from retail_str_grn_detail gd INNER JOIN retail_store_prod_com pm ON gd.ITEM_GUID = pm.ITEM_GUID where gd.GRN_GUID ='$grnID'"
+        val query = "Select sm.PROD_NM, sm.BARCODE, sm.S_PRICE,rd.RETURNQUANTITY  from customerReturnDetail rd INNER JOIN retail_str_stock_master sm ON rd.MASTER_PRODUCT_ITEM_ID = sm.ITEM_GUID where rd.CUSTOMER_RETURNS_MASTER_ID ='$masterID'"
         val cursor = mydb.rawQuery(query, null)
         if (cursor.moveToFirst()) {
             while (!cursor.isAfterLast) {
-                val user = User(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5))
+                val user = User(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3))
                 list.add(user)
                 Log.d("VendorItemAdded", "getSalesDetailsData: "+cursor.getString(0))
                 cursor.moveToNext()
@@ -112,6 +110,5 @@ class VendorReportDetailsFragment : Fragment() {
         mydb.close()
         return list
     }
-
 
 }

@@ -18,6 +18,12 @@
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
             app:popupTheme="@style/Theme.mobilepos.PopupOverlay" />
+        <com.miguelcatalan.materialsearchview.MaterialSearchView
+            android:id="@+id/search_view_auto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColorHint="@color/gray_text_faded"
+            android:visibility="gone"/>
 
     </com.google.android.material.appbar.AppBarLayout>
 

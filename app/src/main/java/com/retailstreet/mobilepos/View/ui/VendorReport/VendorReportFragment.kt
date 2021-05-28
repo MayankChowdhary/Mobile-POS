@@ -5,18 +5,23 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.*
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.NavHostFragment
 import com.evrencoskun.tableview.TableView
 import com.google.android.material.datepicker.MaterialDatePicker
+import com.miguelcatalan.materialsearchview.MaterialSearchView
 import com.retailstreet.mobilepos.R
 import com.retailstreet.mobilepos.View.ui.VendorReport.TableViewComponents.MyTableAdapter
 import com.retailstreet.mobilepos.View.ui.VendorReport.TableViewComponents.MyTableViewListener
 import com.retailstreet.mobilepos.View.ui.VendorReport.TableViewComponents.User
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.concurrent.thread
+
 
 class VendorReportFragment : Fragment() , TableViewInterface {
 
@@ -35,6 +40,9 @@ class VendorReportFragment : Fragment() , TableViewInterface {
     lateinit var spinner: Spinner
     private var isResume: Boolean = false
     private var vendorGuid:String = ""
+    lateinit var mSearchView:MaterialSearchView;
+    private lateinit var SUGGESTIONS: ArrayList<String>
+    private var mAdapter: android.widget.SimpleCursorAdapter? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         setHasOptionsMenu(true) // Add this!
@@ -50,23 +58,44 @@ class VendorReportFragment : Fragment() , TableViewInterface {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        SUGGESTIONS = getSearchArray()
         mTableView = view.findViewById(R.id.my_TableView)
         mProgressBar = view.findViewById(R.id.progressBar)
         emptyReport = view.findViewById(R.id.empty_report_view)
+        mSearchView = requireActivity().findViewById(R.id.search_view_auto)
+        mSearchView.visibility=View.GONE
+
 
        /* val myArgs = SalesReportFragmentArgs.fromBundle(requireArguments())
         custGuid = myArgs.custGuid*/
+
         if(vendorGuid.isNotEmpty() && filterType!=2){
             filterType=1
         }
+
+        activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (mSearchView.isSearchOpen) {
+                    mSearchView.closeSearch();
+                }else{
+
+                    NavHostFragment.findNavController(this@VendorReportFragment).navigateUp()
+
+                }
+
+            }
+        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
+        val mSearch = menu.findItem(R.id.appSearchAuto)
+        mSearch.isVisible = true
+
         val item: MenuItem = menu.findItem(R.id.filterSpinner)
         item.isVisible = true
         spinner = item.actionView as Spinner
-        val filterArray: Array<String> = arrayOf("TODAY'S", "SHOW ALL", "DATE-RANGE")
+        val filterArray: Array<String> = arrayOf("Today's ", "View All ", "By Date ","RESET ")
         val filterAdapter: ArrayAdapter<String> = context?.let { ArrayAdapter(it, R.layout.spinner_item_action_bar, filterArray) }!!
         filterAdapter.setDropDownViewResource(R.layout.spinner_layout_actionbar)
         spinner.adapter = filterAdapter
@@ -96,7 +125,10 @@ class VendorReportFragment : Fragment() , TableViewInterface {
                         })
                     }
 
-                }else{
+                }else if(position==3){
+                    vendorGuid=""
+                    spinner.setSelection(0)
+                } else{
                     changeFilter(position)
                 }
                 Log.d("ShiftSelected", "onItemSelected: Tag= $position")
@@ -106,6 +138,60 @@ class VendorReportFragment : Fragment() , TableViewInterface {
         }
         initializeTableView(mTableView)
     }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
+        return if (item.itemId == R.id.appSearchAuto) {
+            mSearchView.visibility = View.VISIBLE
+            mSearchView.setMenuItem(item);
+            mSearchView.showSearch(true)
+            mSearchView.setSuggestions(SUGGESTIONS.toTypedArray())
+
+            true
+        }else
+            super.onOptionsItemSelected(item)
+
+    }
+
+    override fun onPrepareOptionsMenu(menu: android.view.Menu) {
+        super.onPrepareOptionsMenu(menu)
+
+       /* mSearchView.setOnSearchViewListener(object : SearchViewListener {
+            override fun onSearchViewShown() {
+                //Do some magic
+            }
+
+            override fun onSearchViewClosed() {
+                //Do some magic
+            }
+        })*/
+
+
+        mSearchView.setOnQueryTextListener(object : MaterialSearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String): Boolean {
+
+                vendorGuid = getVendorGuid(query.trim())
+
+                if(filterType==1){
+                    changeFilter(filterType)
+                }else {
+                    filterType = 1
+                    spinner.setSelection(filterType)
+                }
+
+
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String): Boolean {
+
+
+                return false
+            }
+        })
+    }
+
+
 
     private fun initializeTableView(tableView: TableView?) {
         // Create TableView Adapter
@@ -213,8 +299,8 @@ class VendorReportFragment : Fragment() , TableViewInterface {
     override fun launchDetailsFragment(id: String, masterId:String) {
         isResume = true
         Log.d("LauncherInvoked", "launchDetailsFragment: ")
-      /*  val actionNavSalesDetailsFragment = SalesReportFragmentDirections.actionNavSalesReportToNavSalesReportDetails(id,masterId)
-        Navigation.findNavController(requireActivity(), R.id.nav_host_fragment).navigate(actionNavSalesDetailsFragment)*/
+        val actionVendorDetailsFragment = VendorReportFragmentDirections.actionNavVendorReportsToNavVendorReportDetails(masterId)
+        Navigation.findNavController(requireActivity(), R.id.nav_host_fragment).navigate(actionVendorDetailsFragment)
 
     }
 
@@ -344,5 +430,39 @@ class VendorReportFragment : Fragment() , TableViewInterface {
         mTableView!!.setColumnWidth(4,dimen4)
         mTableView!!.setColumnWidth(5,dimen3)
     }
+
+    private fun getSearchArray(): ArrayList<String> {
+        val list: ArrayList<String> = ArrayList()
+        val mydb = requireActivity().openOrCreateDatabase("MasterDB", Context.MODE_PRIVATE, null)
+        val query:String = "select DISTINCT  gm.VENDOR_GUID, vm.DSTR_NM, vm.MOBILE from retail_str_grn_master gm INNER JOIN retail_str_dstr vm ON gm.VENDOR_GUID=vm.VENDOR_GUID";
+        val cursor = mydb.rawQuery(query, null)
+        if (cursor.moveToFirst()) {
+            while (!cursor.isAfterLast) {
+                val id = cursor.getString(0)
+                val name = cursor.getString(1)
+                val mobile = cursor.getString(2)
+                list.add(name)
+                cursor.moveToNext()
+            }
+        }
+        Log.d("masterStateTable", "getmasterState: Successfully Fetched")
+        cursor.close()
+        mydb.close()
+        return list
+    }
+    private fun getVendorGuid(name:String): String{
+        var vGuid =""
+        val mydb = requireActivity().openOrCreateDatabase("MasterDB", Context.MODE_PRIVATE, null)
+        val query:String = "select VENDOR_GUID from retail_str_dstr where DSTR_NM LIKE '$name%'";
+        val cursor = mydb.rawQuery(query, null)
+        if (cursor.moveToFirst()) {
+                vGuid = cursor.getString(0)
+            }
+        Log.d("masterVendorTable", "getVendorGuid: "+vGuid)
+        cursor.close()
+        mydb.close()
+        return vGuid
+    }
+
 
 }
