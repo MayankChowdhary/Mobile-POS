@@ -43,7 +43,9 @@ public class WorkManagerSync {
        // mWorkManager.enqueue(OneTimeWorkRequest.from(TableDataUploader .class));
 
     public  WorkManagerSync(int index ) {
-        mWorkManager = WorkManager.getInstance(ApplicationContextProvider.getContext());
+
+       mWorkManager = WorkManager.getInstance(ApplicationContextProvider.getContext());
+
         // Create Network constraint
         Constraints constraints = new Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
@@ -64,8 +66,7 @@ public class WorkManagerSync {
                 "SALES_DETAILS_SYNC",
                 ExistingPeriodicWorkPolicy.REPLACE, //Existing Periodic Work policy
                 salesSyncDataWork //work request
-        );
-        }
+        ); }
 
         if(index == 2 || index ==0) {
             PeriodicWorkRequest ShiftSyncDataWork =

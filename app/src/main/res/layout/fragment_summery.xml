@@ -54,7 +54,7 @@ android:layout_margin="@dimen/_8sdp">
                 android:layout_weight="1"
                 android:gravity="end"
                 android:layout_gravity="end"
-                android:text="1000.00"
+                android:text="0.00"
                 android:textColor="?colorOnBackground"
                 android:textSize="@dimen/_12ssp" />
         </LinearLayout>
@@ -84,7 +84,7 @@ android:layout_margin="@dimen/_8sdp">
                 android:layout_weight="1"
                 android:gravity="end"
                 android:layout_gravity="end"
-                android:text="80.00"
+                android:text="0.00"
                 android:textColor="?colorOnBackground"
                 android:textSize="@dimen/_12ssp" />
         </LinearLayout>
@@ -112,7 +112,7 @@ android:layout_margin="@dimen/_8sdp">
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="10.00"
+                android:text="0.00"
                 android:gravity="end"
                 android:layout_gravity="end"
                 android:textColor="?colorOnBackground"
@@ -144,7 +144,7 @@ android:layout_margin="@dimen/_8sdp">
                 android:layout_weight="1"
                 android:gravity="end"
                 android:layout_gravity="end"
-                android:text="100.00"
+                android:text="0.00"
                 android:textColor="?colorOnBackground"
                 android:textSize="@dimen/_12ssp" />
         </LinearLayout>
@@ -174,7 +174,7 @@ android:layout_margin="@dimen/_8sdp">
                 android:layout_weight="1"
                 android:gravity="end"
                 android:layout_gravity="end"
-                android:text="100.00"
+                android:text="0.00"
                 android:textColor="?colorOnBackground"
                 android:textSize="@dimen/_12ssp" />
         </LinearLayout>
@@ -204,7 +204,7 @@ android:layout_margin="@dimen/_8sdp">
                 android:layout_weight="1"
                 android:gravity="end"
                 android:layout_gravity="end"
-                android:text="8000.00"
+                android:text="0.00"
                 android:textColor="?colorOnBackground"
                 android:textSize="@dimen/_12ssp" />
         </LinearLayout>
@@ -233,7 +233,7 @@ android:layout_margin="@dimen/_8sdp">
                 android:layout_weight="1"
                 android:gravity="end"
                 android:layout_gravity="end"
-                android:text="100.00"
+                android:text="0.00"
                 android:textColor="?colorOnBackground"
                 android:textSize="@dimen/_12ssp" />
         </LinearLayout>
@@ -262,7 +262,7 @@ android:layout_margin="@dimen/_8sdp">
                 android:layout_weight="1"
                 android:gravity="end"
                 android:layout_gravity="end"
-                android:text="100.00"
+                android:text="0.00"
                 android:textColor="?colorOnBackground"
                 android:textSize="@dimen/_12ssp" />
         </LinearLayout>
@@ -291,7 +291,7 @@ android:layout_margin="@dimen/_8sdp">
                 android:layout_weight="1"
                 android:gravity="end"
                 android:layout_gravity="end"
-                android:text="10000.00"
+                android:text="0.00"
                 android:textColor="?colorOnBackground"
                 android:textSize="@dimen/_12ssp" />
         </LinearLayout>
@@ -320,7 +320,7 @@ android:layout_margin="@dimen/_8sdp">
                 android:layout_weight="1"
                 android:gravity="end"
                 android:layout_gravity="end"
-                android:text="100.00"
+                android:text="0.00"
                 android:textColor="?colorOnBackground"
                 android:textSize="@dimen/_12ssp" />
         </LinearLayout>
@@ -349,7 +349,7 @@ android:layout_margin="@dimen/_8sdp">
                 android:layout_weight="1"
                 android:gravity="end"
                 android:layout_gravity="end"
-                android:text="100.00"
+                android:text="0.00"
                 android:textColor="?colorOnBackground"
                 android:textSize="@dimen/_12ssp" />
         </LinearLayout>
@@ -379,7 +379,7 @@ android:layout_margin="@dimen/_8sdp">
                 android:layout_weight="1"
                 android:gravity="end"
                 android:layout_gravity="end"
-                android:text="100.00"
+                android:text="0.00"
                 android:textColor="?colorOnBackground"
                 android:textSize="@dimen/_12ssp" />
         </LinearLayout>
@@ -410,7 +410,7 @@ android:layout_margin="@dimen/_8sdp">
                 android:layout_weight="1"
                 android:gravity="end"
                 android:layout_gravity="end"
-                android:text="100.00"
+                android:text="0.00"
                 android:textColor="?colorOnBackground"
                 android:textSize="@dimen/_12ssp" />
         </LinearLayout>
@@ -440,7 +440,7 @@ android:layout_margin="@dimen/_8sdp">
                 android:layout_weight="1"
                 android:gravity="end"
                 android:layout_gravity="end"
-                android:text="100.00"
+                android:text="900.00"
                 android:textColor="?colorOnBackground"
                 android:textSize="@dimen/_12ssp" />
         </LinearLayout>
@@ -470,7 +470,7 @@ android:layout_margin="@dimen/_8sdp">
                 android:layout_weight="1"
                 android:gravity="end"
                 android:layout_gravity="end"
-                android:text="100.00"
+                android:text="500.00"
                 android:textColor="?colorOnBackground"
                 android:textSize="@dimen/_12ssp" />
         </LinearLayout>
@@ -500,7 +500,7 @@ android:layout_margin="@dimen/_8sdp">
                 android:layout_weight="1"
                 android:gravity="end"
                 android:layout_gravity="end"
-                android:text="100.00"
+                android:text="110.00"
                 android:textColor="?colorOnBackground"
                 android:textSize="@dimen/_12ssp" />
         </LinearLayout>
@@ -530,7 +530,7 @@ android:layout_margin="@dimen/_8sdp">
                 android:layout_weight="1"
                 android:gravity="end"
                 android:layout_gravity="end"
-                android:text="100.00"
+                android:text="600.00"
                 android:textColor="?colorOnBackground"
                 android:textSize="@dimen/_12ssp" />
         </LinearLayout>
@@ -560,7 +560,7 @@ android:layout_margin="@dimen/_8sdp">
                 android:layout_weight="1"
                 android:gravity="end"
                 android:layout_gravity="end"
-                android:text="100.00"
+                android:text="0.00"
                 android:textColor="?colorOnBackground"
                 android:textSize="@dimen/_12ssp" />
         </LinearLayout>
@@ -590,7 +590,7 @@ android:layout_margin="@dimen/_8sdp">
                 android:layout_weight="1"
                 android:gravity="end"
                 android:layout_gravity="end"
-                android:text="100.00"
+                android:text="0.00"
                 android:textColor="?colorOnBackground"
                 android:textSize="@dimen/_12ssp" />
         </LinearLayout>
@@ -620,7 +620,7 @@ android:layout_margin="@dimen/_8sdp">
                 android:layout_weight="1"
                 android:gravity="end"
                 android:layout_gravity="end"
-                android:text="100.00"
+                android:text="0.00"
                 android:textColor="?colorOnBackground"
                 android:textSize="@dimen/_12ssp" />
         </LinearLayout>
@@ -671,7 +671,7 @@ android:layout_margin="@dimen/_8sdp">
                 android:layout_weight="1"
                 android:gravity="end"
                 android:layout_gravity="end"
-                android:text="100.00"
+                android:text="0.00"
                 android:textColor="?colorOnBackground"
                 android:textSize="@dimen/_12ssp" />
         </LinearLayout>
@@ -701,7 +701,7 @@ android:layout_margin="@dimen/_8sdp">
                 android:layout_weight="1"
                 android:gravity="end"
                 android:layout_gravity="end"
-                android:text="100.00"
+                android:text="0.00"
                 android:textColor="?colorOnBackground"
                 android:textSize="@dimen/_12ssp" />
         </LinearLayout>
@@ -730,7 +730,7 @@ android:layout_margin="@dimen/_8sdp">
                 android:layout_weight="1"
                 android:gravity="end"
                 android:layout_gravity="end"
-                android:text="100.00"
+                android:text="0.00"
                 android:textColor="?colorOnBackground"
                 android:textSize="@dimen/_12ssp" />
         </LinearLayout>
@@ -760,7 +760,7 @@ android:layout_margin="@dimen/_8sdp">
                 android:layout_weight="1"
                 android:gravity="end"
                 android:layout_gravity="end"
-                android:text="1000.00"
+                android:text="0.00"
                 android:textColor="?colorOnBackground"
                 android:textSize="@dimen/_12ssp" />
         </LinearLayout>

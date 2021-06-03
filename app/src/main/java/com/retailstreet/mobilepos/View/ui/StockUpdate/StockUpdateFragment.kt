@@ -128,7 +128,6 @@ class StockUpdateFragment : Fragment() , DatePickerDialog.OnDateSetListener {
             expirySelector.adapter = expiryAdapter
             vendorSearchSelector.setSelection(0)
 
-
         }
         vendorSearchSelector.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {

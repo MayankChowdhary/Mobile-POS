@@ -203,7 +203,7 @@ class VendorIndirectPaymentFragment : Fragment() {
                     return@setOnClickListener
                 }
 
-                ControllerVendorPay(paymentNumber, "", amountPaid, "CA", "", "1900-01-01 00:0:00", vendorGuid, finalPaidForString,"UTILITY PAYMENT")
+                ControllerVendorPay(paymentNumber, "", amountPaid, "CA", "", "1900-01-01 00:0:00", vendorGuid, finalPaidForString,"UTILITY PAYMENTS")
 
                 Log.d("RadioChecked", "onViewCreated: CashRadioInvoked")
 
@@ -220,7 +220,7 @@ class VendorIndirectPaymentFragment : Fragment() {
                     Vibration.vibrate(300)
                     return@setOnClickListener
                 }
-                ControllerVendorPay(paymentNumber, bankGuid, amountPaid, "CX", checkNo, chequeDate, vendorGuid, finalPaidForString,"UTILITY PAYMENT")
+                ControllerVendorPay(paymentNumber, bankGuid, amountPaid, "CX", checkNo, chequeDate, vendorGuid, finalPaidForString,"UTILITY PAYMENTS")
 
                 Log.d("RadioChecked", "onViewCreated: ChequeRadioInvoked")
             }

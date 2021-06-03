@@ -7,7 +7,6 @@ package com.retailstreet.mobilepos.Model;
 
 public class StoreConfiguration {
 
-
     String STORE_CONFIGKEY;
     String STORECONFIG_GUID;
     String STORE_ID;

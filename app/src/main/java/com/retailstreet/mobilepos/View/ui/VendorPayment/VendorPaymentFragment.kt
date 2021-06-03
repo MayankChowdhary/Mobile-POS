@@ -263,7 +263,7 @@ class VendorPaymentFragment : Fragment() {
                     return@setOnClickListener
                 }
 
-                ControllerVendorPay(paymentNumber, "", amountPaid, "CA", "", "1900-01-01 00:0:00", vendorGuid, "","VENDOR PAYMENT")
+                ControllerVendorPay(paymentNumber, "", amountPaid, "CA", "", "1900-01-01 00:0:00", vendorGuid, "","VENDOR PAYMENTS")
                 ControllerVendorPay().updateGRNMaster(dueAmountValue,vendorGuid,invoiceNumberG)
                 Log.d("RadioChecked", "onViewCreated: CashRadioInvoked")
 
@@ -280,7 +280,7 @@ class VendorPaymentFragment : Fragment() {
                     Vibration.vibrate(300)
                     return@setOnClickListener
                 }
-                ControllerVendorPay(paymentNumber, bankGuid, amountPaid, "CX", checkNo, chequeDate, vendorGuid, "","VENDOR PAYMENT")
+                ControllerVendorPay(paymentNumber, bankGuid, amountPaid, "CX", checkNo, chequeDate, vendorGuid, "","VENDOR PAYMENTS")
                 ControllerVendorPay().updateGRNMaster(dueAmountValue,vendorGuid,invoiceNumberG)
                 Log.d("RadioChecked", "onViewCreated: ChequeRadioInvoked")
             }

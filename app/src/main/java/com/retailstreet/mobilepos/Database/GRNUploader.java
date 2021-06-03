@@ -2,6 +2,7 @@ package com.retailstreet.mobilepos.Database;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
@@ -31,6 +32,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static android.content.Context.MODE_PRIVATE;
 import static com.retailstreet.mobilepos.Utils.Constants.DBNAME;
 
 /**
@@ -67,6 +69,8 @@ public class GRNUploader extends Worker {
                     jsonObject.put("GRNTYPE", prod.getGRNTYPE());
                     jsonObject.put("GRANDAMOUNT", prod.getGRANDAMOUNT());
                     jsonObject.put("INVOICEDISCOUNT", prod.getINVOICEDISCOUNT());
+                    jsonObject.put("USERGUID", getFromGroupUserMaster("USER_GUID"));
+
 
 
                     GetGRNDetailToSync = getGRNDetailsSyncdata(prod.getGRN_GUID());
@@ -244,5 +248,30 @@ public class GRNUploader extends Worker {
         }
         db.close();
         return returnval;
+    }
+
+    private String getFromGroupUserMaster(String column){
+        String result= null;
+        try {
+            SQLiteDatabase mydb  = ApplicationContextProvider.getContext().openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
+            String username;
+            SharedPreferences sh = ApplicationContextProvider.getContext().getSharedPreferences("com.retailstreet.mobilepos", MODE_PRIVATE);
+            username = sh.getString("username", "");
+
+            result = "";
+            String selectQuery = "SELECT "+column+" FROM group_user_master where USER_NAME ='"+username+"'";
+            Cursor cursor = mydb.rawQuery(selectQuery, null);
+            if (cursor.moveToFirst()) {
+
+                result= cursor.getString(0);
+            }
+            cursor.close();
+            mydb.close();
+            Log.d("DataRetrieved", "getFromUserMaster: "+result);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+
     }
 }
