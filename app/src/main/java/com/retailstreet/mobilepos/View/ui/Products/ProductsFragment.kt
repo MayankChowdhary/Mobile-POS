@@ -15,6 +15,7 @@ import com.labters.lottiealertdialoglibrary.DialogTypes
 import com.retailstreet.mobilepos.Controller.ControllerProductMaster
 import com.retailstreet.mobilepos.Controller.ControllerStoreConfig
 import com.retailstreet.mobilepos.R
+import com.retailstreet.mobilepos.Utils.ConnectionInspector
 import com.retailstreet.mobilepos.Utils.StringWithTag
 import com.retailstreet.mobilepos.Utils.Vibration
 import com.retailstreet.mobilepos.View.dialog.ClickListeners
@@ -47,6 +48,7 @@ class ProductsFragment : Fragment() , DatePickerDialog.OnDateSetListener {
     lateinit var  expirySelector: Spinner
     var expiryDate:String = ""
     var isIndia:Boolean = true
+    //lateinit var connectionInspector: ConnectionInspector
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_products, container, false)
@@ -62,7 +64,7 @@ class ProductsFragment : Fragment() , DatePickerDialog.OnDateSetListener {
     @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+       // connectionInspector = ConnectionInspector(activity,this@ProductsFragment)
         isIndia = ControllerStoreConfig().isIndia
         expiryDate = getSaleDateAndTime()
 
@@ -350,7 +352,10 @@ class ProductsFragment : Fragment() , DatePickerDialog.OnDateSetListener {
         }
 
         submitButton.setOnClickListener {
-
+           /* if(!connectionInspector.isNetOn){
+                connectionInspector.showErrorDialog()
+                return@setOnClickListener
+            }*/
 
             if (!validateFields(editTextArray) && !validateStrings(allStringsArray)) {
                 Toast.makeText(context, "Please fill up all Mandatory fields first!", Toast.LENGTH_LONG).show();
@@ -408,6 +413,11 @@ class ProductsFragment : Fragment() , DatePickerDialog.OnDateSetListener {
             alertDialog.show()
 
         }
+
+       /* thread {
+            connectionInspector.inspect()
+        }*/
+
     }
 
 

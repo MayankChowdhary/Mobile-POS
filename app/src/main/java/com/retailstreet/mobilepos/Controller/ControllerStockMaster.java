@@ -228,7 +228,7 @@ public class ControllerStockMaster extends SQLiteOpenHelper {
         }
     }
 
-    public void updateStockMaster(String stockid,String  EXTERNALPRODUCTID,String  BARCODE,String  EXP_DATE,String S_PRICE,String P_PRICE,String QTY){
+    public void updateStockMaster(String stockid,String  EXTERNALPRODUCTID,String  BARCODE,String  EXP_DATE,String S_PRICE,String P_PRICE,String QTY, String MRP){
         try{
             db = getWritableDatabase();
             ContentValues contentValues = new ContentValues();
@@ -238,6 +238,7 @@ public class ControllerStockMaster extends SQLiteOpenHelper {
             contentValues.put("S_PRICE", S_PRICE);
             contentValues.put("P_PRICE", P_PRICE);
             contentValues.put("QTY", QTY);
+            contentValues.put("MRP", MRP);
             contentValues.put("ISSYNCED", "0");
 
             String where = "STOCK_ID=?";

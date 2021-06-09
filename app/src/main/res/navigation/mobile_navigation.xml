@@ -271,6 +271,9 @@
         <action
             android:id="@+id/action_nav_home_to_summeryFragment"
             app:destination="@id/nav_summery" />
+        <action
+            android:id="@+id/action_nav_home_to_nav_vendor_addition"
+            app:destination="@id/nav_vendor_addition" />
     </fragment>
     <fragment
         android:id="@+id/nav_sales_report"
@@ -383,4 +386,9 @@
         android:name="com.retailstreet.mobilepos.View.ui.Summery.SummeryFragment"
         android:label="Summery"
         tools:layout="@layout/fragment_summery" />
+    <fragment
+        android:id="@+id/nav_vendor_addition"
+        android:name="com.retailstreet.mobilepos.VendorAdditionFragment"
+        android:label="Add Distributor"
+        tools:layout="@layout/fragment_vendor_addition" />
 </navigation>

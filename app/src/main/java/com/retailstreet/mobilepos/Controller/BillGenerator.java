@@ -35,10 +35,11 @@ import static com.retailstreet.mobilepos.Utils.Constants.DBNAME;
 
 public class BillGenerator {
     Context context;
+    boolean IS_SMS_ENABLED = new ControllerStoreConfig().getSMSVisibility();
+
     private static Set<String> smsSetFromPrefs = new HashSet<>();
      HashMap<String, String> orderList = new HashMap<>();
     String itemGuid;
-
     String billDetailId ;
     String billMasterId;
     String billNumber ;
@@ -165,11 +166,14 @@ public class BillGenerator {
             e.printStackTrace();
         }
 
+        if(IS_SMS_ENABLED) {
             try {
                 new WorkManagerSync(6);
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+
         try {
             new WorkManagerSync(4);
         } catch (Exception e) {

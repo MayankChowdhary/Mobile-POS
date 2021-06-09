@@ -236,7 +236,7 @@ public class ControllerStoreConfig {
         boolean isUnlocked = true;
         try {
             SQLiteDatabase mydb  = context.openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
-            String selectQuery = "SELECT ADDITIONAL_EXP10 FROM store_configuration";
+            String selectQuery = "SELECT ADDITIONAL_EXP7 FROM store_configuration";
             Cursor cursor = mydb.rawQuery(selectQuery, null);
             if (cursor.moveToFirst()) {
                 String result= cursor.getString(0);
@@ -251,6 +251,27 @@ public class ControllerStoreConfig {
             e.printStackTrace();
         }
         return isUnlocked;
+    }
+
+    public  boolean getSMSVisibility(){
+        boolean isEnabled = true;
+        try {
+            SQLiteDatabase mydb  = context.openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
+            String selectQuery = "SELECT ADDITIONAL_EXP2 FROM store_configuration";
+            Cursor cursor = mydb.rawQuery(selectQuery, null);
+            if (cursor.moveToFirst()) {
+                String result= cursor.getString(0);
+                if(result.trim().equals("N")|| result.trim().equals("0")){
+                    isEnabled = false;
+                }
+            }
+            cursor.close();
+            mydb.close();
+            Log.d("DataRetrieved", "getCardMachine: "+ isEnabled);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return isEnabled;
     }
 
 }

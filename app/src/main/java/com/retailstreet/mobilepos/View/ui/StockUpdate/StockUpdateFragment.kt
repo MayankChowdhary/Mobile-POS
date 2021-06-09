@@ -62,7 +62,6 @@ class StockUpdateFragment : Fragment() , DatePickerDialog.OnDateSetListener {
     @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         val myArgs: StockUpdateFragmentArgs = StockUpdateFragmentArgs.fromBundle(requireArguments())
         stockId = myArgs.stockId
         if(stockId.isNotEmpty()){
@@ -178,7 +177,6 @@ class StockUpdateFragment : Fragment() , DatePickerDialog.OnDateSetListener {
                     extProdIdEditText.setText(StockData[2])
                     barcodeEdtText.setText(StockData[3])
                     mrpEdtText.setText(StockData[5])
-                    mrpEdtText.isEnabled=false
                     spriceEdtText.setText(StockData[6])
                     ppriceEdtText.setText(StockData[7])
                     quantityEdtText.setText(StockData[8])
@@ -286,12 +284,12 @@ class StockUpdateFragment : Fragment() , DatePickerDialog.OnDateSetListener {
 
         submitStockUpdate.setOnClickListener{
 
-             extProdId = extProdIdEditText.text.toString()
-             barcode = barcodeEdtText.text.toString()
-             mrp = mrpEdtText.text.toString()
-             sprice = spriceEdtText.text.toString()
-             pprice = ppriceEdtText.text.toString()
-             quantity = quantityEdtText.text.toString()
+             extProdId = extProdIdEditText.text.toString().trim()
+             barcode = barcodeEdtText.text.toString().trim()
+             mrp = mrpEdtText.text.toString().trim()
+             sprice = spriceEdtText.text.toString().trim()
+             pprice = ppriceEdtText.text.toString().trim()
+             quantity = quantityEdtText.text.toString().trim()
              total = totalEdtText.text.toString()
              cgst = cgstEdtText.text.toString()
              sgst = sgstEdtText.text.toString()
@@ -304,7 +302,7 @@ class StockUpdateFragment : Fragment() , DatePickerDialog.OnDateSetListener {
                 return@setOnClickListener
             }
 
-            ControllerStockMaster(context).updateStockMaster(stockId,extProdId,barcode,expiryDate,sprice,pprice,quantity)
+            ControllerStockMaster(context).updateStockMaster(stockId,extProdId,barcode,expiryDate,sprice,pprice,quantity,mrp)
             ControllerStockMaster(context).generateStockRegister(stockId,quantity)
             val alertDialog = LottieAlertDialogs.Builder(context, DialogTypes.TYPE_SUCCESS)
                     .setTitle("Stock Updated")
@@ -327,7 +325,6 @@ class StockUpdateFragment : Fragment() , DatePickerDialog.OnDateSetListener {
             alertDialog.show()
 
         }
-
 
     }
 

@@ -61,6 +61,7 @@ public class MainDrawerActivity extends AppCompatActivity  {
     String LOCK_PASSWORD;
     boolean SUMMERY_UNLOCKED = true;
     boolean SALES_REPORT_NOT_BANNED = true;
+    boolean IS_RETURN_UNLOCKED = true;
     ControllerStoreConfig config = new ControllerStoreConfig();
 
     @Override
@@ -77,6 +78,7 @@ public class MainDrawerActivity extends AppCompatActivity  {
         LOCK_PASSWORD = config.getLockPassword();
         SUMMERY_UNLOCKED = config.getSummeryLock();
         SALES_REPORT_NOT_BANNED = config.getSalesReportBanned();
+        IS_RETURN_UNLOCKED = config.getSalesReturnLock();
          drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
@@ -141,6 +143,8 @@ public class MainDrawerActivity extends AppCompatActivity  {
         childModelsList = new ArrayList<>();
         childModel = new MenuModel("Add Product", false, false, R.drawable.add_product);
         childModelsList.add(childModel);
+        childModel = new MenuModel("Add Vendor", false, false, R.drawable.vendor);
+        childModelsList.add(childModel);
         childModel = new MenuModel("Stock Update", false, false, R.drawable.stockupdate);
         childModelsList.add(childModel);
         childModel = new MenuModel("Purchase Invoice", false, false, R.drawable.invoice);
@@ -151,7 +155,7 @@ public class MainDrawerActivity extends AppCompatActivity  {
         childModelsList.add(childModel);
         childModel = new MenuModel("Vendor Return", false, false, R.drawable.vendor_return);
         childModelsList.add(childModel);
-        childModel = new MenuModel("Vendor Details", false, false, R.drawable.vendor);
+        childModel = new MenuModel("Vendor Details", false, false, R.drawable.vendor_details);
         childModelsList.add(childModel);
 
         if (menuModel.hasChildren) {
@@ -272,12 +276,21 @@ public class MainDrawerActivity extends AppCompatActivity  {
                         Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_nav_sales);
                         drawer.closeDrawer(GravityCompat.START);
                     }else if (groupPosition==1 && childPosition==1) {
-                        Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_nav_sales_refund);
-                        drawer.closeDrawer(GravityCompat.START);
+                        if(IS_RETURN_UNLOCKED || LOCK_PASSWORD.isEmpty()) {
+                            Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_nav_sales_refund);
+                            drawer.closeDrawer(GravityCompat.START);
+                        }else {
+
+                            showPasswordDialog("Sales Return",2);
+                        }
+
                     }else if (groupPosition==2 && childPosition==0) {
                         Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_nav_products);
                         drawer.closeDrawer(GravityCompat.START);
-                    }else if (groupPosition==3 && childPosition==0) {
+                    }else if (groupPosition==2 && childPosition==1) {
+                        Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_nav_vendor_addition);
+                        drawer.closeDrawer(GravityCompat.START);
+                    } else if (groupPosition==3 && childPosition==0) {
                         Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_nav_credit_pay);
                         drawer.closeDrawer(GravityCompat.START);
                     }else if (groupPosition==3 && childPosition==1) {
@@ -321,23 +334,23 @@ public class MainDrawerActivity extends AppCompatActivity  {
 
                             showPasswordDialog("All Summery",1);
                         }
-                    } else if (groupPosition==2 && childPosition==6) {
+                    } else if (groupPosition==2 && childPosition==7) {
                         Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_nav_vendor_update);
                         drawer.closeDrawer(GravityCompat.START);
-                    }else if (groupPosition==2 && childPosition==1) {
+                    }else if (groupPosition==2 && childPosition==2) {
                         HomeFragmentDirections.ActionNavHomeToStockUpdateFragment actionNavStockUpdate = HomeFragmentDirections.actionNavHomeToStockUpdateFragment("");
                         Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(actionNavStockUpdate);
                         drawer.closeDrawer(GravityCompat.START);
-                    }else if (groupPosition==2 && childPosition==2) {
+                    }else if (groupPosition==2 && childPosition==3) {
                     Navigation.findNavController(MainDrawerActivity.this, R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_purchaseInvoiceFragment);
                     drawer.closeDrawer(GravityCompat.START);
-                } else if (groupPosition==2 && childPosition==3) {
+                } else if (groupPosition==2 && childPosition==4) {
                     Navigation.findNavController(MainDrawerActivity.this, R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_vi_payment_fragment);
                     drawer.closeDrawer(GravityCompat.START);
-                }else if (groupPosition==2 && childPosition==4) {
+                }else if (groupPosition==2 && childPosition==5) {
                         Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_vendorPaymentFragment);
                         drawer.closeDrawer(GravityCompat.START);
-                    }else if (groupPosition==2 && childPosition==5) {
+                    }else if (groupPosition==2 && childPosition==6) {
                         Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_nav_vendor_return);
                         drawer.closeDrawer(GravityCompat.START);
                     }
@@ -434,12 +447,17 @@ public class MainDrawerActivity extends AppCompatActivity  {
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v1 -> {
             String value = input.getText().toString().trim();
             if (value.equals(LOCK_PASSWORD)) {
-                if(screenIndex==0) {
-                    HomeFragmentDirections.ActionNavHomeToNavSalesReport actionNavSalesReport = HomeFragmentDirections.actionNavHomeToNavSalesReport("");
-                    Navigation.findNavController(MainDrawerActivity.this, R.id.nav_host_fragment).navigate(actionNavSalesReport);
-                }else if(screenIndex==1){
-                    Navigation.findNavController(MainDrawerActivity.this, R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_summeryFragment);
-                    drawer.closeDrawer(GravityCompat.START);
+                switch (screenIndex) {
+                    case 0:
+                        HomeFragmentDirections.ActionNavHomeToNavSalesReport actionNavSalesReport = HomeFragmentDirections.actionNavHomeToNavSalesReport("");
+                        Navigation.findNavController(MainDrawerActivity.this, R.id.nav_host_fragment).navigate(actionNavSalesReport);
+                        break;
+                    case 1:
+                        Navigation.findNavController(MainDrawerActivity.this, R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_summeryFragment);
+                        break;
+                    case 2:
+                        Navigation.findNavController(MainDrawerActivity.this, R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_nav_sales_refund);
+                        break;
                 }
 
                 drawer.closeDrawer(GravityCompat.START);
