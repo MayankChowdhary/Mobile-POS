@@ -7,13 +7,11 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.Button
-import android.widget.EditText
+import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
+import com.retailstreet.mobilepos.Controller.ControllerStoreConfig
 import com.retailstreet.mobilepos.R
 import com.retailstreet.mobilepos.Utils.StringWithTag
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner
@@ -30,6 +28,7 @@ class VendorInfoFragment : Fragment() {
     }
 
     private lateinit var viewModel: VendorInfoViewModel
+    private var isIndia:Boolean = true
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -46,6 +45,7 @@ class VendorInfoFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val vendorNameArray:List<StringWithTag> = getVendorName()
         var vendorID = ""
+        isIndia = ControllerStoreConfig().isIndia
         val vendorSearchSelector: SearchableSpinner = view.findViewById(R.id.vu_search_value)
         val custSearchAdapter: ArrayAdapter<StringWithTag> = context?.let { ArrayAdapter(it, R.layout.spinner_layout, vendorNameArray) }!!
         custSearchAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -68,6 +68,15 @@ class VendorInfoFragment : Fragment() {
         val distGstEditText: EditText = view.findViewById(R.id.vu_gst_value)
         val distPanEditText: EditText = view.findViewById(R.id.vu_pan_value)
         val distActiveEditText: EditText = view.findViewById(R.id.vu_active_value)
+        val gstLayout:LinearLayout = view.findViewById(R.id.vu_gst_title_layout)
+        val panLayout:LinearLayout = view.findViewById(R.id.vu_pan_title_layout)
+
+        if(!isIndia){
+
+            gstLayout.visibility = View.GONE
+            panLayout.visibility = View.GONE
+
+        }
 
         var vendorPosition:Int = 0
 

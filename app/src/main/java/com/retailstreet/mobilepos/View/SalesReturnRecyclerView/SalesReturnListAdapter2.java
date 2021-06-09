@@ -55,7 +55,7 @@ public class SalesReturnListAdapter2 extends CustomRecyclerViewAdapter<SalesRetu
         totalPrice_view = myParentLayout.findViewById(R.id.total_rupees);
         returnSubmitView = myParentLayout.findViewById(R.id.return_submit_layout);
         returnSubmit = myParentLayout.findViewById(R.id.btn_return_submit);
-        totalPrice_view.setText(getAmountTotal()+" ₹");
+        totalPrice_view.setText(getAmountTotal());
         totalItems_view.setText(getCursorCount()+ " Item(s)");
 
 
@@ -70,7 +70,7 @@ public class SalesReturnListAdapter2 extends CustomRecyclerViewAdapter<SalesRetu
     @Override
     public void swapCursors(Cursor cursor) {
         swapCursor(  new ControllerCustomerReturn().refreshNoBillCursor());
-        totalPrice_view.setText(getAmountTotal()+" ₹");
+        totalPrice_view.setText(getAmountTotal());
         totalItems_view.setText(getCursorCount()+ " Item(s)");
 
     }
@@ -158,7 +158,7 @@ public class SalesReturnListAdapter2 extends CustomRecyclerViewAdapter<SalesRetu
 
                 }
 
-                refreshRecyclerView.setCheckout(getAmountTotal()+" ₹", cursorCount+ " Item(s)");
+                refreshRecyclerView.setCheckout(getAmountTotal(), cursorCount+ " Item(s)");
                 Cursor cursor1 = new ControllerCustomerReturn().refreshNoBillCursor();
                 refreshRecyclerView.swapCursors(cursor1);
             });
@@ -174,7 +174,7 @@ public class SalesReturnListAdapter2 extends CustomRecyclerViewAdapter<SalesRetu
                     countText = String.valueOf(count+1);
                     countorder.setText(countText);
                     upDateReturnData(primary,countText);
-                    refreshRecyclerView.setCheckout(getAmountTotal()+" ₹", cursorCount+ " Item(s)");
+                    refreshRecyclerView.setCheckout(getAmountTotal(), cursorCount+ " Item(s)");
                     Cursor cursor1 = new ControllerCustomerReturn().refreshNoBillCursor();
                     refreshRecyclerView.swapCursors(cursor1);
                 }
@@ -198,7 +198,7 @@ public class SalesReturnListAdapter2 extends CustomRecyclerViewAdapter<SalesRetu
 
                 }, 500);
 
-                refreshRecyclerView.setCheckout(getAmountTotal()+" ₹", cursorCount+ " Item(s)");
+                refreshRecyclerView.setCheckout(getAmountTotal(), cursorCount+ " Item(s)");
             });
 
 
@@ -209,7 +209,7 @@ public class SalesReturnListAdapter2 extends CustomRecyclerViewAdapter<SalesRetu
 
         public void setItem(Cursor cursor) {
             cursorCount = getCursorCount();
-            refreshRecyclerView.setCheckout(getAmountTotal()+" ₹", cursorCount+ " Item(s)");
+            refreshRecyclerView.setCheckout(getAmountTotal(), cursorCount+ " Item(s)");
             this.myListItem = SalesReturnListItem2.fromCursor(cursor);
             String  qtyRound= String.valueOf((int)(Double.parseDouble(myListItem.getQty())));
             product_detail_3.setText("UOM: "+myListItem.getProduct_detail_3()+"  QTY: "+myListItem.getProduct_detail_4());
@@ -276,7 +276,7 @@ public class SalesReturnListAdapter2 extends CustomRecyclerViewAdapter<SalesRetu
 
             result.close();
             db.close();
-            return   new DecimalFormat("#.##").format(total);
+            return   new DecimalFormat("#0.00").format(total);
 
         } catch (NumberFormatException e) {
             e.printStackTrace();

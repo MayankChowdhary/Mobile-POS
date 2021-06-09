@@ -2415,6 +2415,9 @@ public class TableDataInjector {
                 contentValues.put("ADDITIONAL_EXP8", prod.getADDITIONAL_EXP8());
                 contentValues.put("ADDITIONAL_EXP9", prod.getADDITIONAL_EXP9());
                 contentValues.put("ADDITIONAL_EXP10", prod.getADDITIONAL_EXP10());
+                contentValues.put("MULTI_CURRENCY", prod.getMULTI_CURRENCY());
+                contentValues.put("QUICK_PAY", prod.getQUICK_PAY());
+                contentValues.put("MULTI_PAYMENT_MODE", prod.getMULTI_PAYMENT_MODE());
 
                 myDataBase.insert("store_configuration", null, contentValues);
 
@@ -3043,6 +3046,8 @@ public class TableDataInjector {
                 contentValues.put("CULTUREINFO", prod.getCULTUREINFO());
                 contentValues.put("ISSYNCED", prod.getISSYNCED());
                 contentValues.put("ISINTRAIL", prod.getISINTRAIL());
+                contentValues.put("CREDIT_NOTE_VALIDITY", prod.getCREDIT_NOTE_VALIDITY());
+                contentValues.put("RETURN_FOOTER", prod.getRETURN_FOOTER());
 
                 myDataBase.insert("retail_store", null, contentValues);
 

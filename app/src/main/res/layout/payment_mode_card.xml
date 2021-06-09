@@ -107,6 +107,8 @@
         android:id="@+id/pay_card_name_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_4sdp"
+        android:layout_marginBottom="0dp"
         android:orientation="vertical">
 
         <TextView

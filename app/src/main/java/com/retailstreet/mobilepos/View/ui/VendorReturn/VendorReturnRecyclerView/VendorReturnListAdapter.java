@@ -60,7 +60,7 @@ public class VendorReturnListAdapter extends CustomRecyclerViewAdapterVR<VendorR
         totalPrice_view = myParentLayout.findViewById(R.id.total_rupees);
         returnSubmitView = myParentLayout.findViewById(R.id.return_submit_layout);
         returnSubmit = myParentLayout.findViewById(R.id.btn_return_submit);
-        totalPrice_view.setText(getAmountTotal()+" ₹");
+        totalPrice_view.setText(getAmountTotal());
         totalItems_view.setText(getCursorCount(cursor)+ " Item(s)");
 
         /*totalPrice_view.setText(getAmountBefore()+" ₹");
@@ -163,7 +163,7 @@ public class VendorReturnListAdapter extends CustomRecyclerViewAdapterVR<VendorR
 
 
                 }
-                refreshRecyclerView.setCheckout(getAmountTotal()+" ₹", cursorCount+ " Item(s)");
+                refreshRecyclerView.setCheckout(getAmountTotal(), cursorCount+ " Item(s)");
 
             });
 
@@ -188,7 +188,7 @@ public class VendorReturnListAdapter extends CustomRecyclerViewAdapterVR<VendorR
                     countText = String.valueOf(count+1);
                     countorder.setText(countText);
                     upDateReturnData(primary,countText);
-                    refreshRecyclerView.setCheckout(getAmountTotal()+" ₹", cursorCount+ " Item(s)");
+                    refreshRecyclerView.setCheckout(getAmountTotal(), cursorCount+ " Item(s)");
 
                 }
 
@@ -210,7 +210,7 @@ public class VendorReturnListAdapter extends CustomRecyclerViewAdapterVR<VendorR
 
                 }, 500);
 
-                refreshRecyclerView.setCheckout(getAmountTotal()+" ₹", cursorCount+ " Item(s)");
+                refreshRecyclerView.setCheckout(getAmountTotal(), cursorCount+ " Item(s)");
 
             });
 
@@ -220,7 +220,7 @@ public class VendorReturnListAdapter extends CustomRecyclerViewAdapterVR<VendorR
 
         public void setItem(Cursor cursor) {
             cursorCount = getCursorCount(cursor);
-            refreshRecyclerView.setCheckout(getAmountTotal()+" ₹", cursorCount+ " Item(s)");
+            refreshRecyclerView.setCheckout(getAmountTotal(), cursorCount+ " Item(s)");
             this.myListItem = VendorReturnListItem.fromCursor(cursor);
             String  qtyRound= String.valueOf((int)(Double.parseDouble(myListItem.getQty())));
             MaxQty = Integer.parseInt(myListItem.getMaxQty());
@@ -289,7 +289,7 @@ public class VendorReturnListAdapter extends CustomRecyclerViewAdapterVR<VendorR
             }
             result.close();
             db.close();
-            return   new DecimalFormat("#.##").format(total);
+            return   new DecimalFormat("#0.00").format(total);
 
         } catch (NumberFormatException e) {
             e.printStackTrace();

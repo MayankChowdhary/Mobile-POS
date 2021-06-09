@@ -2,6 +2,8 @@ package com.retailstreet.mobilepos.View.ui.SalesReportDetails.TableViewComponent
 
 import android.view.Gravity;
 
+import com.retailstreet.mobilepos.Controller.ControllerStoreConfig;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +15,8 @@ public class MyTableViewModel {
     // View Types
     public static final int GENDER_TYPE = 1;
     public static final int MONEY_TYPE = 2;
+    private boolean isIndia = new ControllerStoreConfig().getIsIndia();
+
 
     private List<ColumnHeaderModel> mColumnHeaderModelList;
     private List<RowHeaderModel> mRowHeaderModelList;
@@ -96,8 +100,10 @@ public class MyTableViewModel {
         list.add(new ColumnHeaderModel("QTY"));
         list.add(new ColumnHeaderModel("TOTAL"));
         list.add(new ColumnHeaderModel("DISCOUNT"));
-        list.add(new ColumnHeaderModel("SGST"));
-        list.add(new ColumnHeaderModel("CGST"));
+        if(isIndia) {
+            list.add(new ColumnHeaderModel("SGST"));
+            list.add(new ColumnHeaderModel("CGST"));
+        }
 
         return list;
     }
@@ -119,8 +125,10 @@ public class MyTableViewModel {
             list.add(new CellModel("4-" + i, user.QTY));
             list.add(new CellModel("5-" + i, user.TOTAL));
             list.add(new CellModel("6-" + i, user.DISCOUNT));
-            list.add(new CellModel("6-" + i, user.SGST));
-            list.add(new CellModel("6-" + i, user.CGST));
+            if(isIndia) {
+                list.add(new CellModel("6-" + i, user.SGST));
+                list.add(new CellModel("6-" + i, user.CGST));
+            }
             // Add
             lists.add(list);
         }

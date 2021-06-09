@@ -56,12 +56,8 @@ public class SalesReturnListAdapter extends CustomRecyclerViewAdapter2<SalesRetu
         totalPrice_view = myParentLayout.findViewById(R.id.total_rupees);
         returnSubmitView = myParentLayout.findViewById(R.id.return_submit_layout);
         returnSubmit = myParentLayout.findViewById(R.id.btn_return_submit);
-        totalPrice_view.setText(getAmountTotal()+" ₹");
+        totalPrice_view.setText(getAmountTotal());
         totalItems_view.setText(getCursorCount(cursor)+ " Item(s)");
-
-        /*totalPrice_view.setText(getAmountBefore()+" ₹");
-        totalItems_view.setText(orderList.size()+" Item(s)");*/
-
     }
 
     @Override
@@ -159,7 +155,7 @@ public class SalesReturnListAdapter extends CustomRecyclerViewAdapter2<SalesRetu
 
 
                 }
-                refreshRecyclerView.setCheckout(getAmountTotal()+" ₹", cursorCount+ " Item(s)");
+                refreshRecyclerView.setCheckout(getAmountTotal(), cursorCount+ " Item(s)");
 
             });
 
@@ -184,7 +180,7 @@ public class SalesReturnListAdapter extends CustomRecyclerViewAdapter2<SalesRetu
                     countText = String.valueOf(count+1);
                     countorder.setText(countText);
                     upDateReturnData(primary,countText);
-                    refreshRecyclerView.setCheckout(getAmountTotal()+" ₹", cursorCount+ " Item(s)");
+                    refreshRecyclerView.setCheckout(getAmountTotal(), cursorCount+ " Item(s)");
 
                 }
 
@@ -207,7 +203,7 @@ public class SalesReturnListAdapter extends CustomRecyclerViewAdapter2<SalesRetu
 
                 }, 500);
 
-                refreshRecyclerView.setCheckout(getAmountTotal()+" ₹", cursorCount+ " Item(s)");
+                refreshRecyclerView.setCheckout(getAmountTotal(), cursorCount+ " Item(s)");
 
             });
 
@@ -219,7 +215,7 @@ public class SalesReturnListAdapter extends CustomRecyclerViewAdapter2<SalesRetu
 
         public void setItem(Cursor cursor) {
             cursorCount = getCursorCount(cursor);
-            refreshRecyclerView.setCheckout(getAmountTotal()+" ₹", cursorCount+ " Item(s)");
+            refreshRecyclerView.setCheckout(getAmountTotal(), cursorCount+ " Item(s)");
             this.myListItem = SalesReturnListItem.fromCursor(cursor);
             String  qtyRound= String.valueOf((int)(Double.parseDouble(myListItem.getQty())));
             MaxQty = Integer.parseInt(myListItem.getMaxQty());
@@ -285,7 +281,7 @@ public class SalesReturnListAdapter extends CustomRecyclerViewAdapter2<SalesRetu
             }
             result.close();
             db.close();
-            return   new DecimalFormat("#.##").format(total);
+            return   new DecimalFormat("#0.00").format(total);
 
         } catch (NumberFormatException e) {
             e.printStackTrace();

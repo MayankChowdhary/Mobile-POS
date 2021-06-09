@@ -43,9 +43,9 @@ class VendorPaymentFragment : Fragment() {
     lateinit var chequeNumberEditText:EditText
     lateinit var  chequeAmount: EditText
     var bankGuid:String = ""
-    var grand:Double = 0.0
-    var amountPaid="0.0"
-    var dueAmountValue="0.0"
+    var grand:Double = 0.00
+    var amountPaid="0.00"
+    var dueAmountValue="0.00"
     lateinit var dueAmountView:TextView
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -66,7 +66,7 @@ class VendorPaymentFragment : Fragment() {
         val cashAmountLayout:LinearLayout = view.findViewById(R.id.vd_cash_amount_layout)
         var chequeLayout: View
         val grandTotalView:TextView = view.findViewById(R.id.vd_grand_balance)
-        grandTotalView.setText("Grand Balance:\n0.00 ₹")
+        grandTotalView.setText("Grand Balance:\n0.00")
          dueAmountView = view.findViewById(R.id.vd_due_balance)
         val submitButton:Button = view.findViewById(R.id.submit_vd_payment)
         val payCash:EditText = view.findViewById(R.id.vd_cash_amount_value)
@@ -89,16 +89,16 @@ class VendorPaymentFragment : Fragment() {
                 if(invoiceSelected.tag.isNotEmpty()) {
                     grand = invoiceSelected.tag.toDouble()
                 }else{
-                    grand = 0.0;
+                    grand = 0.00;
                 }
 
 
                 if(grand>0) {
-                    grandTotalView.text = "Grand Balance:\n $grand ₹"
-                    dueAmountView.text = "Due Balance:\n $grand ₹"
+                    grandTotalView.text = "Grand Balance:\n $grand"
+                    dueAmountView.text = "Due Balance:\n $grand"
                 }else{
-                    grandTotalView.text = "Grand Balance:\n0.00 ₹"
-                    dueAmountView.text = "Due Balance:\n0.00 ₹"
+                    grandTotalView.text = "Grand Balance:\n0.00"
+                    dueAmountView.text = "Due Balance:\n0.00"
                 }
 
                 Log.d("VendorSelected", "onItemSelected: Tag= $invoiceNumberG")
@@ -133,9 +133,9 @@ class VendorPaymentFragment : Fragment() {
 
             if(checkedId==R.id.vd_pay_cash_radio){
 
-                    dueAmountValue="0.0"
-                    amountPaid = "0.0"
-                dueAmountView.text = "Due Balance:\n $grand ₹"
+                    dueAmountValue="0.00"
+                    amountPaid = "0.00"
+                dueAmountView.text = "Due Balance:\n $grand"
 
                 payCash.isEnabled = true
                 cashAmountLayout.visibility = View.VISIBLE
@@ -164,9 +164,9 @@ class VendorPaymentFragment : Fragment() {
 
             }else{
 
-                dueAmountValue="0.0"
-                amountPaid = "0.0"
-                dueAmountView.text = "Due Balance:\n $grand ₹"
+                dueAmountValue="0.00"
+                amountPaid = "0.00"
+                dueAmountView.text = "Due Balance:\n $grand"
 
                 payCash.isEnabled = false
                 cashAmountLayout.visibility = View.GONE
@@ -211,8 +211,8 @@ class VendorPaymentFragment : Fragment() {
             }
 
             if(it.toString().trim().isEmpty()){
-                dueAmountValue = "0.0"
-                dueAmountView.text = "Due Balance:\n $grand ₹"
+                dueAmountValue = "0.00"
+                dueAmountView.text = "Due Balance:\n $grand"
                 return@addTextChangedListener
             }
 
@@ -220,11 +220,11 @@ class VendorPaymentFragment : Fragment() {
             if(received<=grand) {
                 amountPaid = it.toString()
                 dueAmountValue = (grand-received).toString()
-                dueAmountView.text = "Due Balance:\n $dueAmountValue ₹"
+                dueAmountView.text = "Due Balance:\n $dueAmountValue"
             }else{
-                amountPaid = "0.0"
-                dueAmountValue = "0.0"
-                dueAmountView.text = "Due Balance:\n $grand ₹"
+                amountPaid = "0.00"
+                dueAmountValue = "0.00"
+                dueAmountView.text = "Due Balance:\n $grand"
                 Toast.makeText(context,"Incorrect Amount!",Toast.LENGTH_LONG).show()
                 Vibration.vibrate(300)
             }
@@ -238,13 +238,13 @@ class VendorPaymentFragment : Fragment() {
             vendorSearchSelector.setSelection(0)
             invoiceSearchSelector.setSelection(0)
             paymentRadioGroup.check(R.id.vd_pay_cash_radio)
-            amountPaid = "0.0"
+            amountPaid = "0.00"
             payCash.setText("")
-            amountPaid = "0.0"
-            dueAmountValue = "0.0"
-            grand = 0.0
-            grandTotalView.text = "Grand Balance:\n0.00 ₹"
-            dueAmountView.text = "Due Balance:\n0.00 ₹"
+            amountPaid = "0.00"
+            dueAmountValue = "0.00"
+            grand = 0.00
+            grandTotalView.text = "Grand Balance:\n0.00"
+            dueAmountView.text = "Due Balance:\n0.00"
         }
 
 
@@ -446,8 +446,8 @@ class VendorPaymentFragment : Fragment() {
             }
 
             if (it.toString().trim().isEmpty()) {
-                dueAmountValue = "0.0"
-                dueAmountView.text = "Due Balance:\n $grand ₹"
+                dueAmountValue = "0.00"
+                dueAmountView.text = "Due Balance:\n $grand"
                 return@addTextChangedListener
             }
 
@@ -455,11 +455,11 @@ class VendorPaymentFragment : Fragment() {
             if (received <= grand) {
                 amountPaid = it.toString()
                 dueAmountValue = (grand - received).toString()
-                dueAmountView.text = "Due Balance:\n $dueAmountValue ₹"
+                dueAmountView.text = "Due Balance:\n $dueAmountValue"
             } else {
-                amountPaid = "0.0"
-                dueAmountValue = "0.0"
-                dueAmountView.text = "Due Balance:\n $grand ₹"
+                amountPaid = "0.00"
+                dueAmountValue = "0.00"
+                dueAmountView.text = "Due Balance:\n $grand"
                 Toast.makeText(context, "Incorrect Amount!", Toast.LENGTH_LONG).show()
                 Vibration.vibrate(300)
             }

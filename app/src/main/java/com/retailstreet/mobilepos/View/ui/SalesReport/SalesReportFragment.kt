@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import com.evrencoskun.tableview.TableView
 import com.google.android.material.datepicker.MaterialDatePicker
+import com.retailstreet.mobilepos.Controller.ControllerStoreConfig
 import com.retailstreet.mobilepos.R
 import com.retailstreet.mobilepos.View.ui.SalesReport.TableViewComponents.MyTableAdapter
 import com.retailstreet.mobilepos.View.ui.SalesReport.TableViewComponents.MyTableViewListener
@@ -41,6 +42,7 @@ class SalesReportFragment : Fragment() , TableViewInterface {
     lateinit var spinner: Spinner
     private var isResume: Boolean = false
     private var custGuid:String = ""
+    private var isIndia:Boolean = true
 
 
 
@@ -63,6 +65,7 @@ class SalesReportFragment : Fragment() , TableViewInterface {
         mTableView = view.findViewById(R.id.my_TableView)
         mProgressBar = view.findViewById(R.id.progressBar)
         emptyReport = view.findViewById(R.id.empty_report_view)
+        isIndia = ControllerStoreConfig().isIndia
 
         val myArgs = SalesReportFragmentArgs.fromBundle(requireArguments())
         custGuid = myArgs.custGuid
@@ -340,7 +343,7 @@ class SalesReportFragment : Fragment() , TableViewInterface {
 
         }
         filterType=option
-        mTableAdapter?.notifyDataSetChanged();
+
     }
 
 

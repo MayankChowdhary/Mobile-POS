@@ -19,6 +19,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,11 +31,13 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 
+import com.retailstreet.mobilepos.Controller.ControllerStoreConfig;
 import com.retailstreet.mobilepos.R;
 import com.retailstreet.mobilepos.Utils.StringWithTag;
 import com.retailstreet.mobilepos.Utils.Vibration;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 /**
@@ -60,6 +63,8 @@ public class CheckoutFragment extends Fragment {
     private  Button change_add;
     private EditText addDiscEditText;
     private TextView addressText;
+    private boolean isIndia;
+    ControllerStoreConfig config = new ControllerStoreConfig();
 
     String totalItems;
     String amntBefore;
@@ -87,6 +92,15 @@ public class CheckoutFragment extends Fragment {
         addressLayout.setVisibility(View.GONE);
         addDiscEditText = root.findViewById(R.id.add_discount_value);
         addressText = root.findViewById(R.id.addr_text);
+        isIndia = config.getIsIndia();
+
+        LinearLayout gstLayout = root.findViewById(R.id.item_layout_4);
+        LinearLayout amntB4Tax = root.findViewById(R.id.item_layout_2);
+
+        if(!isIndia){
+            gstLayout.setVisibility(View.GONE);
+            amntB4Tax.setVisibility(View.GONE);
+        }
 
 
 
@@ -204,7 +218,7 @@ public class CheckoutFragment extends Fragment {
 
                 totalAmount = grand;
                 addDiscount = "0.00";
-                grandTotalView.setText(totalAmount+" ₹");
+                grandTotalView.setText(totalAmount);
                 if(s.toString().trim().isEmpty()){
                     return;
                 }
@@ -218,11 +232,11 @@ public class CheckoutFragment extends Fragment {
                         Toast.makeText(getContext(), "Incorrect Amount!", Toast.LENGTH_LONG).show();
                         Vibration.Companion.vibrate(300);
                     }
-                    grandTotalView.setText(totalAmount+" ₹");
+                    grandTotalView.setText(totalAmount);
                 } catch (NumberFormatException e) {
                     totalAmount = grand;
                     addDiscount = "0.00";
-                    grandTotalView.setText(totalAmount+" ₹");
+                    grandTotalView.setText(totalAmount);
                     Toast.makeText(getContext(), "Incorrect Amount!", Toast.LENGTH_LONG).show();
                     Vibration.Companion.vibrate(300);
                     e.printStackTrace();
@@ -239,17 +253,23 @@ public class CheckoutFragment extends Fragment {
 
         CheckoutFragmentArgs myArgs =CheckoutFragmentArgs.fromBundle(requireArguments());
          totalItems=myArgs.getTotalItems();
-         amntBefore=myArgs.getAmountBefore()+" ₹";
-         disc=myArgs.getDiscount()+" ₹";
-         gst=myArgs.getGst()+" ₹";
+         amntBefore=myArgs.getAmountBefore();
+         disc=myArgs.getDiscount();
+         gst=myArgs.getGst();
          grand=myArgs.getGrandTotal();
          totalAmount = grand;
+
+        try {
+            totalItems = new DecimalFormat("#0.00").format(Double.parseDouble(totalItems));
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        }
 
         totalItemView.setText(totalItems);
         amountBeforeView.setText(amntBefore);
         totalSgstView.setText(disc);
         totalCgstView.setText(gst);
-        grandTotalView.setText(grand+" ₹");
+        grandTotalView.setText(grand);
 
     }
 

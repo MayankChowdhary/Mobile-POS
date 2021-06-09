@@ -1,17 +1,25 @@
 package com.retailstreet.mobilepos.View;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -24,8 +32,10 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.navigation.NavigationView;
 import com.labters.lottiealertdialoglibrary.DialogTypes;
+import com.retailstreet.mobilepos.Controller.ControllerStoreConfig;
 import com.retailstreet.mobilepos.R;
 import com.retailstreet.mobilepos.Utils.CrashHandler;
+import com.retailstreet.mobilepos.Utils.Vibration;
 import com.retailstreet.mobilepos.Utils.WorkManagerSync;
 import com.retailstreet.mobilepos.View.ExpandableNavigation.ExpandableListAdapter;
 import com.retailstreet.mobilepos.View.ExpandableNavigation.MenuModel;
@@ -48,6 +58,10 @@ public class MainDrawerActivity extends AppCompatActivity  {
     List<MenuModel> headerList = new ArrayList<>();
     HashMap<MenuModel, List<MenuModel>> childList = new HashMap<>();
     DrawerLayout drawer;
+    String LOCK_PASSWORD;
+    boolean SUMMERY_UNLOCKED = true;
+    boolean SALES_REPORT_NOT_BANNED = true;
+    ControllerStoreConfig config = new ControllerStoreConfig();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +74,9 @@ public class MainDrawerActivity extends AppCompatActivity  {
         expandableListView = findViewById(R.id.expandableListView);
         prepareMenuData();
         populateExpandableList();
-
+        LOCK_PASSWORD = config.getLockPassword();
+        SUMMERY_UNLOCKED = config.getSummeryLock();
+        SALES_REPORT_NOT_BANNED = config.getSalesReportBanned();
          drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
@@ -277,9 +293,20 @@ public class MainDrawerActivity extends AppCompatActivity  {
                         Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_nav_dayclose);
                         drawer.closeDrawer(GravityCompat.START);
                     }else if (groupPosition==5 && childPosition==0) {
-                        HomeFragmentDirections.ActionNavHomeToNavSalesReport actionNavSalesReport = HomeFragmentDirections.actionNavHomeToNavSalesReport("");
-                        Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(actionNavSalesReport);
-                        drawer.closeDrawer(GravityCompat.START);
+
+                        if(SALES_REPORT_NOT_BANNED) {
+                            if (LOCK_PASSWORD == null || LOCK_PASSWORD.isEmpty()) {
+                                HomeFragmentDirections.ActionNavHomeToNavSalesReport actionNavSalesReport = HomeFragmentDirections.actionNavHomeToNavSalesReport("");
+                                Navigation.findNavController(MainDrawerActivity.this, R.id.nav_host_fragment).navigate(actionNavSalesReport);
+                                drawer.closeDrawer(GravityCompat.START);
+                            } else {
+
+                                showPasswordDialog("Sales Report", 0);
+                            }
+                        }else {
+                            Vibration.Companion.vibrate(400);
+                            Toast.makeText(getApplicationContext(),"Permission denied!",Toast.LENGTH_LONG).show();
+                        }
                     }else if (groupPosition==5 && childPosition==1) {
                         Navigation.findNavController(MainDrawerActivity.this, R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_nav_vendor_reports);
                         drawer.closeDrawer(GravityCompat.START);
@@ -287,8 +314,13 @@ public class MainDrawerActivity extends AppCompatActivity  {
                         Navigation.findNavController(MainDrawerActivity.this, R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_salesReturnReport);
                         drawer.closeDrawer(GravityCompat.START);
                     }else if (groupPosition==5 && childPosition==3) {
-                        Navigation.findNavController(MainDrawerActivity.this, R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_summeryFragment);
-                        drawer.closeDrawer(GravityCompat.START);
+                        if(SUMMERY_UNLOCKED || LOCK_PASSWORD.isEmpty()) {
+                            Navigation.findNavController(MainDrawerActivity.this, R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_summeryFragment);
+                            drawer.closeDrawer(GravityCompat.START);
+                        }else {
+
+                            showPasswordDialog("All Summery",1);
+                        }
                     } else if (groupPosition==2 && childPosition==6) {
                         Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_nav_vendor_update);
                         drawer.closeDrawer(GravityCompat.START);
@@ -309,7 +341,6 @@ public class MainDrawerActivity extends AppCompatActivity  {
                         Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_nav_vendor_return);
                         drawer.closeDrawer(GravityCompat.START);
                     }
-
                 }
 
                 return false;
@@ -375,5 +406,52 @@ public class MainDrawerActivity extends AppCompatActivity  {
         TextView nav_subuser = hView.findViewById(R.id.nav_subtitle);
         nav_subuser.setText(subtitle);
         nav_subuser.setSelected(true);
+    }
+
+
+    private void showPasswordDialog(String message, int screenIndex){
+        AlertDialog.Builder alert = new AlertDialog.Builder(MainDrawerActivity.this);
+        alert.setTitle("Enter Password");
+        alert.setMessage("           "+message);
+        alert.setIcon(android.R.drawable.ic_lock_lock);
+        final EditText input = new EditText(MainDrawerActivity.this);
+        input.setGravity(Gravity.CENTER);
+        input.setTextSize(20);
+        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+        input.setTypeface(input.getTypeface(), Typeface.BOLD);
+        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+        alert.setView(input);
+        input.requestFocus();
+        alert.setCancelable(false);
+        alert.setPositiveButton("Ok", (dialog, whichButton) -> {
+        });
+        alert.setNegativeButton("Cancel", (dialog, whichButton) -> {
+            imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+        });
+        final AlertDialog dialog = alert.create();
+        dialog.show();
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v1 -> {
+            String value = input.getText().toString().trim();
+            if (value.equals(LOCK_PASSWORD)) {
+                if(screenIndex==0) {
+                    HomeFragmentDirections.ActionNavHomeToNavSalesReport actionNavSalesReport = HomeFragmentDirections.actionNavHomeToNavSalesReport("");
+                    Navigation.findNavController(MainDrawerActivity.this, R.id.nav_host_fragment).navigate(actionNavSalesReport);
+                }else if(screenIndex==1){
+                    Navigation.findNavController(MainDrawerActivity.this, R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_summeryFragment);
+                    drawer.closeDrawer(GravityCompat.START);
+                }
+
+                drawer.closeDrawer(GravityCompat.START);
+                Toast.makeText(getApplicationContext(), "Permission Granted !", Toast.LENGTH_SHORT).show();
+                dialog.dismiss();
+                imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+            } else {
+
+                Vibration.Companion.vibrate(300);
+                Toast.makeText(getApplicationContext(), "Invalid Password !", Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 }

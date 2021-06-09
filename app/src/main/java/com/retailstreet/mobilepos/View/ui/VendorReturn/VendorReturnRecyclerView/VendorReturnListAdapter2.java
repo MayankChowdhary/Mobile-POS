@@ -60,7 +60,7 @@ public class VendorReturnListAdapter2 extends CustomRecyclerViewAdapter<VendorRe
         totalPrice_view = myParentLayout.findViewById(R.id.total_rupees);
         returnSubmitView = myParentLayout.findViewById(R.id.return_submit_layout);
         returnSubmit = myParentLayout.findViewById(R.id.btn_return_submit);
-        totalPrice_view.setText(getAmountTotal()+" ₹");
+        totalPrice_view.setText(getAmountTotal());
         totalItems_view.setText(getCursorCount()+ " Item(s)");
 
 
@@ -75,7 +75,7 @@ public class VendorReturnListAdapter2 extends CustomRecyclerViewAdapter<VendorRe
     @Override
     public void swapCursors(Cursor cursor) {
         swapCursor(  new ControllerVendorReturn().refreshNoGrnCursor());
-        totalPrice_view.setText(getAmountTotal()+" ₹");
+        totalPrice_view.setText(getAmountTotal());
         totalItems_view.setText(getCursorCount()+ " Item(s)");
 
     }
@@ -163,7 +163,7 @@ public class VendorReturnListAdapter2 extends CustomRecyclerViewAdapter<VendorRe
 
                 }
 
-                refreshRecyclerView.setCheckout(getAmountTotal()+" ₹", cursorCount+ " Item(s)");
+                refreshRecyclerView.setCheckout(getAmountTotal(), cursorCount+ " Item(s)");
                 Cursor cursor1 = new ControllerVendorReturn().refreshNoGrnCursor();
                 refreshRecyclerView.swapCursors(cursor1);
             });
@@ -177,7 +177,7 @@ public class VendorReturnListAdapter2 extends CustomRecyclerViewAdapter<VendorRe
                 countText = String.valueOf(count+1);
                 countorder.setText(countText);
                 upDateReturnData(primary,countText);
-                refreshRecyclerView.setCheckout(getAmountTotal()+" ₹", cursorCount+ " Item(s)");
+                refreshRecyclerView.setCheckout(getAmountTotal(), cursorCount+ " Item(s)");
                 Cursor cursor1 = new ControllerVendorReturn().refreshNoGrnCursor();
                 refreshRecyclerView.swapCursors(cursor1);
             });
@@ -197,7 +197,7 @@ public class VendorReturnListAdapter2 extends CustomRecyclerViewAdapter<VendorRe
 
                 }, 500);
 
-                refreshRecyclerView.setCheckout(getAmountTotal()+" ₹", cursorCount+ " Item(s)");
+                refreshRecyclerView.setCheckout(getAmountTotal(), cursorCount+ " Item(s)");
             });
 
 
@@ -208,7 +208,7 @@ public class VendorReturnListAdapter2 extends CustomRecyclerViewAdapter<VendorRe
 
         public void setItem(Cursor cursor) {
             cursorCount = getCursorCount();
-            refreshRecyclerView.setCheckout(getAmountTotal()+" ₹", cursorCount+ " Item(s)");
+            refreshRecyclerView.setCheckout(getAmountTotal(), cursorCount+ " Item(s)");
             this.myListItem = VendorReturnListItem2.fromCursor(cursor);
             String  qtyRound= String.valueOf((int)(Double.parseDouble(myListItem.getQty())));
             product_detail_3.setText("UOM: "+myListItem.getProduct_detail_3()+"  EXP: "+ getFormatDate(myListItem.getProduct_detail_4()));
@@ -217,8 +217,6 @@ public class VendorReturnListAdapter2 extends CustomRecyclerViewAdapter<VendorRe
             product_detail_5.setText(myListItem.getProduct_detail_5());
             qtyView.setText(qtyRound);
             qtyView.setSelected(true);
-
-
         }
     }
     @NonNull
@@ -273,7 +271,7 @@ public class VendorReturnListAdapter2 extends CustomRecyclerViewAdapter<VendorRe
 
             result.close();
             db.close();
-            return   new DecimalFormat("#.##").format(total);
+            return   new DecimalFormat("#0.00").format(total);
 
         } catch (NumberFormatException e) {
             e.printStackTrace();

@@ -25,6 +25,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.mikepenz.actionitembadge.library.ActionItemBadge;
 import com.mikepenz.iconics.typeface.library.fontawesome.FontAwesome;
+import com.retailstreet.mobilepos.Controller.ControllerStoreConfig;
 import com.retailstreet.mobilepos.R;
 import com.retailstreet.mobilepos.View.ApplicationContextProvider;
 import com.retailstreet.mobilepos.View.ui.Sales.SalesFragmentDirections;
@@ -39,17 +40,22 @@ import java.util.HashMap;
 
 public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter.ViewHolder>  {
 
-    static Activity myParentActivity;
+     static Activity myParentActivity;
      static HashMap<String, String> orderList = new HashMap<>();
      Context context;
      public static UpdateRecyclerView updateRecyclerView;
+     public static boolean isMRPVisible = true;
+     public static boolean isIndia;
+     ControllerStoreConfig config = new ControllerStoreConfig();
 
 
     public SalesListAdapter(Context context, Cursor cursor, Activity myParentActivity, UpdateRecyclerView updateRecyclerViews){
         super(context,cursor);
         this.myParentActivity = myParentActivity;
         this.context=context;
+        isIndia = config.getIsIndia();
         updateRecyclerView = updateRecyclerViews;
+        isMRPVisible = config.getMRPVisibility();
         //SQLiteDbInspector.PrintTableSchema(ApplicationContextProvider.getContext(),"MasterDB");
        // EmptyCart();
        initMap();
@@ -61,7 +67,6 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
     public static class ViewHolder extends RecyclerView.ViewHolder implements Animation.AnimationListener {
         public TextView productTitle;
         public TextView product_detail_2;
-        public TextView product_detail_3;
         public TextView product_detail_4;
         public TextView product_detail_V;
         public ImageButton add_order;
@@ -77,25 +82,34 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
 
         public void setMyListItem(Cursor cursor) {
             this.myListItem = SalesListItem.fromCursor(cursor);
-            String mrp ="MRP: "+myListItem.getProduct_detail_2()+" ₹";
-            String sp ="Price: "+myListItem.getProduct_detail_4()+" ₹";
+            String mrp ="MRP: "+myListItem.getProduct_detail_2();
+            String sp ="Price: "+myListItem.getProduct_detail_4();
             double discount = Double.parseDouble(myListItem.getProduct_detail_3());
             String discountString = "Disc: "+new DecimalFormat("#.##").format(Double.parseDouble(myListItem.getProduct_detail_3()))+" %";
             qty = (int)Double.parseDouble(myListItem.getQty());
-            product_detail_3.setVisibility(View.GONE);
+
             if(discount==0){
-               //product_detail_3.setVisibility(View.GONE);
                 discountString = "";
-            }/*else {
-                product_detail_3.setText(discountString);
-                product_detail_3.setVisibility(View.VISIBLE);
-            }*/
+            }
+
 
             productTitle.setText(myListItem.getName());
             product_detail_2.setText(mrp);
             product_detail_4.setText(sp+"   "+discountString);
             product_detail_V.setText(myListItem.getProduct_detail_v());
             sales_qty.setText("Avail: "+qty);
+
+            if(isMRPVisible){
+                product_detail_2.setVisibility(View.VISIBLE);
+            }else {
+                product_detail_2.setVisibility(View.GONE);
+            }
+
+            if(isIndia){
+                product_detail_V.setVisibility(View.VISIBLE);
+            }else {
+                product_detail_V.setVisibility(View.GONE);
+            }
 
             String oc = orderList.get(myListItem.getPrimary());
             if(oc ==null) {
@@ -108,8 +122,8 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
                 order_count.setText(orderList.get(myListItem.getPrimary()));
                 add_to_cart.setVisibility(View.GONE);
                 order_count.setSelected(true);
-
             }
+
 
             if(qty<=0){
 
@@ -126,7 +140,6 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
             super(view);
             productTitle = view.findViewById(R.id.product_title);
             product_detail_2=view.findViewById(R.id.product_detail_II);
-            product_detail_3=view.findViewById(R.id.product_detail_III);
             product_detail_4=view.findViewById(R.id.product_detail_IV);
             product_detail_V=view.findViewById(R.id.product_detail_V);
             sales_qty = view.findViewById(R.id.sales_qty);

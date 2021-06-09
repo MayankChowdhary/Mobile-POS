@@ -2,6 +2,8 @@ package com.retailstreet.mobilepos.View.ui.SalesReport.TableViewComponents;
 
 import android.view.Gravity;
 
+import com.retailstreet.mobilepos.Controller.ControllerStoreConfig;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +15,7 @@ public class MyTableViewModel {
     // View Types
     public static final int GENDER_TYPE = 1;
     public static final int MONEY_TYPE = 2;
+    private boolean isIndia = new ControllerStoreConfig().getIsIndia();
 
     private List<ColumnHeaderModel> mColumnHeaderModelList;
     private List<RowHeaderModel> mRowHeaderModelList;
@@ -113,6 +116,7 @@ public class MyTableViewModel {
         list.add(new ColumnHeaderModel("DATE"));
         list.add(new ColumnHeaderModel("DISCOUNT"));
         list.add(new ColumnHeaderModel("TOTAL"));
+        if(isIndia)
         list.add(new ColumnHeaderModel("GST"));
 
         return list;
@@ -135,6 +139,7 @@ public class MyTableViewModel {
             list.add(new CellModel(user.BILL_NO , user.DATE,user.MASTER_ID));    // "Nickname"
             list.add(new CellModel(user.BILL_NO , user.DISCOUNT,user.MASTER_ID));       // "Email"
             list.add(new CellModel(user.BILL_NO , user.TOTAL,user.MASTER_ID));   // "BirthDay"
+            if(isIndia)
             list.add(new CellModel(user.BILL_NO , user.GST,user.MASTER_ID));      // "Gender"
 
             // Add

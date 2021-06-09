@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/sales_list_item_layout"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/_100sdp"
+    android:layout_height="@dimen/_90sdp"
     android:layout_margin="4dp"
     android:background="@drawable/item_box_border"
     android:elevation="2dp"
@@ -19,8 +19,8 @@
         android:background="@null"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:tint="?colorPrimary"
-        app:srcCompat="@drawable/edit_sales" />
+        app:srcCompat="@drawable/edit_sales"
+        app:tint="?colorPrimary" />
 
     <FrameLayout
         android:id="@+id/frameLayout"
@@ -48,8 +48,8 @@
                 android:layout_weight="1"
                 android:background="?colorSurface"
                 android:scaleType="centerInside"
-                android:tint="?colorPrimary"
-                app:srcCompat="@drawable/remove_order" />
+                app:srcCompat="@drawable/remove_order"
+                app:tint="?colorPrimary" />
 
             <TextView
                 android:id="@+id/textview_order_count"
@@ -78,8 +78,8 @@
                 android:layout_weight="1"
                 android:background="?colorSurface"
                 android:scaleType="centerInside"
-                android:tint="?colorPrimary"
-                app:srcCompat="@drawable/add_order" />
+                app:srcCompat="@drawable/add_order"
+                app:tint="?colorPrimary" />
 
         </LinearLayout>
 
@@ -125,7 +125,8 @@
         <TextView
             android:id="@+id/product_title"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:text="listItems"
             android:ellipsize="end"
             android:maxLines="2"
@@ -136,18 +137,8 @@
         <TextView
             android:id="@+id/product_detail_II"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="listItems"
-            android:textColor="?colorOnBackground"
-            android:textAlignment="viewStart"
-            android:textSize="@dimen/_10ssp" />
-
-
-        <TextView
-            android:id="@+id/product_detail_III"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:layout_marginTop="4dp"
             android:text="listItems"
             android:textColor="?colorOnBackground"
@@ -157,7 +148,8 @@
         <TextView
             android:id="@+id/product_detail_IV"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:layout_marginTop="4dp"
             android:text="listItemsIV"
             android:textColor="?colorOnBackground"
@@ -168,7 +160,8 @@
         <TextView
             android:id="@+id/product_detail_V"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:layout_marginTop="4dp"
             android:text="listItemsV"
             android:textAlignment="viewStart"

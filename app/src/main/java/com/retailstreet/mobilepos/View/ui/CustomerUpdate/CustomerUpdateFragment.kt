@@ -20,6 +20,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.labters.lottiealertdialoglibrary.DialogTypes
 import com.retailstreet.mobilepos.Controller.ControllerCreditPay
 import com.retailstreet.mobilepos.Controller.ControllerCustomerMaster
+import com.retailstreet.mobilepos.Controller.ControllerStoreConfig
 import com.retailstreet.mobilepos.R
 import com.retailstreet.mobilepos.Utils.StringWithTag
 import com.retailstreet.mobilepos.Utils.WorkManagerSync
@@ -39,7 +40,7 @@ class CustomerUpdateFragment : Fragment() {
     }
 
     private lateinit var viewModel: CustomerUpdateViewModel
-
+    private var isIndia:Boolean = true
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -55,7 +56,7 @@ class CustomerUpdateFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        isIndia = ControllerStoreConfig().isIndia
         val custNameEdtText: EditText = view.findViewById(R.id.cu_name__value)
         val custMobileEdtText: EditText = view.findViewById(R.id.cu_mobile_value)
         val custEmailEdtText: EditText = view.findViewById(R.id.cu_email_value)
@@ -66,6 +67,16 @@ class CustomerUpdateFragment : Fragment() {
         val submitCustUpdate:Button = view.findViewById(R.id.submit_update_customer)
         val updateCashButton:Button = view.findViewById(R.id.cu_add_cash_btn)
         var custPosition:Int = 0
+
+        val gstLayout:LinearLayout = view.findViewById(R.id.cu_gst_layout)
+        val panLayout:LinearLayout = view.findViewById(R.id.cu_pan_layout)
+
+        if(!isIndia){
+
+            gstLayout.visibility = View.GONE
+            panLayout.visibility = View.GONE
+
+        }
 
         var custName = " "
         var custMobile= " "
@@ -113,7 +124,7 @@ class CustomerUpdateFragment : Fragment() {
             custGstEdtText.setText("")
             custPanEdtText.setText("")
             custCreditLimitEditText.setText("")
-            custAdvanceTextView.setText("Advance:\n0.00 ₹")
+            custAdvanceTextView.setText("Advance:\n0.00")
             custTypeSelector.setSelection(0)
             creditCustSelector.setSelection(0)
             custSearchSelector.setSelection(0)
@@ -147,14 +158,13 @@ class CustomerUpdateFragment : Fragment() {
                     creditCustSelector.setSelection(spinnerPosition)
                     custGuid = customerData[7]
                     custAdvanceOld = customerData[8]
-                    custAdvanceTextView.setText("Advance:\n" + customerData[8] + " ₹")
+                    custAdvanceTextView.setText("Advance:\n" + customerData[8])
                     custCreditLimitEditText.setText(customerData[9])
                 }
 
             }
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
-
 
         updateCashButton.setOnClickListener {
 

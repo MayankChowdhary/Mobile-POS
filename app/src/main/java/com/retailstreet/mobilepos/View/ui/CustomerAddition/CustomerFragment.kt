@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.labters.lottiealertdialoglibrary.DialogTypes
 import com.retailstreet.mobilepos.Controller.ControllerCustomerMaster
+import com.retailstreet.mobilepos.Controller.ControllerStoreConfig
 import com.retailstreet.mobilepos.R
 import com.retailstreet.mobilepos.Utils.StringWithTag
 import com.retailstreet.mobilepos.View.dialog.ClickListeners
@@ -33,6 +34,7 @@ class CustomerFragment : Fragment() {
     }
 
     private lateinit var viewModel: CustomerViewModel
+    private var isIndia:Boolean = true
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -47,6 +49,7 @@ class CustomerFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        isIndia = ControllerStoreConfig().isIndia
         val custNameEdtText: EditText = view.findViewById(R.id.c_name__value)
         val custMobileEdtText: EditText = view.findViewById(R.id.c_mobile_value)
         val custEmailEdtText: EditText = view.findViewById(R.id.c_email_value)
@@ -64,6 +67,15 @@ class CustomerFragment : Fragment() {
         val submit_btn: Button = view.findViewById(R.id.submit_add_customer)
         val addressSwitch: SwitchMaterial = view.findViewById(R.id.ca_address_switch)
         val addressLayout:LinearLayout = view.findViewById(R.id.address_master_layout)
+        val gstLayout:LinearLayout = view.findViewById(R.id.c_gst_layout)
+        val panLayout:LinearLayout = view.findViewById(R.id.c_pan_layout)
+
+        if(!isIndia){
+
+            gstLayout.visibility = View.GONE
+            panLayout.visibility = View.GONE
+
+        }
 
         enableDisableView(addressLayout,false)
 

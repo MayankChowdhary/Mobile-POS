@@ -162,6 +162,8 @@ public class RetailStore {
         this.ISINTRAIL = ISINTRAIL;
     }
 
+    private String CREDIT_NOTE_VALIDITY;
+    private String RETURN_FOOTER;
 
     /**
      * No args constructor for use in serialization
@@ -170,52 +172,7 @@ public class RetailStore {
     public RetailStore() {
     }
 
-    /**
-     *
-     * @param storeStreet
-     * @param sTRCNTCTNM
-     * @param iSSTOREENABLEDFORECOMMERCE
-     * @param cULTUREINFO
-     * @param sTORESECONDARYEMAIL
-     * @param sTRNM
-     * @param cREATIONDATE
-     * @param bUSINESSTYPE
-     * @param vERSIONBUILD
-     * @param sTORESTATE
-     * @param lastUpdatedOn
-     * @param sALESPERSONID
-     * @param aDD1
-     * @param pOSUSER
-     * @param noOfRegisters
-     * @param eCOMMERCESTOREID
-     * @param pANCARDNUMBER
-     * @param zIP
-     * @param lastUpdatedBy
-     * @param sTOREGUID
-     * @param fLAG
-     * @param dESCRIPTION
-     * @param tELE1
-     * @param sTORENUMBER
-     * @param cTY
-     * @param sTATUS
-     * @param fSSAINUMBER
-     * @param vERSIONNAME
-     * @param eMAIL
-     * @param aSSEMBLYINFO
-     * @param storeStateID
-     * @param mASTERORGGUID
-     * @param vERSIONINDENTITY
-     * @param sTRCTR
-     * @param eNTID
-     * @param storeTaxID
-     * @param fOOTER
-     * @param gSTINNUMBER
-     * @param oRGID
-     * @param tELE
-     * @param sTOREID
-     */
-    public RetailStore(String aDD1, String zIP, String sTRCNTCTNM, String sTORENUMBER, String cULTUREINFO, String gSTINNUMBER, String vERSIONBUILD, String sTRNM, String aSSEMBLYINFO, String sALESPERSONID, String cTY, String fLAG, String tELE, String fSSAINUMBER, String mASTERORGGUID, String sTATUS, String sTORESTATE, String dESCRIPTION, String iSSTOREENABLEDFORECOMMERCE, String eNTID, String vERSIONINDENTITY, String lastUpdatedOn, String sTOREID, String pOSUSER, String tELE1, String noOfRegisters, String sTOREGUID, String oRGID, String lastUpdatedBy, String storeTaxID, String cREATIONDATE, String fOOTER, String eMAIL, String storeStateID, String storeStreet, String bUSINESSTYPE, String pANCARDNUMBER, String vERSIONNAME, String sTORESECONDARYEMAIL, String eCOMMERCESTOREID, String sTRCTR) {
-        super();
+    public RetailStore(String aDD1, String zIP, String sTRCNTCTNM, String sTORENUMBER, String cULTUREINFO, String gSTINNUMBER, String vERSIONBUILD, String sTRNM, String aSSEMBLYINFO, String sALESPERSONID, String cTY, String fLAG, String tELE, String fSSAINUMBER, String mASTERORGGUID, String sTATUS, String sTORESTATE, String dESCRIPTION, String iSSTOREENABLEDFORECOMMERCE, String eNTID, String vERSIONINDENTITY, String lastUpdatedOn, String sTOREID, String pOSUSER, String tELE1, String noOfRegisters, String sTOREGUID, String oRGID, String lastUpdatedBy, String storeTaxID, String cREATIONDATE, String fOOTER, String eMAIL, String storeStateID, String storeStreet, String bUSINESSTYPE, String pANCARDNUMBER, String vERSIONNAME, String sTORESECONDARYEMAIL, String eCOMMERCESTOREID, String sTRCTR, String ISSYNCED, String ISINTRAIL, String CREDIT_NOTE_VALIDITY, String RETURN_FOOTER) {
         this.aDD1 = aDD1;
         this.zIP = zIP;
         this.sTRCNTCTNM = sTRCNTCTNM;
@@ -257,7 +214,12 @@ public class RetailStore {
         this.sTORESECONDARYEMAIL = sTORESECONDARYEMAIL;
         this.eCOMMERCESTOREID = eCOMMERCESTOREID;
         this.sTRCTR = sTRCTR;
+        this.ISSYNCED = ISSYNCED;
+        this.ISINTRAIL = ISINTRAIL;
+        this.CREDIT_NOTE_VALIDITY = CREDIT_NOTE_VALIDITY;
+        this.RETURN_FOOTER = RETURN_FOOTER;
     }
+
 
     public String getADD1() {
         return aDD1;
@@ -590,5 +552,22 @@ public class RetailStore {
     @Override
     public String toString() {
         return sTRNM;
+    }
+
+
+    public String getCREDIT_NOTE_VALIDITY() {
+        return CREDIT_NOTE_VALIDITY;
+    }
+
+    public void setCREDIT_NOTE_VALIDITY(String CREDIT_NOTE_VALIDITY) {
+        this.CREDIT_NOTE_VALIDITY = CREDIT_NOTE_VALIDITY;
+    }
+
+    public String getRETURN_FOOTER() {
+        return RETURN_FOOTER;
+    }
+
+    public void setRETURN_FOOTER(String RETURN_FOOTER) {
+        this.RETURN_FOOTER = RETURN_FOOTER;
     }
 }

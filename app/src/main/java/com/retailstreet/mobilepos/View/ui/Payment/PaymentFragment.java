@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -37,11 +38,14 @@ import androidx.navigation.Navigation;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
+import com.labters.lottiealertdialoglibrary.DialogTypes;
 import com.retailstreet.mobilepos.Controller.BillGenerator;
 import com.retailstreet.mobilepos.Controller.ControllerCreditPay;
+import com.retailstreet.mobilepos.Controller.ControllerStoreConfig;
 import com.retailstreet.mobilepos.R;
 import com.retailstreet.mobilepos.Utils.StringWithTag;
 import com.retailstreet.mobilepos.Utils.Vibration;
+import com.retailstreet.mobilepos.View.dialog.LottieAlertDialogs;
 import com.retailstreet.mobilepos.View.dialog.MonthYearPickerDialog;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
@@ -132,6 +136,8 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
     String chequeYear ;
 
     int DIALOG_FRAGMENT =1;
+    boolean CARD_MACHINE = true;
+    ControllerStoreConfig config = new  ControllerStoreConfig();
 
     public static PaymentFragment newInstance() {
         return new PaymentFragment();
@@ -158,6 +164,7 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
         creditBalance = myArgs.getCreditBalance();
         addDiscount = myArgs.getAddDiscount();
 
+        CARD_MACHINE = config.getCardMachine();
         createBillPreviewTable();
 
         if(!customerId.trim().isEmpty()){
@@ -187,7 +194,7 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
 
         getPayModeID();
        pendingAmountTextView = view.findViewById(R.id.pending_amount_value);
-        pendingAmountTextView.setText(amountToPay+" ₹");
+        pendingAmountTextView.setText(amountToPay);
         pendingAmount = Double.parseDouble(amountToPay);
 
 
@@ -228,15 +235,7 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
 
             }
 
-            String message = "";
 
-            if(isCreditPay){
-
-                message = "Settlement Completed";
-            }else {
-
-                message = "Purchase Completed";
-            }
 
             if(paidByCard>0 ) {
                 Log.d("PaidByCard is true", "onViewCreated: "+paidByCard);
@@ -246,7 +245,12 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
                  card4 =  cardNumber4.getText().toString();
                 custName = custNameEdittext.getText().toString();
                 cardNumberX = card1+card2+card3+card4;
-                cardValidateStrings = new ArrayList<>(Arrays.asList(card1,card2,card3,card4,custName,bankGuid));
+                if(CARD_MACHINE) {
+                    cardValidateStrings = new ArrayList<>(Arrays.asList(card1, card2, card3, card4, custName, bankGuid));
+                }else {
+                    cardValidateStrings = new ArrayList<>(Arrays.asList(card1, card2, card3, card4, custName));
+
+                }
                 if (!validateStrings(cardValidateStrings)) {
 
                     Toast.makeText(getContext(), "Please Fill up card details first!", Toast.LENGTH_LONG).show();
@@ -282,8 +286,29 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
                 updateCustomerAdvance(newAdvance,customerId);
             }
 
-            Log.d("Billing_DONE", "onViewCreated: Showing Dialog");
-            showEditDialog(billNumber,customerId);
+            if(isCreditPay){
+                LottieAlertDialogs alertDialog= new LottieAlertDialogs.Builder(getContext(), DialogTypes.TYPE_SUCCESS)
+                        .setTitle( "Settlement Completed")
+                        .setDescription("Thank You!")
+                        .setPositiveText("Back")
+                        .setPositiveButtonColor(Color.parseColor("#297999"))
+                        .setPositiveTextColor(Color.parseColor("#ffffff"))
+                        .setPositiveListener(lottieAlertDialog -> {
+                                Navigation.findNavController(requireActivity(), R.id.nav_host_fragment).popBackStack();
+                                 lottieAlertDialog.dismiss();
+                        })
+                        .build();
+                alertDialog.setCancelable(false);
+                alertDialog.show();
+
+
+            }else {
+
+                Log.d("Billing_DONE", "onViewCreated: Showing Dialog");
+                showEditDialog(billNumber,customerId);
+            }
+
+
 
         });
     }
@@ -342,11 +367,11 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
     private void initCashLayout(View viewPager){
         received_amnt = viewPager.findViewById(R.id.received_amount_value);
         TextView creditBalanceTV = viewPager.findViewById(R.id.pay_cash_credit_value);
-        creditBalanceTV.setText(creditBalance+" ₹");
+        creditBalanceTV.setText(creditBalance);
         EditText creditPayEditText = viewPager.findViewById(R.id.pay_credit_amount_value);
         advanceLayout = viewPager.findViewById(R.id.advance_amount_layout);
         TextView advanceAmountTV = viewPager.findViewById(R.id.advance_amount_value);
-        advanceAmountTV.setText(advance_amount+" ₹");
+        advanceAmountTV.setText(advance_amount);
 
 
         Button cash50 = viewPager.findViewById(R.id.cash_fifty);
@@ -534,6 +559,8 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
          cardNumber4 = viewPager.findViewById(R.id.pay_card_number_four);
 
 
+
+         TextView bankTitle = viewPager.findViewById(R.id.pay_card_bank_title);
          List<StringWithTag> banknameList = getBankListData();
         ArrayAdapter<StringWithTag> bankNameAdapter = new ArrayAdapter<StringWithTag> (getActivity(), R.layout.spinner_layout, banknameList);
         bankNameAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -543,6 +570,7 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
         bankNameSpinner.setGravity(Gravity.START);
 
 
+        TextView expriryTitle = viewPager.findViewById(R.id.pay_card_expiry_title);
         Spinner expirySelector = viewPager.findViewById(R.id.pay_card_expiry_value);
         String[] expiryItem = new String[] {"MM/YYYY"};
         ArrayAdapter<String> expiryAdapter = new ArrayAdapter<String>(getActivity(), R.layout.spinner_item_bold, expiryItem);
@@ -580,6 +608,19 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
                 return true;
             }
         });
+
+        if(!CARD_MACHINE){
+            cardNumber1.setEnabled(false);
+            cardNumber2.setEnabled(false);
+            cardNumber3.setEnabled(false);
+            cardNumber1.setText("XXXX");
+            cardNumber2.setText("XXXX");
+            cardNumber3.setText("XXXX");
+            expirySelector.setVisibility(View.GONE);
+            bankNameSpinner.setVisibility(View.GONE);
+            bankTitle.setVisibility(View.GONE);
+            expriryTitle.setVisibility(View.GONE);
+        }
 
         RadioGroup payCardRadioGroup = (RadioGroup) viewPager.findViewById(R.id.pay_card_radiogroup);
 
@@ -1216,7 +1257,7 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
                 Object item = parent.getItemAtPosition(position);
                 StringWithTag myItem = (StringWithTag) item;
                 String amount = myItem.tag;
-                redeemAmount.setText(amount+" ₹");
+                redeemAmount.setText(amount);
                 Log.d("NoteSelected", "onItemClick: "+redeemNumber);
                 double amountInNum = Math.abs(Double.parseDouble(amount));
                 if(amountInNum>pendingAmount){
@@ -1236,7 +1277,7 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
 
-                redeemAmount.setText("0.00 ₹");
+                redeemAmount.setText("0.00");
                 redeemMasterAmount = "0.00";
                 redeemNumber = "";
                 setPendingAmount();
@@ -1328,7 +1369,7 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
                 pendingAmount = pendingAmount - Double.parseDouble(redeemMasterAmount);
             }
         }
-        pendingAmountTextView.setText((new DecimalFormat("#.##").format(pendingAmount))+" ₹");
+        pendingAmountTextView.setText((new DecimalFormat("#0.00").format(pendingAmount)));
 
     }
 

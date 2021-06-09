@@ -19,6 +19,7 @@ import static android.content.Context.MODE_PRIVATE;
  * Created by Mayank Choudhary on 31-05-2021.
  * mayankchoudhary00@gmail.com
  */
+
 public class ControllerSummery {
 
     Context context;
@@ -52,7 +53,6 @@ public class ControllerSummery {
                     result += Double.parseDouble(cursor.getString(0));
                     cursor.moveToNext();
                 }
-
 
             }
             cursor.close();
@@ -155,9 +155,9 @@ public class ControllerSummery {
             String selectQuery;
 
             if(startDate.trim().isEmpty() || endDate.trim().isEmpty()) {
-                selectQuery = "SELECT SUM(AMOUNTREFUNDED)   FROM customerReturnMaster Where RETURN_DATE LIKE '" + date + "%' AND CREDITNOTENUMBER = ''";
+                selectQuery = "SELECT TOTAL(AMOUNTREFUNDED)   FROM customerReturnMaster Where RETURN_DATE LIKE '" + date + "%' AND CREDITNOTENUMBER = ''";
             }else {
-                selectQuery = "SELECT SUM(AMOUNTREFUNDED)  FROM customerReturnMaster Where RETURN_DATE BETWEEN '" + startDate + "' AND '"+ endDate + "' AND CREDITNOTENUMBER = ''";
+                selectQuery = "SELECT TOTAL(AMOUNTREFUNDED)  FROM customerReturnMaster Where RETURN_DATE BETWEEN '" + startDate + "' AND '"+ endDate + "' AND CREDITNOTENUMBER = ''";
             }
             Cursor cursor = mydb.rawQuery(selectQuery, null);
             if (cursor.moveToFirst()) {
@@ -180,9 +180,9 @@ public class ControllerSummery {
             String selectQuery;
 
             if(startDate.trim().isEmpty() || endDate.trim().isEmpty()) {
-                selectQuery = "SELECT SUM(AMOUNTREFUNDED)   FROM customerReturnMaster Where RETURN_DATE LIKE '" + date + "%' AND CREDITNOTENUMBER NOT LIKE ''";
+                selectQuery = "SELECT TOTAL(AMOUNTREFUNDED)   FROM customerReturnMaster Where RETURN_DATE LIKE '" + date + "%' AND CREDITNOTENUMBER NOT LIKE ''";
             }else {
-                selectQuery = "SELECT SUM(AMOUNTREFUNDED)  FROM customerReturnMaster Where RETURN_DATE BETWEEN '" + startDate + "' AND '"+ endDate + "' AND CREDITNOTENUMBER NOT LIKE ''";
+                selectQuery = "SELECT TOTAL(AMOUNTREFUNDED)  FROM customerReturnMaster Where RETURN_DATE BETWEEN '" + startDate + "' AND '"+ endDate + "' AND CREDITNOTENUMBER NOT LIKE ''";
             }
             Cursor cursor = mydb.rawQuery(selectQuery, null);
             if (cursor.moveToFirst()) {
@@ -205,9 +205,9 @@ public class ControllerSummery {
             String selectQuery;
 
             if(startDate.trim().isEmpty() || endDate.trim().isEmpty()) {
-                selectQuery = "SELECT Sum(CREDITAMOUNT)   FROM customerLedger Where ACTIONDATE LIKE '" + date + "%' ";
+                selectQuery = "SELECT TOTAL(CREDITAMOUNT)   FROM customerLedger Where ACTIONDATE LIKE '" + date + "%' ";
             }else {
-                selectQuery = "SELECT Sum(CREDITAMOUNT)  FROM customerLedger Where ACTIONDATE BETWEEN '" + startDate + "' AND '"+ endDate + "'";
+                selectQuery = "SELECT TOTAL(CREDITAMOUNT)  FROM customerLedger Where ACTIONDATE BETWEEN '" + startDate + "' AND '"+ endDate + "'";
             }
             Cursor cursor = mydb.rawQuery(selectQuery, null);
             if (cursor.moveToFirst()) {
@@ -230,9 +230,9 @@ public class ControllerSummery {
             String selectQuery;
 
             if(startDate.trim().isEmpty() || endDate.trim().isEmpty()) {
-                selectQuery = "SELECT Sum(CREDITAMOUNT)   FROM customerLedger Where ACTIONDATE LIKE '" + date + "%' AND MASTERPAYMODEGUID = 'E123BBBE-A000-4617-AD49-9B5AF2275F43'";
+                selectQuery = "SELECT TOTAL(CREDITAMOUNT)   FROM customerLedger Where ACTIONDATE LIKE '" + date + "%' AND MASTERPAYMODEGUID = 'E123BBBE-A000-4617-AD49-9B5AF2275F43'";
             }else {
-                selectQuery = "SELECT Sum(CREDITAMOUNT)  FROM customerLedger Where ACTIONDATE BETWEEN '" + startDate + "' AND '"+ endDate + "' AND MASTERPAYMODEGUID = 'E123BBBE-A000-4617-AD49-9B5AF2275F43'";
+                selectQuery = "SELECT TOTAL(CREDITAMOUNT)  FROM customerLedger Where ACTIONDATE BETWEEN '" + startDate + "' AND '"+ endDate + "' AND MASTERPAYMODEGUID = 'E123BBBE-A000-4617-AD49-9B5AF2275F43'";
             }
             Cursor cursor = mydb.rawQuery(selectQuery, null);
             if (cursor.moveToFirst()) {
@@ -255,9 +255,9 @@ public class ControllerSummery {
             String selectQuery;
 
             if(startDate.trim().isEmpty() || endDate.trim().isEmpty()) {
-                selectQuery = "SELECT Sum(a.INVOICEAMOUNT) FROM VendorPayMaster a LEFT JOIN VendorPayDetail b ON a.VENDOR_PAYGUID = b.VENDOR_PAYGUID where a.CREATEDON LIKE '" + date + "%' AND a.TYPEOFINVOICE = '"+ payType+"' and b.PAYMODE='"+payMode+"'";
+                selectQuery = "SELECT TOTAL(a.INVOICEAMOUNT) FROM VendorPayMaster a LEFT JOIN VendorPayDetail b ON a.VENDOR_PAYGUID = b.VENDOR_PAYGUID where a.CREATEDON LIKE '" + date + "%' AND a.TYPEOFINVOICE = '"+ payType+"' and b.PAYMODE='"+payMode+"'";
             }else {
-                selectQuery = "SELECT Sum(a.INVOICEAMOUNT) FROM VendorPayMaster a LEFT JOIN VendorPayDetail b ON a.VENDOR_PAYGUID = b.VENDOR_PAYGUID Where strftime('%Y-%m-%d', CREATEDON) BETWEEN '" + startDate + "' AND '"+ endDate + "' AND a.TYPEOFINVOICE = '"+ payType+"' and b.PAYMODE='"+payMode+"'";
+                selectQuery = "SELECT TOTAL(a.INVOICEAMOUNT) FROM VendorPayMaster a LEFT JOIN VendorPayDetail b ON a.VENDOR_PAYGUID = b.VENDOR_PAYGUID Where strftime('%Y-%m-%d', CREATEDON) BETWEEN '" + startDate + "' AND '"+ endDate + "' AND a.TYPEOFINVOICE = '"+ payType+"' and b.PAYMODE='"+payMode+"'";
             }
             Cursor cursor = mydb.rawQuery(selectQuery, null);
             if (cursor.moveToFirst()) {
@@ -284,12 +284,13 @@ public class ControllerSummery {
             String selectQuery;
 
             if(startDate.trim().isEmpty() || endDate.trim().isEmpty()) {
-                selectQuery = "SELECT SUM(a.PAYAMOUNT) FROM billpaydetail a LEFT JOIN retail_str_sales_master b ON a.BILLMASTERID=b.BILLMASTERID where b.SALEDATE LIKE '" + date + "%' and a.MASTERPAYMODEGUID='" + masterPayId + "'";
+                selectQuery = "SELECT TOTAL(a.PAYAMOUNT) FROM billpaydetail a LEFT JOIN retail_str_sales_master b ON a.BILLMASTERID=b.BILLMASTERID where b.SALEDATE LIKE '" + date + "%' and a.MASTERPAYMODEGUID='" + masterPayId + "'";
             }else {
-                selectQuery = "SELECT SUM(a.PAYAMOUNT) FROM billpaydetail a LEFT JOIN retail_str_sales_master b ON a.BILLMASTERID=b.BILLMASTERID Where strftime('%Y-%m-%d', SALEDATE) BETWEEN '" + startDate + "' AND '"+ endDate + "' AND a.MASTERPAYMODEGUID='" + masterPayId + "'";
+                selectQuery = "SELECT TOTAL(a.PAYAMOUNT) FROM billpaydetail a LEFT JOIN retail_str_sales_master b ON a.BILLMASTERID=b.BILLMASTERID Where strftime('%Y-%m-%d', SALEDATE) BETWEEN '" + startDate + "' AND '"+ endDate + "' AND a.MASTERPAYMODEGUID='" + masterPayId + "'";
             }
             Cursor cursor = mydb.rawQuery(selectQuery, null);
             if (cursor.moveToFirst()) {
+                Log.d("Printing Value TOTAL", "getSumOfSaleByType: "+cursor.getString(0));
                 result = Double.parseDouble(cursor.getString(0));
             }
             cursor.close();
@@ -311,9 +312,9 @@ public class ControllerSummery {
             String selectQuery;
 
             if(startDate.trim().isEmpty() || endDate.trim().isEmpty()) {
-                selectQuery = "SELECT Sum(DEBITAMOUNT) FROM customerLedger where strftime('%Y-%m-%d',ACTIONDATE) ='" + date +  "'";
+                selectQuery = "SELECT TOTAL(DEBITAMOUNT) FROM customerLedger where strftime('%Y-%m-%d',ACTIONDATE) ='" + date +  "'";
             }else {
-                selectQuery = "SELECT Sum(DEBITAMOUNT)  FROM customerLedger  Where strftime('%Y-%m-%d', ACTIONDATE) BETWEEN '" + startDate + "' AND '"+ endDate + "'";
+                selectQuery = "SELECT TOTAL(DEBITAMOUNT)  FROM customerLedger  Where strftime('%Y-%m-%d', ACTIONDATE) BETWEEN '" + startDate + "' AND '"+ endDate + "'";
             }
             Cursor cursor = mydb.rawQuery(selectQuery, null);
             if (cursor.moveToFirst()) {
@@ -339,9 +340,9 @@ public class ControllerSummery {
             String selectQuery;
 
             if(startDate.trim().isEmpty() || endDate.trim().isEmpty()) {
-                selectQuery = "SELECT Sum(ADDITIONALPARAM6)  FROM customerLedger  where strftime('%Y-%m-%d',ACTIONDATE) ='" + date +  "'";
+                selectQuery = "SELECT TOTAL(ADDITIONALPARAM6)  FROM customerLedger  where strftime('%Y-%m-%d',ACTIONDATE) ='" + date +  "'";
             }else {
-                selectQuery = "SELECT Sum(ADDITIONALPARAM6)  FROM customerLedger  Where strftime('%Y-%m-%d', ACTIONDATE) BETWEEN '" + startDate + "' AND '"+ endDate + "'";
+                selectQuery = "SELECT TOTAL(ADDITIONALPARAM6)  FROM customerLedger  Where strftime('%Y-%m-%d', ACTIONDATE) BETWEEN '" + startDate + "' AND '"+ endDate + "'";
             }
             Cursor cursor = mydb.rawQuery(selectQuery, null);
             if (cursor.moveToFirst()) {
@@ -366,9 +367,9 @@ public class ControllerSummery {
             String selectQuery;
 
             if(startDate.trim().isEmpty() || endDate.trim().isEmpty()) {
-                selectQuery = "SELECT Sum(ADDITIONALPARAM2)  FROM customerLedger where strftime('%Y-%m-%d',ACTIONDATE) ='" + date +  "'";
+                selectQuery = "SELECT TOTAL(ADDITIONALPARAM2)  FROM customerLedger where strftime('%Y-%m-%d',ACTIONDATE) ='" + date +  "'";
             }else {
-                selectQuery = "SELECT Sum(ADDITIONALPARAM2)  FROM customerLedger Where strftime('%Y-%m-%d',ACTIONDATE) BETWEEN '" + startDate + "' AND '"+ endDate + "'";
+                selectQuery = "SELECT TOTAL(ADDITIONALPARAM2)  FROM customerLedger Where strftime('%Y-%m-%d',ACTIONDATE) BETWEEN '" + startDate + "' AND '"+ endDate + "'";
             }
             Cursor cursor = mydb.rawQuery(selectQuery, null);
             if (cursor.moveToFirst()) {
@@ -429,7 +430,7 @@ public class ControllerSummery {
         try {
             SQLiteDatabase  mydb  = context.openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
             result = "";
-            String selectQuery = "select sum(GRANDTOTAL) from retail_credit_cust ";
+            String selectQuery = "select TOTAL(GRANDTOTAL) from retail_credit_cust ";
             Cursor cursor = mydb.rawQuery(selectQuery, null);
             if (cursor.moveToFirst()) {
 
@@ -447,7 +448,7 @@ public class ControllerSummery {
         try {
             SQLiteDatabase  mydb  = context.openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
             result = "";
-            String selectQuery = "select sum(GRANDAMOUNT) from retail_str_grn_master ";
+            String selectQuery = "select TOTAL(GRANDAMOUNT) from retail_str_grn_master ";
             Cursor cursor = mydb.rawQuery(selectQuery, null);
             if (cursor.moveToFirst()) {
 
@@ -466,7 +467,7 @@ public class ControllerSummery {
         try {
             SQLiteDatabase  mydb  = context.openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
             result = "";
-            String selectQuery = "select sum(ADVANCE_AMOUNT) from retail_cust";
+            String selectQuery = "select TOTAL(ADVANCE_AMOUNT) from retail_cust";
             Cursor cursor = mydb.rawQuery(selectQuery, null);
             if (cursor.moveToFirst()) {
 
@@ -490,7 +491,7 @@ public class ControllerSummery {
         String end = dateFormat.format(theEnd.getTime());
         try {
             SQLiteDatabase  mydb  = context.openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
-            String selectQuery = "SELECT SUM(a.PAYAMOUNT) FROM billpaydetail a LEFT JOIN retail_str_sales_master b ON a.BILLMASTERID=b.BILLMASTERID where b.SALEDATE between '" + start + "' AND '" + end + "' and a.MASTERPAYMODEGUID='" + masterpayguid + "'";
+            String selectQuery = "SELECT TOTAL(a.PAYAMOUNT) FROM billpaydetail a LEFT JOIN retail_str_sales_master b ON a.BILLMASTERID=b.BILLMASTERID where b.SALEDATE between '" + start + "' AND '" + end + "' and a.MASTERPAYMODEGUID='" + masterpayguid + "'";
             Cursor cursor = mydb.rawQuery(selectQuery, null);
             if (cursor.moveToFirst()) {
 
@@ -509,7 +510,7 @@ public class ControllerSummery {
         double result= 0.00;
         try {
             SQLiteDatabase  mydb  = context.openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
-            String selectQuery = "SELECT Sum(DEBITAMOUNT)  FROM customerLedger where strftime('%Y-%m-%d',ACTIONDATE) > date('now','"+days+" days') ";
+            String selectQuery = "SELECT TOTAL(DEBITAMOUNT)  FROM customerLedger where strftime('%Y-%m-%d',ACTIONDATE) > date('now','"+days+" days') ";
             Cursor cursor = mydb.rawQuery(selectQuery, null);
             if (cursor.moveToFirst()) {
 
@@ -527,7 +528,7 @@ public class ControllerSummery {
         double result= 0.00;
         try {
             SQLiteDatabase  mydb  = context.openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
-            String selectQuery = "SELECT  Sum(ADDITIONALPARAM6)  FROM customerLedger  where strftime('%Y-%m-%d',ACTIONDATE) > date('now','"+days+" days') ";
+            String selectQuery = "SELECT  TOTAL(ADDITIONALPARAM6)  FROM customerLedger  where strftime('%Y-%m-%d',ACTIONDATE) > date('now','"+days+" days') ";
             Cursor cursor = mydb.rawQuery(selectQuery, null);
             if (cursor.moveToFirst()) {
 

@@ -236,10 +236,10 @@ class SalesRefundFragment : Fragment() {
 
                 if(custGuid.isNotEmpty()) {
                     balance = getCustBalance(custGuid)
-                    balanceText.setText("Balance:\n" + balance + " ₹")
+                    balanceText.setText("Balance:\n" + balance)
                 }else{
                     balance = "0.00"
-                    balanceText.setText("Balance:\n" + balance + " ₹")
+                    balanceText.setText("Balance:\n" + balance)
                 }
                 Log.d("CustomerSelected", "onItemSelected: Tag= $custGuid")
 
@@ -331,7 +331,7 @@ class SalesRefundFragment : Fragment() {
                 val custSelected = parent.getItemAtPosition(position) as StringWithTag
                 custGuid = custSelected.tag
                 balance = getCustBalance(custGuid)
-                balanceText.setText("Balance:\n" + balance + " ₹")
+                balanceText.setText("Balance:\n" + balance)
                 Log.d("CustomerSelected", "onItemSelected: Tag= $custGuid")
 
             }
@@ -351,6 +351,7 @@ class SalesRefundFragment : Fragment() {
                 if(!isProductReturnable(stockGuid)){
 
                     Toast.makeText(context, "Item is not Returnable!", Toast.LENGTH_LONG).show()
+                    productSpinner.setSelection(0)
                     return
                 }
 
@@ -475,7 +476,7 @@ class SalesRefundFragment : Fragment() {
             result.close()
             db.close()
             Log.d("TotalAmountRefunded", "getAmountTotal: " + total)
-            DecimalFormat("#.##").format(total)
+            DecimalFormat("#0.00").format(total)
         } catch (e: NumberFormatException) {
             e.printStackTrace()
             ""
@@ -517,7 +518,7 @@ class SalesRefundFragment : Fragment() {
             }
             result.close()
             db.close()
-            DecimalFormat("#.##").format(total)
+            DecimalFormat("#0.00").format(total)
         } catch (e: java.lang.NumberFormatException) {
             e.printStackTrace()
             ""

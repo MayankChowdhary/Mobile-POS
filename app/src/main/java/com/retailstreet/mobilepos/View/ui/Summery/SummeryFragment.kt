@@ -218,6 +218,7 @@ class SummeryFragment : Fragment() {
         customerAdvance = controllerSummery.allCreditCustomerAdvance
         saleOfTheMonth = controllerSummery.monthlyTotal
 
+
     }
 
     private fun refreshUiValues(){
@@ -244,11 +245,11 @@ class SummeryFragment : Fragment() {
         vendorPayPendingTv.text = vendorPayPending
         customerAdvanceTv.text = customerAdvance
         saleOfTheMonthTv.text = saleOfTheMonth
+        totalOnlinePayTv.text = totalOnlinePay
 
         val plus: Double = cashPaymentTv.text.toString().toDouble() + openBalanceTV.text.toString().toDouble()+ creditPaymentTotalTv.text.toString().toDouble() + advanceCollectionTv.text.toString().toDouble()
-        val minus: Double = totalExpenseCashTv.text.toString().toDouble() + vendorPaymentCashTv.getText().toString().toDouble() + salesReturnCashTv.text.toString().toDouble()
+        val minus: Double = totalExpenseCashTv.text.toString().toDouble() + vendorPaymentCashTv.text.toString().toDouble() + salesReturnCashTv.text.toString().toDouble()
         cashInHandTv.text = getFormattedValue(plus - minus)
-
 
     }
 
@@ -257,7 +258,6 @@ class SummeryFragment : Fragment() {
         loadingDialog.showDialog(activity,"Refreshing...","Please wait")
     }
     private fun cancelDialogs(){
-
         loadingDialog.cancelDialog()
     }
 

@@ -19,6 +19,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import com.google.android.material.textfield.TextInputEditText;
+import com.retailstreet.mobilepos.Controller.ControllerStoreConfig;
 import com.retailstreet.mobilepos.R;
 import com.retailstreet.mobilepos.Utils.Vibration;
 import com.retailstreet.mobilepos.View.ApplicationContextProvider;
@@ -39,14 +40,17 @@ public class PurchaseInvoiceEditDialog extends DialogFragment implements DatePic
 
     TextInputEditText expiry;
     String cellId="";
+    boolean discColVis = true;
+    boolean freeColVis = true;
+    boolean expiryColVis = true;
+    boolean barcodeColVis = true;
+   ControllerStoreConfig config= new ControllerStoreConfig();
 
             @NonNull
             @Override
             public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
 
                 return super.onCreateDialog(savedInstanceState);
-
-
 
             }
 
@@ -85,6 +89,11 @@ public class PurchaseInvoiceEditDialog extends DialogFragment implements DatePic
 
 
 
+                discColVis = config.getInvoiceDiscVis();
+                freeColVis = config.getInvoiceFreeVis();
+                expiryColVis = config.getInvoiceExpiryVis();
+                barcodeColVis = config.getInvoiceBarcodeVis();
+
                 TextInputEditText sPrice = view.findViewById(R.id.pi_sprice);
                 TextInputEditText quantity = view.findViewById(R.id.editqtyid);
                  expiry = view.findViewById(R.id.editexpiryid);
@@ -95,6 +104,10 @@ public class PurchaseInvoiceEditDialog extends DialogFragment implements DatePic
                 TextInputEditText editBarCode = view.findViewById(R.id.editbarcodeid);
                 TextInputEditText editDiscount = view.findViewById(R.id.editdiscid);
 
+                editDiscount.setEnabled(discColVis);
+                editFQty.setEnabled(freeColVis);
+                expiry.setEnabled(expiryColVis);
+                editBarCode.setEnabled(barcodeColVis);
 
              //   ITEM_GUID  text not null PRIMARY KEY, PROD_NM text,EXTERNALPRODUCTID text , BARCODE text, EXP_DATE text DEFAULT '00-00-00', MRP text DEFAULT '0.00', S_PRICE text DEFAULT '0.00' , P_PRICE text DEFAULT '0.00', QTY INTEGER DEFAULT 1,FQTY INTEGER DEFAULT 0,DISC text DEFAULT '0.00', UOM text, TOTAL REAL DEFAULT 0.00,TAX text DEFAULT '0.00')
 
@@ -131,6 +144,7 @@ public class PurchaseInvoiceEditDialog extends DialogFragment implements DatePic
                             Date date = new Date();
                             Calendar calendar = Calendar.getInstance();
                             calendar.setTime(date);
+                            expiry.clearFocus();
 
                             new SpinnerDatePickerDialogBuilder()
                                     .context(getActivity())
@@ -259,7 +273,15 @@ public class PurchaseInvoiceEditDialog extends DialogFragment implements DatePic
 
     @Override
     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-        String expiryDate = year +"-"+monthOfYear+"-"+dayOfMonth+" 00:00:00";
+        String expiryDate="";
+                if((monthOfYear+1)<10 && dayOfMonth<10){
+                    expiryDate = year +"-0"+(monthOfYear+1)+"-0"+dayOfMonth+" 00:00:00";
+                }else if((monthOfYear+1)<10){
+                    expiryDate = year +"-0"+(monthOfYear+1)+"-"+dayOfMonth+" 00:00:00";
+                }else if(dayOfMonth<10){
+                    expiryDate = year +"-"+(monthOfYear+1)+"-0"+dayOfMonth+" 00:00:00";
+                }
+        // expiryDate = year +"-"+(monthOfYear+1)+"-"+dayOfMonth+" 00:00:00";
         expiry.setText(expiryDate);
         expiry.clearFocus();
 

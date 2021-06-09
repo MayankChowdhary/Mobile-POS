@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.labters.lottiealertdialoglibrary.DialogTypes
 import com.retailstreet.mobilepos.Controller.ControllerProductMaster
+import com.retailstreet.mobilepos.Controller.ControllerStoreConfig
 import com.retailstreet.mobilepos.R
 import com.retailstreet.mobilepos.Utils.StringWithTag
 import com.retailstreet.mobilepos.Utils.Vibration
@@ -45,11 +46,12 @@ class ProductsFragment : Fragment() , DatePickerDialog.OnDateSetListener {
     private  var igst:String =""
     lateinit var  expirySelector: Spinner
     var expiryDate:String = ""
+    var isIndia:Boolean = true
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_products, container, false)
     }
+
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -61,6 +63,7 @@ class ProductsFragment : Fragment() , DatePickerDialog.OnDateSetListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        isIndia = ControllerStoreConfig().isIndia
         expiryDate = getSaleDateAndTime()
 
         val productNameEdittext:EditText = view.findViewById(R.id.p_name__value)
@@ -139,6 +142,9 @@ class ProductsFragment : Fragment() , DatePickerDialog.OnDateSetListener {
         val extProdIdTitle: TextView = view.findViewById(R.id.p_ext_id_title)
         extProdIdTitle.isSelected = true
 
+        val sgstLayout: LinearLayout = view.findViewById(R.id.p_sgst_layout);
+        val cgstLayout: LinearLayout = view.findViewById(R.id.p_cgst_layout);
+        val igstLayout: LinearLayout = view.findViewById(R.id.p_igst_layout);
 
         sprice_edittext.addTextChangedListener {
 
@@ -148,6 +154,11 @@ class ProductsFragment : Fragment() , DatePickerDialog.OnDateSetListener {
 
         }
 
+        if(!isIndia){
+            sgstLayout.visibility = View.GONE
+            cgstLayout.visibility = View.GONE
+            igstLayout.visibility = View.GONE
+        }
 
         val categoryAdapter: ArrayAdapter<StringWithTag> = context?.let { ArrayAdapter(it, R.layout.spinner_layout, categoryArray) }!!
         categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)

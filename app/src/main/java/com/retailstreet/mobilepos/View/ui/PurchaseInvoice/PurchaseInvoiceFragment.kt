@@ -23,6 +23,7 @@ import androidx.navigation.Navigation
 import com.evrencoskun.tableview.TableView
 import com.labters.lottiealertdialoglibrary.DialogTypes
 import com.retailstreet.mobilepos.Controller.ControllerPurchaseInvoice
+import com.retailstreet.mobilepos.Controller.ControllerStoreConfig
 import com.retailstreet.mobilepos.R
 import com.retailstreet.mobilepos.Utils.StringWithTag
 import com.retailstreet.mobilepos.Utils.Vibration
@@ -69,6 +70,9 @@ class PurchaseInvoiceFragment : Fragment() , TableViewInterface, PurchaseInvoice
     var GrandTotal = "0.00"
     var invoiceNumber=""
     val DIALOG_FRAGMENT:Int =1
+    var isIndia:Boolean = false
+    val config:ControllerStoreConfig = ControllerStoreConfig()
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -80,6 +84,7 @@ class PurchaseInvoiceFragment : Fragment() , TableViewInterface, PurchaseInvoice
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this).get(PurchaseInvoiceViewModel::class.java)
         // TODO: Use the ViewModel
+
 
         activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -125,6 +130,7 @@ class PurchaseInvoiceFragment : Fragment() , TableViewInterface, PurchaseInvoice
     @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        isIndia = config.isIndia
         MasterView = view;
         mTableView = view.findViewById(R.id.my_TableView)
         mProgressBar = view.findViewById(R.id.progressBar)
@@ -327,11 +333,6 @@ class PurchaseInvoiceFragment : Fragment() , TableViewInterface, PurchaseInvoice
 
         initializeTableView(view as ViewGroup);
 
-       /* Handler(Looper.myLooper()!!).postDelayed({
-
-            showEditDialog()
-
-        }, 400)*/
 
     }
 
@@ -340,21 +341,26 @@ class PurchaseInvoiceFragment : Fragment() , TableViewInterface, PurchaseInvoice
 
         val totalItemsCount =  userList.size
         val grandTotal = getTotalCellData()
-        GrandTotal = DecimalFormat("###.##").format(grandTotal)
+        GrandTotal = DecimalFormat("##0.00").format(grandTotal)
         val beforeTaxAmount=getBeforeGSTAmount()
         if(totalItemsCount>0){
             totalLayout.visibility=View.VISIBLE
-            totalItemText.text = "Item(s):\n"+totalItemsCount
-            totalGrandText.text = "Grand Total:\n"+GrandTotal+" ₹"
-            beforeTaxText.text = "Before Tax: \n"+DecimalFormat("###.##").format(beforeTaxAmount)+" ₹"
+            totalItemText.text = "Item(s):\n"+DecimalFormat("##0.00").format(totalItemsCount)
+            totalGrandText.text = "Grand Total:\n"+GrandTotal
+            beforeTaxText.text = "Before Tax: \n"+DecimalFormat("##0.00").format(beforeTaxAmount)
             if(isIgstEnabled) {
-                totalIgstText.text ="IGST: \n"+ (DecimalFormat("###.##").format(grandTotal - beforeTaxAmount))+" ₹"
+                totalIgstText.text ="IGST: \n"+ (DecimalFormat("##0.00").format(grandTotal - beforeTaxAmount))
             }else{
-                totalIgstText.text ="GST: \n"+ (DecimalFormat("###.##").format(grandTotal - beforeTaxAmount))+" ₹"
+                totalIgstText.text ="GST: \n"+ (DecimalFormat("##0.00").format(grandTotal - beforeTaxAmount))
             }
 
         }else{
             totalLayout.visibility=View.GONE
+        }
+
+        if(!isIndia){
+            beforeTaxText.visibility = View.GONE
+            totalIgstText.visibility = View.GONE
         }
 
     }
@@ -534,6 +540,7 @@ class PurchaseInvoiceFragment : Fragment() , TableViewInterface, PurchaseInvoice
         mTableAdapter = MyTableAdapter(context, this)
         mTableView!!.setAdapter(mTableAdapter)
         mTableView!!.tableViewListener = MyTableViewListener(mTableView, this)
+
     }
 
 
@@ -572,9 +579,12 @@ class PurchaseInvoiceFragment : Fragment() , TableViewInterface, PurchaseInvoice
         mTableView!!.setColumnWidth(12,dimen6)
         setTotalViews()
 
+
         }
 
-
+    private fun hideCol(col: Int) {
+        mTableView!!.hideColumn(col)
+    }
 
 
     override fun launchDetailsFragment(id: String?, masterID: String?) {
@@ -616,6 +626,7 @@ class PurchaseInvoiceFragment : Fragment() , TableViewInterface, PurchaseInvoice
 
     override fun refreshTableView() {
         reloadTableView()
+
     }
 
     override fun openDialogInterface(rowId: Int, cellId: String?, masterID: String?, nAme:String?) {

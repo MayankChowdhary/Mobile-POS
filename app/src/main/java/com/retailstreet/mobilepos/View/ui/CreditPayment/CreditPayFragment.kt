@@ -104,7 +104,7 @@ class CreditPayFragment : Fragment() {
                     custMobileTv.text = custNameMob.tag
                     custBalance = getCustBalance(custGuid)
                     custBalance = abs(custBalance.toDouble()).toString()
-                    custBalanceTv.text = custBalance+" ₹"
+                    custBalanceTv.text = custBalance
                 }else{
 
                     viewWrapper.visibility =View.GONE

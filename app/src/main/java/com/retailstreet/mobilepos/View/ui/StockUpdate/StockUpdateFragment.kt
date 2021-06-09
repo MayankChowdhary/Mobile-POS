@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import com.labters.lottiealertdialoglibrary.DialogTypes
 import com.retailstreet.mobilepos.Controller.ControllerStockMaster
+import com.retailstreet.mobilepos.Controller.ControllerStoreConfig
 import com.retailstreet.mobilepos.R
 import com.retailstreet.mobilepos.Utils.StringWithTag
 import com.retailstreet.mobilepos.View.dialog.ClickListeners
@@ -43,6 +44,8 @@ class StockUpdateFragment : Fragment() , DatePickerDialog.OnDateSetListener {
     private var expiryDate =""
     private var argEnabled= false
     private var isfromSales = false
+    private var isIndia = false
+    var config:ControllerStoreConfig = ControllerStoreConfig()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -67,6 +70,7 @@ class StockUpdateFragment : Fragment() , DatePickerDialog.OnDateSetListener {
             isfromSales=true
         }
 
+        isIndia = config.isIndia
         var stockPosition=0
         val extProdIdEditText: EditText = view.findViewById(R.id.su_extid__value)
         val barcodeEdtText: EditText = view.findViewById(R.id.su_barcode_value)
@@ -78,7 +82,14 @@ class StockUpdateFragment : Fragment() , DatePickerDialog.OnDateSetListener {
         val cgstEdtText: EditText = view.findViewById(R.id.su_cgst_value)
         val sgstEdtText: EditText = view.findViewById(R.id.su_sgst_value)
         val submitStockUpdate: Button = view.findViewById(R.id.submit_update_stock)
+        val cgstLayout:LinearLayout = view.findViewById(R.id.su_cgst_layout)
+        val sgstLayout:LinearLayout = view.findViewById(R.id.su_sgst_layout)
 
+        if(!isIndia){
+
+            cgstLayout.visibility = View.GONE
+            sgstLayout.visibility = View.GONE
+        }
 
         var extProdId = " "
         var barcode = " "
