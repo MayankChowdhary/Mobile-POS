@@ -56,5 +56,17 @@
         <item>OFFICE</item>
         <item>OTHERS</item>
     </string-array>
+    <string-array name="paymentTerms">
+        <item>15</item>
+        <item>30</item>
+        <item>45</item>
+        <item>60</item>
+        <item>75</item>
+        <item>90</item>
+    </string-array>
 
+    <string-array name="inventory">
+        <item>YES</item>
+        <item>NO</item>
+    </string-array>
 </resources>

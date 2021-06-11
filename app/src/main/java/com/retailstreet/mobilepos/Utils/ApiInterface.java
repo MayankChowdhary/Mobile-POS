@@ -225,122 +225,7 @@ public interface ApiInterface {
 
    /* @GET
     Call<List<GroupUserMaster>> getGroupUserMaster(@Url String url);
-
-    @GET
-    Call<List<CustomerMaster>> getRetail_Cust(@Url String url);
-
-    @GET
-    Call<List<ProductMaster>> getProduct_MAster(@Url String url);
-
-    @GET
-    Call<List<StockMaster>> getStock_Master(@Url String url);
-
-    @GET
-    Call<List<BillDetail>> getBill_Details(@Url String url);
-
-    @GET
-    Call<List<BillMaster>> getBill_Mater(@Url String url);
-
-    @GET
-    Call<List<RetailStore>> getRetail_store(@Url String url);
-
-    @GET
-    Call<List<TerminalUserAllocation>> getTerminalUser_Alloc(@Url String url);
-
-    @GET
-    Call<List<TerminalConfiguration>> getTerminal_Config(@Url String url);
-
-    @GET
-    Call<List<ShiftMaster>> getShift_Master(@Url String url);
-
-    @GET
-    Call<List<DeliveryTypeMaster>> getDelivery_Type(@Url String url);
-
-    @GET
-    Call<List<PaymentModeMaster>> getPayemtMode_Master(@Url String url);
-
-    @GET
-    Call<List<BillPayDetail>> getBillPay_Detail(@Url String url);
-
-    @GET
-    Call<List<ShiftTrans>> getShiftTrans(@Url String url);
-
-    @GET
-    Call<List<MasterCategory>> getMasterCategory(@Url String url);
-
-    @GET
-    Call<List<MasterSubcategory>> getMasterSubCategory(@Url String url);
-
-    @GET
-    Call<List<HSNMaster>> getHsnMaster(@Url String url);
-
-    @GET
-    Call<List<MasterUOM>> getMasterUom(@Url String url);
-
-    @GET
-    Call<List<VendorMaster>> getVendorMaster(@Url String url);
-
-    @GET
-    Call<List<CustomerAddress>> getCustomerAddress(@Url String url);
-
-    @GET
-    Call<List<MasterState>> getMasterState(@Url String url);
-
-    @GET
-    Call<List<MasterCustomerType>> getCustomerType(@Url String url);
-
-    @GET
-    Call<List<BankDetails>> getBankDetails(@Url String url);
-
-    @GET
-    Call<List<StoreConfiguration>> getStoreConfiguration(@Url String url);
-
-    @GET
-    Call<List<SalesRetunMaster>> getSalesReturnMaster(@Url String url);
-
-    @GET
-    Call<List<SalesReturnDetails>> getSalesReturnDetails(@Url String url);
-
-    @GET
-    Call<List<CustomerReject>> getCustomerReject(@Url String url);
-
-    @GET
-    Call<List<CustomerCredit>> getCustomerCredit(@Url String url);
-
-    @GET
-    Call<List<CustomerReturnMaster>> getCustomerReturnMaster(@Url String url);
-
-    @GET
-    Call<List<CustomerReturnDetails>> getCustomerReturnDetails(@Url String url);
-
-    @GET
-    Call<List<CustomerLedger>> getCustomerLedger(@Url String url);
-
-    @GET
-    Call<List<CreditBillDetails>> getCreditBillDetails(@Url String url);
-
-    @GET
-    Call<List<StockRegister>> getStockRegister(@Url String url);
-    @GET
-    Call<List<GRNDetails>> getGrnDetails(@Url String url);
-
-    @GET
-    Call<List<GRNMaster>> getGrnMaster(@Url String url);
-
-    @GET
-    Call<List<VendorPayDetail>> getVendorPayDetail(@Url String url);
-
-    @GET
-    Call<List<VendorPayMaster>> getVendorPayMaster(@Url String url);
-
-    @GET
-    Call<List<VendorRejectReason>> getVendorRejectReason(@Url String url);
-
-    @GET
-    Call<List<VendorMasterReturn>> getVendorMasterReturn(@Url String url);
-
-    @GET
-    Call<List<VendorDetailReturn>> getVendorDetailReturn(@Url String url);*/
+*/
 
 
     //***************Installation Validator************************
@@ -388,4 +273,10 @@ public interface ApiInterface {
 
     @POST("APIMANAGER/api/PullPOSRegualarSync/PushVendorReturns")
     Call<SyncResponse> UploadVendor_Return_Records(@Header("Authorization") String Authorization, @Body RequestBody body);
+
+
+    @POST("/APIMANAGER/api/PullPOSRegualarSync/PullVendorDetails")
+    Call<SyncResponse> UploadVendorRecords(@Header("Authorization") String Authorization, @Body RequestBody body);
+
+
 }

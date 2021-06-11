@@ -1,4 +1,4 @@
-package com.retailstreet.mobilepos
+package com.retailstreet.mobilepos.View.ui.VendorAddition
 
 import androidx.lifecycle.ViewModel
 

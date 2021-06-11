@@ -133,9 +133,7 @@ public class TableDataInjector {
         status=0;
         progressBarDialog=new ProgressBarDialog(activity);
         progressBarDialog.show();
-
         injectAll();
-
     }
 
 

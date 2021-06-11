@@ -388,7 +388,7 @@
         tools:layout="@layout/fragment_summery" />
     <fragment
         android:id="@+id/nav_vendor_addition"
-        android:name="com.retailstreet.mobilepos.VendorAdditionFragment"
+        android:name="com.retailstreet.mobilepos.View.ui.VendorAddition.VendorAdditionFragment"
         android:label="Add Distributor"
         tools:layout="@layout/fragment_vendor_addition" />
 </navigation>

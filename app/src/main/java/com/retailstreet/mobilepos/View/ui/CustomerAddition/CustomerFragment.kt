@@ -49,6 +49,7 @@ class CustomerFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         isIndia = ControllerStoreConfig().isIndia
         val custNameEdtText: EditText = view.findViewById(R.id.c_name__value)
         val custMobileEdtText: EditText = view.findViewById(R.id.c_mobile_value)
@@ -71,10 +72,8 @@ class CustomerFragment : Fragment() {
         val panLayout:LinearLayout = view.findViewById(R.id.c_pan_layout)
 
         if(!isIndia){
-
             gstLayout.visibility = View.GONE
             panLayout.visibility = View.GONE
-
         }
 
         enableDisableView(addressLayout,false)
