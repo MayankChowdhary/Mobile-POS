@@ -565,6 +565,8 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
             }
         });
 
+
+        if(IS_MULTI_CURR)
         received_amnt.setText(pendingAmount.toString());
 
     }
