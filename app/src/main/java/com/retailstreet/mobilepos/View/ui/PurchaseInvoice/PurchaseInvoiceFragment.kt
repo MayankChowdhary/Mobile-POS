@@ -24,17 +24,16 @@ import com.evrencoskun.tableview.TableView
 import com.labters.lottiealertdialoglibrary.DialogTypes
 import com.retailstreet.mobilepos.Controller.ControllerPurchaseInvoice
 import com.retailstreet.mobilepos.Controller.ControllerStoreConfig
+import com.retailstreet.mobilepos.Controller.ControllerStoreParams
 import com.retailstreet.mobilepos.R
+import com.retailstreet.mobilepos.Utils.DecimalRounder
 import com.retailstreet.mobilepos.Utils.StringWithTag
 import com.retailstreet.mobilepos.Utils.Vibration
 import com.retailstreet.mobilepos.View.dialog.ClickListeners
 import com.retailstreet.mobilepos.View.dialog.LottieAlertDialogs
-import com.retailstreet.mobilepos.View.ui.PurchaseInvoice.PurchaseInvoiceEditDialog
-import com.retailstreet.mobilepos.View.ui.PurchaseInvoice.PurchaseInvoiceViewModel
 import com.retailstreet.mobilepos.View.ui.PurchaseInvoice.TableViewComponents.MyTableAdapter
 import com.retailstreet.mobilepos.View.ui.PurchaseInvoice.TableViewComponents.MyTableViewListener
 import com.retailstreet.mobilepos.View.ui.PurchaseInvoice.TableViewComponents.User
-import com.retailstreet.mobilepos.View.ui.PurchaseInvoice.TableViewInterface
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner
 import java.text.DecimalFormat
 import java.util.*
@@ -66,13 +65,14 @@ class PurchaseInvoiceFragment : Fragment() , TableViewInterface, PurchaseInvoice
     lateinit var totalIgstText:TextView
     lateinit var totalGrandText:TextView
     lateinit var totalLayout:LinearLayout
+    var isGstIncluded = true
     var invoiceDate:String = ""
     var GrandTotal = "0.00"
     var invoiceNumber=""
     val DIALOG_FRAGMENT:Int =1
     var isIndia:Boolean = false
     val config:ControllerStoreConfig = ControllerStoreConfig()
-
+    var params = ControllerStoreParams()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -131,6 +131,7 @@ class PurchaseInvoiceFragment : Fragment() , TableViewInterface, PurchaseInvoice
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         isIndia = config.isIndia
+        isGstIncluded = params.isGSTInclude
         MasterView = view;
         mTableView = view.findViewById(R.id.my_TableView)
         mProgressBar = view.findViewById(R.id.progressBar)
@@ -155,13 +156,25 @@ class PurchaseInvoiceFragment : Fragment() , TableViewInterface, PurchaseInvoice
         vendorSearchSelector.gravity = Gravity.START
         val GSTEditTExt:EditText = view.findViewById(R.id.pi_gst_input)
 
+        fun doResetVendor() {
+            userList= emptyList();
+            InvoiceNumberText.setText("")
+            invoiceNumber =""
+            invoiceDate = ""
+            invoiceDateSelector.setText("")
+            GSTEditTExt.setText("")
+            initTable()
+            reloadTableView()
+        }
+
+
         initTable()
         vendorSearchSelector.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, views: View?, position: Int, id: Long) {
+               doResetVendor()
                 val vendorSelected = parent.getItemAtPosition(position) as StringWithTag
                 vendorID = vendorSelected.tag
                 vendorName= vendorSelected.string
-
                 GSTEditTExt.setText(getGSTNumber(vendorID))
                 isIgstEnabled = isIgstEnbled(vendorID)
                 Log.d("VendorSelected", "onItemSelected: Tag= $vendorID")
@@ -204,8 +217,6 @@ class PurchaseInvoiceFragment : Fragment() , TableViewInterface, PurchaseInvoice
 
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
-
-
 
         invoiceDateSelector = view.findViewById<EditText>(R.id.pi_invoice_date_input)
         invoiceDateSelector.setOnTouchListener { _, event ->
@@ -337,22 +348,42 @@ class PurchaseInvoiceFragment : Fragment() , TableViewInterface, PurchaseInvoice
     }
 
 
+    @SuppressLint("SetTextI18n")
     private fun setTotalViews(){
 
         val totalItemsCount =  userList.size
-        val grandTotal = getTotalCellData()
-        GrandTotal = DecimalFormat("##0.00").format(grandTotal)
-        val beforeTaxAmount=getBeforeGSTAmount()
+        var grandTotal = getTotalCellData()
+        val gstTotalCalc = getGstTotalCalc()
+
+        if(!isGstIncluded){
+
+            grandTotal+= gstTotalCalc
+        }
+
+        GrandTotal = DecimalRounder.grandRoundOff(grandTotal)
+
+        val beforeTaxAmount: Double = if(isGstIncluded){
+                getBeforeGSTAmount()
+        }else{
+                getBeforeAmountExcluded() }
+
+
+
+
         if(totalItemsCount>0){
             totalLayout.visibility=View.VISIBLE
             totalItemText.text = "Item(s):\n"+DecimalFormat("##0.00").format(totalItemsCount)
             totalGrandText.text = "Grand Total:\n"+GrandTotal
             beforeTaxText.text = "Before Tax: \n"+DecimalFormat("##0.00").format(beforeTaxAmount)
-            if(isIgstEnabled) {
-                totalIgstText.text ="IGST: \n"+ (DecimalFormat("##0.00").format(grandTotal - beforeTaxAmount))
-            }else{
-                totalIgstText.text ="GST: \n"+ (DecimalFormat("##0.00").format(grandTotal - beforeTaxAmount))
-            }
+
+                if (isIgstEnabled) {
+                    totalIgstText.text =
+                        "IGST: \n" + (DecimalFormat("##0.00").format( gstTotalCalc))
+                } else {
+                    totalIgstText.text =
+                        "GST: \n" + (DecimalFormat("##0.00").format( gstTotalCalc))
+                }
+
 
         }else{
             totalLayout.visibility=View.GONE
@@ -654,9 +685,9 @@ class PurchaseInvoiceFragment : Fragment() , TableViewInterface, PurchaseInvoice
             }
             if(gstNumberRetalStore.trim().isNotEmpty() && gstNumberVendor.trim().isNotEmpty()){
 
-                if(gstNumberRetalStore == gstNumberVendor){
+                if(getFirstTwo(gstNumberRetalStore) == getFirstTwo(gstNumberVendor)){
                     Log.d("IGST Enabled", "isCgstEnbled: Invoked")
-                    return true
+                    return false
                 }
             }
             Log.d("Simple GST Enabled", "isCgstEnbled: Invoked")
@@ -666,7 +697,7 @@ class PurchaseInvoiceFragment : Fragment() , TableViewInterface, PurchaseInvoice
             e.printStackTrace()
         }
 
-        return false
+        return true
     }
 
 
@@ -713,7 +744,7 @@ class PurchaseInvoiceFragment : Fragment() , TableViewInterface, PurchaseInvoice
                     val gstResult= getGSTORCGST(isIgstEnabled, guid)
                     val LineTax = (gstResult * total) / 100
 
-                    mydb.execSQL("UPDATE tmp_purchase_invoice SET TAX = '$LineTax' WHERE ITEM_GUID = '$guid'")
+                   // mydb.execSQL("UPDATE tmp_purchase_invoice SET TAX = '$LineTax' WHERE ITEM_GUID = '$guid'")
 
                     Log.d("LineTaxIS", "getTotalGSTAmount: $gstResult")
 
@@ -733,6 +764,73 @@ class PurchaseInvoiceFragment : Fragment() , TableViewInterface, PurchaseInvoice
             e.printStackTrace()
         }
         return gstTotal
+    }
+
+    private fun getGstTotalCalc():Double {
+        var taxTotal:Double = 0.00
+        try {
+            val mydb = requireActivity().openOrCreateDatabase("MasterDB", Context.MODE_PRIVATE, null)
+            val query = "select ITEM_GUID, TOTAL from tmp_purchase_invoice"
+            val cursor = mydb.rawQuery(query, null)
+            if (cursor.moveToFirst()) {
+                while (!cursor.isAfterLast) {
+
+                    val guid =cursor.getString(0)
+                    val total = cursor.getDouble(1)
+
+                    Log.d("CalcGST Data Retrieved", "getTotalGSTAmount: TotalBefore: $total")
+
+                    val gstResult= getGSTORCGST(isIgstEnabled, guid)
+                    val LineTax = (gstResult * total) / 100
+
+                    mydb.execSQL("UPDATE tmp_purchase_invoice SET TAX = '$LineTax' WHERE ITEM_GUID = '$guid'")
+
+                    Log.d("LineTaxIS", "getTotalGSTAmount: $gstResult")
+
+                    Log.d("LineTaxIS", "getTotalGSTAmount: $LineTax")
+                    taxTotal += LineTax
+                    cursor.moveToNext()
+                    // Log.d("Calculating GST", "getTotalCellData: $gstTotal")
+
+                }
+            }
+            Log.d("GSTDATATable", "getGSTNUM: Successfully Fetched: $taxTotal")
+            cursor.close()
+            mydb.close()
+
+            return taxTotal
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return taxTotal
+    }
+
+    private fun getBeforeAmountExcluded():Double {
+        var beforeTotal:Double = 0.00
+        try {
+            val mydb = requireActivity().openOrCreateDatabase("MasterDB", Context.MODE_PRIVATE, null)
+            val query = "select  TOTAL from tmp_purchase_invoice"
+            val cursor = mydb.rawQuery(query, null)
+            if (cursor.moveToFirst()) {
+                while (!cursor.isAfterLast) {
+
+                    val total = cursor.getDouble(0)
+
+                    beforeTotal += total
+                    cursor.moveToNext()
+                    // Log.d("Calculating GST", "getTotalCellData: $gstTotal")
+
+                }
+            }
+            Log.d("GSTDATATable", "getGSTNUM: Successfully Fetched: $beforeTotal")
+            cursor.close()
+            mydb.close()
+
+            return beforeTotal
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return beforeTotal
     }
 
 
@@ -811,5 +909,7 @@ class PurchaseInvoiceFragment : Fragment() , TableViewInterface, PurchaseInvoice
 
     }
 
-
+    fun getFirstTwo(str: String): String? {
+        return if (str.length < 2) str else str.substring(0, 2)
+    }
 }

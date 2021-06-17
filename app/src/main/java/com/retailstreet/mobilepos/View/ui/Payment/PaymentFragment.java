@@ -42,6 +42,7 @@ import com.labters.lottiealertdialoglibrary.DialogTypes;
 import com.retailstreet.mobilepos.Controller.BillGenerator;
 import com.retailstreet.mobilepos.Controller.ControllerCreditPay;
 import com.retailstreet.mobilepos.Controller.ControllerStoreConfig;
+import com.retailstreet.mobilepos.Controller.ControllerStoreParams;
 import com.retailstreet.mobilepos.R;
 import com.retailstreet.mobilepos.Utils.StringWithTag;
 import com.retailstreet.mobilepos.Utils.Vibration;
@@ -137,7 +138,12 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
 
     int DIALOG_FRAGMENT =1;
     boolean CARD_MACHINE = true;
+    boolean IS_CREDIT_ALLOWED = true;
+    boolean IS_MULTI_CURR = false;
+
     ControllerStoreConfig config = new  ControllerStoreConfig();
+    ControllerStoreParams params = new ControllerStoreParams();
+
 
     public static PaymentFragment newInstance() {
         return new PaymentFragment();
@@ -165,6 +171,9 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
         addDiscount = myArgs.getAddDiscount();
 
         CARD_MACHINE = config.getCardMachine();
+        IS_CREDIT_ALLOWED = params.getCreditSale();
+        IS_MULTI_CURR = config.getMultiCurrency();
+
         createBillPreviewTable();
 
         if(!customerId.trim().isEmpty()){
@@ -236,7 +245,6 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
             }
 
 
-
             if(paidByCard>0 ) {
                 Log.d("PaidByCard is true", "onViewCreated: "+paidByCard);
                  card1 =  cardNumber1.getText().toString();
@@ -301,14 +309,11 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
                 alertDialog.setCancelable(false);
                 alertDialog.show();
 
-
             }else {
 
                 Log.d("Billing_DONE", "onViewCreated: Showing Dialog");
                 showEditDialog(billNumber,customerId);
             }
-
-
 
         });
     }
@@ -372,7 +377,17 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
         advanceLayout = viewPager.findViewById(R.id.advance_amount_layout);
         TextView advanceAmountTV = viewPager.findViewById(R.id.advance_amount_value);
         advanceAmountTV.setText(advance_amount);
+        LinearLayout multiCurr = viewPager.findViewById(R.id.pay_multi_curr_layout);
+        TextView usdValue = viewPager.findViewById(R.id.amount_usd_pay);
+        usdValue.setText(getConvertedCurrency(pendingAmount,0));
+        TextView euroValue = viewPager.findViewById(R.id.amount_euro_pay);
+        euroValue.setText(getConvertedCurrency(pendingAmount,1));
+        TextView poundValue = viewPager.findViewById(R.id.amount_pound_pay);
+        poundValue.setText(getConvertedCurrency(pendingAmount,2));
 
+        if(IS_MULTI_CURR){
+            multiCurr.setVisibility(View.VISIBLE);
+        }
 
         Button cash50 = viewPager.findViewById(R.id.cash_fifty);
         Button cash100 = viewPager.findViewById(R.id.cash_hundred);
@@ -387,18 +402,19 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
         cash2000.setOnClickListener(this);
 
         creditPayLayout = viewPager.findViewById(R.id.pay_credit_main_layout);
-        if(isCreditPay || customerId.trim().isEmpty() || Integer.parseInt(isCreditEnabled)==0){
+        if(isCreditPay || customerId.trim().isEmpty() || Integer.parseInt(isCreditEnabled)==0 || !IS_CREDIT_ALLOWED){
             creditPayLayout.setVisibility(View.GONE);
 
         }else {
             creditPayLayout.setVisibility(View.VISIBLE);
         }
 
-        if(isCreditPay || customerId.trim().isEmpty()){
+        if(isCreditPay || customerId.trim().isEmpty() || !IS_CREDIT_ALLOWED){
             advanceLayout.setVisibility(View.GONE);
 
         }else {
             advanceLayout.setVisibility(View.VISIBLE);
+
         }
 
 
@@ -458,12 +474,14 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
                         paidByCredit = received;
                         setPendingAmount();
                         payModeData.put("RX", new String[]{payModeId.get("RX"), "", String.valueOf(paidByCredit), "", "", ""});
+
                     } else {
                         paidByCredit = 0;
                         setPendingAmount();
                         Toast.makeText(getContext(), "Incorrect Amount!", Toast.LENGTH_LONG).show();
                         Vibration.Companion.vibrate(300);
                     }
+
                 } catch (NumberFormatException e) {
                     Toast.makeText(getContext(), "Incorrect Amount!", Toast.LENGTH_LONG).show();
                     Vibration.Companion.vibrate(300);
@@ -472,8 +490,8 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
             }
         });
 
-        received_amnt.addTextChangedListener(new TextWatcher() {
 
+        received_amnt.addTextChangedListener(new TextWatcher() {
             @Override
             public void afterTextChanged(Editable s) {
 
@@ -546,6 +564,9 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
 
             }
         });
+
+        received_amnt.setText(pendingAmount.toString());
+
     }
 
     private void initCardLayout(View viewPager){
@@ -557,7 +578,6 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
          cardNumber2 = viewPager.findViewById(R.id.pay_card_number_two);
          cardNumber3 = viewPager.findViewById(R.id.pay_card_number_three);
          cardNumber4 = viewPager.findViewById(R.id.pay_card_number_four);
-
 
 
          TextView bankTitle = viewPager.findViewById(R.id.pay_card_bank_title);
@@ -1481,5 +1501,30 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
         mydb.execSQL("DROP TABLE IF EXISTS tmp_bill_preview");
         mydb.execSQL("CREATE TABLE IF NOT EXISTS tmp_bill_preview (PROD_NM text, MRP text, SPRICE  text, QTY  text, TOTAL text)");
         mydb.close();
+    }
+
+    private  String getConvertedCurrency( double amount, int index){
+        double result=0.00;
+
+        switch (index){
+            case 0:
+                 // calculating usd
+                result = amount/73.25;
+                break;
+
+            case 1:
+                // calculating euro
+                result = amount/88.74;
+                break;
+
+            case 2:
+                // calculating pound
+                result = amount/103.26;
+                break;
+        }
+
+        Log.d("Converted Curr", "getConvertedCurrency: "+result);
+        return  new DecimalFormat("#0.00").format( result);
+
     }
 }

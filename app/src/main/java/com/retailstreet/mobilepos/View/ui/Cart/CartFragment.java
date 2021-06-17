@@ -44,7 +44,6 @@ public class CartFragment extends Fragment {
     static Cursor cursor;
     ControllerCart controllerCart;
 
-
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         setHasOptionsMenu(true);
 

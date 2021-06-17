@@ -42,6 +42,7 @@ import com.retailstreet.mobilepos.Model.ShiftTrans;
 import com.retailstreet.mobilepos.Model.StockMaster;
 import com.retailstreet.mobilepos.Model.StockRegister;
 import com.retailstreet.mobilepos.Model.StoreConfiguration;
+import com.retailstreet.mobilepos.Model.StoreParameter;
 import com.retailstreet.mobilepos.Model.TerminalConfiguration;
 import com.retailstreet.mobilepos.Model.TerminalUserAllocation;
 import com.retailstreet.mobilepos.Model.VendorDetailReturn;
@@ -116,6 +117,7 @@ public class TableDataInjector {
     private List<VendorRejectReason> vendorRejectReasonList = null;
     private List<VendorDetailReturn> vendorDetailReturnList = null;
     private List<VendorMasterReturn> vendorMasterReturnList = null;
+    private List<StoreParameter> storeParameterList = null;
 
    // private static LoadingDialog loadingDialog;
 
@@ -177,25 +179,11 @@ public class TableDataInjector {
         getVendorRejectReason();
         getVendorDetailReturn();
         getVendorMasterReturn();
+        getStoreParameter();
+
     }
 
-    /*private Retrofit getRetroInstance(String url) {
-        try {
-            Retrofit retrofit = null;
-            Log.i("autolog", "retrofit");
 
-            retrofit = new Retrofit.Builder()
-                    .baseUrl(url)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build();
-            Log.i("autolog", "build();");
-            return retrofit;
-        } catch (Exception e) {
-            Log.i("autolog", "Exception");
-            return null;
-        }
-
-    }*/
 
     public void getUserMasterList() {
         try {
@@ -1769,6 +1757,95 @@ public class TableDataInjector {
             });
         } catch (Exception e) {
             Log.i("autolog", "Exception");
+        }
+    }
+
+    public void getStoreParameter() {
+        try {
+            ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
+            Call<List<StoreParameter>> call = apiService.loadStoreParameter(Constants.Authorization, storeId);
+            call.enqueue(new CallbackWithRetry<List<StoreParameter>>() {
+                @Override
+                public void onResponse(Call<List<StoreParameter>> call, Response<List<StoreParameter>> response) {
+
+
+                    if (response.isSuccessful()) {
+                        if (response.code() == 200) {
+                            try{
+                                storeParameterList= response.body();
+                                Log.i("autolog", "RetrievedTabaleData" + response.body().toString());
+                                injectExecutor.submit(() -> InsertStoreParameter(storeParameterList));
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            Log.d("InsertionEmpty", "StoreParameter: ");
+                            status++;
+                            if (status == tableConstant) {
+                                finishTask();
+                            } else {
+                                updateProgress(status);
+                            }
+                        }
+                    }
+
+                }
+                @Override
+                public void onFailure(Call<List<StoreParameter>> call, Throwable t) {
+                    Log.i("autolog", t.getMessage());
+                    super.onFailure(call,t);
+                }
+            });
+        } catch (Exception e) {
+            Log.i("autolog", "Exception");
+        }
+    }
+
+
+    public void InsertStoreParameter(List<StoreParameter> list) {
+        if (list == null) {
+            return;
+        }
+        try {
+            SQLiteDatabase myDataBase = context.openOrCreateDatabase(dbname, Context.MODE_PRIVATE, null);
+            myDataBase.delete("Store_Parameters", null, null);
+
+            for (StoreParameter prod : list) {
+                ContentValues contentValues = new ContentValues();
+                contentValues.put("STORE_ID", prod.getSTORE_ID());
+                contentValues.put("STORE_GUID", prod.getSTORE_GUID());
+                contentValues.put("Vendoraddition", prod.getVendoraddition());
+                contentValues.put("Productaddition", prod.getProductaddition());
+                contentValues.put("StockEntry", prod.getStockEntry());
+                contentValues.put("Stockadjustments", prod.getStockadjustments());
+                contentValues.put("Vendorpayment", prod.getVendorpayment());
+                contentValues.put("Vendorreturns", prod.getVendorreturns());
+                contentValues.put("Creditsales", prod.getCreditsales());
+                contentValues.put("Estimates", prod.getEstimates());
+                contentValues.put("Systemsetting", prod.getSystemsetting());
+                contentValues.put("Storeaddress", prod.getStoreaddress());
+                contentValues.put("Reports", prod.getReports());
+                contentValues.put("Printersetting", prod.getPrintersetting());
+                contentValues.put("Additionalparam1", prod.getAdditionalparam1());
+                contentValues.put("Looseitem", prod.getLooseitem());
+                contentValues.put("GST_Price", prod.getGST_Price());
+                contentValues.put("Cash_drawer", prod.getCash_drawer());
+                contentValues.put("Printer", prod.getPrinter());
+                contentValues.put("Printer_brand", prod.getPrinter_brand());
+
+                myDataBase.insert("Store_Parameters", null, contentValues);
+            }
+
+            myDataBase.close();
+            status+=1;
+            if(status==tableConstant){
+                finishTask();
+            }else {
+                updateProgress(status);
+            }
+            Log.d("Insertion Successful", "Store_Parameters: "+status);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

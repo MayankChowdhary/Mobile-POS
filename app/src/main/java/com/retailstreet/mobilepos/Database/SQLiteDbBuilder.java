@@ -109,7 +109,8 @@ public class SQLiteDbBuilder {
     private final ArrayList<String> retail_str_vendor_detail_return_pk;
     private final ArrayList<String> retail_str_vendor_master_return;
     private final ArrayList<String> retail_str_vendor_master_return_pk;
-
+    private final ArrayList<String> Store_Parameters;
+    private final ArrayList<String> Store_Parameters_pk;
 
    static String dbname = "MasterDB";
     public static boolean dbOk = false;
@@ -199,8 +200,8 @@ public class SQLiteDbBuilder {
         retail_str_vendor_detail_return_pk = new ArrayList<>();
         retail_str_vendor_master_return = new ArrayList<>();
         retail_str_vendor_master_return_pk = new ArrayList<>();
-
-
+        Store_Parameters = new ArrayList<>();
+        Store_Parameters_pk  = new ArrayList<>();
 
         cartList= new ArrayList<>(Arrays.asList("STOCK_ID","PROD_NM","count","MRP","S_PRICE","SALESDISCOUNTBYPERCENTAGE","GST","SGST","CGST","QTY" ));
         cartList_Pk= new ArrayList<>(Collections.singletonList("STOCK_ID"));
@@ -939,6 +940,25 @@ public class SQLiteDbBuilder {
             }
 
 
+            JSONArray Store_Parameters_json = jsonObject.getJSONArray("Store_Parameters");
+            for (int i = 0; i < Store_Parameters_json.length(); i++) {
+                JSONObject obj = (JSONObject) Store_Parameters_json.get(i);
+                String id = obj.getString("Field");
+                Store_Parameters.add(id);
+                // Log.d("retail_store", "id:" + id);
+
+            }
+
+            JSONArray Store_Parameters__pk_json = jsonObject.getJSONArray("Store_Parameters_pk");
+            for (int i = 0; i < Store_Parameters__pk_json.length(); i++) {
+                JSONObject obj = (JSONObject) Store_Parameters__pk_json.get(i);
+                String constraint = obj.getString("Constraint");
+                Store_Parameters_pk.add(constraint);
+                //Log.d("retail_store_pk", "constraint:" + constraint);
+
+            }
+
+
             createDynamicDatabase(context, "group_user_master", user_master, user_master_pk);
             createDynamicDatabase(context, "retail_cust", retail_cust, retail_cust_pk);
             createDynamicDatabase(context, "retail_store_prod_com", retail_store_prod_com, retail_store_prod_com_pk);
@@ -981,6 +1001,7 @@ public class SQLiteDbBuilder {
             createDynamicDatabase(context, "retail_store_vend_reject", retail_store_vend_reject,retail_store_vend_reject_pk);
             createDynamicDatabase(context, "retail_str_vendor_detail_return", retail_str_vendor_detail_return,retail_str_vendor_detail_return_pk);
             createDynamicDatabase(context, "retail_str_vendor_master_return", retail_str_vendor_master_return,retail_str_vendor_master_return_pk);
+            createDynamicDatabase(context, "Store_Parameters", Store_Parameters,Store_Parameters_pk);
 
             dbOk=true;
             //loadingDialog.cancelDialog();

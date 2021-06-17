@@ -1,5 +1,7 @@
 package com.retailstreet.mobilepos.View.ui.PurchaseInvoice.TableViewComponents;
 
+import com.retailstreet.mobilepos.Utils.DecimalRounder;
+
 /**
  * Created by evrencoskun on 1.12.2017.
  */
@@ -26,9 +28,9 @@ public class User {
         this.EXT_ID = EXT_ID;
         this.BARCODE = BARCODE;
         this.EXPIRY = EXPIRY;
-        this.MRP = MRP;
-        S_PRICE = s_PRICE;
-        P_PRICE = p_PRICE;
+        this.MRP = DecimalRounder.roundMRP( MRP);
+        S_PRICE = DecimalRounder.roundSPrice(s_PRICE);
+        P_PRICE = DecimalRounder.roundPPrice(p_PRICE);
         this.QTY = QTY;
         F_QTY = f_QTY;
         this.DISC = DISC;

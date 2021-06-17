@@ -166,6 +166,143 @@
                 android:textStyle="bold" />
         </LinearLayout>
 
+
+    <LinearLayout
+        android:id="@+id/pay_multi_curr_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_15sdp"
+        android:layout_marginStart="@dimen/_10sdp"
+        android:orientation="vertical"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/pay_cash_amount_layout">
+
+        <LinearLayout
+            android:id="@+id/pay_usd_amount_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/amount_usd_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="$ USD "
+                android:textColor="@color/black"
+                android:textSize="@dimen/_13ssp"
+                android:textStyle="bold" />
+            <TextView
+                android:id="@+id/amount_usd_pay"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="@color/black"
+                android:text="400"
+                android:textSize="@dimen/_13ssp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/amount_usd_value"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:digits="0,1,2,3,4,5,6,7,8,9,."
+                android:ems="8"
+                android:includeFontPadding="true"
+                android:inputType="numberDecimal|textNoSuggestions"
+                android:letterSpacing="0.4"
+                android:textColor="?colorOnSurface"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/pay_euro_amount_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/amount_euro_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="€ EURO "
+                android:textColor="@color/black"
+                android:textSize="@dimen/_13ssp"
+                android:textStyle="bold" />
+            <TextView
+                android:id="@+id/amount_euro_pay"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="@color/black"
+                android:text="400"
+                android:textSize="@dimen/_13ssp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/amount_euro_value"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:digits="0,1,2,3,4,5,6,7,8,9,."
+                android:ems="8"
+                android:includeFontPadding="true"
+                android:inputType="numberDecimal|textNoSuggestions"
+                android:letterSpacing="0.4"
+                android:textColor="?colorOnSurface"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/pay_pound_amount_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+        <TextView
+            android:id="@+id/amount_pound_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="£ POUND "
+            android:textColor="@color/black"
+            android:textSize="@dimen/_13ssp"
+            android:textStyle="bold" />
+        <TextView
+            android:id="@+id/amount_pound_pay"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@color/black"
+            android:text="400"
+            android:textSize="@dimen/_13ssp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/amount_pound_value"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:digits="0,1,2,3,4,5,6,7,8,9,."
+            android:ems="8"
+            android:includeFontPadding="true"
+            android:inputType="numberDecimal|textNoSuggestions"
+            android:letterSpacing="0.4"
+            android:textColor="?colorOnSurface"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+
+    </LinearLayout>
+
         <LinearLayout
             android:id="@+id/pay_credit_main_layout"
             android:layout_width="match_parent"
@@ -174,7 +311,7 @@
             android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/pay_cash_amount_layout">
+            app:layout_constraintTop_toBottomOf="@+id/pay_multi_curr_layout">
 
             <View
                 android:id="@+id/c_divider_1"

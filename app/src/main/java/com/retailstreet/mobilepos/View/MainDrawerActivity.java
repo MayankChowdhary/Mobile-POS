@@ -33,6 +33,7 @@ import androidx.navigation.ui.NavigationUI;
 import com.google.android.material.navigation.NavigationView;
 import com.labters.lottiealertdialoglibrary.DialogTypes;
 import com.retailstreet.mobilepos.Controller.ControllerStoreConfig;
+import com.retailstreet.mobilepos.Controller.ControllerStoreParams;
 import com.retailstreet.mobilepos.R;
 import com.retailstreet.mobilepos.Utils.CrashHandler;
 import com.retailstreet.mobilepos.Utils.Vibration;
@@ -58,11 +59,21 @@ public class MainDrawerActivity extends AppCompatActivity  {
     List<MenuModel> headerList = new ArrayList<>();
     HashMap<MenuModel, List<MenuModel>> childList = new HashMap<>();
     DrawerLayout drawer;
+
     String LOCK_PASSWORD;
     boolean SUMMERY_UNLOCKED = true;
     boolean SALES_REPORT_NOT_BANNED = true;
     boolean IS_RETURN_UNLOCKED = true;
+    boolean IS_VENDOR_ADDITION = true;
+    boolean IS_PRODUCT_ADDITION = true;
+    boolean IS_STOCK_ENTRY = true;
+    boolean IS_STOCK_ADJUSTMENT = true;
+    boolean IS_VENDOR_PAY = true;
+    boolean IS_VENDOR_RETURNS = true;
+    boolean ALL_REPORTS_VISIBILITY = true;
+
     ControllerStoreConfig config = new ControllerStoreConfig();
+    ControllerStoreParams params = new ControllerStoreParams();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +90,15 @@ public class MainDrawerActivity extends AppCompatActivity  {
         SUMMERY_UNLOCKED = config.getSummeryLock();
         SALES_REPORT_NOT_BANNED = config.getSalesReportBanned();
         IS_RETURN_UNLOCKED = config.getSalesReturnLock();
+
+        IS_VENDOR_ADDITION = params.getIsVendorAddition();
+         IS_PRODUCT_ADDITION = params.getIsProductAddition();
+         IS_STOCK_ENTRY = params.getIsStockEntry();
+         IS_STOCK_ADJUSTMENT = params.getIsStockAdjust();
+         IS_VENDOR_PAY = params.getVendorPayment();
+         IS_VENDOR_RETURNS = params.getVendorreturns();
+         ALL_REPORTS_VISIBILITY = params.getAllReportsVisibility();
+
          drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
@@ -98,9 +118,7 @@ public class MainDrawerActivity extends AppCompatActivity  {
             //it's possible to do more actions on several items, if there is a large amount of items I prefer switch(){case} instead of if()
             if (id == R.id.nav_logout) {
 
-
                 return true;
-
             }
 
             //This is for maintaining the behavior of the Navigation view
@@ -190,6 +208,7 @@ public class MainDrawerActivity extends AppCompatActivity  {
         if (menuModel.hasChildren) {
             childList.put(menuModel, childModelsList);
         }
+
 
         childModelsList = new ArrayList<>();
         menuModel = new MenuModel("Reports", true, true, R.drawable.reports); //Menu of Python Tutorials
@@ -285,11 +304,22 @@ public class MainDrawerActivity extends AppCompatActivity  {
                         }
 
                     }else if (groupPosition==2 && childPosition==0) {
-                        Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_nav_products);
-                        drawer.closeDrawer(GravityCompat.START);
+                        if(IS_PRODUCT_ADDITION){
+                            Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_nav_products);
+                            drawer.closeDrawer(GravityCompat.START);
+                        }else {
+                            Vibration.Companion.vibrate(400);
+                            Toast.makeText(getApplicationContext(),"Permission denied!",Toast.LENGTH_LONG).show();
+                        }
                     }else if (groupPosition==2 && childPosition==1) {
-                        Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_nav_vendor_addition);
-                        drawer.closeDrawer(GravityCompat.START);
+                        if(IS_VENDOR_ADDITION){
+                            Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_nav_vendor_addition);
+                            drawer.closeDrawer(GravityCompat.START);
+                        }else {
+                            Vibration.Companion.vibrate(400);
+                            Toast.makeText(getApplicationContext(),"Permission denied!",Toast.LENGTH_LONG).show();
+                        }
+
                     } else if (groupPosition==3 && childPosition==0) {
                         Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_nav_credit_pay);
                         drawer.closeDrawer(GravityCompat.START);
@@ -307,7 +337,7 @@ public class MainDrawerActivity extends AppCompatActivity  {
                         drawer.closeDrawer(GravityCompat.START);
                     }else if (groupPosition==5 && childPosition==0) {
 
-                        if(SALES_REPORT_NOT_BANNED) {
+                        if(SALES_REPORT_NOT_BANNED && ALL_REPORTS_VISIBILITY) {
                             if (LOCK_PASSWORD == null || LOCK_PASSWORD.isEmpty()) {
                                 HomeFragmentDirections.ActionNavHomeToNavSalesReport actionNavSalesReport = HomeFragmentDirections.actionNavHomeToNavSalesReport("");
                                 Navigation.findNavController(MainDrawerActivity.this, R.id.nav_host_fragment).navigate(actionNavSalesReport);
@@ -321,11 +351,21 @@ public class MainDrawerActivity extends AppCompatActivity  {
                             Toast.makeText(getApplicationContext(),"Permission denied!",Toast.LENGTH_LONG).show();
                         }
                     }else if (groupPosition==5 && childPosition==1) {
-                        Navigation.findNavController(MainDrawerActivity.this, R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_nav_vendor_reports);
-                        drawer.closeDrawer(GravityCompat.START);
+                        if(ALL_REPORTS_VISIBILITY) {
+                            Navigation.findNavController(MainDrawerActivity.this, R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_nav_vendor_reports);
+                            drawer.closeDrawer(GravityCompat.START);
+                        }else {
+                            Vibration.Companion.vibrate(400);
+                            Toast.makeText(getApplicationContext(),"Permission denied!",Toast.LENGTH_LONG).show();
+                        }
                     }else if (groupPosition==5 && childPosition==2) {
-                        Navigation.findNavController(MainDrawerActivity.this, R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_salesReturnReport);
-                        drawer.closeDrawer(GravityCompat.START);
+                        if(ALL_REPORTS_VISIBILITY) {
+                            Navigation.findNavController(MainDrawerActivity.this, R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_salesReturnReport);
+                            drawer.closeDrawer(GravityCompat.START);
+                        }else {
+                            Vibration.Companion.vibrate(400);
+                            Toast.makeText(getApplicationContext(),"Permission denied!",Toast.LENGTH_LONG).show();
+                     }
                     }else if (groupPosition==5 && childPosition==3) {
                         if(SUMMERY_UNLOCKED || LOCK_PASSWORD.isEmpty()) {
                             Navigation.findNavController(MainDrawerActivity.this, R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_summeryFragment);
@@ -338,21 +378,43 @@ public class MainDrawerActivity extends AppCompatActivity  {
                         Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_nav_vendor_update);
                         drawer.closeDrawer(GravityCompat.START);
                     }else if (groupPosition==2 && childPosition==2) {
-                        HomeFragmentDirections.ActionNavHomeToStockUpdateFragment actionNavStockUpdate = HomeFragmentDirections.actionNavHomeToStockUpdateFragment("");
-                        Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(actionNavStockUpdate);
-                        drawer.closeDrawer(GravityCompat.START);
+                        if(IS_STOCK_ADJUSTMENT){
+                            HomeFragmentDirections.ActionNavHomeToStockUpdateFragment actionNavStockUpdate = HomeFragmentDirections.actionNavHomeToStockUpdateFragment("");
+                            Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(actionNavStockUpdate);
+                            drawer.closeDrawer(GravityCompat.START);
+                        }else {
+                            Vibration.Companion.vibrate(400);
+                            Toast.makeText(getApplicationContext(),"Permission denied!",Toast.LENGTH_LONG).show();
+                        }
+
                     }else if (groupPosition==2 && childPosition==3) {
-                    Navigation.findNavController(MainDrawerActivity.this, R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_purchaseInvoiceFragment);
-                    drawer.closeDrawer(GravityCompat.START);
+                        if(IS_STOCK_ENTRY){
+                            Navigation.findNavController(MainDrawerActivity.this, R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_purchaseInvoiceFragment);
+                            drawer.closeDrawer(GravityCompat.START);
+                        }else {
+                            Vibration.Companion.vibrate(400);
+                            Toast.makeText(getApplicationContext(),"Permission denied!",Toast.LENGTH_LONG).show();
+                        }
                 } else if (groupPosition==2 && childPosition==4) {
                     Navigation.findNavController(MainDrawerActivity.this, R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_vi_payment_fragment);
                     drawer.closeDrawer(GravityCompat.START);
                 }else if (groupPosition==2 && childPosition==5) {
-                        Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_vendorPaymentFragment);
-                        drawer.closeDrawer(GravityCompat.START);
+                        if(IS_VENDOR_PAY){
+                            Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_vendorPaymentFragment);
+                            drawer.closeDrawer(GravityCompat.START);
+                        }else {
+                            Vibration.Companion.vibrate(400);
+                            Toast.makeText(getApplicationContext(),"Permission denied!",Toast.LENGTH_LONG).show();
+                        }
+
                     }else if (groupPosition==2 && childPosition==6) {
-                        Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_nav_vendor_return);
-                        drawer.closeDrawer(GravityCompat.START);
+                        if(IS_VENDOR_RETURNS){
+                            Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_nav_vendor_return);
+                            drawer.closeDrawer(GravityCompat.START);
+                        }else {
+                            Vibration.Companion.vibrate(400);
+                            Toast.makeText(getApplicationContext(),"Permission denied!",Toast.LENGTH_LONG).show();
+                        }
                     }
                 }
 

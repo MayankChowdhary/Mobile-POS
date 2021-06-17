@@ -246,7 +246,7 @@ public class ControllerStoreConfig {
             }
             cursor.close();
             mydb.close();
-            Log.d("DataRetrieved", "getCardMachine: "+ isUnlocked);
+            Log.d("DataRetrieved", "getSalesReturn: "+ isUnlocked);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -268,6 +268,154 @@ public class ControllerStoreConfig {
             cursor.close();
             mydb.close();
             Log.d("DataRetrieved", "getCardMachine: "+ isEnabled);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return isEnabled;
+    }
+
+    public  boolean getExternalProdVis(){
+        boolean isEnabled = true;
+        try {
+            SQLiteDatabase mydb  = context.openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
+            String selectQuery = "SELECT ADDITIONAL_EXP4 FROM store_configuration";
+            Cursor cursor = mydb.rawQuery(selectQuery, null);
+            if (cursor.moveToFirst()) {
+                String result= cursor.getString(0);
+                if(result.trim().equals("N")|| result.trim().equals("0")){
+                    isEnabled = false;
+                }
+            }
+            cursor.close();
+            mydb.close();
+            Log.d("DataRetrieved", "getExtProd: "+ isEnabled);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return isEnabled;
+    }
+
+    public  boolean getNegativeStockVis(){
+        boolean isEnabled = true;
+        try {
+            SQLiteDatabase mydb  = context.openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
+            String selectQuery = "SELECT NEGATIVESTOCK FROM store_configuration";
+            Cursor cursor = mydb.rawQuery(selectQuery, null);
+            if (cursor.moveToFirst()) {
+                String result= cursor.getString(0);
+                if(result.trim().equals("N")|| result.trim().equals("0")){
+                    isEnabled = false;
+                }
+            }
+            cursor.close();
+            mydb.close();
+            Log.d("DataRetrieved", "getExtProd: "+ isEnabled);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return isEnabled;
+    }
+
+    public  boolean getMultiCurrency(){
+        boolean isEnabled = true;
+        try {
+            SQLiteDatabase mydb  = context.openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
+            String selectQuery = "SELECT MULTI_CURRENCY FROM store_configuration";
+            Cursor cursor = mydb.rawQuery(selectQuery, null);
+            if (cursor.moveToFirst()) {
+                String result= cursor.getString(0);
+                if(result.trim().equals("N")|| result.trim().equals("0")){
+                    isEnabled = false;
+                }
+            }
+            cursor.close();
+            mydb.close();
+            Log.d("DataRetrieved", "getMultiCurrency: "+ isEnabled);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return isEnabled;
+    }
+
+
+    public  int getMrpDecimal(){
+        int decimal = 2;
+        try {
+            SQLiteDatabase mydb  = context.openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
+            String selectQuery = "SELECT MRP_DECIMAL FROM store_configuration";
+            Cursor cursor = mydb.rawQuery(selectQuery, null);
+            if (cursor.moveToFirst()) {
+                String result= cursor.getString(0);
+                if(!result.trim().isEmpty()){
+                    decimal = Integer.parseInt(result);
+                }
+            }
+            cursor.close();
+            mydb.close();
+            Log.d("DataRetrieved", "getMrpDecimal: "+ decimal);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return decimal;
+    }
+
+    public  int getPPriceDecimal(){
+        int decimal = 2;
+        try {
+            SQLiteDatabase mydb  = context.openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
+            String selectQuery = "SELECT PURCHASE_PRICE_DECIMAL FROM store_configuration";
+            Cursor cursor = mydb.rawQuery(selectQuery, null);
+            if (cursor.moveToFirst()) {
+                String result= cursor.getString(0);
+                if(!result.trim().isEmpty()){
+                    decimal = Integer.parseInt(result);
+                }
+            }
+            cursor.close();
+            mydb.close();
+            Log.d("DataRetrieved", "getMrpDecimal: "+ decimal);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return decimal;
+    }
+
+    public  int getSPriceDecimal(){
+        int decimal = 2;
+        try {
+            SQLiteDatabase mydb  = context.openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
+            String selectQuery = "SELECT SALES_PRICE_DECIMAL FROM store_configuration";
+            Cursor cursor = mydb.rawQuery(selectQuery, null);
+            if (cursor.moveToFirst()) {
+                String result= cursor.getString(0);
+                if(!result.trim().isEmpty()){
+                    decimal = Integer.parseInt(result);
+                }
+            }
+            cursor.close();
+            mydb.close();
+            Log.d("DataRetrieved", "getSPriceDecimal: "+ decimal);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return decimal;
+    }
+
+    public  boolean getIsRoundOff(){
+        boolean isEnabled = true;
+        try {
+            SQLiteDatabase mydb  = context.openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
+            String selectQuery = "SELECT ROUNDOFF FROM store_configuration";
+            Cursor cursor = mydb.rawQuery(selectQuery, null);
+            if (cursor.moveToFirst()) {
+                String result= cursor.getString(0);
+                if(result.trim().equals("N")|| result.trim().equals("0")){
+                    isEnabled = false;
+                }
+            }
+            cursor.close();
+            mydb.close();
+            Log.d("DataRetrieved", "getIsRoundOff: "+ isEnabled);
         } catch (Exception e) {
             e.printStackTrace();
         }

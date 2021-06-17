@@ -157,8 +157,17 @@ public class BillGenerator {
 
                 updateRetunMaster(redeemNumber,billNumber);
         }
-        smsSetFromPrefs.add(billNumber);
-        SaveSetsInPrefs();
+
+        if(IS_SMS_ENABLED) {
+            smsSetFromPrefs.add(billNumber);
+            SaveSetsInPrefs();
+            try {
+                new WorkManagerSync(6);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
 
         try {
             new WorkManagerSync(1);
@@ -166,13 +175,7 @@ public class BillGenerator {
             e.printStackTrace();
         }
 
-        if(IS_SMS_ENABLED) {
-            try {
-                new WorkManagerSync(6);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+
 
         try {
             new WorkManagerSync(4);

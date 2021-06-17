@@ -31,15 +31,22 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 
+import com.retailstreet.mobilepos.Controller.BillGenerator;
 import com.retailstreet.mobilepos.Controller.ControllerStoreConfig;
+import com.retailstreet.mobilepos.Controller.ControllerStoreParams;
 import com.retailstreet.mobilepos.R;
+import com.retailstreet.mobilepos.Utils.DecimalRounder;
 import com.retailstreet.mobilepos.Utils.StringWithTag;
 import com.retailstreet.mobilepos.Utils.Vibration;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+
+import static android.content.Context.MODE_PRIVATE;
+
 /**
  * Created by Mayank Choudhary on 07-05-2021.
  * mayankchoudhary00@gmail.com
@@ -48,8 +55,9 @@ import java.util.List;
 public class CheckoutFragment extends Fragment {
 
     private CheckoutViewModel checkoutViewModel;
-     StringWithTag spinnerSelected;
-     private TextView totalItemView;
+    static HashMap<String, String> orderList = new HashMap<>();
+    StringWithTag spinnerSelected;
+    private TextView totalItemView;
     private TextView amountBeforeView;
     private TextView totalSgstView;
     private TextView totalCgstView;
@@ -63,7 +71,10 @@ public class CheckoutFragment extends Fragment {
     private  Button change_add;
     private EditText addDiscEditText;
     private TextView addressText;
+    private TextView GSTTitle;
     private boolean isIndia;
+    private String custGst="";
+    private String storeGST="";
     ControllerStoreConfig config = new ControllerStoreConfig();
 
     String totalItems;
@@ -75,11 +86,16 @@ public class CheckoutFragment extends Fragment {
     String totalAmount = "0.00";
     String creditBalance="0.00";
 
+    public static boolean isGstIncluded = true;
+    ControllerStoreParams params = new ControllerStoreParams();
+
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         checkoutViewModel = new ViewModelProvider(this).get(CheckoutViewModel.class);
         View root = inflater.inflate(R.layout.fragment_checkout, container, false);
         setHasOptionsMenu(true); // Add this!
+        isGstIncluded = params.getIsGSTInclude();
+        initMap();
         spinnerSelected = new StringWithTag("","");
         totalItemView = root.findViewById(R.id.item_value);
         amountBeforeView= root.findViewById(R.id.amount_before_value);
@@ -89,10 +105,12 @@ public class CheckoutFragment extends Fragment {
         payement = root.findViewById(R.id.payment_btn);
         addressLayout= root.findViewById(R.id.address_layout);
         change_add = root.findViewById(R.id.change_add);
+        GSTTitle = root.findViewById(R.id.cgst_title);
         addressLayout.setVisibility(View.GONE);
         addDiscEditText = root.findViewById(R.id.add_discount_value);
         addressText = root.findViewById(R.id.addr_text);
         isIndia = config.getIsIndia();
+        storeGST = getFromRetailStore("GSTIN_NUMBER");
 
         LinearLayout gstLayout = root.findViewById(R.id.item_layout_4);
         LinearLayout amntB4Tax = root.findViewById(R.id.item_layout_2);
@@ -101,8 +119,6 @@ public class CheckoutFragment extends Fragment {
             gstLayout.setVisibility(View.GONE);
             amntB4Tax.setVisibility(View.GONE);
         }
-
-
 
 
 
@@ -115,6 +131,7 @@ public class CheckoutFragment extends Fragment {
                 textView.setText(s);
             }
         });*/
+
 
         payement.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -159,8 +176,15 @@ public class CheckoutFragment extends Fragment {
 
                 customerId = spinnerSelected.tag;
                 creditBalance = getCustBalance(customerId);
+                custGst = getCustGst(customerId,storeGST);
                creditBalance = String.valueOf( Math.abs(Double.parseDouble(creditBalance)));
                addressText.setText(getCustAddress(getCustID(customerId)));
+
+                if(isNotIGST(custGst,storeGST)){
+                    GSTTitle.setText("GST:");
+                }else {
+                    GSTTitle.setText("IGST:");
+                }
                 Log.d("SpinnerSelected", "onItemSelected: Tag= "+customerId);
 
                 deliveryOptions.setEnabled(!customerId.trim().isEmpty());
@@ -250,14 +274,23 @@ public class CheckoutFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+         totalItems = String.valueOf(orderList.size());
+         disc = getTotalDiscount();
+         gst = getTotalGST();
 
-        CheckoutFragmentArgs myArgs =CheckoutFragmentArgs.fromBundle(requireArguments());
-         totalItems=myArgs.getTotalItems();
-         amntBefore=myArgs.getAmountBefore();
-         disc=myArgs.getDiscount();
-         gst=myArgs.getGst();
-         grand=myArgs.getGrandTotal();
-         totalAmount = grand;
+        if(isGstIncluded){
+            amntBefore = getAmountBefore();
+            grand = DecimalRounder.grandRoundOff(Double.parseDouble(getGrandTotal()) -  Double.parseDouble(disc));
+        }else {
+            amntBefore = getAmountBeforeNoGST();
+            grand = DecimalRounder.grandRoundOff((Double.parseDouble(getGrandTotal()) -  Double.parseDouble(disc) )+ Double.parseDouble(gst));
+        }
+
+
+
+        //grand = DecimalRounder.grandRoundOff(Double.parseDouble(amntBefore) - Double.parseDouble(disc) + Double.parseDouble(gst));
+
+        totalAmount = grand;
 
         try {
             totalItems = new DecimalFormat("#0.00").format(Double.parseDouble(totalItems));
@@ -363,6 +396,29 @@ public class CheckoutFragment extends Fragment {
         return balance;
     }
 
+    private String getCustGst(String custid,String storeGst) {
+
+        String gstnum="";
+        try {
+            SQLiteDatabase mydb = requireActivity().openOrCreateDatabase("MasterDB", Context.MODE_PRIVATE, null);
+            String query = "select  GSTNO from retail_cust Where CUSTOMERGUID = '"+custid+"'";
+            Cursor cursor = mydb.rawQuery(query, null);
+            if (cursor.moveToFirst()) {
+                gstnum = cursor.getString(0);
+            }
+            if(gstnum!=null && gstnum.trim().isEmpty())
+                gstnum= storeGst;
+
+            Log.d("CustomerOneValue", "getCustomerGst: Successfully Fetched"+gstnum);
+            cursor.close();
+            mydb.close();
+        } catch (Exception e) {
+            gstnum= storeGst;
+            e.printStackTrace();
+        }
+        return gstnum;
+    }
+
     private String getCustID(String custid) {
 
         String mycustid ="";
@@ -412,4 +468,231 @@ public class CheckoutFragment extends Fragment {
         return address;
     }
 
+    private void initMap(){
+        orderList.clear();
+        SQLiteDatabase db = requireContext().openOrCreateDatabase("MasterDB", Context.MODE_PRIVATE, null);
+        Cursor cursor  = db.rawQuery("SELECT * FROM cart", null);
+        if (cursor.moveToFirst()) {
+            while (!cursor.isAfterLast()) {
+                String id = cursor.getString(0);
+                String cnt = cursor.getString(2);
+                orderList.put(id,cnt);
+                cursor.moveToNext();
+            }
+        }
+        cursor.close();
+        db.close();
+    }
+
+    public String getTotalDiscount(){
+        double totalDis =0.00;
+
+        for (String key: orderList.keySet()) {
+
+            String dis = new BillGenerator().getDiscountValue(key);
+            totalDis += Double.parseDouble(dis);
+        }
+        return new DecimalFormat("#0.00").format(totalDis);
+
+    }
+    public String getTotalGST(){
+        double totalGST =0.00;
+
+        for (String key: orderList.keySet()) {
+
+            double GST = Double.parseDouble( getCGST(key))+ Double.parseDouble(getSGST(key));
+            totalGST += GST;
+        }
+
+        return new DecimalFormat("#0.00").format(totalGST);
+    }
+
+    public String getSGST(String stockID){
+        SQLiteDatabase mydb  = requireContext().openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
+        String query = "select SGST,S_PRICE, count from cart WHERE STOCK_ID = "+stockID;
+        Cursor result = mydb.rawQuery( query, null );
+
+        if(result==null)
+            return "0";
+
+        double total = 0.0; // Your default if none is found
+        for (result.moveToFirst(); !result.isAfterLast(); result.moveToNext()) {
+
+            double itemSgst = Double.parseDouble(result.getString(0));
+            double itemPrice = Double.parseDouble(result.getString(1));
+            double sgstForone= ((itemSgst*itemPrice)/100);
+            int itemcount= Integer.parseInt(result.getString(2));
+            total = sgstForone*itemcount;
+
+        }
+        result.close();
+        mydb.close();
+        return String.valueOf(total);
+    }
+
+    public  String getCGST( String stockID){
+        SQLiteDatabase  mydb  = requireContext().openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
+        String query = "select CGST,S_PRICE, count from cart WHERE STOCK_ID = "+stockID;
+        Cursor result = mydb.rawQuery( query, null );
+
+        if(result==null)
+            return "0";
+
+        double total = 0.0; // Your default if none is found
+        for (result.moveToFirst(); !result.isAfterLast(); result.moveToNext()) {
+
+            double itemSgst = Double.parseDouble(result.getString(0));
+            double itemPrice = Double.parseDouble(result.getString(1));
+            double sgstForone= ((itemSgst*itemPrice)/100);
+            int itemcount= Integer.parseInt(result.getString(2));
+            total = sgstForone*itemcount;
+
+        }
+        result.close();
+        mydb.close();
+        return String.valueOf(total);
+
+    }
+
+    public   String getAmountBefore(){
+        try {
+            SQLiteDatabase db = requireContext().openOrCreateDatabase("MasterDB", Context.MODE_PRIVATE, null);
+            String query = "select STOCK_ID, SGST,CGST, count,S_PRICE from cart";
+            Cursor result = db.rawQuery( query, null );
+
+            if(result==null)
+                return "0";
+
+            double total = 0.0; // Your default if none is found
+            for (result.moveToFirst(); !result.isAfterLast(); result.moveToNext()) {
+
+                String  sgst =result.getString(1);
+                String cgst = result.getString(2);
+                String price = result.getString(4);
+                String count = result.getString(3);
+                String netval =  getNetValue(sgst,cgst,price,count);
+                total += Double.parseDouble(netval);
+            }
+            result.close();
+            db.close();
+            return   new DecimalFormat("#0.00").format(total);
+
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            return "";
+        }
+
+
+    }
+
+    public static String getNetValue( String cgst, String sgst,String price, String count){
+        try {
+
+            double gstD = Double.parseDouble(cgst)+Double.parseDouble(sgst);
+            double total = 0.0; // Your default if none is found
+            double itemprice = Double.parseDouble(price);
+            itemprice = itemprice-((itemprice*gstD)/100);
+            int itemcount= Integer.parseInt(count);
+            total += itemprice*itemcount;
+            return String.valueOf(total);
+
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+
+    public   String getAmountBeforeNoGST(){
+        try {
+            SQLiteDatabase db =requireContext().openOrCreateDatabase("MasterDB", Context.MODE_PRIVATE, null);
+            String query = "select count,S_PRICE from cart";
+            Cursor result = db.rawQuery( query, null );
+
+            if(result==null)
+                return "0";
+
+            double total = 0.0; // Your default if none is found
+            for (result.moveToFirst(); !result.isAfterLast(); result.moveToNext()) {
+
+                String price = result.getString(1);
+                String count = result.getString(0);
+                total += (Double.parseDouble(price)*Double.parseDouble(count));
+            }
+            result.close();
+            db.close();
+            return   new DecimalFormat("#0.00").format(total);
+
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
+
+    public   String getGrandTotal(){
+        try {
+            SQLiteDatabase db =requireContext().openOrCreateDatabase("MasterDB", Context.MODE_PRIVATE, null);
+            String query = "select count,S_PRICE from cart";
+            Cursor result = db.rawQuery( query, null );
+
+            if(result==null)
+                return "0";
+
+            double total = 0.0; // Your default if none is found
+            for (result.moveToFirst(); !result.isAfterLast(); result.moveToNext()) {
+
+                String price = result.getString(1);
+                String count = result.getString(0);
+                total += (Double.parseDouble(price)*Double.parseDouble(count));
+            }
+            result.close();
+            db.close();
+            return   new DecimalFormat("#0.00").format(total);
+
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
+
+    private String getFromRetailStore( String column){
+        String result= null;
+        try {
+            SQLiteDatabase  mydb  = requireContext().openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
+            result = "";
+            String selectQuery = "SELECT "+column+" FROM retail_store ";
+            Cursor cursor = mydb.rawQuery(selectQuery, null);
+            if (cursor.moveToFirst()) {
+
+                result= cursor.getString(0);
+            }
+            cursor.close();
+            mydb.close();
+            Log.d("DataRetrieved", "getFromRetailStore: "+result);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+
+    }
+
+    private boolean isNotIGST(String custGst, String storeGST){
+
+        try {
+            String custGst2 = getFirstTwo(custGst.trim());
+            String storeGst2 = getFirstTwo(storeGST.trim());
+
+            return custGst2.equalsIgnoreCase(storeGst2);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return false;
+
+    }
+
+    public String getFirstTwo(String str) {
+        return str.length() < 2 ? str : str.substring(0, 2);
+    }
 }

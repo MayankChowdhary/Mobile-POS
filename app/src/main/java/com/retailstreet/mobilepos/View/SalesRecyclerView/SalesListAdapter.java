@@ -27,6 +27,7 @@ import com.mikepenz.actionitembadge.library.ActionItemBadge;
 import com.mikepenz.iconics.typeface.library.fontawesome.FontAwesome;
 import com.retailstreet.mobilepos.Controller.ControllerStoreConfig;
 import com.retailstreet.mobilepos.R;
+import com.retailstreet.mobilepos.Utils.DecimalRounder;
 import com.retailstreet.mobilepos.View.ApplicationContextProvider;
 import com.retailstreet.mobilepos.View.ui.Sales.SalesFragmentDirections;
 
@@ -46,6 +47,7 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
      public static UpdateRecyclerView updateRecyclerView;
      public static boolean isMRPVisible = true;
      public static boolean isIndia;
+     public static boolean isNegativeStock = true;
      ControllerStoreConfig config = new ControllerStoreConfig();
 
 
@@ -56,6 +58,7 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
         isIndia = config.getIsIndia();
         updateRecyclerView = updateRecyclerViews;
         isMRPVisible = config.getMRPVisibility();
+        isNegativeStock = config.getNegativeStockVis();
         //SQLiteDbInspector.PrintTableSchema(ApplicationContextProvider.getContext(),"MasterDB");
        // EmptyCart();
        initMap();
@@ -82,10 +85,10 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
 
         public void setMyListItem(Cursor cursor) {
             this.myListItem = SalesListItem.fromCursor(cursor);
-            String mrp ="MRP: "+myListItem.getProduct_detail_2();
+            String mrp ="MRP: "+ myListItem.getProduct_detail_2();
             String sp ="Price: "+myListItem.getProduct_detail_4();
             double discount = Double.parseDouble(myListItem.getProduct_detail_3());
-            String discountString = "Disc: "+new DecimalFormat("#.##").format(Double.parseDouble(myListItem.getProduct_detail_3()))+" %";
+            String discountString = "Disc: "+new DecimalFormat("#0.00").format(Double.parseDouble(myListItem.getProduct_detail_3()))+" %";
             qty = (int)Double.parseDouble(myListItem.getQty());
 
             if(discount==0){
@@ -125,7 +128,7 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
             }
 
 
-            if(qty<=0){
+            if(qty<=0 && !isNegativeStock){
 
                 sales_qty.setText("Unavailable!");
                 sales_qty.setVisibility(View.VISIBLE);
@@ -181,7 +184,7 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
                     String primary= myListItem.getPrimary();
                     int count= Integer.parseInt(countText);
 
-                    if(count==qty) {
+                    if(count==qty && !isNegativeStock) {
 
                         if(count==1)
                             Toast.makeText(ApplicationContextProvider.getContext(),"Sorry only "+qty+" quantity is available!",Toast.LENGTH_SHORT).show();
@@ -256,7 +259,7 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
             add_to_cart.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (qty<=0){
+                    if (qty<=0 && !isNegativeStock){
 
                         Toast.makeText(ApplicationContextProvider.getContext(),"Sorry Item Unavailable!", Toast.LENGTH_SHORT).show();
                         return;
@@ -366,6 +369,7 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
             e.printStackTrace();
         }
     }
+
     public  void updateCountIndicator(Menu myMenu){
         int badgeCount = orderList.size();
         if (badgeCount >0 ) {
@@ -374,4 +378,6 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
             ActionItemBadge.update(myParentActivity, myMenu.findItem(R.id.appCart), FontAwesome.Icon.faw_shopping_cart, ActionItemBadge.BadgeStyles.RED, Integer.MIN_VALUE);
         }
     }
+
+
 }

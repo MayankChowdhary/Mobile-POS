@@ -24,10 +24,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.retailstreet.mobilepos.Controller.BillGenerator;
 import com.retailstreet.mobilepos.Controller.ControllerCart;
 import com.retailstreet.mobilepos.Controller.ControllerStoreConfig;
+import com.retailstreet.mobilepos.Controller.ControllerStoreParams;
 import com.retailstreet.mobilepos.R;
 import com.retailstreet.mobilepos.View.ApplicationContextProvider;
 import com.retailstreet.mobilepos.View.SalesRecyclerView.CustomRecyclerViewAdapter;
-import com.retailstreet.mobilepos.View.ui.Cart.CartFragmentDirections;
 
 import java.text.DecimalFormat;
 import java.util.HashMap;
@@ -53,7 +53,9 @@ public class CartListAdapter extends CustomRecyclerViewAdapter<CartListAdapter.V
     private static Context context;
     public static boolean isMRPVisible = true;
     public static boolean isIndia;
+    public static boolean isGstIncluded = true;
     ControllerStoreConfig config = new ControllerStoreConfig();
+    ControllerStoreParams params = new ControllerStoreParams();
 
 
     public CartListAdapter(Context context, Cursor cursor , View parentLayout , Activity activity){
@@ -63,6 +65,7 @@ public class CartListAdapter extends CustomRecyclerViewAdapter<CartListAdapter.V
         this.context =context;
         isMRPVisible = config.getMRPVisibility();
         isIndia = config.getIsIndia();
+        isGstIncluded = params.getIsGSTInclude();
         //ControllerCart.printCart();
         initMap();
         totalItems_view = myParentLayout.findViewById(R.id.total_item);
@@ -72,14 +75,12 @@ public class CartListAdapter extends CustomRecyclerViewAdapter<CartListAdapter.V
 
         checkout_btn.setOnClickListener(v -> {
 
-            String totalItem = String.valueOf(orderList.size());
-            String amntBefore = getAmountBefore() ;
-            String discount = getTotalDiscount();
-            String gst = getTotalGST();
-            String grand = new DecimalFormat("#0.00").format(Double.parseDouble(amntBefore)-Double.parseDouble(discount)+Double.parseDouble(gst));
+           // CartFragmentDirections.ActionNavCartToCheckoutFragment action= CartFragmentDirections.actionNavCartToCheckoutFragment(totalItem, amntBefore, discount,gst,grand);
+            Navigation.findNavController(myActivity,R.id.nav_host_fragment).navigate(R.id.action_nav_cart_to_checkoutFragment);
 
-            CartFragmentDirections.ActionNavCartToCheckoutFragment action= CartFragmentDirections.actionNavCartToCheckoutFragment(totalItem, amntBefore, discount,gst,grand);
-            Navigation.findNavController(myActivity,R.id.nav_host_fragment).navigate(action);
+
+
+
 
         });
 
@@ -217,7 +218,7 @@ public class CartListAdapter extends CustomRecyclerViewAdapter<CartListAdapter.V
 
                         refreshRecyclerView.refreshIt(root);
                         orderList.remove(primary);
-                        countText = String.valueOf(count-1);
+                        countText = String.valueOf(0);
                         countorder.setText(countText);
                         deletefromCart(primary);
                         Cursor cursor1 = new ControllerCart(ApplicationContextProvider.getContext()).getCartCursor();
@@ -294,7 +295,7 @@ public class CartListAdapter extends CustomRecyclerViewAdapter<CartListAdapter.V
         public void setItem(Cursor cursor) {
             this.myListItem = CartListItem.fromCursor(cursor);
 
-            String mrp ="MRP: "+myListItem.getProduct_detail_2();
+            String mrp ="MRP: "+ myListItem.getProduct_detail_2();
             String sp ="Price: "+myListItem.getProduct_detail_4();
             double discount = Double.parseDouble(myListItem.getProduct_detail_3());
             String discountString = "Disc: "+new DecimalFormat("#0.00").format(Double.parseDouble(myListItem.getProduct_detail_3()))+" %";
@@ -342,8 +343,7 @@ public class CartListAdapter extends CustomRecyclerViewAdapter<CartListAdapter.V
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.cart_list_view_item, parent, false);
-        ViewHolder vh = new ViewHolder(itemView, this);
-        return vh;
+        return new ViewHolder(itemView, this);
     }
 
     @Override
@@ -402,6 +402,33 @@ public class CartListAdapter extends CustomRecyclerViewAdapter<CartListAdapter.V
                 String count = result.getString(3);
                 String netval =  getNetValue(sgst,cgst,price,count);
                 total += Double.parseDouble(netval);
+            }
+            result.close();
+            db.close();
+            return   new DecimalFormat("#0.00").format(total);
+
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
+
+
+    public static  String getAmountBeforeNoGST(){
+        try {
+            SQLiteDatabase db = context.openOrCreateDatabase("MasterDB", Context.MODE_PRIVATE, null);
+            String query = "select count,S_PRICE from cart";
+            Cursor result = db.rawQuery( query, null );
+
+            if(result==null)
+                return "0";
+
+            double total = 0.0; // Your default if none is found
+            for (result.moveToFirst(); !result.isAfterLast(); result.moveToNext()) {
+
+                String price = result.getString(1);
+                String count = result.getString(0);
+                total += (Double.parseDouble(price)*Double.parseDouble(count));
             }
             result.close();
             db.close();
@@ -534,4 +561,6 @@ public class CartListAdapter extends CustomRecyclerViewAdapter<CartListAdapter.V
         return String.valueOf(total);
 
     }
+
+
 }

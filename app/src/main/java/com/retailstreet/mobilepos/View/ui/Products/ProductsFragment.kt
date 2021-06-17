@@ -15,7 +15,7 @@ import com.labters.lottiealertdialoglibrary.DialogTypes
 import com.retailstreet.mobilepos.Controller.ControllerProductMaster
 import com.retailstreet.mobilepos.Controller.ControllerStoreConfig
 import com.retailstreet.mobilepos.R
-import com.retailstreet.mobilepos.Utils.ConnectionInspector
+import com.retailstreet.mobilepos.Utils.IDGenerator
 import com.retailstreet.mobilepos.Utils.StringWithTag
 import com.retailstreet.mobilepos.Utils.Vibration
 import com.retailstreet.mobilepos.View.dialog.ClickListeners
@@ -48,8 +48,9 @@ class ProductsFragment : Fragment() , DatePickerDialog.OnDateSetListener {
     lateinit var  expirySelector: Spinner
     var expiryDate:String = ""
     var isIndia:Boolean = true
+    var IS_EXTID_VIS:Boolean = true
     //lateinit var connectionInspector: ConnectionInspector
-
+    val config:ControllerStoreConfig = ControllerStoreConfig()
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_products, container, false)
     }
@@ -65,8 +66,9 @@ class ProductsFragment : Fragment() , DatePickerDialog.OnDateSetListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
        // connectionInspector = ConnectionInspector(activity,this@ProductsFragment)
-        isIndia = ControllerStoreConfig().isIndia
+        isIndia = config.isIndia
         expiryDate = getSaleDateAndTime()
+        IS_EXTID_VIS = config.externalProdVis
 
         val productNameEdittext:EditText = view.findViewById(R.id.p_name__value)
         val brandNameEdittext: EditText = view.findViewById(R.id.p_brand__value)
@@ -132,6 +134,12 @@ class ProductsFragment : Fragment() , DatePickerDialog.OnDateSetListener {
         val editTextArray: Array<EditText> = arrayOf(productNameEdittext, brandNameEdittext, sprice_edittext, pprice_edittext, special_price_edittext, mrp_edittext, whole_price_edittext, internet_price_edittext, stock_qty_edittext, cess1_edittext, cess2_edittext, min_qty_edittext, max_qty_edittext)
         val allStringsArray: Array<String> = arrayOf(categoryGuid, subCatGuid, vendorGuid, hsnId, uomGuid);
 
+        val extIdLayout:LinearLayout = view.findViewById(R.id.p_ext_id_layout)
+
+        if(!IS_EXTID_VIS){
+            ext_prod_id_editext.setText(IDGenerator.getTimeStamp())
+            extIdLayout.visibility = View.GONE
+        }
 
         val internetPriceTitle: TextView = view.findViewById(R.id.p_internet_price_title)
         internetPriceTitle.isSelected = true
@@ -343,11 +351,16 @@ class ProductsFragment : Fragment() , DatePickerDialog.OnDateSetListener {
             igstName.setText("")
             sgstName.setText("")
             cgstName.setText("")
-            cess1_edittext.setText("")
-            cess2_edittext.setText("")
+            cess1_edittext.setText("0.00")
+            cess2_edittext.setText("0.00")
             uomSpinner.setSelection(0)
-            min_qty_edittext.setText("")
-            max_qty_edittext.setText("")
+            min_qty_edittext.setText("0")
+            max_qty_edittext.setText("0")
+
+            if(!IS_EXTID_VIS){
+                ext_prod_id_editext.setText(IDGenerator.getTimeStamp())
+                extIdLayout.visibility = View.GONE
+            }
 
         }
 

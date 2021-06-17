@@ -34,6 +34,7 @@ import com.retailstreet.mobilepos.Model.ShiftTrans;
 import com.retailstreet.mobilepos.Model.StockMaster;
 import com.retailstreet.mobilepos.Model.StockRegister;
 import com.retailstreet.mobilepos.Model.StoreConfiguration;
+import com.retailstreet.mobilepos.Model.StoreParameter;
 import com.retailstreet.mobilepos.Model.SyncResponse;
 import com.retailstreet.mobilepos.Model.TerminalConfiguration;
 import com.retailstreet.mobilepos.Model.TerminalUserAllocation;
@@ -187,9 +188,9 @@ public interface ApiInterface {
     @GET("/APIMANAGER/api/CloudtoDevice/GetStoreConfiguration/{StoreId}")//40
     Call<List<StoreConfiguration>> loadStoreConfiguration(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId);
 
-   /* @GET("/APIMANAGER/api/CloudtoDevice/GetStoreParameter/{StoreId}")//41
+    @GET("/APIMANAGER/api/CloudtoDevice/GetStoreParameter/{StoreId}")//41
     Call<List<StoreParameter>> loadStoreParameter(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId);
-*/
+
    /* @GET("/APIMANAGER/api/CloudtoDevice/GetTaxDetail/{StoreId}")//42
     Call<List<TaxDetail>> loadTaxDetail(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId);
 

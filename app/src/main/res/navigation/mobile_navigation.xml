@@ -59,21 +59,6 @@
         android:name="com.retailstreet.mobilepos.View.ui.Checkout.CheckoutFragment"
         android:label="Delivery Options"
         tools:layout="@layout/fragment_checkout">
-        <argument
-            android:name="totalItems"
-            app:argType="string" />
-        <argument
-            android:name="amountBefore"
-            app:argType="string" />
-        <argument
-            android:name="discount"
-            app:argType="string" />
-        <argument
-            android:name="gst"
-            app:argType="string" />
-        <argument
-            android:name="grandTotal"
-            app:argType="string" />
         <action
             android:id="@+id/action_nav_checkout_to_payment"
             app:destination="@id/nav_payment"

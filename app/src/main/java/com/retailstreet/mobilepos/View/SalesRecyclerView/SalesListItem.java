@@ -2,6 +2,8 @@ package com.retailstreet.mobilepos.View.SalesRecyclerView;
 
 import android.database.Cursor;
 
+import com.retailstreet.mobilepos.Utils.DecimalRounder;
+
 /**
  * Created by Mayank Choudhary on 07-05-2021.
  * mayankchoudhary00@gmail.com
@@ -80,7 +82,7 @@ public class SalesListItem {
 
 
     public String getProduct_detail_4() {
-        return product_detail_4;
+        return DecimalRounder.roundSPrice(product_detail_4);
     }
 
     public void setProduct_detail_4(String product_detail_4) {
@@ -88,7 +90,7 @@ public class SalesListItem {
     }
 
     public String getProduct_detail_2() {
-        return product_detail_2;
+        return DecimalRounder.roundMRP(product_detail_2);
     }
 
     public void setProduct_detail_2(String product_detail_2) {
@@ -127,5 +129,6 @@ public class SalesListItem {
         salesListItem.setQty(cursor.getString(3));
         salesListItem.setItemGuid(cursor.getString(3));
         return salesListItem;
+
     }
 }
