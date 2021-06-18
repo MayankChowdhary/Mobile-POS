@@ -229,6 +229,7 @@ public class SQLiteDbBuilder {
 
                 if(result!=null && !result.isEmpty()) {
                     Toast.makeText(context, "Tables Created", Toast.LENGTH_LONG).show();
+                    Log.d("Printing Raw Structure", "onPostExecute: "+result);
                 }
                 else {
                     Toast.makeText(ApplicationContextProvider.getContext(), "Network Error Download Failed !", Toast.LENGTH_LONG).show();
@@ -241,13 +242,17 @@ public class SQLiteDbBuilder {
             @Override
             protected String doInBackground(Void... params) {
                 JSONParserSync jsonParserSync = new JSONParserSync();
-                String structure = jsonParserSync.sendGetRequest("http://www.99retailstreet.com:8080/ApiTest/TestStructure");
+                String structure = jsonParserSync.sendGetRequest("http://web.99mithuro.com/APIMANAGER/api/GetTableStructure/GetTableStructure");
                 Log.d("BackgroundDone", "doInBackground: " + structure);
 
-                if(structure!=null && !structure.isEmpty())
-                JSONToArray(structure);
+                String  JSON_STRING="";
 
-                return structure;
+                if(structure!=null && !structure.isEmpty()) {
+                    JSON_STRING =structure.substring(1,structure.length()-1);
+                    JSONToArray(JSON_STRING);
+                }
+
+                return JSON_STRING;
 
             }
         }
@@ -1008,7 +1013,8 @@ public class SQLiteDbBuilder {
              SQLiteDbInspector.PrintTableSchema(context,dbname);
 
         } catch (Exception e) {
-            Log.e("exception", e.toString());
+            e.printStackTrace();
+            Log.e("exception Table Create", e.toString());
         }
 
 

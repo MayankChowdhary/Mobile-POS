@@ -49,14 +49,14 @@ public class InstallationValidator  {
                     if (response.code()==200){
                         loadingDialog[0].cancelDialog();
                         loadingDialog[0] =null;
-                        new TableDataInjector(activity, StoreID,callback);
+                        new TableDataInjector(activity, StoreID,callback,Terminal);
 
                     }
                 }
                 else {
                     loadingDialog[0].cancelDialog();
                     loadingDialog[0] =null;
-                    new TableDataInjector(activity, StoreID,callback);
+                    new TableDataInjector(activity, StoreID,callback,Terminal);
                     /*if(response.code()==417) {
                         Gson gson = new Gson();
                         Type type = new TypeToken<DownloadcheckPojo>() {
@@ -86,4 +86,8 @@ public class InstallationValidator  {
             }
         });
     }
+
+
+
 }
+

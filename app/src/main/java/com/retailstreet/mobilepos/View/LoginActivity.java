@@ -319,7 +319,7 @@ public class LoginActivity extends AppCompatActivity implements DBReadyCallback 
             }
         } catch (Exception e) {
             storeGuid="";
-            e.printStackTrace();
+           // e.printStackTrace();
         }
 
         Log.d("StoreID retrieved", "getStoreGUID: OnLoginCheck "+storeGuid);

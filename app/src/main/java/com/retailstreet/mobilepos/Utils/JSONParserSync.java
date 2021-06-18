@@ -1,7 +1,5 @@
 package com.retailstreet.mobilepos.Utils;
 
-import android.util.Log;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -82,7 +80,7 @@ public class JSONParserSync {
         try {
             jsonObj = new JSONObject(json);
         } catch (JSONException e) {
-          //  Log.e("json Parsering", "" + e.toString());
+            //  Log.e("json Parsering", "" + e.toString());
         }
 
         return jsonObj;
@@ -94,6 +92,7 @@ public class JSONParserSync {
         try {
             URL url = new URL(requestURL);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestProperty ("Authorization", Constants.Authorization);
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(con.getInputStream()));
 
             String s;
@@ -101,10 +100,6 @@ public class JSONParserSync {
                 sb.append(s + "\n");
             }
         } catch (Exception e) {
-
-            Log.e("sendGetRequest", "sendGetRequest: "+e.toString());
-
-
         }
         return sb.toString();
     }
@@ -142,7 +137,6 @@ public class JSONParserSync {
 
         return result.toString();
     }
-
 
 }
 

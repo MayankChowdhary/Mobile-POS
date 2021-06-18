@@ -108,8 +108,8 @@ public interface ApiInterface {
     @GET("/APIMANAGER/api/CloudtoDevice/GetGrnMaster/{StoreId}")//14
     Call<List<GRNMaster>> loadGrnMaster(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId);
 
-    @GET("/APIMANAGER/api/CloudtoDevice/GetGroupUserMaster/{StoreId}")//15
-    Call<List<GroupUserMaster>> loadGroupUserMaster(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId);
+    @GET("/APIMANAGER/api/CloudtoDevice/GetGroupUserMaster/{StoreId}/{TerminalName}")//15
+    Call<List<GroupUserMaster>> loadGroupUserMaster(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId, @Path("TerminalName") String TerminalName);
 
     @GET("/APIMANAGER/api/CloudtoDevice/GetHSNMaster/{StoreId}")//16
     Call<List<HSNMaster>> loadHsnMaster(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId);
@@ -176,11 +176,11 @@ public interface ApiInterface {
     Call<List<>> loadRetailEmployee(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId);
 */
 
-    @GET("/APIMANAGER/api/CloudtoDevice/GetShiftMaster/{StoreId}")//37
-    Call<List<ShiftMaster>> loadShiftMaster(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId);
+    @GET("/APIMANAGER/api/CloudtoDevice/GetShiftMaster/{StoreId}/{TerminalName}")//37
+    Call<List<ShiftMaster>> loadShiftMaster(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId, @Path("TerminalName") String TerminalName);
 
-    @GET("/APIMANAGER/api/CloudtoDevice/GetShiftTransactions/{StoreId}")//38
-    Call<List<ShiftTrans>> loadShifttrans(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId);
+    @GET("/APIMANAGER/api/CloudtoDevice/GetShiftTransactions/{StoreId}/{TerminalName}")//38
+    Call<List<ShiftTrans>> loadShifttrans(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId,@Path("TerminalName") String TerminalName);
 
     @GET("/APIMANAGER/api/CloudtoDevice/GetStockMaster/{StoreId}")//39
     Call<List<StockMaster>> loadStockMaster(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId);
@@ -197,12 +197,12 @@ public interface ApiInterface {
     @GET("/APIMANAGER/api/CloudtoDevice/GetTaxMaster/{StoreId}")//43
     Call<List<TaxMaster>> loadTaxMaster(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId);*/
 
-    @GET("/APIMANAGER/api/CloudtoDevice/GetTerminalConfiguration/{StoreId}")//44
-    Call<List<TerminalConfiguration>> loadTerminalConfiguration(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId);
+    @GET("/APIMANAGER/api/CloudtoDevice/GetTerminalConfiguration/{StoreId}/{TerminalName}")//44
+    Call<List<TerminalConfiguration>> loadTerminalConfiguration(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId, @Path("TerminalName") String TerminalName);
 
 
-    @GET("/APIMANAGER/api/CloudtoDevice/GetTerminalUserAllocation/{StoreId}")//45
-    Call<List<TerminalUserAllocation>> loadTerminalUserAllocation(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId);
+    @GET("/APIMANAGER/api/CloudtoDevice/GetTerminalUserAllocation/{StoreId}/{TerminalName}")//45
+    Call<List<TerminalUserAllocation>> loadTerminalUserAllocationterminal(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId, @Path("TerminalName") String TerminalName);
 
     @GET("/APIMANAGER/api/CloudtoDevice/GetUoMMaster/{StoreId}")//46GetUoMMaster
     Call<List<MasterUOM>> loadUomMaster(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId);

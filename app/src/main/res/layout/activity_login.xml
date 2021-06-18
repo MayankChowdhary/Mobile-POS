@@ -63,7 +63,7 @@
                 android:enabled="true"
                 android:hint="Store ID"
                 android:inputType="text"
-                android:text="9747690001" />
+                android:text="5530220001" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -78,9 +78,9 @@
                 android:id="@+id/terminal_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:enabled="false"
-                android:text="XXXXXXXXX"
-                android:hint="Terminal ID"
+                android:enabled="true"
+                android:hint="Terminal Name"
+                android:text="TERMINAL-5530220001"
                 android:inputType="text" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -101,7 +101,7 @@
                 android:enabled="true"
                 android:hint="Username"
                 android:inputType="textEmailAddress"
-                android:text="9747690001" />
+                android:text="5530220001" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -120,7 +120,7 @@
                 android:enabled="true"
                 android:hint="Password"
                 android:inputType="textPassword"
-                android:text="9747690001" />
+                android:text="5530220001" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <Button

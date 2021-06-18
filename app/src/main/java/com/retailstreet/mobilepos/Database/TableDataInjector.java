@@ -78,6 +78,7 @@ public class TableDataInjector {
     private Context context;
     String baseUrl = "http://99retailstreet.com:8080/";
     String storeId;
+    String terminal_id;
     private static DBReadyCallback dbReadyCallback;
     private List<GroupUserMaster> groupUserMasterList = null;
     private List<CustomerMaster> retailCustList = null;
@@ -126,16 +127,18 @@ public class TableDataInjector {
     public static int status =0;
     public static final int tableConstant=38;
 
-    public TableDataInjector(Activity context, String storeid,DBReadyCallback callback) {
+    public TableDataInjector(Activity context, String storeid,DBReadyCallback callback, String terminal_id) {
 
         activity = context;
         this.context = context.getBaseContext();
         this.storeId = storeid;
+        this.terminal_id=terminal_id;
         dbReadyCallback=callback;
         status=0;
         progressBarDialog=new ProgressBarDialog(activity);
         progressBarDialog.show();
         injectAll();
+
     }
 
 
@@ -188,7 +191,7 @@ public class TableDataInjector {
     public void getUserMasterList() {
         try {
             ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
-            Call<List<GroupUserMaster>> call1 = apiService.loadGroupUserMaster(Constants.Authorization, storeId);
+            Call<List<GroupUserMaster>> call1 = apiService.loadGroupUserMaster(Constants.Authorization, storeId,terminal_id);
             call1.enqueue(new CallbackWithRetry<List<GroupUserMaster>>() {
                 @Override
                 public void onResponse(Call<List<GroupUserMaster>> call, Response<List<GroupUserMaster>> response) {
@@ -467,7 +470,7 @@ public class TableDataInjector {
     public void getTerminalUserAlloc() {
         try {
             ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
-            Call<List<TerminalUserAllocation>> call = apiService.loadTerminalUserAllocation(Constants.Authorization, storeId);
+            Call<List<TerminalUserAllocation>> call = apiService.loadTerminalUserAllocationterminal(Constants.Authorization, storeId,terminal_id);
             call.enqueue(new CallbackWithRetry<List<TerminalUserAllocation>>() {
                 @Override
                 public void onResponse(@NonNull Call<List<TerminalUserAllocation>> call, Response<List<TerminalUserAllocation>> response) {
@@ -508,7 +511,7 @@ public class TableDataInjector {
     public void getTerminalConfig() {
         try {
             ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
-            Call<List<TerminalConfiguration>> call = apiService.loadTerminalConfiguration(Constants.Authorization, storeId);
+            Call<List<TerminalConfiguration>> call = apiService.loadTerminalConfiguration(Constants.Authorization, storeId,terminal_id);
             call.enqueue(new CallbackWithRetry<List<TerminalConfiguration>>() {
                 @Override
                 public void onResponse(Call<List<TerminalConfiguration>> call, Response<List<TerminalConfiguration>> response) {
@@ -548,7 +551,7 @@ public class TableDataInjector {
     public void getShiftMaster() {
         try {
             ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
-            Call<List<ShiftMaster>> call = apiService.loadShiftMaster(Constants.Authorization, storeId);
+            Call<List<ShiftMaster>> call = apiService.loadShiftMaster(Constants.Authorization, storeId,terminal_id);
             call.enqueue(new CallbackWithRetry<List<ShiftMaster>>() {
                 @Override
                 public void onResponse(Call<List<ShiftMaster>> call, Response<List<ShiftMaster>> response) {
@@ -715,7 +718,7 @@ public class TableDataInjector {
     public void getShiftTransactions() {
         try {
             ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
-            Call<List<ShiftTrans>> call = apiService.loadShifttrans(Constants.Authorization, storeId);
+            Call<List<ShiftTrans>> call = apiService.loadShifttrans(Constants.Authorization, storeId,terminal_id);
             call.enqueue(new CallbackWithRetry<List<ShiftTrans>>() {
                 @Override
                 public void onResponse(Call<List<ShiftTrans>> call, Response<List<ShiftTrans>> response) {
@@ -3505,11 +3508,10 @@ public class TableDataInjector {
     }
     public static void  interruptTask(){
         new Handler(Looper.getMainLooper()).post(() -> {
-            progressBarDialog.cancel();
+          /* progressBarDialog.cancel();
 
             if(!injectExecutor.isShutdown())
-                injectExecutor.shutdown();
-
+                injectExecutor.shutdown();*/
 
         });
     }
