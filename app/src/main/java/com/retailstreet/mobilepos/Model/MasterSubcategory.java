@@ -27,16 +27,27 @@ public class MasterSubcategory {
     @Expose
     String CATEGORY_GUID;
 
+    String MASTER_TERMINAL_ID;
+
     public MasterSubcategory() {
 
 
     }
 
-    public MasterSubcategory(String SUB_CATEGORYID, String SUB_CATEGORYGUID, String SUBCATEGORY_DESCRIPTION, String CATEGORY_GUID) {
+    public MasterSubcategory(String SUB_CATEGORYID, String SUB_CATEGORYGUID, String SUBCATEGORY_DESCRIPTION, String CATEGORY_GUID, String MASTER_TERMINAL_ID) {
         this.SUB_CATEGORYID = SUB_CATEGORYID;
         this.SUB_CATEGORYGUID = SUB_CATEGORYGUID;
         this.SUBCATEGORY_DESCRIPTION = SUBCATEGORY_DESCRIPTION;
         this.CATEGORY_GUID = CATEGORY_GUID;
+        this.MASTER_TERMINAL_ID = MASTER_TERMINAL_ID;
+    }
+
+    public String getMASTER_TERMINAL_ID() {
+        return MASTER_TERMINAL_ID;
+    }
+
+    public void setMASTER_TERMINAL_ID(String MASTER_TERMINAL_ID) {
+        this.MASTER_TERMINAL_ID = MASTER_TERMINAL_ID;
     }
 
     public String getSUB_CATEGORYID() {

@@ -15,13 +15,14 @@ public class CustomerReject {
     String STORE_ID;
     String CREATEDBY;
     String LAST_MODIFIED;
+    String MASTER_TERMINAL_ID;
 
     public CustomerReject() {
 
     }
 
-    public CustomerReject(String ID, String REASONGUID, String REASONFOR, String REASON_FOR_REJECTION, String ACTIVE, String STORE_ID, String CREATEDBY, String LAST_MODIFIED) {
-        this.ID =ID;
+    public CustomerReject(String ID, String REASONGUID, String REASONFOR, String REASON_FOR_REJECTION, String ACTIVE, String STORE_ID, String CREATEDBY, String LAST_MODIFIED, String MASTER_TERMINAL_ID) {
+        this.ID = ID;
         this.REASONGUID = REASONGUID;
         this.REASONFOR = REASONFOR;
         this.REASON_FOR_REJECTION = REASON_FOR_REJECTION;
@@ -29,6 +30,15 @@ public class CustomerReject {
         this.STORE_ID = STORE_ID;
         this.CREATEDBY = CREATEDBY;
         this.LAST_MODIFIED = LAST_MODIFIED;
+        this.MASTER_TERMINAL_ID = MASTER_TERMINAL_ID;
+    }
+
+    public String getMASTER_TERMINAL_ID() {
+        return MASTER_TERMINAL_ID;
+    }
+
+    public void setMASTER_TERMINAL_ID(String MASTER_TERMINAL_ID) {
+        this.MASTER_TERMINAL_ID = MASTER_TERMINAL_ID;
     }
 
     public String getID() {

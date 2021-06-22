@@ -78,17 +78,20 @@ public class ControllerVendorReturn {
     String SPECIALPRICE;
    // String ISSYNCED;
 
+    String MASTER_TERMINAL_ID;
+
 
     public ControllerVendorReturn(){
      context = ApplicationContextProvider.getContext();
+     MASTER_TERMINAL_ID = getTerminal_ID();
     }
 
 
     public ControllerVendorReturn(String vendorGuid, String invoiceNum, String reason){
         context = ApplicationContextProvider.getContext();
+        MASTER_TERMINAL_ID = getTerminal_ID();
         initMap();
         VENDOR_RETURNGUID = IDGenerator.getUUID();
-
         String lastKey="";
 
         for (String key:returnList.keySet()) {
@@ -125,6 +128,7 @@ public class ControllerVendorReturn {
 
     public ControllerVendorReturn(String vendorGuid , String reason) {
         context = ApplicationContextProvider.getContext();
+        MASTER_TERMINAL_ID = getTerminal_ID();
         initMap2();
         VENDOR_RETURNGUID = IDGenerator.getUUID();
 
@@ -180,7 +184,7 @@ public class ControllerVendorReturn {
         BATCHNO = getFromStockMasterByID(orderid,"BATCH_NO");
         LINETYPE = "DEBIT";
         QTY = quantity;
-         TRANSACTIONTYPE = "VENDOR RETURN";
+        TRANSACTIONTYPE = "VENDOR RETURN";
         TRANSACTIONNUMBER = VENDOR_RETURNGUID;
          TRANSACTIONDATE = getCurrentDateAndTime();
          BARCODE = getFromStockMasterByID(orderid,"BARCODE");
@@ -189,7 +193,7 @@ public class ControllerVendorReturn {
          INTERNETPRICE = getFromStockMasterByID(orderid, "INTERNET_PRICE");
          SPECIALPRICE = getFromStockMasterByID(orderid, "SPEC_PRICE");
         ISSYNCED ="0";
-        StockRegister stockRegister = new StockRegister(REGISTERGUID, MASTERORG_GUID, STORE_GUID, VENDOR_GUID, LINETYPE, TRANSACTIONTYPE, TRANSACTIONNUMBER, TRANSACTIONDATE, ITEM_GUID, UOM_GUID, QTY, BATCHNO, BARCODE, SALESPRICE, WHOLESALEPRICE, INTERNETPRICE, SPECIALPRICE, ISSYNCED);
+        StockRegister stockRegister = new StockRegister(REGISTERGUID, MASTERORG_GUID, STORE_GUID, VENDOR_GUID, LINETYPE, TRANSACTIONTYPE, TRANSACTIONNUMBER, TRANSACTIONDATE, ITEM_GUID, UOM_GUID, QTY, BATCHNO, BARCODE, SALESPRICE, WHOLESALEPRICE, INTERNETPRICE, SPECIALPRICE, ISSYNCED,MASTER_TERMINAL_ID);
         InsertStockRegister(stockRegister);
     }
     public void InsertStockRegister(StockRegister prod) {
@@ -240,7 +244,7 @@ public class ControllerVendorReturn {
          UPDATEDON = getCurrentDateAndTime();
          ISSYNCED = "0";
 
-        VendorMasterReturn vendorMasterReturn = new VendorMasterReturn(VENDOR_RETURN_MASTERID, VENDOR_RETURNGUID, VENDOR_GUID, STORE_GUID, INVOICENO, INVOICEDATE, RETURN_DATE, REASON, GRNNO, GRNDATE, CREATEDBY, UPDATEDBY, CREATEDON, UPDATEDON, ISSYNCED);
+        VendorMasterReturn vendorMasterReturn = new VendorMasterReturn(VENDOR_RETURN_MASTERID, VENDOR_RETURNGUID, VENDOR_GUID, STORE_GUID, INVOICENO, INVOICEDATE, RETURN_DATE, REASON, GRNNO, GRNDATE, CREATEDBY, UPDATEDBY, CREATEDON, UPDATEDON, ISSYNCED, MASTER_TERMINAL_ID);
         InsertVendorMasterReturn(vendorMasterReturn);
     }
 
@@ -260,7 +264,7 @@ public class ControllerVendorReturn {
         UPDATEDON = getCurrentDateAndTime();
         ISSYNCED = "0";
 
-        VendorMasterReturn vendorMasterReturn = new VendorMasterReturn(VENDOR_RETURN_MASTERID, VENDOR_RETURNGUID, VENDOR_GUID, STORE_GUID, INVOICENO, INVOICEDATE, RETURN_DATE, REASON, GRNNO, GRNDATE, CREATEDBY, UPDATEDBY, CREATEDON, UPDATEDON, ISSYNCED);
+        VendorMasterReturn vendorMasterReturn = new VendorMasterReturn(VENDOR_RETURN_MASTERID, VENDOR_RETURNGUID, VENDOR_GUID, STORE_GUID, INVOICENO, INVOICEDATE, RETURN_DATE, REASON, GRNNO, GRNDATE, CREATEDBY, UPDATEDBY, CREATEDON, UPDATEDON, ISSYNCED, MASTER_TERMINAL_ID);
         InsertVendorMasterReturn(vendorMasterReturn);
     }
 
@@ -284,6 +288,7 @@ public class ControllerVendorReturn {
                 contentValues.put("CREATEDON", prod.getCREATEDON());
                 contentValues.put("UPDATEDON", prod.getUPDATEDON());
                 contentValues.put("ISSYNCED", prod.getISSYNCED());
+                contentValues.put("MASTER_TERMINAL_ID", prod.getMASTER_TERMINAL_ID());
 
                 myDataBase.insert("retail_str_vendor_master_return", null, contentValues);
 
@@ -747,6 +752,27 @@ public class ControllerVendorReturn {
 
             e.printStackTrace();
         }
+
+    }
+
+    private String getTerminal_ID(){
+        String result= null;
+        try {
+            SQLiteDatabase  mydb  = context.openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
+            result = "";
+            String selectQuery = "SELECT MASTER_TERMINAL_ID FROM terminal_configuration";
+            Cursor cursor = mydb.rawQuery(selectQuery, null);
+            if (cursor.moveToFirst()) {
+
+                result= cursor.getString(0);
+            }
+            cursor.close();
+            mydb.close();
+            Log.d("DataRetrieved", "getTerminal_ID: "+result);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
 
     }
 }

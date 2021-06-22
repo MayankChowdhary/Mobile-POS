@@ -20,11 +20,12 @@ public class CustomerAddress {
     String ADDRESSSTATUS;
     String CREATEDBY;
     String CREATEDDATETIME;
+    String MASTER_TERMINAL_ID;
 
     public CustomerAddress() {
     }
 
-    public CustomerAddress(String CUSTOMERADDRESSID, String MASTERCUSTOMERID, String ADDRESSTYPE, String CONTACTPERSONNAME, String ADDRESSLINE1, String ADDRESSLINE2, String STREET_AREA, String PINCODE, String CITY, String MASTERSTATEID, String ADDRESSSTATUS, String CREATEDBY, String CREATEDDATETIME) {
+    public CustomerAddress(String CUSTOMERADDRESSID, String MASTERCUSTOMERID, String ADDRESSTYPE, String CONTACTPERSONNAME, String ADDRESSLINE1, String ADDRESSLINE2, String STREET_AREA, String PINCODE, String CITY, String MASTERSTATEID, String ADDRESSSTATUS, String CREATEDBY, String CREATEDDATETIME, String MASTER_TERMINAL_ID) {
         this.CUSTOMERADDRESSID = CUSTOMERADDRESSID;
         this.MASTERCUSTOMERID = MASTERCUSTOMERID;
         this.ADDRESSTYPE = ADDRESSTYPE;
@@ -38,6 +39,15 @@ public class CustomerAddress {
         this.ADDRESSSTATUS = ADDRESSSTATUS;
         this.CREATEDBY = CREATEDBY;
         this.CREATEDDATETIME = CREATEDDATETIME;
+        this.MASTER_TERMINAL_ID = MASTER_TERMINAL_ID;
+    }
+
+    public String getMASTER_TERMINAL_ID() {
+        return MASTER_TERMINAL_ID;
+    }
+
+    public void setMASTER_TERMINAL_ID(String MASTER_TERMINAL_ID) {
+        this.MASTER_TERMINAL_ID = MASTER_TERMINAL_ID;
     }
 
     public String getCUSTOMERADDRESSID() {

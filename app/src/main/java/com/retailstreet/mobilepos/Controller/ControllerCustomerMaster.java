@@ -98,12 +98,16 @@ public class ControllerCustomerMaster {
     //String CUSTOMERGUID;
     String TOTALGST;
 
+    String MASTER_TERMINAL_ID;
+
     public ControllerCustomerMaster() {
         context= ApplicationContextProvider.getContext();
+        MASTER_TERMINAL_ID = getTerminal_ID();
     }
 
     public ControllerCustomerMaster( String stateGuid, String city, String pin, String street, String add1, String add2, String addType, String creditLimit, String balance, String advance, String custCatid, String custTypeguid, String PAN, String GST, String custCredittype, String mobile, String gender, String custType, String custCategory, String custName , String email, String age, Boolean isAddressUpdate){
         context= ApplicationContextProvider.getContext();
+        MASTER_TERMINAL_ID = getTerminal_ID();
         CUSTOMERTYPE = custType;
         CUSTOMERCATEGORY = custCategory;
         CUST_ID = IDGenerator.getTimeStamp();
@@ -165,14 +169,14 @@ public class ControllerCustomerMaster {
         DUEAMOUNT = "0.00";
         TOTALGST ="0.00";
 
-        CustomerMaster customerMaster = new CustomerMaster(  CUSTOMERTYPE,  CUSTOMERCATEGORY,  CUST_ID,  CUSTOMERGUID,  NAME,  E_MAIL,  GENDER,  AGE,  ISEMAILVALIDATED,  MOBILE_NO,  ISMOBILEVALIDATED,  SECONDARYEMAIL,  SECONDARYMOBILE,  CUSTOMERDISCOUNTPERCENTAGE,  LASTOTP,  OTPVALIDATEDDATETIME,  EMAILVALIDATEDDATETIME,  UPDATEDBY,  LAST_MODIFIED,  TOTALORDERS,  CREDIT_CUST,  REGISTEREDFROM,  REGISTEREDFROMSTOREID,  PANNO,  GSTNO,  CPASSWORD,  CUSTOMERSTATUS,  MASTER_CUSTOMER_TYPE,  MASTER_CUSTOMERCATEGORY,  ADVANCE_AMOUNT,  BALANCE_AMOUNT,  CUSTOMERSTOREKEY,  STORE_ID,  MASTER_CUSTOMERCATEGORYID,  PERCENTAGE,  CREATEDBY,  ISSYNCED,  CREDITLIMIT);
+        CustomerMaster customerMaster = new CustomerMaster(  CUSTOMERTYPE,  CUSTOMERCATEGORY,  CUST_ID,  CUSTOMERGUID,  NAME,  E_MAIL,  GENDER,  AGE,  ISEMAILVALIDATED,  MOBILE_NO,  ISMOBILEVALIDATED,  SECONDARYEMAIL,  SECONDARYMOBILE,  CUSTOMERDISCOUNTPERCENTAGE,  LASTOTP,  OTPVALIDATEDDATETIME,  EMAILVALIDATEDDATETIME,  UPDATEDBY,  LAST_MODIFIED,  TOTALORDERS,  CREDIT_CUST,  REGISTEREDFROM,  REGISTEREDFROMSTOREID,  PANNO,  GSTNO,  CPASSWORD,  CUSTOMERSTATUS,  MASTER_CUSTOMER_TYPE,  MASTER_CUSTOMERCATEGORY,  ADVANCE_AMOUNT,  BALANCE_AMOUNT,  CUSTOMERSTOREKEY,  STORE_ID,  MASTER_CUSTOMERCATEGORYID,  PERCENTAGE,  CREATEDBY,  ISSYNCED,  CREDITLIMIT,MASTER_TERMINAL_ID);
         CustomerCredit customerCredit= new CustomerCredit( PAYMENTID,  STORE_GUID,  CUSTOMERNAME,  CUSTOMERMOBILENO,  GRANDTOTAL,  CUSTOMERSTATUS,  RECEIVEAMOUNT,  DUEAMOUNT,  CUSTOMERGUID,  TOTALGST);
         new ControllerCreditPay().updateCustAdditionLedger(CUSTOMERGUID,advance);
         InsertRetailCust(customerMaster);
         InsertCustomerCredit(customerCredit);
 
         if(isAddressUpdate){
-            CustomerAddress customerAddress = new CustomerAddress( CUSTOMERADDRESSID,  MASTERCUSTOMERID,  ADDRESSTYPE,  CONTACTPERSONNAME,  ADDRESSLINE1,  ADDRESSLINE2,  STREET_AREA,  PINCODE,  CITY,  MASTERSTATEID,  ADDRESSSTATUS,  CREATEDBY,  CREATEDDATETIME);
+            CustomerAddress customerAddress = new CustomerAddress( CUSTOMERADDRESSID,  MASTERCUSTOMERID,  ADDRESSTYPE,  CONTACTPERSONNAME,  ADDRESSLINE1,  ADDRESSLINE2,  STREET_AREA,  PINCODE,  CITY,  MASTERSTATEID,  ADDRESSSTATUS,  CREATEDBY,  CREATEDDATETIME,MASTER_TERMINAL_ID);
             InsertCustomerAddress(customerAddress);
         }
         new ControllerCreditPay().updateCustAdditionLedger(CUSTOMERGUID,advance);
@@ -261,6 +265,7 @@ public class ControllerCustomerMaster {
                 contentValues.put("CREATEDBY", prod.getCREATEDBY());
                 contentValues.put("ISSYNCED", prod.getISSYNCED());
                 contentValues.put("CREDITLIMIT", prod.getCREDITLIMIT());
+                contentValues.put("MASTER_TERMINAL_ID", prod.getMASTER_TERMINAL_ID());
                 myDataBase.insert("retail_cust", null, contentValues);
 
             myDataBase.close();
@@ -289,6 +294,7 @@ public class ControllerCustomerMaster {
                 contentValues.put("ADDRESSSTATUS", prod.getADDRESSSTATUS());
                 contentValues.put("CREATEDBY", prod.getCREATEDBY());
                 contentValues.put("CREATEDDATETIME", prod.getCREATEDDATETIME());
+                contentValues.put("MASTER_TERMINAL_ID", prod.getMASTER_TERMINAL_ID());
                 myDataBase.insert("retail_cust_address", null, contentValues);
 
             myDataBase.close();
@@ -484,6 +490,27 @@ public class ControllerCustomerMaster {
         }
         db.close();
         return returnval;
+    }
+
+    private String getTerminal_ID(){
+        String result= null;
+        try {
+            SQLiteDatabase  mydb  = context.openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
+            result = "";
+            String selectQuery = "SELECT MASTER_TERMINAL_ID FROM terminal_configuration";
+            Cursor cursor = mydb.rawQuery(selectQuery, null);
+            if (cursor.moveToFirst()) {
+
+                result= cursor.getString(0);
+            }
+            cursor.close();
+            mydb.close();
+            Log.d("DataRetrieved", "getTerminal_ID: "+result);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+
     }
 }
 

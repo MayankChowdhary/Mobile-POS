@@ -27,15 +27,26 @@ public class MasterUOM {
     @Expose
     String UoMID;
 
+    String MASTER_TERMINAL_ID;
 
     public MasterUOM() {
     }
 
-    public MasterUOM(String ISACTIVE, String uoM, String UOM_GUID, String uoMID) {
+    public MasterUOM(String ISACTIVE, String uoM, String UOM_GUID, String uoMID, String MASTER_TERMINAL_ID) {
         this.ISACTIVE = ISACTIVE;
         UoM = uoM;
         this.UOM_GUID = UOM_GUID;
         UoMID = uoMID;
+        this.MASTER_TERMINAL_ID = MASTER_TERMINAL_ID;
+    }
+
+
+    public String getMASTER_TERMINAL_ID() {
+        return MASTER_TERMINAL_ID;
+    }
+
+    public void setMASTER_TERMINAL_ID(String MASTER_TERMINAL_ID) {
+        this.MASTER_TERMINAL_ID = MASTER_TERMINAL_ID;
     }
 
     public String getISACTIVE() {

@@ -70,6 +70,7 @@ class VendorAdditionFragment : Fragment() {
         var vState = ""
         var vGSt= ""
         var stateGuid = ""
+        var regularVendor = "N"
 
 
         val stateTypeArray:List<StringWithTag> = getStateType()
@@ -93,6 +94,12 @@ class VendorAdditionFragment : Fragment() {
         val inventoryAdapter: ArrayAdapter<String> = context?.let { ArrayAdapter(it, R.layout.spinner_layout_center_box,inventoryArray) }!!
         inventoryAdapter.setDropDownViewResource(R.layout.spinner_layout_centre)
         inventorySelector.adapter = inventoryAdapter
+
+        val regVendorArray:Array<String> = resources.getStringArray(R.array.regVendor)
+        val regVendorSelector: Spinner = view.findViewById(R.id.va_regular_value)
+        val regVendorAdapter: ArrayAdapter<String> = context?.let { ArrayAdapter(it, R.layout.spinner_layout_center_box,regVendorArray) }!!
+        regVendorAdapter.setDropDownViewResource(R.layout.spinner_layout_centre)
+        regVendorSelector.adapter = regVendorAdapter
 
 
         stateTypeSelector.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -133,6 +140,21 @@ class VendorAdditionFragment : Fragment() {
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
 
+        regVendorSelector.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                val inventorySelected = parent.getItemAtPosition(position) as String
+                regularVendor = if(inventorySelected == "NO"){
+                    "N"
+                }else{
+                    "Y"
+                }
+
+                Log.d("regVendorSelector", "onItemSelected: Tag= $regularVendor")
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
+
 
         fun doViewsEmpty() {
 
@@ -148,7 +170,7 @@ class VendorAdditionFragment : Fragment() {
              vendorGst.setText("")
 
             payTermSelector.setSelection(0)
-            inventorySelector.setSelection(0)
+            regVendorSelector.setSelection(0)
             stateTypeSelector.setSelection(0)
             vendorName.requestFocus()
         }
@@ -176,7 +198,7 @@ class VendorAdditionFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            ControllerVendorMaster( vName, vAddr,vCity, vMobile, vEmail, vGSt, vPan, vZip, vLand,vInventory, vState, vpayTerms)
+            ControllerVendorMaster( vName, vAddr,vCity, vMobile, vEmail, vGSt, vPan, vZip, vLand,vInventory, vState, vpayTerms, regularVendor)
 
             val alertDialog = LottieAlertDialogs.Builder(context, DialogTypes.TYPE_SUCCESS)
                 .setTitle("Distributor Added")

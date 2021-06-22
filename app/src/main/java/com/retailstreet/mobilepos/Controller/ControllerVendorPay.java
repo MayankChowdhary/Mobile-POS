@@ -53,15 +53,19 @@ public class ControllerVendorPay {
     String ISYNCED;
     String VENDORPAY_STATUS;
 
+    String MASTER_TERMINAL_ID;
+
     public ControllerVendorPay(){
 
         context = ApplicationContextProvider.getContext();
+        MASTER_TERMINAL_ID = getTerminal_ID();
 
     }
 
     public ControllerVendorPay(String payId, String bankGuid, String amountPaid, String payMode, String chequeNo, String chequeDate, String vendorGuid, String paidFor,String typeOfInvoice){
         context = ApplicationContextProvider.getContext();
         VENDOR_PAYGUID = IDGenerator.getUUID();
+        MASTER_TERMINAL_ID = getTerminal_ID();
 
         generateVendorPayDetail(bankGuid,amountPaid,payMode, chequeNo,chequeDate);
         generateVendorPayMaster(payId,vendorGuid,amountPaid,paidFor,typeOfInvoice);
@@ -106,7 +110,7 @@ public class ControllerVendorPay {
         ISYNCED = "0";
         VENDORPAY_STATUS = "1";
 
-        VendorPayMaster vendorPayMaster = new VendorPayMaster( VENDOR_PAYGUID,  VENDOR_PAYID,  VENDOR_GUID,  STORE_GUID,  INVOICENO,  INVOICEDATE,  INVOICEAMOUNT,  CREATEDBY,  UPDATEDBY,  CREATEDON,  UPDATEDON,  DUEAMOUNT,  PAIDFOR,  TYPEOFINVOICE,  ISYNCED,  VENDORPAY_STATUS);
+        VendorPayMaster vendorPayMaster = new VendorPayMaster( VENDOR_PAYGUID,  VENDOR_PAYID,  VENDOR_GUID,  STORE_GUID,  INVOICENO,  INVOICEDATE,  INVOICEAMOUNT,  CREATEDBY,  UPDATEDBY,  CREATEDON,  UPDATEDON,  DUEAMOUNT,  PAIDFOR,  TYPEOFINVOICE,  ISYNCED,  VENDORPAY_STATUS, MASTER_TERMINAL_ID);
         InsertVendorPayMaster(vendorPayMaster);
     }
 
@@ -155,7 +159,7 @@ public class ControllerVendorPay {
                 contentValues.put("TYPEOFINVOICE", prod.getTYPEOFINVOICE());
                 contentValues.put("ISYNCED", prod.getISYNCED());
                 contentValues.put("VENDORPAY_STATUS", prod.getVENDORPAY_STATUS());
-
+                contentValues.put("MASTER_TERMINAL_ID", prod.getMASTER_TERMINAL_ID());
                 myDataBase.insert("VendorPayMaster", null, contentValues);
 
 
@@ -231,6 +235,28 @@ public class ControllerVendorPay {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+    }
+
+
+    private String getTerminal_ID(){
+        String result= null;
+        try {
+            SQLiteDatabase  mydb  = context.openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
+            result = "";
+            String selectQuery = "SELECT MASTER_TERMINAL_ID FROM terminal_configuration";
+            Cursor cursor = mydb.rawQuery(selectQuery, null);
+            if (cursor.moveToFirst()) {
+
+                result= cursor.getString(0);
+            }
+            cursor.close();
+            mydb.close();
+            Log.d("DataRetrieved", "getTerminal_ID: "+result);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
 
     }
 }

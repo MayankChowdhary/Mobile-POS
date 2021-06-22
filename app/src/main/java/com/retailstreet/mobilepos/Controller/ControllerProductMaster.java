@@ -65,17 +65,19 @@ public class ControllerProductMaster {
     String ADDITIONALPARAM1;
     String ADDITIONALPARAM2;
     String ADDITIONALPARAM3;
-
+    String MASTER_TERMINAL_ID;
     String userGuid;
 
     public  ControllerProductMaster(){
         context = ApplicationContextProvider.getContext();
+        MASTER_TERMINAL_ID = getTerminal_ID();
 
     }
 
     public ControllerProductMaster(String qty, String batch_no, String internetPrice, String sPrice, String mrp,String minQty, String MaxQty, String wholePrice, String specPrice, String expDate, String vendor_nm, String vendorGuid,String prodName, String brandName,String p_price, String category, String subCategory, String barcode, String categoryGuid, String cess1, String cess2, String cgst, String extProID, String hsn, String igst, String sgst, String subCategoryGuid, String uom, String uomGuid, String isProdReturn, String isLoose){
 
         context = ApplicationContextProvider.getContext();
+        MASTER_TERMINAL_ID = getTerminal_ID();
         ACTIVE="1";
         BARCODE= barcode;
         CATEGORY = category;
@@ -115,7 +117,7 @@ public class ControllerProductMaster {
         ADDITIONALPARAM2 ="YES";
         ADDITIONALPARAM3 = "YES";
 
-        ProductMaster productMaster= new ProductMaster( ACTIVE,  BARCODE,  CATEGORY,  CATEGORY_GUID,  CESS1,  CESS2,  CGST,  EXTERNALPRODUCTID,  GENERIC_NAME,  GST,  HSN,  IGST,  ITEM_CODE,  ITEM_GUID,  Item_Type,  MASTERBRAND,  MASTERCATEGORY_id,  POS_USER,  PRINT_NAME,  PROD_ID,  PROD_NM,  PRODUCTRELEVANCE,  SGST,  STORE_ID,  STORE_NUMBER,  SUB_CATEGORYGUID,  SUBCATEGORY_DESCRIPTION,  SUBCATEGORY_ID,  UOM,  UOM_GUID,  UoMID,ISSYNCED, ISPRODUCTRETURNABLE, ISLOOSEITEM, ADDITIONALPARAM1, ADDITIONALPARAM2, ADDITIONALPARAM3) ;
+        ProductMaster productMaster= new ProductMaster( ACTIVE,  BARCODE,  CATEGORY,  CATEGORY_GUID,  CESS1,  CESS2,  CGST,  EXTERNALPRODUCTID,  GENERIC_NAME,  GST,  HSN,  IGST,  ITEM_CODE,  ITEM_GUID,  Item_Type,  MASTERBRAND,  MASTERCATEGORY_id,  POS_USER,  PRINT_NAME,  PROD_ID,  PROD_NM,  PRODUCTRELEVANCE,  SGST,  STORE_ID,  STORE_NUMBER,  SUB_CATEGORYGUID,  SUBCATEGORY_DESCRIPTION,  SUBCATEGORY_ID,  UOM,  UOM_GUID,  UoMID,ISSYNCED, ISPRODUCTRETURNABLE, ISLOOSEITEM, ADDITIONALPARAM1, ADDITIONALPARAM2, ADDITIONALPARAM3,MASTER_TERMINAL_ID) ;
         InsertProductMaster(productMaster);
         new ControllerStockMaster(context).InjectIntoStockMaster(vendor_nm,vendorGuid,  userGuid,  ITEM_CODE, PROD_NM, expDate, CESS1, CESS2, GST, SGST, IGST, CGST, EXTERNALPRODUCTID, GENERIC_NAME, specPrice, wholePrice,  minQty,  MaxQty, internetPrice, sPrice, mrp, p_price, BARCODE, batch_no,  UOM, ITEM_GUID, qty, UOM_GUID);
 
@@ -169,6 +171,7 @@ public class ControllerProductMaster {
                 contentValues.put("ADDITIONALPARAM1",prod.getADDITIONALPARAM1());
                 contentValues.put("ADDITIONALPARAM2",prod.getADDITIONALPARAM2());
                 contentValues.put("ADDITIONALPARAM3",prod.getADDITIONALPARAM3());
+                contentValues.put("MASTER_TERMINAL_ID", prod.getMASTER_TERMINAL_ID());
                 myDataBase.insert("retail_store_prod_com", null, contentValues);
             myDataBase.close();
             Log.d("Insertion Successful", "InsertProductMaster: ");
@@ -370,5 +373,24 @@ public class ControllerProductMaster {
         return returnval;
     }
 
+    private String getTerminal_ID(){
+        String result= null;
+        try {
+            SQLiteDatabase  mydb  = context.openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
+            result = "";
+            String selectQuery = "SELECT MASTER_TERMINAL_ID FROM terminal_configuration";
+            Cursor cursor = mydb.rawQuery(selectQuery, null);
+            if (cursor.moveToFirst()) {
 
+                result= cursor.getString(0);
+            }
+            cursor.close();
+            mydb.close();
+            Log.d("DataRetrieved", "getTerminal_ID: "+result);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+
+    }
 }

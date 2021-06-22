@@ -22,12 +22,13 @@ public class VendorPayMaster {
     String TYPEOFINVOICE;
     String ISYNCED;
     String VENDORPAY_STATUS;
+    String MASTER_TERMINAL_ID;
 
 
     public VendorPayMaster() {
     }
 
-    public VendorPayMaster(String VENDOR_PAYGUID, String VENDOR_PAYID, String VENDOR_GUID, String STORE_GUID, String INVOICENO, String INVOICEDATE, String INVOICEAMOUNT, String CREATEDBY, String UPDATEDBY, String CREATEDON, String UPDATEDON, String DUEAMOUNT, String PAIDFOR, String TYPEOFINVOICE, String ISYNCED, String VENDORPAY_STATUS) {
+    public VendorPayMaster(String VENDOR_PAYGUID, String VENDOR_PAYID, String VENDOR_GUID, String STORE_GUID, String INVOICENO, String INVOICEDATE, String INVOICEAMOUNT, String CREATEDBY, String UPDATEDBY, String CREATEDON, String UPDATEDON, String DUEAMOUNT, String PAIDFOR, String TYPEOFINVOICE, String ISYNCED, String VENDORPAY_STATUS, String MASTER_TERMINAL_ID) {
         this.VENDOR_PAYGUID = VENDOR_PAYGUID;
         this.VENDOR_PAYID = VENDOR_PAYID;
         this.VENDOR_GUID = VENDOR_GUID;
@@ -44,6 +45,15 @@ public class VendorPayMaster {
         this.TYPEOFINVOICE = TYPEOFINVOICE;
         this.ISYNCED = ISYNCED;
         this.VENDORPAY_STATUS = VENDORPAY_STATUS;
+        this.MASTER_TERMINAL_ID = MASTER_TERMINAL_ID;
+    }
+
+    public String getMASTER_TERMINAL_ID() {
+        return MASTER_TERMINAL_ID;
+    }
+
+    public void setMASTER_TERMINAL_ID(String MASTER_TERMINAL_ID) {
+        this.MASTER_TERMINAL_ID = MASTER_TERMINAL_ID;
     }
 
     public String getVENDOR_PAYGUID() {

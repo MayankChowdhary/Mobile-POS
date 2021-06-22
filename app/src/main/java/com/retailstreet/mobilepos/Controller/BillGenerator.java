@@ -114,16 +114,18 @@ public class BillGenerator {
         String ITEM_NAME;
         String SELLINGPRICE;
 
-
+         String MASTER_TERMINAL_ID;
 
 
 
         public  BillGenerator(){
             context = ApplicationContextProvider.getContext();
+            MASTER_TERMINAL_ID = getTerminal_ID();
         }
 
     public BillGenerator( String customerID, String receivedCash,String balanceCash, String deliveryTypeGuid, HashMap<String , String[]> payModeData, String additionDisc, String redeemNumber,double advanceAmount, String billnum) {
         context = ApplicationContextProvider.getContext();
+        MASTER_TERMINAL_ID = getTerminal_ID();
         GetSetFromPrefs();
         initMap();
         context = ApplicationContextProvider.getContext();
@@ -271,7 +273,7 @@ public class BillGenerator {
        String INTERNETPRICE = getFromStockMaster(orderid, "INTERNET_PRICE");
        String SPECIALPRICE = getFromStockMaster(orderid, "SPEC_PRICE");
         ISSYNCED ="0";
-        StockRegister stockRegister = new StockRegister(REGISTERGUID, MASTERORG_GUID, STORE_GUID, VENDOR_GUID, LINETYPE, TRANSACTIONTYPE, TRANSACTIONNUMBER, TRANSACTIONDATE, ITEM_GUID, UOM_GUID, QTY, BATCHNO, BARCODE, SALESPRICE, WHOLESALEPRICE, INTERNETPRICE, SPECIALPRICE, ISSYNCED);
+        StockRegister stockRegister = new StockRegister(REGISTERGUID, MASTERORG_GUID, STORE_GUID, VENDOR_GUID, LINETYPE, TRANSACTIONTYPE, TRANSACTIONNUMBER, TRANSACTIONDATE, ITEM_GUID, UOM_GUID, QTY, BATCHNO, BARCODE, SALESPRICE, WHOLESALEPRICE, INTERNETPRICE, SPECIALPRICE, ISSYNCED,MASTER_TERMINAL_ID);
         InsertStockRegister(stockRegister);
 
     }
@@ -908,4 +910,24 @@ public class BillGenerator {
          mydb.close();
     }
 
+    private String getTerminal_ID(){
+        String result= null;
+        try {
+            SQLiteDatabase  mydb  = context.openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
+            result = "";
+            String selectQuery = "SELECT MASTER_TERMINAL_ID FROM terminal_configuration";
+            Cursor cursor = mydb.rawQuery(selectQuery, null);
+            if (cursor.moveToFirst()) {
+
+                result= cursor.getString(0);
+            }
+            cursor.close();
+            mydb.close();
+            Log.d("DataRetrieved", "getTerminal_ID: "+result);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+
+    }
 }

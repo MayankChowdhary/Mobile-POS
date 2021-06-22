@@ -49,14 +49,17 @@ public class ControllerShiftTrans {
         String ISACTIVE ;
         String ISSYNCED;
 
+    String MASTER_TERMINAL_ID;
 
     public ControllerShiftTrans(){
         context= ApplicationContextProvider.getContext();
+        MASTER_TERMINAL_ID = getTerminal_ID();
 
     }
 
     public  ControllerShiftTrans(String PosDate, String Username, String shiftGuid,String startCash){
         context= ApplicationContextProvider.getContext();
+        MASTER_TERMINAL_ID = getTerminal_ID();
         this.username=Username;
         SHIFT_TRANS_ID =  IDGenerator.getTimeStamp();
         SHIFT_TRANSACTIONGUID = IDGenerator.getUUID();
@@ -74,7 +77,7 @@ public class ControllerShiftTrans {
         ISACTIVE = "Y";
         ISSYNCED ="0";
         
-        ShiftTrans shiftTrans = new ShiftTrans(  SHIFT_TRANS_ID  , SHIFT_TRANSACTIONGUID , ORG_GUID , STORE_GUID  , SHIFT_GUID  , SHIFT_DATE , START_TIME  , END_TIME  , IS_SHIFT_STARTED  , IS_SHIFT_ENDED  , USER_GUID  , CASH_OPENED  , CASH_CLOSED  , ISACTIVE  , ISSYNCED );
+        ShiftTrans shiftTrans = new ShiftTrans(  SHIFT_TRANS_ID  , SHIFT_TRANSACTIONGUID , ORG_GUID , STORE_GUID  , SHIFT_GUID  , SHIFT_DATE , START_TIME  , END_TIME  , IS_SHIFT_STARTED  , IS_SHIFT_ENDED  , USER_GUID  , CASH_OPENED  , CASH_CLOSED  , ISACTIVE  , ISSYNCED,MASTER_TERMINAL_ID );
 
         insertIntoShiftTrans(shiftTrans);
 
@@ -410,4 +413,24 @@ public class ControllerShiftTrans {
         return returnval;
     }
 
+    private String getTerminal_ID(){
+        String result= null;
+        try {
+            SQLiteDatabase  mydb  = context.openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
+            result = "";
+            String selectQuery = "SELECT MASTER_TERMINAL_ID FROM terminal_configuration";
+            Cursor cursor = mydb.rawQuery(selectQuery, null);
+            if (cursor.moveToFirst()) {
+
+                result= cursor.getString(0);
+            }
+            cursor.close();
+            mydb.close();
+            Log.d("DataRetrieved", "getTerminal_ID: "+result);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+
+    }
 }

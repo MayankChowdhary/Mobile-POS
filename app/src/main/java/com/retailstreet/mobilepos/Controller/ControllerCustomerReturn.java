@@ -64,14 +64,17 @@ public class ControllerCustomerReturn {
     String ISSYNCED;
     String CREDITNOTENUMBER;
 
+    String MASTER_TERMINAL_ID;
 
     public ControllerCustomerReturn(){
         context = ApplicationContextProvider.getContext();
+        MASTER_TERMINAL_ID = getTerminal_ID();
 
     }
 
     public ControllerCustomerReturn(String reasonGuid, String custGuid, String reasonDetail, String totalAmount, String creditNoteNum){
         context = ApplicationContextProvider.getContext();
+        MASTER_TERMINAL_ID = getTerminal_ID();
         initMap();
         CUSTOMERRETURNGUID= IDGenerator.getUUID();
 
@@ -136,7 +139,7 @@ public class ControllerCustomerReturn {
         RETURNQUANTITY = count;
         EXPIRYDATE = getFromStockMaster(key,"EXP_DATE");
         CUSTOMER_RETURN_DETAIL_STATUS="1";
-        CustomerReturnDetails customerReturnDetails = new CustomerReturnDetails( CUSTOMER_RETURNS_DETAILID,  CUSTOMERRETURNGUID,  MASTER_PRODUCT_ITEM_ID,  BATCHNO,  RETURNQUANTITY,  EXPIRYDATE, CUSTOMER_RETURN_DETAIL_STATUS);
+        CustomerReturnDetails customerReturnDetails = new CustomerReturnDetails( CUSTOMER_RETURNS_DETAILID,  CUSTOMERRETURNGUID,  MASTER_PRODUCT_ITEM_ID,  BATCHNO,  RETURNQUANTITY,  EXPIRYDATE, CUSTOMER_RETURN_DETAIL_STATUS,MASTER_TERMINAL_ID);
         InsertCustomerReturnDetails(customerReturnDetails);
 
 
@@ -165,7 +168,7 @@ public class ControllerCustomerReturn {
         String ITEM_GUID = getFromStockMaster(key, "ITEM_GUID");
         String UOM_GUID = getFromStockMaster(key, "SALE_UOMID");
         ISSYNCED ="0";
-        StockRegister stockRegister = new StockRegister(REGISTERGUID, MASTERORG_GUID, STORE_GUID, VENDOR_GUID, LINETYPE, TRANSACTIONTYPE, TRANSACTIONNUMBER, TRANSACTIONDATE, ITEM_GUID, UOM_GUID, QTY, BATCHNO, BARCODE, SALESPRICE, WHOLESALEPRICE, INTERNETPRICE, SPECIALPRICE, ISSYNCED);
+        StockRegister stockRegister = new StockRegister(REGISTERGUID, MASTERORG_GUID, STORE_GUID, VENDOR_GUID, LINETYPE, TRANSACTIONTYPE, TRANSACTIONNUMBER, TRANSACTIONDATE, ITEM_GUID, UOM_GUID, QTY, BATCHNO, BARCODE, SALESPRICE, WHOLESALEPRICE, INTERNETPRICE, SPECIALPRICE, ISSYNCED,MASTER_TERMINAL_ID);
         InsertStockRegister(stockRegister);
     }
 
@@ -219,7 +222,7 @@ public class ControllerCustomerReturn {
         ISSYNCED = "0";
         CREDITNOTENUMBER = creditNoteNum;
 
-      CustomerReturnMaster customerReturnMaster = new CustomerReturnMaster( CUSTOMER_RETURNS_MASTER_ID, CUSTOMERRETURNGUID,  REASONGUID,  MASTERSTOREID,  CUSTOMERGUID,  BILLNO,  SALESDATE,  REASONDETAILS,  RETURN_DATE,  ISPARTIALRETURN,  AMOUNTREFUNDED,  REPLACEMENTBILLNO,  CUSTOMER_RETURNS_STATUS,  CREATEDBYGUID,  CREATEDON,  ISSYNCED,  CREDITNOTENUMBER);
+      CustomerReturnMaster customerReturnMaster = new CustomerReturnMaster( CUSTOMER_RETURNS_MASTER_ID, CUSTOMERRETURNGUID,  REASONGUID,  MASTERSTOREID,  CUSTOMERGUID,  BILLNO,  SALESDATE,  REASONDETAILS,  RETURN_DATE,  ISPARTIALRETURN,  AMOUNTREFUNDED,  REPLACEMENTBILLNO,  CUSTOMER_RETURNS_STATUS,  CREATEDBYGUID,  CREATEDON,  ISSYNCED,  CREDITNOTENUMBER,MASTER_TERMINAL_ID);
         InsertCustomerReturnMaster(customerReturnMaster);
     }
 
@@ -236,6 +239,7 @@ public class ControllerCustomerReturn {
                 contentValues.put("RETURNQUANTITY", prod.getRETURNQUANTITY());
                 contentValues.put("EXPIRYDATE", prod.getEXPIRYDATE());
                 contentValues.put("CUSTOMER_RETURN_DETAIL_STATUS", prod.getCUSTOMER_RETURN_DETAIL_STATUS());
+                contentValues.put("MASTER_TERMINAL_ID", prod.getMASTER_TERMINAL_ID());
                 myDataBase.insert("customerReturnDetail", null, contentValues);
 
             myDataBase.close();
@@ -266,6 +270,7 @@ public class ControllerCustomerReturn {
                 contentValues.put("CREATEDON", prod.getCREATEDON());
                 contentValues.put("ISSYNCED", prod.getISSYNCED());
                 contentValues.put("CREDITNOTENUMBER", prod.getCREDITNOTENUMBER());
+                contentValues.put("MASTER_TERMINAL_ID", prod.getMASTER_TERMINAL_ID());
                 myDataBase.insert("customerReturnMaster", null, contentValues);
             myDataBase.close();
             Log.d("Insertion Successful", "InsertcustomerReturnMaster: ");
@@ -662,5 +667,24 @@ public class ControllerCustomerReturn {
                 " = ?  ", new String[]{billno});
 
     }
+    private String getTerminal_ID(){
+        String result= null;
+        try {
+            SQLiteDatabase  mydb  = context.openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
+            result = "";
+            String selectQuery = "SELECT MASTER_TERMINAL_ID FROM terminal_configuration";
+            Cursor cursor = mydb.rawQuery(selectQuery, null);
+            if (cursor.moveToFirst()) {
 
+                result= cursor.getString(0);
+            }
+            cursor.close();
+            mydb.close();
+            Log.d("DataRetrieved", "getTerminal_ID: "+result);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+
+    }
 }

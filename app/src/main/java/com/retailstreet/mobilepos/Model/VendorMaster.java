@@ -86,11 +86,13 @@ public class VendorMaster {
     @Expose
       private  String ISSYNCED;
 
+    String MASTER_TERMINAL_ID;
+    String REGULAR_VENDOR;
 
     public VendorMaster() {
     }
 
-    public VendorMaster(String DSTR_ID, String VENDOR_GUID, String MASTERORGID, String STORE_ID, String VENDOR_CATEGORY, String DSTR_NM, String VENDOR_STREET, String ADD_1, String CITY, String DSTR_CNTCT_NM, String MOBILE, String EMAIL, String GST, String PAN, String ZIP, String TELE, String VENDOR_STATUS, String POS_USER, String CREATEDON, String MASTERCOUNTRYID, String DSTR_INV, String VENDORSTATE, String PAYMENTTERMS, String ISSYNCED) {
+    public VendorMaster(String DSTR_ID, String VENDOR_GUID, String MASTERORGID, String STORE_ID, String VENDOR_CATEGORY, String DSTR_NM, String VENDOR_STREET, String ADD_1, String CITY, String DSTR_CNTCT_NM, String MOBILE, String EMAIL, String GST, String PAN, String ZIP, String TELE, String VENDOR_STATUS, String POS_USER, String CREATEDON, String MASTERCOUNTRYID, String DSTR_INV, String VENDORSTATE, String PAYMENTTERMS, String ISSYNCED,String REGULAR_VENDOR, String MASTER_TERMINAL_ID ) {
         this.DSTR_ID = DSTR_ID;
         this.VENDOR_GUID = VENDOR_GUID;
         this.MASTERORGID = MASTERORGID;
@@ -115,6 +117,25 @@ public class VendorMaster {
         this.VENDORSTATE = VENDORSTATE;
         this.PAYMENTTERMS = PAYMENTTERMS;
         this.ISSYNCED = ISSYNCED;
+        this.REGULAR_VENDOR = REGULAR_VENDOR;
+        this.MASTER_TERMINAL_ID = MASTER_TERMINAL_ID;
+
+    }
+
+    public String getMASTER_TERMINAL_ID() {
+        return MASTER_TERMINAL_ID;
+    }
+
+    public void setMASTER_TERMINAL_ID(String MASTER_TERMINAL_ID) {
+        this.MASTER_TERMINAL_ID = MASTER_TERMINAL_ID;
+    }
+
+    public String getREGULAR_VENDOR() {
+        return REGULAR_VENDOR;
+    }
+
+    public void setREGULAR_VENDOR(String REGULAR_VENDOR) {
+        this.REGULAR_VENDOR = REGULAR_VENDOR;
     }
 
     public String getDSTR_ID() {

@@ -24,13 +24,14 @@ public class GRNMaster {
     String VENDOR_GUID;
     String STORE_GUID;
     String ISSYNCED;
+    String MASTER_TERMINAL_ID;
 
     public GRNMaster() {
 
 
     }
 
-    public GRNMaster(String GRN_GUID, String GRNNO, String GRNDate, String GRANDAMOUNT, String INVOICENO, String INVOICEDATE, String INVOICEDISCOUNT, String GRNPRINT, String GRNRECON, String GRN_STATUS, String CREATEDON, String GRNTYPE, String USER_GUID, String VENDOR_GUID, String STORE_GUID, String ISSYNCED) {
+    public GRNMaster(String GRN_GUID, String GRNNO, String GRNDate, String GRANDAMOUNT, String INVOICENO, String INVOICEDATE, String INVOICEDISCOUNT, String GRNPRINT, String GRNRECON, String GRN_STATUS, String CREATEDON, String GRNTYPE, String USER_GUID, String VENDOR_GUID, String STORE_GUID, String ISSYNCED, String MASTER_TERMINAL_ID) {
         this.GRN_GUID = GRN_GUID;
         this.GRNNO = GRNNO;
         this.GRNDate = GRNDate;
@@ -47,6 +48,15 @@ public class GRNMaster {
         this.VENDOR_GUID = VENDOR_GUID;
         this.STORE_GUID = STORE_GUID;
         this.ISSYNCED = ISSYNCED;
+        this.MASTER_TERMINAL_ID = MASTER_TERMINAL_ID;
+    }
+
+    public String getMASTER_TERMINAL_ID() {
+        return MASTER_TERMINAL_ID;
+    }
+
+    public void setMASTER_TERMINAL_ID(String MASTER_TERMINAL_ID) {
+        this.MASTER_TERMINAL_ID = MASTER_TERMINAL_ID;
     }
 
     public String getGRN_GUID() {

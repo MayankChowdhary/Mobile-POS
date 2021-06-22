@@ -25,6 +25,7 @@ public class GRNDetails {
     String STORE_GUID;
     String UOM_GUID;
     String GRNDETAILGUID;
+    String MASTER_TERMINAL_ID;
 
 
 
@@ -33,7 +34,7 @@ public class GRNDetails {
 
     }
 
-    public GRNDetails(String GRNDETAILID, String GRN_QTY, String BATCHNO, String EXP_DATE, String PUR_PRICE, String TAX_AMOUNT, String GRN_VALUE, String MRP, String ISFREEGOODS, String FREE_QUANTITY, String PURCHASEDISCOUNTPERCENTAGE, String PURCHASEDISCOUNTBYAMOUNT, String GRN_GUID, String ITEM_GUID, String STORE_GUID, String UOM_GUID, String GRNDETAILGUID) {
+    public GRNDetails(String GRNDETAILID, String GRN_QTY, String BATCHNO, String EXP_DATE, String PUR_PRICE, String TAX_AMOUNT, String GRN_VALUE, String MRP, String ISFREEGOODS, String FREE_QUANTITY, String PURCHASEDISCOUNTPERCENTAGE, String PURCHASEDISCOUNTBYAMOUNT, String GRN_GUID, String ITEM_GUID, String STORE_GUID, String UOM_GUID, String GRNDETAILGUID, String MASTER_TERMINAL_ID) {
         this.GRNDETAILID = GRNDETAILID;
         this.GRN_QTY = GRN_QTY;
         this.BATCHNO = BATCHNO;
@@ -51,6 +52,15 @@ public class GRNDetails {
         this.STORE_GUID = STORE_GUID;
         this.UOM_GUID = UOM_GUID;
         this.GRNDETAILGUID = GRNDETAILGUID;
+        this.MASTER_TERMINAL_ID = MASTER_TERMINAL_ID;
+    }
+
+    public String getMASTER_TERMINAL_ID() {
+        return MASTER_TERMINAL_ID;
+    }
+
+    public void setMASTER_TERMINAL_ID(String MASTER_TERMINAL_ID) {
+        this.MASTER_TERMINAL_ID = MASTER_TERMINAL_ID;
     }
 
     public String getGRNDETAILID() {

@@ -8,7 +8,6 @@
     android:background="@color/design_default_color_on_primary"
     android:paddingStart="@dimen/_8sdp"
     android:paddingEnd="@dimen/_8sdp"
-    android:forceDarkAllowed="false"
     tools:context=".View.LoginActivity">
 
     <FrameLayout

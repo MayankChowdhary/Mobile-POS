@@ -21,12 +21,14 @@ public class VendorMasterReturn {
     String CREATEDON;
     String UPDATEDON;
     String ISSYNCED;
+    String MASTER_TERMINAL_ID;
 
 
     public VendorMasterReturn() {
+
     }
 
-    public VendorMasterReturn(String VENDOR_RETURN_MASTERID, String VENDOR_RETURNGUID, String VENDOR_GUID, String STORE_GUID, String INVOICENO, String INVOICEDATE, String RETURN_DATE, String REASON, String GRNNO, String GRNDATE, String CREATEDBY, String UPDATEDBY, String CREATEDON, String UPDATEDON, String ISSYNCED) {
+    public VendorMasterReturn(String VENDOR_RETURN_MASTERID, String VENDOR_RETURNGUID, String VENDOR_GUID, String STORE_GUID, String INVOICENO, String INVOICEDATE, String RETURN_DATE, String REASON, String GRNNO, String GRNDATE, String CREATEDBY, String UPDATEDBY, String CREATEDON, String UPDATEDON, String ISSYNCED, String MASTER_TERMINAL_ID) {
         this.VENDOR_RETURN_MASTERID = VENDOR_RETURN_MASTERID;
         this.VENDOR_RETURNGUID = VENDOR_RETURNGUID;
         this.VENDOR_GUID = VENDOR_GUID;
@@ -42,6 +44,15 @@ public class VendorMasterReturn {
         this.CREATEDON = CREATEDON;
         this.UPDATEDON = UPDATEDON;
         this.ISSYNCED = ISSYNCED;
+        this.MASTER_TERMINAL_ID = MASTER_TERMINAL_ID;
+    }
+
+    public String getMASTER_TERMINAL_ID() {
+        return MASTER_TERMINAL_ID;
+    }
+
+    public void setMASTER_TERMINAL_ID(String MASTER_TERMINAL_ID) {
+        this.MASTER_TERMINAL_ID = MASTER_TERMINAL_ID;
     }
 
     public String getVENDOR_RETURN_MASTERID() {

@@ -74,16 +74,19 @@ public class ControllerStockMaster extends SQLiteOpenHelper {
         String VENDOR_NAME ;
         String ISSYNCED ;
         String GRNDETAILGUID;
+        String MASTER_TERMINAL_ID;
 
 
     public ControllerStockMaster(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         this.context =context;
+        MASTER_TERMINAL_ID = getTerminal_ID();
 
     }
 
     public void  InjectIntoStockMaster(String vendor_name, String vendor_guid, String userGuid, String itemCode, String prodName, String ExpDate, String cess1, String cess2, String gst, String sgst, String igst, String cgst, String extProdId, String genricName, String spec_price, String wholePrice, String minQty, String maxQty, String internetPrice, String s_price, String mrp, String p_price, String barcode, String batch_no, String uom, String itemGuid, String qty, String uomGuid){
         this.context =ApplicationContextProvider.getContext();
+        MASTER_TERMINAL_ID = getTerminal_ID();
         STOCK_ID= IDGenerator.getTimeStamp();
         STORE_GUID = getFromRetailStore("STORE_GUID");
         ITEM_GUID = itemGuid;
@@ -125,13 +128,14 @@ public class ControllerStockMaster extends SQLiteOpenHelper {
         GRNDETAILGUID = " ";
         
 
-        StockMaster stockMaster = new StockMaster(STOCK_ID, STORE_GUID, ITEM_GUID, QTY, SALE_UOMID, UOM, BATCH_NO, BARCODE, P_PRICE, MRP, S_PRICE, INTERNET_PRICE, MIN_QUANTITY, MAX_QUANTITY, WHOLE_SPRICE, SPEC_PRICE, GENERIC_NAME, EXTERNALPRODUCTID, GST, SGST, CGST, IGST, CESS1, CESS2, EXP_DATE, PROD_NM, ITEM_CODE, CREATED_BY, UPDATEDBY, CREATED_ON, UPDATEDON, SALESDISCOUNTBYPERCENTAGE, SALESDISCOUNTBYAMOUNT, GRN_GUID, GRNNO, VENDOR_GUID, VENDOR_NAME, ISSYNCED, GRNDETAILGUID);
+        StockMaster stockMaster = new StockMaster(STOCK_ID, STORE_GUID, ITEM_GUID, QTY, SALE_UOMID, UOM, BATCH_NO, BARCODE, P_PRICE, MRP, S_PRICE, INTERNET_PRICE, MIN_QUANTITY, MAX_QUANTITY, WHOLE_SPRICE, SPEC_PRICE, GENERIC_NAME, EXTERNALPRODUCTID, GST, SGST, CGST, IGST, CESS1, CESS2, EXP_DATE, PROD_NM, ITEM_CODE, CREATED_BY, UPDATEDBY, CREATED_ON, UPDATEDON, SALESDISCOUNTBYPERCENTAGE, SALESDISCOUNTBYAMOUNT, GRN_GUID, GRNNO, VENDOR_GUID, VENDOR_NAME, ISSYNCED, GRNDETAILGUID, MASTER_TERMINAL_ID);
         InsertStockMaster(stockMaster);
 
     }
 
     public void  InjectIntoStockMasterFromPurcaheInvoice(String vendor_name, String vendor_guid, String userGuid, String itemCode, String prodName, String ExpDate, String cess1, String cess2, String gst, String sgst, String igst, String cgst, String extProdId, String genricName, String spec_price, String wholePrice, String minQty, String maxQty, String internetPrice, String s_price, String mrp, String p_price, String barcode, String batch_no, String uom, String itemGuid, String qty, String uomGuid,String grnDetailGuid,String grnguid,String grnno, String discByPer, String discByAmount){
         this.context =ApplicationContextProvider.getContext();
+        MASTER_TERMINAL_ID= getTerminal_ID();
         STOCK_ID= IDGenerator.getTimeStamp();
         STORE_GUID = getFromRetailStore("STORE_GUID");
         ITEM_GUID = itemGuid;
@@ -172,7 +176,7 @@ public class ControllerStockMaster extends SQLiteOpenHelper {
         ISSYNCED ="0";
         GRNDETAILGUID = grnDetailGuid;
 
-        StockMaster stockMaster = new StockMaster(STOCK_ID, STORE_GUID, ITEM_GUID, QTY, SALE_UOMID, UOM, BATCH_NO, BARCODE, P_PRICE, MRP, S_PRICE, INTERNET_PRICE, MIN_QUANTITY, MAX_QUANTITY, WHOLE_SPRICE, SPEC_PRICE, GENERIC_NAME, EXTERNALPRODUCTID, GST, SGST, CGST, IGST, CESS1, CESS2, EXP_DATE, PROD_NM, ITEM_CODE, CREATED_BY, UPDATEDBY, CREATED_ON, UPDATEDON, SALESDISCOUNTBYPERCENTAGE, SALESDISCOUNTBYAMOUNT, GRN_GUID, GRNNO, VENDOR_GUID, VENDOR_NAME, ISSYNCED, GRNDETAILGUID);
+        StockMaster stockMaster = new StockMaster(STOCK_ID, STORE_GUID, ITEM_GUID, QTY, SALE_UOMID, UOM, BATCH_NO, BARCODE, P_PRICE, MRP, S_PRICE, INTERNET_PRICE, MIN_QUANTITY, MAX_QUANTITY, WHOLE_SPRICE, SPEC_PRICE, GENERIC_NAME, EXTERNALPRODUCTID, GST, SGST, CGST, IGST, CESS1, CESS2, EXP_DATE, PROD_NM, ITEM_CODE, CREATED_BY, UPDATEDBY, CREATED_ON, UPDATEDON, SALESDISCOUNTBYPERCENTAGE, SALESDISCOUNTBYAMOUNT, GRN_GUID, GRNNO, VENDOR_GUID, VENDOR_NAME, ISSYNCED, GRNDETAILGUID,MASTER_TERMINAL_ID);
         InsertStockMaster(stockMaster);
 
     }
@@ -220,6 +224,7 @@ public class ControllerStockMaster extends SQLiteOpenHelper {
                 values.put("VENDOR_GUID",prod.getVENDOR_GUID());
                 values.put("ISSYNCED", prod.getISSYNCED());
                 values.put("GRNDETAILGUID",prod.getGRNDETAILGUID());
+                values.put("MASTER_TERMINAL_ID", prod.getMASTER_TERMINAL_ID());
                 db.insert("retail_str_stock_master", null, values);
                 db.close();
             Log.d("Insertion Successful", "InsertStockMaster: ");
@@ -278,7 +283,7 @@ public class ControllerStockMaster extends SQLiteOpenHelper {
         String INTERNETPRICE = getFromStockMaster(orderid, "INTERNET_PRICE");
         String SPECIALPRICE = getFromStockMaster(orderid, "SPEC_PRICE");
         ISSYNCED ="0";
-        StockRegister stockRegister = new StockRegister(REGISTERGUID, MASTERORG_GUID, STORE_GUID, VENDOR_GUID, LINETYPE, TRANSACTIONTYPE, TRANSACTIONNUMBER, TRANSACTIONDATE, ITEM_GUID, UOM_GUID, QTY, BATCHNO, BARCODE, SALESPRICE, WHOLESALEPRICE, INTERNETPRICE, SPECIALPRICE, ISSYNCED);
+        StockRegister stockRegister = new StockRegister(REGISTERGUID, MASTERORG_GUID, STORE_GUID, VENDOR_GUID, LINETYPE, TRANSACTIONTYPE, TRANSACTIONNUMBER, TRANSACTIONDATE, ITEM_GUID, UOM_GUID, QTY, BATCHNO, BARCODE, SALESPRICE, WHOLESALEPRICE, INTERNETPRICE, SPECIALPRICE, ISSYNCED,MASTER_TERMINAL_ID);
         InsertStockRegister(stockRegister);
         try {
             new WorkManagerSync(10);
@@ -607,5 +612,27 @@ public class ControllerStockMaster extends SQLiteOpenHelper {
         }
         return result;
     }
-    
+
+    private String getTerminal_ID(){
+        String result= null;
+        try {
+            SQLiteDatabase  mydb  = context.openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
+            result = "";
+            String selectQuery = "SELECT MASTER_TERMINAL_ID FROM terminal_configuration";
+            Cursor cursor = mydb.rawQuery(selectQuery, null);
+            if (cursor.moveToFirst()) {
+
+                result= cursor.getString(0);
+            }
+            cursor.close();
+            mydb.close();
+            Log.d("DataRetrieved", "getTerminal_ID: "+result);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+
+    }
+
+
 }

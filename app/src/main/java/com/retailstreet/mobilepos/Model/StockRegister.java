@@ -26,6 +26,8 @@ public class StockRegister {
     String INTERNETPRICE;
     String SPECIALPRICE;
     String ISSYNCED;
+    String MASTER_TERMINAL_ID;
+
 
 
     public StockRegister() {
@@ -33,7 +35,7 @@ public class StockRegister {
 
     }
 
-    public StockRegister(String REGISTERGUID, String MASTERORG_GUID, String STORE_GUID, String VENDOR_GUID, String LINETYPE, String TRANSACTIONTYPE, String TRANSACTIONNUMBER, String TRANSACTIONDATE, String ITEM_GUID, String UOM_GUID, String QUANTITY, String BATCHNO, String BARCODE, String SALESPRICE, String WHOLESALEPRICE, String INTERNETPRICE, String SPECIALPRICE, String ISSYNCED) {
+    public StockRegister(String REGISTERGUID, String MASTERORG_GUID, String STORE_GUID, String VENDOR_GUID, String LINETYPE, String TRANSACTIONTYPE, String TRANSACTIONNUMBER, String TRANSACTIONDATE, String ITEM_GUID, String UOM_GUID, String QUANTITY, String BATCHNO, String BARCODE, String SALESPRICE, String WHOLESALEPRICE, String INTERNETPRICE, String SPECIALPRICE, String ISSYNCED, String MASTER_TERMINAL_ID) {
         this.REGISTERGUID = REGISTERGUID;
         this.MASTERORG_GUID = MASTERORG_GUID;
         this.STORE_GUID = STORE_GUID;
@@ -52,6 +54,15 @@ public class StockRegister {
         this.INTERNETPRICE = INTERNETPRICE;
         this.SPECIALPRICE = SPECIALPRICE;
         this.ISSYNCED = ISSYNCED;
+        this.MASTER_TERMINAL_ID = MASTER_TERMINAL_ID;
+    }
+
+    public String getMASTER_TERMINAL_ID() {
+        return MASTER_TERMINAL_ID;
+    }
+
+    public void setMASTER_TERMINAL_ID(String MASTER_TERMINAL_ID) {
+        this.MASTER_TERMINAL_ID = MASTER_TERMINAL_ID;
     }
 
     public String getREGISTERGUID() {

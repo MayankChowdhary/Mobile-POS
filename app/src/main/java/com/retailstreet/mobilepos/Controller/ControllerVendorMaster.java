@@ -51,15 +51,15 @@ import static com.retailstreet.mobilepos.Utils.Constants.DBNAME;
         private  String VENDORSTATE;
         private  String PAYMENTTERMS;
         private  String ISSYNCED;
-
-
+        String MASTER_TERMINAL_ID;
     public  ControllerVendorMaster(){
-
+        MASTER_TERMINAL_ID = getTerminal_ID();
     }
 
-    public  ControllerVendorMaster(String name, String addr,String city, String mob, String email, String gst, String pan, String zip, String tele,String inventory, String state, String payterm){
+    public  ControllerVendorMaster(String name, String addr,String city, String mob, String email, String gst, String pan, String zip, String tele,String inventory, String state, String payterm, String regular_vendor){
         DSTR_ID = IDGenerator.getTimeStamp();
         VENDOR_GUID = IDGenerator.getUUID();
+        MASTER_TERMINAL_ID = getTerminal_ID();
         MASTERORGID = getFromRetailStore("MASTERORG_GUID");
         STORE_ID = getFromRetailStore("STORE_GUID");
         VENDOR_CATEGORY = "";
@@ -83,7 +83,7 @@ import static com.retailstreet.mobilepos.Utils.Constants.DBNAME;
         PAYMENTTERMS = payterm;
         ISSYNCED = "0";
 
-       VendorMaster vendorMaster= new VendorMaster( DSTR_ID,  VENDOR_GUID,  MASTERORGID,  STORE_ID,  VENDOR_CATEGORY,  DSTR_NM,  VENDOR_STREET,  ADD_1,  CITY,  DSTR_CNTCT_NM,  MOBILE,  EMAIL,  GST,  PAN,  ZIP,  TELE,  VENDOR_STATUS,  POS_USER,  CREATEDON,  MASTERCOUNTRYID,  DSTR_INV,  VENDORSTATE,  PAYMENTTERMS,  ISSYNCED);
+       VendorMaster vendorMaster= new VendorMaster( DSTR_ID,  VENDOR_GUID,  MASTERORGID,  STORE_ID,  VENDOR_CATEGORY,  DSTR_NM,  VENDOR_STREET,  ADD_1,  CITY,  DSTR_CNTCT_NM,  MOBILE,  EMAIL,  GST,  PAN,  ZIP,  TELE,  VENDOR_STATUS,  POS_USER,  CREATEDON,  MASTERCOUNTRYID,  DSTR_INV,  VENDORSTATE,  PAYMENTTERMS,  ISSYNCED,regular_vendor,MASTER_TERMINAL_ID);
        InsertVendorMaster(vendorMaster);
 
         try {
@@ -95,7 +95,6 @@ import static com.retailstreet.mobilepos.Utils.Constants.DBNAME;
 
 
     public void InsertVendorMaster(VendorMaster prod) {
-
         try {
             SQLiteDatabase myDataBase = context.openOrCreateDatabase(DBNAME, Context.MODE_PRIVATE, null);
                 ContentValues contentValues = new ContentValues();
@@ -123,6 +122,8 @@ import static com.retailstreet.mobilepos.Utils.Constants.DBNAME;
                 contentValues.put("VENDORSTATE", prod.getVENDORSTATE());
                 contentValues.put("PAYMENTTERMS", prod.getPAYMENTTERMS());
                 contentValues.put("ISSYNCED", prod.getISSYNCED());
+                contentValues.put("REGULAR_VENDOR", prod.getREGULAR_VENDOR());
+                contentValues.put("MASTER_TERMINAL_ID", prod.getMASTER_TERMINAL_ID());
                 myDataBase.insert("retail_str_dstr", null, contentValues);
 
             Log.d("Insertion Successful", "InsertVendorMater: ");
@@ -192,5 +193,25 @@ import static com.retailstreet.mobilepos.Utils.Constants.DBNAME;
         return formatter.format(date);
     }
 
+    private String getTerminal_ID(){
+        String result= null;
+        try {
+            SQLiteDatabase  mydb  = context.openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
+            result = "";
+            String selectQuery = "SELECT MASTER_TERMINAL_ID FROM terminal_configuration";
+            Cursor cursor = mydb.rawQuery(selectQuery, null);
+            if (cursor.moveToFirst()) {
+
+                result= cursor.getString(0);
+            }
+            cursor.close();
+            mydb.close();
+            Log.d("DataRetrieved", "getTerminal_ID: "+result);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+
+    }
 
     }

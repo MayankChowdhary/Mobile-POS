@@ -48,12 +48,13 @@ public class ProductMaster {
     String ADDITIONALPARAM1;
     String ADDITIONALPARAM2;
     String ADDITIONALPARAM3;
+    String MASTER_TERMINAL_ID;
 
     public ProductMaster() {
 
     }
 
-    public ProductMaster(String ACTIVE, String BARCODE, String CATEGORY, String CATEGORY_GUID, String CESS1, String CESS2, String CGST, String EXTERNALPRODUCTID, String GENERIC_NAME, String GST, String HSN, String IGST, String ITEM_CODE, String ITEM_GUID, String item_Type, String MASTERBRAND, String MASTERCATEGORY_id, String POS_USER, String PRINT_NAME, String PROD_ID, String PROD_NM, String PRODUCTRELEVANCE, String SGST, String STORE_ID, String STORE_NUMBER, String SUB_CATEGORYGUID, String SUBCATEGORY_DESCRIPTION, String SUBCATEGORY_ID, String UOM, String UOM_GUID, String uoMID, String ISSYNCED, String ISPRODUCTRETURNABLE, String ISLOOSEITEM, String ADDITIONALPARAM1, String ADDITIONALPARAM2, String ADDITIONALPARAM3) {
+    public ProductMaster(String ACTIVE, String BARCODE, String CATEGORY, String CATEGORY_GUID, String CESS1, String CESS2, String CGST, String EXTERNALPRODUCTID, String GENERIC_NAME, String GST, String HSN, String IGST, String ITEM_CODE, String ITEM_GUID, String item_Type, String MASTERBRAND, String MASTERCATEGORY_id, String POS_USER, String PRINT_NAME, String PROD_ID, String PROD_NM, String PRODUCTRELEVANCE, String SGST, String STORE_ID, String STORE_NUMBER, String SUB_CATEGORYGUID, String SUBCATEGORY_DESCRIPTION, String SUBCATEGORY_ID, String UOM, String UOM_GUID, String uoMID, String ISSYNCED, String ISPRODUCTRETURNABLE, String ISLOOSEITEM, String ADDITIONALPARAM1, String ADDITIONALPARAM2, String ADDITIONALPARAM3, String MASTER_TERMINAL_ID) {
         this.ACTIVE = ACTIVE;
         this.BARCODE = BARCODE;
         this.CATEGORY = CATEGORY;
@@ -91,6 +92,15 @@ public class ProductMaster {
         this.ADDITIONALPARAM1 = ADDITIONALPARAM1;
         this.ADDITIONALPARAM2 = ADDITIONALPARAM2;
         this.ADDITIONALPARAM3 = ADDITIONALPARAM3;
+        this.MASTER_TERMINAL_ID = MASTER_TERMINAL_ID;
+    }
+
+    public String getMASTER_TERMINAL_ID() {
+        return MASTER_TERMINAL_ID;
+    }
+
+    public void setMASTER_TERMINAL_ID(String MASTER_TERMINAL_ID) {
+        this.MASTER_TERMINAL_ID = MASTER_TERMINAL_ID;
     }
 
     public String getISPRODUCTRETURNABLE() {

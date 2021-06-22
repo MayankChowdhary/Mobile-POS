@@ -54,11 +54,12 @@ public class ControllerCreditPay {
     String ADDITIONALPARAM5;
     String ADDITIONALPARAM6;
 
-
+     String MASTER_TERMINAL_ID;
 
     public ControllerCreditPay( ) {
 
         context = ApplicationContextProvider.getContext();
+        MASTER_TERMINAL_ID = getTerminal_ID();
 
     }
 
@@ -102,7 +103,7 @@ public class ControllerCreditPay {
         CREDITAMOUNT = "0";
 
 
-        CustomerLedger customerLedger = new CustomerLedger( CUSTLEDGERID,  CUSTOMERGUID,  STORE_GUID,  USER_GUID,  ACTIONDATE,  GRANDTOTAL,  CREDITAMOUNT,  DEBITAMOUNT,  BALANCEAMOUNT,  BILLNO,  ISSYNCED,  MASTERPAYMODEGUID,  ADDITIONALPARAM1,  ADDITIONALPARAM2,  ADDITIONALPARAM3,  ADDITIONALPARAM4,  ADDITIONALPARAM5,  ADDITIONALPARAM6);
+        CustomerLedger customerLedger = new CustomerLedger( CUSTLEDGERID,  CUSTOMERGUID,  STORE_GUID,  USER_GUID,  ACTIONDATE,  GRANDTOTAL,  CREDITAMOUNT,  DEBITAMOUNT,  BALANCEAMOUNT,  BILLNO,  ISSYNCED,  MASTERPAYMODEGUID,  ADDITIONALPARAM1,  ADDITIONALPARAM2,  ADDITIONALPARAM3,  ADDITIONALPARAM4,  ADDITIONALPARAM5,  ADDITIONALPARAM6,MASTER_TERMINAL_ID);
         InsertCustomerLedger(customerLedger);
         try {
             new WorkManagerSync(8);
@@ -136,7 +137,7 @@ public class ControllerCreditPay {
         RECEIVEAMOUNT = "0";
         CREDITAMOUNT = "0";
 
-        CustomerLedger customerLedger = new CustomerLedger( CUSTLEDGERID,  CUSTOMERGUID,  STORE_GUID,  USER_GUID,  ACTIONDATE,  GRANDTOTAL,  CREDITAMOUNT,  DEBITAMOUNT,  BALANCEAMOUNT,  BILLNO,  ISSYNCED,  MASTERPAYMODEGUID,  ADDITIONALPARAM1,  ADDITIONALPARAM2,  ADDITIONALPARAM3,  ADDITIONALPARAM4,  ADDITIONALPARAM5,  ADDITIONALPARAM6);
+        CustomerLedger customerLedger = new CustomerLedger( CUSTLEDGERID,  CUSTOMERGUID,  STORE_GUID,  USER_GUID,  ACTIONDATE,  GRANDTOTAL,  CREDITAMOUNT,  DEBITAMOUNT,  BALANCEAMOUNT,  BILLNO,  ISSYNCED,  MASTERPAYMODEGUID,  ADDITIONALPARAM1,  ADDITIONALPARAM2,  ADDITIONALPARAM3,  ADDITIONALPARAM4,  ADDITIONALPARAM5,  ADDITIONALPARAM6,MASTER_TERMINAL_ID);
         InsertCustomerLedger(customerLedger);
         try {
             new WorkManagerSync(8);
@@ -169,7 +170,7 @@ public class ControllerCreditPay {
         RECEIVEAMOUNT = "0";
         CREDITAMOUNT = "0";
 
-        CustomerLedger customerLedger = new CustomerLedger( CUSTLEDGERID,  CUSTOMERGUID,  STORE_GUID,  USER_GUID,  ACTIONDATE,  GRANDTOTAL,  CREDITAMOUNT,  DEBITAMOUNT,  BALANCEAMOUNT,  BILLNO,  ISSYNCED,  MASTERPAYMODEGUID,  ADDITIONALPARAM1,  ADDITIONALPARAM2,  ADDITIONALPARAM3,  ADDITIONALPARAM4,  ADDITIONALPARAM5,  ADDITIONALPARAM6);
+        CustomerLedger customerLedger = new CustomerLedger( CUSTLEDGERID,  CUSTOMERGUID,  STORE_GUID,  USER_GUID,  ACTIONDATE,  GRANDTOTAL,  CREDITAMOUNT,  DEBITAMOUNT,  BALANCEAMOUNT,  BILLNO,  ISSYNCED,  MASTERPAYMODEGUID,  ADDITIONALPARAM1,  ADDITIONALPARAM2,  ADDITIONALPARAM3,  ADDITIONALPARAM4,  ADDITIONALPARAM5,  ADDITIONALPARAM6,MASTER_TERMINAL_ID);
         InsertCustomerLedger(customerLedger);
         try {
             new WorkManagerSync(8);
@@ -204,7 +205,7 @@ public class ControllerCreditPay {
         DUEAMOUNT = String.valueOf(Math.abs(Double.parseDouble(GRANDTOTAL)) - Double.parseDouble(RECEIVEAMOUNT));
         GRANDTOTAL = DUEAMOUNT;
         UpdateCreditCust(GRANDTOTAL,custId,RECEIVEAMOUNT,DUEAMOUNT);
-        CustomerLedger customerLedger = new CustomerLedger( CUSTLEDGERID,  CUSTOMERGUID,  STORE_GUID,  USER_GUID,  ACTIONDATE,  GRANDTOTAL,  CREDITAMOUNT,  DEBITAMOUNT,  BALANCEAMOUNT,  BILLNO,  ISSYNCED,  MASTERPAYMODEGUID,  ADDITIONALPARAM1,  ADDITIONALPARAM2,  ADDITIONALPARAM3,  ADDITIONALPARAM4,  ADDITIONALPARAM5,  ADDITIONALPARAM6);
+        CustomerLedger customerLedger = new CustomerLedger( CUSTLEDGERID,  CUSTOMERGUID,  STORE_GUID,  USER_GUID,  ACTIONDATE,  GRANDTOTAL,  CREDITAMOUNT,  DEBITAMOUNT,  BALANCEAMOUNT,  BILLNO,  ISSYNCED,  MASTERPAYMODEGUID,  ADDITIONALPARAM1,  ADDITIONALPARAM2,  ADDITIONALPARAM3,  ADDITIONALPARAM4,  ADDITIONALPARAM5,  ADDITIONALPARAM6,MASTER_TERMINAL_ID);
         InsertCustomerLedger(customerLedger);
 
         try {
@@ -272,7 +273,7 @@ public class ControllerCreditPay {
             GRANDTOTAL = DUEAMOUNT;
 
             UpdateCreditCust(GRANDTOTAL,custGuid,RECEIVEAMOUNT,DUEAMOUNT);
-            CustomerLedger customerLedger = new CustomerLedger( CUSTLEDGERID,  CUSTOMERGUID,  STORE_GUID,  USER_GUID,  ACTIONDATE,  GRANDTOTAL,  CREDITAMOUNT,  DEBITAMOUNT,  BALANCEAMOUNT,  BILLNO,  ISSYNCED,  MASTERPAYMODEGUID,  ADDITIONALPARAM1,  ADDITIONALPARAM2,  ADDITIONALPARAM3,  ADDITIONALPARAM4,  ADDITIONALPARAM5,  ADDITIONALPARAM6);
+            CustomerLedger customerLedger = new CustomerLedger( CUSTLEDGERID,  CUSTOMERGUID,  STORE_GUID,  USER_GUID,  ACTIONDATE,  GRANDTOTAL,  CREDITAMOUNT,  DEBITAMOUNT,  BALANCEAMOUNT,  BILLNO,  ISSYNCED,  MASTERPAYMODEGUID,  ADDITIONALPARAM1,  ADDITIONALPARAM2,  ADDITIONALPARAM3,  ADDITIONALPARAM4,  ADDITIONALPARAM5,  ADDITIONALPARAM6,MASTER_TERMINAL_ID);
             InsertCustomerLedger(customerLedger);
         }
 
@@ -305,6 +306,7 @@ public class ControllerCreditPay {
                 contentValues.put("ADDITIONALPARAM4", prod.getADDITIONALPARAM4());
                 contentValues.put("ADDITIONALPARAM5", prod.getADDITIONALPARAM5());
                 contentValues.put("ADDITIONALPARAM6", prod.getADDITIONALPARAM6());
+                contentValues.put("MASTER_TERMINAL_ID", prod.getMASTER_TERMINAL_ID());
                 myDataBase.insert("customerLedger", null, contentValues);
                 
             Log.d("Insertion Successful", "CustomerLedger: ");
@@ -439,6 +441,27 @@ public class ControllerCreditPay {
         return formatter.format(date);
     }
 
+
+    private String getTerminal_ID(){
+        String result= null;
+        try {
+            SQLiteDatabase  mydb  = context.openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
+            result = "";
+            String selectQuery = "SELECT MASTER_TERMINAL_ID FROM terminal_configuration";
+            Cursor cursor = mydb.rawQuery(selectQuery, null);
+            if (cursor.moveToFirst()) {
+
+                result= cursor.getString(0);
+            }
+            cursor.close();
+            mydb.close();
+            Log.d("DataRetrieved", "getTerminal_ID: "+result);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+
+    }
 
 }
 

@@ -123,7 +123,6 @@ public class TableDataInjector {
    // private static LoadingDialog loadingDialog;
 
     private static ProgressBarDialog progressBarDialog;
-
     public static int status =0;
     public static final int tableConstant=38;
 
@@ -138,7 +137,6 @@ public class TableDataInjector {
         progressBarDialog=new ProgressBarDialog(activity);
         progressBarDialog.show();
         injectAll();
-
     }
 
 
@@ -1878,7 +1876,7 @@ public class TableDataInjector {
                 contentValues.put("CREATEDON", prod.getCREATEDON());
                 contentValues.put("UPDATEDON", prod.getUPDATEDON());
                 contentValues.put("ISSYNCED", prod.getISSYNCED());
-
+                contentValues.put("MASTER_TERMINAL_ID", prod.getMASTER_TERMINAL_ID());
                 myDataBase.insert("retail_str_vendor_master_return", null, contentValues);
             }
 
@@ -1944,6 +1942,7 @@ public class TableDataInjector {
                 contentValues.put("LAST_MODIFIED", prod.getLAST_MODIFIED());
                 contentValues.put("REASON_FOR_REJECTION", prod.getREASON_FOR_REJECTION());
                 contentValues.put("CREATEDBY", prod.getCREATEDBY());
+                contentValues.put("MASTER_TERMINAL_ID", prod.getMASTER_TERMINAL_ID());
                 myDataBase.insert("retail_store_vend_reject", null, contentValues);
 
             }
@@ -1987,7 +1986,7 @@ public class TableDataInjector {
                 contentValues.put("TYPEOFINVOICE", prod.getTYPEOFINVOICE());
                 contentValues.put("ISYNCED", prod.getISYNCED());
                 contentValues.put("VENDORPAY_STATUS", prod.getVENDORPAY_STATUS());
-
+                contentValues.put("MASTER_TERMINAL_ID", prod.getMASTER_TERMINAL_ID());
                 myDataBase.insert("VendorPayMaster", null, contentValues);
 
             }
@@ -2067,6 +2066,7 @@ public class TableDataInjector {
                 contentValues.put("VENDOR_GUID", prod.getVENDOR_GUID());
                 contentValues.put("STORE_GUID", prod.getSTORE_GUID());
                 contentValues.put("ISSYNCED", prod.getISSYNCED());
+                contentValues.put("MASTER_TERMINAL_ID", prod.getMASTER_TERMINAL_ID());
                 myDataBase.insert("retail_str_grn_master", null, contentValues);
 
             }
@@ -2111,6 +2111,7 @@ public class TableDataInjector {
                 contentValues.put("STORE_GUID", prod.getSTORE_GUID());
                 contentValues.put("UOM_GUID", prod.getUOM_GUID());
                 contentValues.put("GRNDETAILGUID", prod.getGRNDETAILGUID());
+                contentValues.put("MASTER_TERMINAL_ID", prod.getMASTER_TERMINAL_ID());
                 myDataBase.insert("retail_str_grn_detail", null, contentValues);
 
             }
@@ -2155,6 +2156,7 @@ public class TableDataInjector {
                 contentValues.put("INTERNETPRICE", prod.getINTERNETPRICE());
                 contentValues.put("SPECIALPRICE", prod.getSPECIALPRICE());
                 contentValues.put("ISSYNCED", prod.getISSYNCED());
+                contentValues.put("MASTER_TERMINAL_ID", prod.getMASTER_TERMINAL_ID());
                 myDataBase.insert("stock_register", null, contentValues);
 
             }
@@ -2243,7 +2245,7 @@ public class TableDataInjector {
                 contentValues.put("ADDITIONALPARAM4", prod.getADDITIONALPARAM4());
                 contentValues.put("ADDITIONALPARAM5", prod.getADDITIONALPARAM5());
                 contentValues.put("ADDITIONALPARAM6", prod.getADDITIONALPARAM6());
-
+                contentValues.put("MASTER_TERMINAL_ID", prod.getMASTER_TERMINAL_ID());
                 myDataBase.insert("customerLedger", null, contentValues);
 
             }
@@ -2315,6 +2317,7 @@ public class TableDataInjector {
                 contentValues.put("STORE_ID", prod.getSTORE_ID());
                 contentValues.put("CREATEDBY", prod.getCREATEDBY());
                 contentValues.put("LAST_MODIFIED", prod.getLAST_MODIFIED());
+                contentValues.put("MASTER_TERMINAL_ID", prod.getMASTER_TERMINAL_ID());
                 myDataBase.insert("retail_store_cust_reject", null, contentValues);
 
             }
@@ -2348,6 +2351,7 @@ public class TableDataInjector {
                 contentValues.put("RETURNQUANTITY", prod.getRETURNQUANTITY());
                 contentValues.put("EXPIRYDATE", prod.getEXPIRYDATE());
                 contentValues.put("CUSTOMER_RETURN_DETAIL_STATUS", prod.getCUSTOMER_RETURN_DETAIL_STATUS());
+                contentValues.put("MASTER_TERMINAL_ID", prod.getMASTER_TERMINAL_ID());
                 myDataBase.insert("customerReturnDetail", null, contentValues);
             }
 
@@ -2392,7 +2396,7 @@ public class TableDataInjector {
                 contentValues.put("CREATEDON", prod.getCREATEDON());
                 contentValues.put("ISSYNCED", prod.getISSYNCED());
                 contentValues.put("CREDITNOTENUMBER", prod.getCREDITNOTENUMBER());
-
+                contentValues.put("MASTER_TERMINAL_ID", prod.getMASTER_TERMINAL_ID());
                 myDataBase.insert("customerReturnMaster", null, contentValues);
             }
 
@@ -2496,7 +2500,7 @@ public class TableDataInjector {
                 contentValues.put("MULTI_CURRENCY", prod.getMULTI_CURRENCY());
                 contentValues.put("QUICK_PAY", prod.getQUICK_PAY());
                 contentValues.put("MULTI_PAYMENT_MODE", prod.getMULTI_PAYMENT_MODE());
-
+                contentValues.put("MASTER_TERMINAL_ID", prod.getMASTER_TERMINAL_ID());
                 myDataBase.insert("store_configuration", null, contentValues);
 
             }
@@ -2607,7 +2611,7 @@ public class TableDataInjector {
                 contentValues.put("ADDRESSSTATUS", prod.getADDRESSSTATUS());
                 contentValues.put("CREATEDBY", prod.getCREATEDBY());
                 contentValues.put("CREATEDDATETIME", prod.getCREATEDDATETIME());
-
+                contentValues.put("MASTER_TERMINAL_ID", prod.getMASTER_TERMINAL_ID());
                 myDataBase.insert("retail_cust_address", null, contentValues);
             }
 
@@ -2670,6 +2674,7 @@ public class TableDataInjector {
                 contentValues.put("UoM", prod.getUoM());
                 contentValues.put("UOM_GUID", prod.getUOM_GUID());
                 contentValues.put("UoMID", prod.getUoMID());
+                contentValues.put("MASTER_TERMINAL_ID", prod.getMASTER_TERMINAL_ID());
                 myDataBase.insert("master_uom", null, contentValues);
 
             }
@@ -2721,6 +2726,8 @@ public class TableDataInjector {
                 contentValues.put("VENDORSTATE", prod.getVENDORSTATE());
                 contentValues.put("PAYMENTTERMS", prod.getPAYMENTTERMS());
                 contentValues.put("ISSYNCED", prod.getISSYNCED());
+                contentValues.put("REGULAR_VENDOR", prod.getREGULAR_VENDOR());
+                contentValues.put("MASTER_TERMINAL_ID", prod.getMASTER_TERMINAL_ID());
                 myDataBase.insert("retail_str_dstr", null, contentValues);
 
             }
@@ -2756,6 +2763,7 @@ public class TableDataInjector {
                 contentValues.put("IGST", prod.getIGST());
                 contentValues.put("CESS", prod.getCESS());
                 contentValues.put("HSN_STATUS", prod.getHSN_STATUS());
+                contentValues.put("MASTER_TERMINAL_ID", prod.getMASTER_TERMINAL_ID());
                 myDataBase.insert("hsn_master", null, contentValues);
 
             }
@@ -2788,6 +2796,7 @@ public class TableDataInjector {
                 contentValues.put("SUB_CATEGORYGUID", prod.getSUB_CATEGORYGUID());
                 contentValues.put("SUBCATEGORY_DESCRIPTION", prod.getSUBCATEGORY_DESCRIPTION());
                 contentValues.put("CATEGORY_GUID", prod.getCATEGORY_GUID());
+                contentValues.put("MASTER_TERMINAL_ID", prod.getMASTER_TERMINAL_ID());
                 myDataBase.insert("master_subcategory", null, contentValues);
 
             }
@@ -2818,6 +2827,7 @@ public class TableDataInjector {
                 contentValues.put("CATEGORYID", prod.getCATEGORYID());
                 contentValues.put("CATEGORY_GUID", prod.getCATEGORY_GUID());
                 contentValues.put("CATEGORY", prod.getCATEGORY());
+                contentValues.put("MASTER_TERMINAL_ID", prod.getMASTER_TERMINAL_ID());
                 myDataBase.insert("master_category", null, contentValues);
 
                 // myDataBase.close(); // Closing database connection
@@ -2861,6 +2871,7 @@ public class TableDataInjector {
                 contentValues.put("CASH_CLOSED", prod.getCASH_CLOSED());
                 contentValues.put("ISACTIVE", prod.getISACTIVE());
                 contentValues.put("ISSYNCED", prod.getISSYNCED());
+                contentValues.put("MASTER_TERMINAL_ID", prod.getMASTER_TERMINAL_ID());
                 myDataBase.insert("shift_trans", null, contentValues);
 
                 // myDataBase.close(); // Closing database connection
@@ -3012,19 +3023,22 @@ public class TableDataInjector {
         if (list == null) {
             return;
         }
+
         try {
             SQLiteDatabase myDataBase = context.openOrCreateDatabase(dbname, Context.MODE_PRIVATE, null);
             myDataBase.delete("terminal_configuration", null, null);
+
             for (TerminalConfiguration prod : list) {
                 ContentValues contentValues = new ContentValues();
                 contentValues.put("STORE_GUID", prod.getSTOREGUID());
                 contentValues.put("TERMINALCONFIG_GUID", prod.getTERMINALCONFIGGUID());
                 contentValues.put("TERMINAL_GUID", prod.getTERMINALGUID());
                 contentValues.put("TERMINAL_NAME", prod.getTERMINALNAME());
+                contentValues.put("MASTER_TERMINAL_ID", prod.getMASTER_TERMINAL_ID());
                 myDataBase.insert("terminal_configuration", null, contentValues);
-
                 // myDataBase.close(); // Closing database connection
             }
+
             myDataBase.close();
             status+=1;
             if(status==tableConstant){
@@ -3301,7 +3315,7 @@ public class TableDataInjector {
                 values.put("VENDOR_GUID",prod.getVENDOR_GUID());
                 values.put("ISSYNCED", prod.getISSYNCED());
                 values.put("GRNDETAILGUID",prod.getGRNDETAILGUID());
-
+                values.put("MASTER_TERMINAL_ID", prod.getMASTER_TERMINAL_ID());
 
                 myDataBase.insert("retail_str_stock_master", null, values);
 
@@ -3370,7 +3384,7 @@ public class TableDataInjector {
                 contentValues.put("ADDITIONALPARAM1",prod.getADDITIONALPARAM1());
                 contentValues.put("ADDITIONALPARAM2",prod.getADDITIONALPARAM2());
                 contentValues.put("ADDITIONALPARAM3",prod.getADDITIONALPARAM3());
-
+                contentValues.put("MASTER_TERMINAL_ID", prod.getMASTER_TERMINAL_ID());
                 myDataBase.insert("retail_store_prod_com", null, contentValues);
 
 
@@ -3474,7 +3488,7 @@ public class TableDataInjector {
                 contentValues.put("CREATEDBY", prod.getCREATEDBY());
                 contentValues.put("ISSYNCED", prod.getISSYNCED());
                 contentValues.put("CREDITLIMIT", prod.getCREDITLIMIT());
-
+                contentValues.put("MASTER_TERMINAL_ID", prod.getMASTER_TERMINAL_ID());
 
                 myDataBase.insert("retail_cust", null, contentValues);
 

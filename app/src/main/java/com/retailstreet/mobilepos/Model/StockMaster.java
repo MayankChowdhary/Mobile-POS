@@ -130,6 +130,7 @@ public class StockMaster {
     @SerializedName("ISSYNCED")
     @Expose
     private String ISSYNCED;
+    String MASTER_TERMINAL_ID;
 
     public String getGRNDETAILGUID() {
         return GRNDETAILGUID;
@@ -152,7 +153,7 @@ public class StockMaster {
     public StockMaster() {
     }
 
-    public StockMaster(String STOCK_ID, String STORE_GUID, String ITEM_GUID, String QTY, String SALE_UOMID, String UOM, String BATCH_NO, String BARCODE, String p_PRICE, String MRP, String s_PRICE, String INTERNET_PRICE, String MIN_QUANTITY, String MAX_QUANTITY, String WHOLE_SPRICE, String SPEC_PRICE, String GENERIC_NAME, String EXTERNALPRODUCTID, String GST, String SGST, String CGST, String IGST, String CESS1, String CESS2, String EXP_DATE, String PROD_NM, String ITEM_CODE, String CREATED_BY, String UPDATEDBY, String CREATED_ON, String UPDATEDON, String SALESDISCOUNTBYPERCENTAGE, String SALESDISCOUNTBYAMOUNT, String GRN_GUID, String GRNNO, String VENDOR_GUID, String VENDOR_NAME, String issynceed, String grndetail_id) {
+    public StockMaster(String STOCK_ID, String STORE_GUID, String ITEM_GUID, String QTY, String SALE_UOMID, String UOM, String BATCH_NO, String BARCODE, String p_PRICE, String MRP, String s_PRICE, String INTERNET_PRICE, String MIN_QUANTITY, String MAX_QUANTITY, String WHOLE_SPRICE, String SPEC_PRICE, String GENERIC_NAME, String EXTERNALPRODUCTID, String GST, String SGST, String CGST, String IGST, String CESS1, String CESS2, String EXP_DATE, String PROD_NM, String ITEM_CODE, String CREATED_BY, String UPDATEDBY, String CREATED_ON, String UPDATEDON, String SALESDISCOUNTBYPERCENTAGE, String SALESDISCOUNTBYAMOUNT, String GRN_GUID, String GRNNO, String VENDOR_GUID, String VENDOR_NAME, String GRNDETAILGUID, String ISSYNCED, String MASTER_TERMINAL_ID) {
         this.STOCK_ID = STOCK_ID;
         this.STORE_GUID = STORE_GUID;
         this.ITEM_GUID = ITEM_GUID;
@@ -190,8 +191,18 @@ public class StockMaster {
         this.GRNNO = GRNNO;
         this.VENDOR_GUID = VENDOR_GUID;
         this.VENDOR_NAME = VENDOR_NAME;
-        this.ISSYNCED=issynceed;
-        this.GRNDETAILGUID=grndetail_id;
+        this.GRNDETAILGUID = GRNDETAILGUID;
+        this.ISSYNCED = ISSYNCED;
+        this.MASTER_TERMINAL_ID = MASTER_TERMINAL_ID;
+    }
+
+
+    public String getMASTER_TERMINAL_ID() {
+        return MASTER_TERMINAL_ID;
+    }
+
+    public void setMASTER_TERMINAL_ID(String MASTER_TERMINAL_ID) {
+        this.MASTER_TERMINAL_ID = MASTER_TERMINAL_ID;
     }
 
     public String getSTOCK_ID() {

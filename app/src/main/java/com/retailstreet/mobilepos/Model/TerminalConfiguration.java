@@ -25,6 +25,8 @@ public class TerminalConfiguration {
     @Expose
     private String tERMINALCONFIGGUID;
 
+    private String MASTER_TERMINAL_ID;
+
     /**
      * No args constructor for use in serialization
      *
@@ -32,19 +34,56 @@ public class TerminalConfiguration {
     public TerminalConfiguration() {
     }
 
-    /**
-     *
-     * @param sTOREGUID
-     * @param tERMINALGUID
-     * @param tERMINALNAME
-     * @param tERMINALCONFIGGUID
-     */
-    public TerminalConfiguration(String tERMINALGUID, String tERMINALNAME, String sTOREGUID, String tERMINALCONFIGGUID) {
-        super();
+
+
+    public TerminalConfiguration(String tERMINALGUID, String tERMINALNAME, String sTOREGUID, String tERMINALCONFIGGUID, String MASTER_TERMINAL_ID) {
         this.tERMINALGUID = tERMINALGUID;
         this.tERMINALNAME = tERMINALNAME;
         this.sTOREGUID = sTOREGUID;
         this.tERMINALCONFIGGUID = tERMINALCONFIGGUID;
+        this.MASTER_TERMINAL_ID = MASTER_TERMINAL_ID;
+    }
+
+
+
+    public String gettERMINALGUID() {
+        return tERMINALGUID;
+    }
+
+    public void settERMINALGUID(String tERMINALGUID) {
+        this.tERMINALGUID = tERMINALGUID;
+    }
+
+    public String gettERMINALNAME() {
+        return tERMINALNAME;
+    }
+
+    public void settERMINALNAME(String tERMINALNAME) {
+        this.tERMINALNAME = tERMINALNAME;
+    }
+
+    public String getsTOREGUID() {
+        return sTOREGUID;
+    }
+
+    public void setsTOREGUID(String sTOREGUID) {
+        this.sTOREGUID = sTOREGUID;
+    }
+
+    public String gettERMINALCONFIGGUID() {
+        return tERMINALCONFIGGUID;
+    }
+
+    public void settERMINALCONFIGGUID(String tERMINALCONFIGGUID) {
+        this.tERMINALCONFIGGUID = tERMINALCONFIGGUID;
+    }
+
+    public String getMASTER_TERMINAL_ID() {
+        return MASTER_TERMINAL_ID;
+    }
+
+    public void setMASTER_TERMINAL_ID(String MASTER_TERMINAL_ID) {
+        this.MASTER_TERMINAL_ID = MASTER_TERMINAL_ID;
     }
 
     public String getTERMINALGUID() {

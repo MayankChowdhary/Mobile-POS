@@ -39,11 +39,12 @@ public class HSNMaster {
     @Expose
    String HSN_STATUS;
 
+    String MASTER_TERMINAL_ID;
 
     public HSNMaster() {
     }
 
-    public HSNMaster(String HSN_ID, String HSN, String GST, String SGST, String CGST, String IGST, String CESS, String HSN_STATUS) {
+    public HSNMaster(String HSN_ID, String HSN, String GST, String SGST, String CGST, String IGST, String CESS, String HSN_STATUS, String MASTER_TERMINAL_ID) {
         this.HSN_ID = HSN_ID;
         this.HSN = HSN;
         this.GST = GST;
@@ -52,6 +53,15 @@ public class HSNMaster {
         this.IGST = IGST;
         this.CESS = CESS;
         this.HSN_STATUS = HSN_STATUS;
+        this.MASTER_TERMINAL_ID = MASTER_TERMINAL_ID;
+    }
+
+    public String getMASTER_TERMINAL_ID() {
+        return MASTER_TERMINAL_ID;
+    }
+
+    public void setMASTER_TERMINAL_ID(String MASTER_TERMINAL_ID) {
+        this.MASTER_TERMINAL_ID = MASTER_TERMINAL_ID;
     }
 
     public String getHSN_ID() {

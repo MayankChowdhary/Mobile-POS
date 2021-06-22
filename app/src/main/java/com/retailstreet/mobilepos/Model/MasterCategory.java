@@ -25,16 +25,26 @@ public class MasterCategory {
     @Expose
     private String CATEGORY;
 
+    String MASTER_TERMINAL_ID;
+
     public MasterCategory(){
 
     }
 
-    public MasterCategory(String CATEGORYID, String CATEGORY_GUID, String CATEGORY) {
+    public MasterCategory(String CATEGORYID, String CATEGORY_GUID, String CATEGORY, String MASTER_TERMINAL_ID) {
         this.CATEGORYID = CATEGORYID;
         this.CATEGORY_GUID = CATEGORY_GUID;
         this.CATEGORY = CATEGORY;
+        this.MASTER_TERMINAL_ID = MASTER_TERMINAL_ID;
     }
 
+    public String getMASTER_TERMINAL_ID() {
+        return MASTER_TERMINAL_ID;
+    }
+
+    public void setMASTER_TERMINAL_ID(String MASTER_TERMINAL_ID) {
+        this.MASTER_TERMINAL_ID = MASTER_TERMINAL_ID;
+    }
 
     public String getCATEGORYID() {
         return CATEGORYID;

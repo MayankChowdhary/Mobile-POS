@@ -69,4 +69,9 @@
         <item>YES</item>
         <item>NO</item>
     </string-array>
+
+    <string-array name="regVendor">
+        <item>NO</item>
+        <item>YES</item>
+    </string-array>
 </resources>

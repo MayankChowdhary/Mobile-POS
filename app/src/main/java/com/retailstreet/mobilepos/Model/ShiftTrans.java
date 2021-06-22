@@ -58,17 +58,17 @@ public class ShiftTrans {
     @Expose
     String ISSYNCED;
 
+    String MASTER_TERMINAL_ID;
 
     public ShiftTrans(){
 
     }
 
 
-
-    public ShiftTrans(String SHIFT_TRANS_ID, String SHIFT_TRANSACTIONGUID, String ORG_GUID, String STORE_GUID, String SHIFT_GUID, String SHIFT_DATE, String START_TIME, String END_TIME, String IS_SHIFT_STARTED, String IS_SHIFT_ENDED, String USER_GUID, String CASH_OPENED, String CASH_CLOSED,String ISACTIVE,String ISSYNCED){
+    public ShiftTrans(String SHIFT_TRANS_ID, String SHIFT_TRANSACTIONGUID, String ORG_GUID, String STORE_GUID, String SHIFT_GUID, String SHIFT_DATE, String START_TIME, String END_TIME, String IS_SHIFT_STARTED, String IS_SHIFT_ENDED, String USER_GUID, String CASH_OPENED, String CASH_CLOSED, String ISACTIVE, String ISSYNCED, String MASTER_TERMINAL_ID) {
         this.SHIFT_TRANS_ID = SHIFT_TRANS_ID;
         this.SHIFT_TRANSACTIONGUID = SHIFT_TRANSACTIONGUID;
-        this.ORG_GUID= ORG_GUID;
+        this.ORG_GUID = ORG_GUID;
         this.STORE_GUID = STORE_GUID;
         this.SHIFT_GUID = SHIFT_GUID;
         this.SHIFT_DATE = SHIFT_DATE;
@@ -81,8 +81,17 @@ public class ShiftTrans {
         this.CASH_CLOSED = CASH_CLOSED;
         this.ISACTIVE = ISACTIVE;
         this.ISSYNCED = ISSYNCED;
+        this.MASTER_TERMINAL_ID = MASTER_TERMINAL_ID;
     }
 
+
+    public String getMASTER_TERMINAL_ID() {
+        return MASTER_TERMINAL_ID;
+    }
+
+    public void setMASTER_TERMINAL_ID(String MASTER_TERMINAL_ID) {
+        this.MASTER_TERMINAL_ID = MASTER_TERMINAL_ID;
+    }
 
     public String getSHIFT_TRANS_ID() {
         return SHIFT_TRANS_ID;

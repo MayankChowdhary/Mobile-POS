@@ -83,15 +83,19 @@ public class ControllerPurchaseInvoice {
     String INTERNETPRICE;
     String SPECIALPRICE;
     // String ISSYNCED;
+    String MASTER_TERMINAL_ID;
+
 
 
     public ControllerPurchaseInvoice() {
         context = ApplicationContextProvider.getContext();
+        MASTER_TERMINAL_ID = getTerminal_ID();
 
     }
 
     public ControllerPurchaseInvoice(String Invoicedate, String grandTotal, String invoiceNo, String vendorGuid,String vendorName) {
         context = ApplicationContextProvider.getContext();
+        MASTER_TERMINAL_ID=getTerminal_ID();
         GRN_GUID = IDGenerator.getUUID();
         GRNNO = IDGenerator.getTimeStamp();
         INVOICEDISCOUNT = "0.00";
@@ -158,7 +162,7 @@ public class ControllerPurchaseInvoice {
 
             UOM_GUID = getFromProductMaster(itemGuid, "UOM_GUID");
 
-            GRNDetails grnDetails = new GRNDetails(GRNDETAILID, GRN_QTY, BATCHNO, EXP_DATE, PUR_PRICE, TAX_AMOUNT, GRN_VALUE, MRP, ISFREEGOODS, FREE_QUANTITY, PURCHASEDISCOUNTPERCENTAGE, PURCHASEDISCOUNTBYAMOUNT, GRN_GUID, ITEM_GUID, STORE_GUID, UOM_GUID, GRNDETAILGUID);
+            GRNDetails grnDetails = new GRNDetails(GRNDETAILID, GRN_QTY, BATCHNO, EXP_DATE, PUR_PRICE, TAX_AMOUNT, GRN_VALUE, MRP, ISFREEGOODS, FREE_QUANTITY, PURCHASEDISCOUNTPERCENTAGE, PURCHASEDISCOUNTBYAMOUNT, GRN_GUID, ITEM_GUID, STORE_GUID, UOM_GUID, GRNDETAILGUID,MASTER_TERMINAL_ID);
             InsertGrnDetails(grnDetails);
             generateStockMaster(itemGuid,totalCount,vendorname,GRNDETAILGUID);
         } catch (NumberFormatException e) {
@@ -179,7 +183,7 @@ public class ControllerPurchaseInvoice {
             USER_GUID = getFromGroupUserMaster("USER_GUID");
             ISSYNCED = "0";
 
-            GRNMaster grnMaster = new GRNMaster(GRN_GUID, GRNNO, GRNDate, GRANDAMOUNT, INVOICENO, INVOICEDATE, INVOICEDISCOUNT, GRNPRINT, GRNRECON, GRN_STATUS, CREATEDBY, GRNTYPE, USER_GUID, VENDOR_GUID, STORE_GUID, ISSYNCED);
+            GRNMaster grnMaster = new GRNMaster(GRN_GUID, GRNNO, GRNDate, GRANDAMOUNT, INVOICENO, INVOICEDATE, INVOICEDISCOUNT, GRNPRINT, GRNRECON, GRN_STATUS, CREATEDBY, GRNTYPE, USER_GUID, VENDOR_GUID, STORE_GUID, ISSYNCED,MASTER_TERMINAL_ID);
             InsertGrnMasters(grnMaster);
         } catch (Exception e) {
             e.printStackTrace();
@@ -205,7 +209,7 @@ public class ControllerPurchaseInvoice {
             SPECIALPRICE = getFromStockMaster(itemGuid, "SPEC_PRICE");
             ISSYNCED = "0";
 
-            StockRegister stockRegister = new StockRegister(REGISTERGUID, MASTERORG_GUID, STORE_GUID, VENDOR_GUID, LINETYPE, TRANSACTIONTYPE, TRANSACTIONNUMBER, TRANSACTIONDATE, ITEM_GUID, UOM_GUID, QUANTITY, BATCHNO, BARCODE, SALESPRICE, WHOLESALEPRICE, INTERNETPRICE, SPECIALPRICE, ISSYNCED);
+            StockRegister stockRegister = new StockRegister(REGISTERGUID, MASTERORG_GUID, STORE_GUID, VENDOR_GUID, LINETYPE, TRANSACTIONTYPE, TRANSACTIONNUMBER, TRANSACTIONDATE, ITEM_GUID, UOM_GUID, QUANTITY, BATCHNO, BARCODE, SALESPRICE, WHOLESALEPRICE, INTERNETPRICE, SPECIALPRICE, ISSYNCED,MASTER_TERMINAL_ID);
             InsertStockRegister(stockRegister);
         } catch (Exception e) {
             e.printStackTrace();
@@ -333,6 +337,7 @@ public class ControllerPurchaseInvoice {
             contentValues.put("VENDOR_GUID", prod.getVENDOR_GUID());
             contentValues.put("STORE_GUID", prod.getSTORE_GUID());
             contentValues.put("ISSYNCED", prod.getISSYNCED());
+            contentValues.put("MASTER_TERMINAL_ID", prod.getMASTER_TERMINAL_ID());
             myDataBase.insert("retail_str_grn_master", null, contentValues);
 
             myDataBase.close();
@@ -396,6 +401,7 @@ public class ControllerPurchaseInvoice {
             contentValues.put("STORE_GUID", prod.getSTORE_GUID());
             contentValues.put("UOM_GUID", prod.getUOM_GUID());
             contentValues.put("GRNDETAILGUID", prod.getGRNDETAILGUID());
+            contentValues.put("MASTER_TERMINAL_ID", prod.getMASTER_TERMINAL_ID());
             myDataBase.insert("retail_str_grn_detail", null, contentValues);
             myDataBase.close();
 
@@ -564,5 +570,26 @@ public class ControllerPurchaseInvoice {
         }
 
         return isNewItem;
+    }
+
+    private String getTerminal_ID(){
+        String result= null;
+        try {
+            SQLiteDatabase  mydb  = context.openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
+            result = "";
+            String selectQuery = "SELECT MASTER_TERMINAL_ID FROM terminal_configuration";
+            Cursor cursor = mydb.rawQuery(selectQuery, null);
+            if (cursor.moveToFirst()) {
+
+                result= cursor.getString(0);
+            }
+            cursor.close();
+            mydb.close();
+            Log.d("DataRetrieved", "getTerminal_ID: "+result);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+
     }
 }
