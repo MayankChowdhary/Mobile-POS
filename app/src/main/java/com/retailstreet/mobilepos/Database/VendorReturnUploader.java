@@ -71,6 +71,9 @@ public class VendorReturnUploader extends Worker {
                     jsonObject.put("CREATEDON", prod.getCREATEDON());
                     jsonObject.put("UPDATEDBYGUID", prod.getUPDATEDBYGUID());
                     jsonObject.put("UPDATEDON", prod.getUPDATEDON());
+                    jsonObject.put("MASTER_TERMINAL_ID", prod.getMASTER_TERMINAL_ID());
+
+
                     // jsonObject.put("ISSYNCED", "0");
                     GetVendor_return_detail_sync = getVendor_return_detail_sync(prod.getVENDOR_RETURNGUID());
                     JSONArray jsonArray2 = new JSONArray();
@@ -163,7 +166,7 @@ public class VendorReturnUploader extends Worker {
                     pm.setCREATEDON(productcursor.getString(productcursor.getColumnIndex("CREATEDON")));
                     pm.setUPDATEDBYGUID(productcursor.getString(productcursor.getColumnIndex("UPDATEDBY")));
                     pm.setUPDATEDON(productcursor.getString(productcursor.getColumnIndex("UPDATEDON")));
-
+                    pm.setMASTER_TERMINAL_ID(getTerminal_ID());
                     productlist.add(pm);
                 } while (productcursor.moveToNext());
             }
@@ -232,6 +235,27 @@ public class VendorReturnUploader extends Worker {
             cursor.close();
             mydb.close();
             Log.d("DataRetrieved", "getFromRetailStore: "+result);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+
+    }
+
+    private String getTerminal_ID(){
+        String result= null;
+        try {
+            SQLiteDatabase  mydb  = ApplicationContextProvider.getContext().openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
+            result = "";
+            String selectQuery = "SELECT MASTER_TERMINAL_ID FROM terminal_configuration";
+            Cursor cursor = mydb.rawQuery(selectQuery, null);
+            if (cursor.moveToFirst()) {
+
+                result= cursor.getString(0);
+            }
+            cursor.close();
+            mydb.close();
+            Log.d("DataRetrieved", "getTerminal_ID: "+result);
         } catch (Exception e) {
             e.printStackTrace();
         }

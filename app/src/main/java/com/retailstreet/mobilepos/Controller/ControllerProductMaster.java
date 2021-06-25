@@ -344,6 +344,7 @@ public class ControllerProductMaster {
                     pm.setADDITIONALPARAM1(productcursor.getString(productcursor.getColumnIndex("ADDITIONALPARAM1")));
                     pm.setADDITIONALPARAM2(productcursor.getString(productcursor.getColumnIndex("ADDITIONALPARAM2")));
                     pm.setADDITIONALPARAM3(productcursor.getString(productcursor.getColumnIndex("ADDITIONALPARAM3")));
+                    pm.setMASTER_TERMINAL_ID(getTerminal_ID());
                     productlist.add(pm);
                 } while (productcursor.moveToNext());
             }

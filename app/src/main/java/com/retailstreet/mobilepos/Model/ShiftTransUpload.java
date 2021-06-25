@@ -22,6 +22,7 @@ public class ShiftTransUpload {
     String CASH_OPEN;
     String CASH_CLOSED;
     String ISACTIVE;
+    String MASTER_TERMINAL_ID;
 
 
     public ShiftTransUpload(){
@@ -29,25 +30,40 @@ public class ShiftTransUpload {
     }
 
 
-
-    public ShiftTransUpload(String SHIFT_TRANS_ID, String SHIFT_TRANSACTIONGUID, String ORG_GUID, String STORE_GUID, String SHIFT_GUID, String SHIFT_DATE, String START_TIME, String END_TIME, String IS_SHIFT_STARTED, String IS_SHIFT_ENDED, String USER_GUID, String CASH_OPENED, String CASH_CLOSED,String ISACTIVE){
+    public ShiftTransUpload(String SHIFT_TRANS_ID, String SHIFT_TRANSACTIONGUID, String ORG_GUID, String STORE_GUID, String USER_GUID, String SHIFT_GUID, String SHIFT_DATE, String START_TIME, String END_TIME, String IS_SHIFT_STARTED, String IS_SHIFT_ENDED, String CASH_OPEN, String CASH_CLOSED, String ISACTIVE, String MASTER_TERMINAL_ID) {
         this.SHIFT_TRANS_ID = SHIFT_TRANS_ID;
         this.SHIFT_TRANSACTIONGUID = SHIFT_TRANSACTIONGUID;
-        this.ORG_GUID= ORG_GUID;
+        this.ORG_GUID = ORG_GUID;
         this.STORE_GUID = STORE_GUID;
+        this.USER_GUID = USER_GUID;
         this.SHIFT_GUID = SHIFT_GUID;
         this.SHIFT_DATE = SHIFT_DATE;
         this.START_TIME = START_TIME;
         this.END_TIME = END_TIME;
         this.IS_SHIFT_STARTED = IS_SHIFT_STARTED;
         this.IS_SHIFT_ENDED = IS_SHIFT_ENDED;
-        this.USER_GUID = USER_GUID;
-        this.CASH_OPEN = CASH_OPENED;
+        this.CASH_OPEN = CASH_OPEN;
         this.CASH_CLOSED = CASH_CLOSED;
         this.ISACTIVE = ISACTIVE;
-
+        this.MASTER_TERMINAL_ID = MASTER_TERMINAL_ID;
     }
 
+
+    public String getCASH_OPEN() {
+        return CASH_OPEN;
+    }
+
+    public void setCASH_OPEN(String CASH_OPEN) {
+        this.CASH_OPEN = CASH_OPEN;
+    }
+
+    public String getMASTER_TERMINAL_ID() {
+        return MASTER_TERMINAL_ID;
+    }
+
+    public void setMASTER_TERMINAL_ID(String MASTER_TERMINAL_ID) {
+        this.MASTER_TERMINAL_ID = MASTER_TERMINAL_ID;
+    }
 
     public String getSHIFT_TRANS_ID() {
         return SHIFT_TRANS_ID;

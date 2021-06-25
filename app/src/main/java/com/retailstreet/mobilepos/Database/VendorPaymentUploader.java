@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
+import com.retailstreet.mobilepos.Controller.DBRetriever;
 import com.retailstreet.mobilepos.Model.SyncResponse;
 import com.retailstreet.mobilepos.Model.VendorPayDetailSync;
 import com.retailstreet.mobilepos.Model.VendorPaymentMasterSync;
@@ -70,6 +71,7 @@ public class VendorPaymentUploader extends Worker {
                     jsonObject.put("DUEAMOUNT", prod.getDUEAMOUNT());
                     jsonObject.put("PAIDFOR", prod.getPAIDFOR());
                     jsonObject.put("TYPEOFINVOICE", prod.getTYPEOFINVOICE());
+                    jsonObject.put("MASTER_TERMINAL_ID", prod.getMASTER_TERMINAL_ID());
 
                     GetVendorPayDetailSync = getVendorPayDetailSync(prod.getVENDOR_PAYGUID());
                     JSONArray jsonArray2 = new JSONArray();
@@ -167,6 +169,7 @@ public class VendorPaymentUploader extends Worker {
                     pm.setDUEAMOUNT(productcursor.getString(productcursor.getColumnIndex("DUEAMOUNT")));
                     pm.setPAIDFOR(productcursor.getString(productcursor.getColumnIndex("PAIDFOR")));
                     pm.setTYPEOFINVOICE(productcursor.getString(productcursor.getColumnIndex("TYPEOFINVOICE")));
+                    pm.setMASTER_TERMINAL_ID(DBRetriever.getTerminal_ID());
 
                     productlist.add(pm);
                 } while (productcursor.moveToNext());

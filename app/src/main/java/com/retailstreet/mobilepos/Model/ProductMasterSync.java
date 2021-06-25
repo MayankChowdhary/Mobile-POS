@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
  * mayankchoudhary00@gmail.com
  */
 
+
 public class ProductMasterSync {
     String ISACTIVE;
     String BARCODE;
@@ -38,15 +39,14 @@ public class ProductMasterSync {
     String ADDITIONALPARAM1;
     String ADDITIONALPARAM2;
     String ADDITIONALPARAM3;
-
-
+    String MASTER_TERMINAL_ID;
 
 
     public ProductMasterSync() {
 
     }
 
-    public ProductMasterSync(String ISACTIVE, String BARCODE, String CATEGORY_GUID, String CGST, String EXTERNALPRODUCTID, String GENERICNAME, String GST, String HSN, String IGST, String ITEM_CODE, String ITEM_GUID, String MASTERBRAND, String USER_GUID, String PRINT_NAME, String ITEMID, String ITEM_NAME, String PRODUCTRELEVANCE, String SGST, String SUBCATEGORY_GUID, String UOMID, String ISSYNCED, String STORE_GUID, String ISPRODUCTRETURNABLE, String ISLOOSEITEM, String ADDITIONALPARAM1, String ADDITIONALPARAM2, String ADDITIONALPARAM3) {
+    public ProductMasterSync(String ISACTIVE, String BARCODE, String CATEGORY_GUID, String CGST, String EXTERNALPRODUCTID, String GENERICNAME, String GST, String HSN, String IGST, String ITEM_CODE, String ITEM_GUID, String MASTERBRAND, String USER_GUID, String PRINT_NAME, String ITEMID, String ITEM_NAME, String PRODUCTRELEVANCE, String SGST, String SUBCATEGORY_GUID, String UOMID, String ISSYNCED, String STORE_GUID, String ISPRODUCTRETURNABLE, String ISLOOSEITEM, String ADDITIONALPARAM1, String ADDITIONALPARAM2, String ADDITIONALPARAM3, String MASTER_TERMINAL_ID) {
         this.ISACTIVE = ISACTIVE;
         this.BARCODE = BARCODE;
         this.CATEGORY_GUID = CATEGORY_GUID;
@@ -74,6 +74,15 @@ public class ProductMasterSync {
         this.ADDITIONALPARAM1 = ADDITIONALPARAM1;
         this.ADDITIONALPARAM2 = ADDITIONALPARAM2;
         this.ADDITIONALPARAM3 = ADDITIONALPARAM3;
+        this.MASTER_TERMINAL_ID = MASTER_TERMINAL_ID;
+    }
+
+    public String getMASTER_TERMINAL_ID() {
+        return MASTER_TERMINAL_ID;
+    }
+
+    public void setMASTER_TERMINAL_ID(String MASTER_TERMINAL_ID) {
+        this.MASTER_TERMINAL_ID = MASTER_TERMINAL_ID;
     }
 
     public String getISPRODUCTRETURNABLE() {

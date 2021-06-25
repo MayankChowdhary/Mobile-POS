@@ -382,6 +382,7 @@ public class ControllerShiftTrans {
                     pm.setCASH_OPENED(productcursor.getString(productcursor.getColumnIndex("CASH_OPENED")));
                     pm.setCASH_CLOSED(productcursor.getString(productcursor.getColumnIndex("CASH_CLOSED")));
                     pm.setISACTIVE(productcursor.getString(productcursor.getColumnIndex("ISACTIVE")));
+                    pm.setMASTER_TERMINAL_ID(DBRetriever.getTerminal_ID());
                     productlist.add(pm);
                 } while (productcursor.moveToNext());
             }

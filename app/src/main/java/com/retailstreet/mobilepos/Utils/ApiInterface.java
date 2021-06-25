@@ -241,7 +241,6 @@ public interface ApiInterface {
    @POST("APIMANAGER/api/PullPOSRegualarSync/PullBillHeaderDetails")
    Call<SyncResponse> UploadSaleRecords(@Header("Authorization")String Authorization, @Body RequestBody body);
 
-
     @POST("APIMANAGER/api/PullPOSRegualarSync/PushShiftTransactions")
     Call<SyncResponse> UploadShifttransRecords(@Header("Authorization")String Authorization, @Body RequestBody body);
 

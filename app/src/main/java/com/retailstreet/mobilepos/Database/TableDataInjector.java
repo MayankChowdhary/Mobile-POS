@@ -2501,6 +2501,11 @@ public class TableDataInjector {
                 contentValues.put("QUICK_PAY", prod.getQUICK_PAY());
                 contentValues.put("MULTI_PAYMENT_MODE", prod.getMULTI_PAYMENT_MODE());
                 contentValues.put("MASTER_TERMINAL_ID", prod.getMASTER_TERMINAL_ID());
+                contentValues.put("PARAM1", prod.getPARAM1());
+                contentValues.put("PARAM2", prod.getPARAM2());
+                contentValues.put("PARAM3", prod.getPARAM3());
+                contentValues.put("PARAM4", prod.getPARAM4());
+                contentValues.put("PARAM5", prod.getPARAM5());
                 myDataBase.insert("store_configuration", null, contentValues);
 
             }

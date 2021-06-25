@@ -4,6 +4,7 @@ package com.retailstreet.mobilepos.Model;
  * Created by Mayank Choudhary on 11-05-2021.
  * mayankchoudhary00@gmail.com
  */
+
 public class VendorReturnMasterSync {
     String VENDOR_RETURN_MASTERID;
     String VENDOR_RETURNGUID;
@@ -20,12 +21,15 @@ public class VendorReturnMasterSync {
     String CREATEDON;
     String UPDATEDBYGUID;
     String UPDATEDON;
+    String MASTER_TERMINAL_ID;
 
     public VendorReturnMasterSync() {
 
+
+
     }
 
-    public VendorReturnMasterSync(String VENDOR_RETURN_MASTERID, String VENDOR_RETURNGUID, String MASTER_STORE_GUID, String MASTER_VENDOR_GUID, String REASON, String RETURN_DATE, String GRNNO, String GRNDATE, String INVOICENO, String INVOICEDATE, String VENDOR_RETURN_STATUS, String CREATEDBYGUID, String CREATEDON, String UPDATEDBYGUID, String UPDATEDON) {
+    public VendorReturnMasterSync(String VENDOR_RETURN_MASTERID, String VENDOR_RETURNGUID, String MASTER_STORE_GUID, String MASTER_VENDOR_GUID, String REASON, String RETURN_DATE, String GRNNO, String GRNDATE, String INVOICENO, String INVOICEDATE, String VENDOR_RETURN_STATUS, String CREATEDBYGUID, String CREATEDON, String UPDATEDBYGUID, String UPDATEDON, String MASTER_TERMINAL_ID) {
         this.VENDOR_RETURN_MASTERID = VENDOR_RETURN_MASTERID;
         this.VENDOR_RETURNGUID = VENDOR_RETURNGUID;
         this.MASTER_STORE_GUID = MASTER_STORE_GUID;
@@ -41,6 +45,15 @@ public class VendorReturnMasterSync {
         this.CREATEDON = CREATEDON;
         this.UPDATEDBYGUID = UPDATEDBYGUID;
         this.UPDATEDON = UPDATEDON;
+        this.MASTER_TERMINAL_ID = MASTER_TERMINAL_ID;
+    }
+
+    public String getMASTER_TERMINAL_ID() {
+        return MASTER_TERMINAL_ID;
+    }
+
+    public void setMASTER_TERMINAL_ID(String MASTER_TERMINAL_ID) {
+        this.MASTER_TERMINAL_ID = MASTER_TERMINAL_ID;
     }
 
     public String getVENDOR_RETURN_MASTERID() {

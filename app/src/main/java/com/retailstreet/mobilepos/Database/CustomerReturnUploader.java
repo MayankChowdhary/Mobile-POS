@@ -74,6 +74,8 @@ public class CustomerReturnUploader extends Worker {
                     jsonObject.put("CUSTOMER_RETURNS_STATUS", prod.getCUSTOMER_RETURNS_STATUS());
                     jsonObject.put("CREATEDBYGUID", prod.getCREATEDBYGUID());
                     jsonObject.put("CREATEDON", prod.getCREATEDON());
+                    jsonObject.put("MASTER_TERMINAL_ID", prod.getMASTER_TERMINAL_ID());
+
 
                     GetReturnDetailToSync = customerReturn.getSalereturnDetailsSyncdata(prod.getCUSTOMERRETURNGUID());
                     JSONArray jsonArray2 = new JSONArray();

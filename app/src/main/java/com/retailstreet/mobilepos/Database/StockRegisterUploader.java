@@ -13,6 +13,7 @@ import androidx.work.WorkerParameters;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.retailstreet.mobilepos.Controller.DBRetriever;
 import com.retailstreet.mobilepos.Model.StockRegisterSync;
 import com.retailstreet.mobilepos.Model.SyncResponse;
 import com.retailstreet.mobilepos.Utils.ApiInterface;
@@ -138,6 +139,7 @@ public class StockRegisterUploader extends Worker {
                     pm.setWHOLESALEPRICE(productcursor.getString(productcursor.getColumnIndex("WHOLESALEPRICE")));
                     pm.setINTERNETPRICE(productcursor.getString(productcursor.getColumnIndex("INTERNETPRICE")));
                     pm.setSPECIALPRICE(productcursor.getString(productcursor.getColumnIndex("SPECIALPRICE")));
+                    pm.setMASTER_TERMINAL_ID(DBRetriever.getTerminal_ID());
                     productlist.add(pm);
                 } while (productcursor.moveToNext());
             }

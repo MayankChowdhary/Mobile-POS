@@ -83,6 +83,7 @@ public class CustomerMasterUploader extends Worker {
                         jsonObject.put("CUSTOMERID", prod.getCUSTOMERID());
                         jsonObject.put("CREATEDBYGUID", prod.getCREATEDBY());
                         jsonObject.put("CREDITLIMIT", prod.getCREDITLIMIT());
+                        jsonObject.put("MASTER_TERMINAL_ID", prod.getMASTER_TERMINAL_ID());
 
                         GetCustomerDetailToSync = controllerCustomerMaster.getCustomerDetailsSyncdata(prod.getCUSTOMERGUID());
                         Log.e("RC CustomerMaster :- ",jsonObject.toString());

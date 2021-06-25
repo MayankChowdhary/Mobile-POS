@@ -13,6 +13,7 @@ import androidx.work.WorkerParameters;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.retailstreet.mobilepos.Controller.DBRetriever;
 import com.retailstreet.mobilepos.Model.CustomerLedgerUpload;
 import com.retailstreet.mobilepos.Model.SyncResponse;
 import com.retailstreet.mobilepos.Utils.ApiInterface;
@@ -130,6 +131,7 @@ public class CustomerLedgerUploader extends Worker {
                     pm.setADDITIONALPARAM4(productcursor.getString(productcursor.getColumnIndex("ADDITIONALPARAM4")));
                     pm.setADDITIONALPARAM5(productcursor.getString(productcursor.getColumnIndex("ADDITIONALPARAM5")));
                     pm.setADDITIONALPARAM6(productcursor.getString(productcursor.getColumnIndex("ADDITIONALPARAM6")));
+                    pm.setMASTER_TERMINAL_ID(DBRetriever.getTerminal_ID());
 
                     productlist.add(pm);
                 } while (productcursor.moveToNext());

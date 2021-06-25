@@ -39,6 +39,9 @@ public class StockMasterSync {
         private String CATEGORY_GUID;
         private String SUBCATEGORY_GUID;
         private String PUR_UOM_GUID;
+        String MASTER_TERMINAL_ID;
+
+
 
     public String getPUR_UOM_GUID() {
         return PUR_UOM_GUID;
@@ -75,37 +78,50 @@ public class StockMasterSync {
         public StockMasterSync() {
         }
 
-        public StockMasterSync(String STOCKID, String STORE_GUID, String ITEM_GUID, String QTY, String SALE_UOM_GUID, String UOM, String BATCHNO, String BARCODE, String COST_PRICE, String MRP, String SALEPRICE, String INTERNETPRICE, String MIN_QUANTITY, String MAX_QUANTITY, String WHOLESALEPRICE, String SPECIALPRICE, String GENERIC_NAME, String EXTERNALPRODUCTID, String GST, String SGST, String CGST, String IGST, String CESS1, String CESS2, String EXPIRYDATE, String ITEM_NAME, String ITEM_CODE, String CREATEDBYGUID, String UPDATEDBYGUID, String CREATEDON, String UPDATEDON, String SALESDISCOUNTBYPERCENTAGE, String SALESDISCOUNTBYAMOUNT, String GRN_MASTER_GUID, String GRNNO, String MASTER_VENDOR_GUID, String VENDOR_NAME, String issynceed, String grndetail_id) {
-            this.STOCKID = STOCKID;
-            this.STORE_GUID = STORE_GUID;
-            this.ITEM_GUID = ITEM_GUID;
-            this.QTY = QTY;
-            this.SALE_UOM_GUID = SALE_UOM_GUID;
-            this.BATCHNO = BATCHNO;
-            this.BARCODE = BARCODE;
-            this.COST_PRICE = COST_PRICE;
-            this.MRP = MRP;
-            this.SALEPRICE = SALEPRICE;
-            this.INTERNETPRICE = INTERNETPRICE;
-            this.MIN_QUANTITY = MIN_QUANTITY;
-            this.MAX_QUANTITY = MAX_QUANTITY;
-            this.WHOLESALEPRICE = WHOLESALEPRICE;
-            this.SPECIALPRICE = SPECIALPRICE;
-            this.EXPIRYDATE = EXPIRYDATE;
-            this.ITEM_NAME = ITEM_NAME;
-            this.ITEM_CODE = ITEM_CODE;
-            this.CREATEDBYGUID = CREATEDBYGUID;
-            this.UPDATEDBYGUID = UPDATEDBYGUID;
-            this.CREATEDON = CREATEDON;
-            this.UPDATEDON = UPDATEDON;
-            this.SALESDISCOUNTBYPERCENTAGE = SALESDISCOUNTBYPERCENTAGE;
-            this.SALESDISCOUNTBYAMOUNT = SALESDISCOUNTBYAMOUNT;
-            this.GRN_MASTER_GUID = GRN_MASTER_GUID;
-            this.MASTER_VENDOR_GUID = MASTER_VENDOR_GUID;
-            this.GRN_DETAIL_GUID =grndetail_id;
-        }
+    public String getMASTER_TERMINAL_ID() {
+        return MASTER_TERMINAL_ID;
+    }
 
-        public String getORG_GUID() {
+    public void setMASTER_TERMINAL_ID(String MASTER_TERMINAL_ID) {
+        this.MASTER_TERMINAL_ID = MASTER_TERMINAL_ID;
+    }
+
+    public StockMasterSync(String STOCKID, String STORE_GUID, String ITEM_GUID, String QTY, String SALE_UOM_GUID, String BATCHNO, String BARCODE, String COST_PRICE, String MRP, String SALEPRICE, String INTERNETPRICE, String MIN_QUANTITY, String MAX_QUANTITY, String WHOLESALEPRICE, String SPECIALPRICE, String EXPIRYDATE, String ITEM_NAME, String ITEM_CODE, String CREATEDBYGUID, String UPDATEDBYGUID, String CREATEDON, String UPDATEDON, String SALESDISCOUNTBYPERCENTAGE, String SALESDISCOUNTBYAMOUNT, String GRN_MASTER_GUID, String MASTER_VENDOR_GUID, String GRN_DETAIL_GUID, String ORG_GUID, String CATEGORY_GUID, String SUBCATEGORY_GUID, String PUR_UOM_GUID, String MASTER_TERMINAL_ID) {
+        this.STOCKID = STOCKID;
+        this.STORE_GUID = STORE_GUID;
+        this.ITEM_GUID = ITEM_GUID;
+        this.QTY = QTY;
+        this.SALE_UOM_GUID = SALE_UOM_GUID;
+        this.BATCHNO = BATCHNO;
+        this.BARCODE = BARCODE;
+        this.COST_PRICE = COST_PRICE;
+        this.MRP = MRP;
+        this.SALEPRICE = SALEPRICE;
+        this.INTERNETPRICE = INTERNETPRICE;
+        this.MIN_QUANTITY = MIN_QUANTITY;
+        this.MAX_QUANTITY = MAX_QUANTITY;
+        this.WHOLESALEPRICE = WHOLESALEPRICE;
+        this.SPECIALPRICE = SPECIALPRICE;
+        this.EXPIRYDATE = EXPIRYDATE;
+        this.ITEM_NAME = ITEM_NAME;
+        this.ITEM_CODE = ITEM_CODE;
+        this.CREATEDBYGUID = CREATEDBYGUID;
+        this.UPDATEDBYGUID = UPDATEDBYGUID;
+        this.CREATEDON = CREATEDON;
+        this.UPDATEDON = UPDATEDON;
+        this.SALESDISCOUNTBYPERCENTAGE = SALESDISCOUNTBYPERCENTAGE;
+        this.SALESDISCOUNTBYAMOUNT = SALESDISCOUNTBYAMOUNT;
+        this.GRN_MASTER_GUID = GRN_MASTER_GUID;
+        this.MASTER_VENDOR_GUID = MASTER_VENDOR_GUID;
+        this.GRN_DETAIL_GUID = GRN_DETAIL_GUID;
+        this.ORG_GUID = ORG_GUID;
+        this.CATEGORY_GUID = CATEGORY_GUID;
+        this.SUBCATEGORY_GUID = SUBCATEGORY_GUID;
+        this.PUR_UOM_GUID = PUR_UOM_GUID;
+        this.MASTER_TERMINAL_ID = MASTER_TERMINAL_ID;
+    }
+
+    public String getORG_GUID() {
             return ORG_GUID;
         }
 

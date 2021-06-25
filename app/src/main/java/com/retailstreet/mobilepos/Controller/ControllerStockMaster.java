@@ -542,7 +542,7 @@ public class ControllerStockMaster extends SQLiteOpenHelper {
 
                     pm.setGRN_DETAIL_GUID("");
                     pm.setGRN_MASTER_GUID("");
-
+                    pm.setMASTER_TERMINAL_ID(DBRetriever.getTerminal_ID());
                     productlist.add(pm);
                 } while (productcursor.moveToNext());
             }

@@ -8,8 +8,8 @@ import java.io.Serializable;
  * Created by Mayank Choudhary on 11-06-2021.
  * mayankchoudhary00@gmail.com
  */
-public class VendorSync implements Serializable {
 
+public class VendorSync implements Serializable {
     public String VENDORID ;
     public String VENDOR_GUID ;
     public String ORG_GUID ;
@@ -32,13 +32,17 @@ public class VendorSync implements Serializable {
     public String ISINVENTORY;
     public String VENDORSTATE;
     public String PAYMENTTERMS;
+    String REGULAR_VENDOR;
+    String MASTER_TERMINAL_ID;
+
     transient
     public String ISSYNCED;
 
     public VendorSync() {
+
     }
 
-    public VendorSync(String VENDORID, String VENDOR_GUID, String ORG_GUID, String STORE_GUID, String VENDOR_CATEGORY, String VENDOR_NAME, String VENDOR_STREET, String VENDOR_ADDRESS, String CITY, String CONTACT_PERSON, String MOBILE, String EMAIL, String GST, String PAN, String CREATEDBYUSERID, String ISACTIVE, String PINCODE, String TELEPHONENO, String MASTERCOUNTRYID, String ISINVENTORY, String VENDORSTATE, String PAYMENTTERMS, String ISSYNCED) {
+    public VendorSync(String VENDORID, String VENDOR_GUID, String ORG_GUID, String STORE_GUID, String VENDOR_CATEGORY, String VENDOR_NAME, String VENDOR_STREET, String VENDOR_ADDRESS, String CITY, String CONTACT_PERSON, String MOBILE, String EMAIL, String GST, String PAN, String CREATEDBYUSERID, String ISACTIVE, String PINCODE, String TELEPHONENO, String MASTERCOUNTRYID, String ISINVENTORY, String VENDORSTATE, String PAYMENTTERMS, String REGULAR_VENDOR, String MASTER_TERMINAL_ID, String ISSYNCED) {
         this.VENDORID = VENDORID;
         this.VENDOR_GUID = VENDOR_GUID;
         this.ORG_GUID = ORG_GUID;
@@ -61,7 +65,26 @@ public class VendorSync implements Serializable {
         this.ISINVENTORY = ISINVENTORY;
         this.VENDORSTATE = VENDORSTATE;
         this.PAYMENTTERMS = PAYMENTTERMS;
+        this.REGULAR_VENDOR = REGULAR_VENDOR;
+        this.MASTER_TERMINAL_ID = MASTER_TERMINAL_ID;
         this.ISSYNCED = ISSYNCED;
+    }
+
+
+    public String getREGULAR_VENDOR() {
+        return REGULAR_VENDOR;
+    }
+
+    public void setREGULAR_VENDOR(String REGULAR_VENDOR) {
+        this.REGULAR_VENDOR = REGULAR_VENDOR;
+    }
+
+    public String getMASTER_TERMINAL_ID() {
+        return MASTER_TERMINAL_ID;
+    }
+
+    public void setMASTER_TERMINAL_ID(String MASTER_TERMINAL_ID) {
+        this.MASTER_TERMINAL_ID = MASTER_TERMINAL_ID;
     }
 
     public String getVENDORID() {

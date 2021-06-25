@@ -132,7 +132,6 @@ class ProductsFragment : Fragment() , DatePickerDialog.OnDateSetListener {
         val hsnArray: List<StringWithTag> = getHSN();
         val uomArray: List<StringWithTag> = getUOM();
         val editTextArray: Array<EditText> = arrayOf(productNameEdittext, brandNameEdittext, sprice_edittext, pprice_edittext, special_price_edittext, mrp_edittext, whole_price_edittext, internet_price_edittext, stock_qty_edittext, cess1_edittext, cess2_edittext, min_qty_edittext, max_qty_edittext)
-        val allStringsArray: Array<String> = arrayOf(categoryGuid, subCatGuid, vendorGuid, hsnId, uomGuid);
 
         val extIdLayout:LinearLayout = view.findViewById(R.id.p_ext_id_layout)
 
@@ -369,6 +368,8 @@ class ProductsFragment : Fragment() , DatePickerDialog.OnDateSetListener {
                 connectionInspector.showErrorDialog()
                 return@setOnClickListener
             }*/
+            val allStringsArray: Array<String> = arrayOf(categoryGuid, subCatGuid, vendorGuid, hsnId, uomGuid);
+
 
             if (!validateFields(editTextArray) && !validateStrings(allStringsArray)) {
                 Toast.makeText(context, "Please fill up all Mandatory fields first!", Toast.LENGTH_LONG).show();

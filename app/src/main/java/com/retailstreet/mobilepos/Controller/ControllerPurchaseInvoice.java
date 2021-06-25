@@ -307,6 +307,7 @@ public class ControllerPurchaseInvoice {
             contentValues.put("INTERNETPRICE", prod.getINTERNETPRICE());
             contentValues.put("SPECIALPRICE", prod.getSPECIALPRICE());
             contentValues.put("ISSYNCED", prod.getISSYNCED());
+            contentValues.put("MASTER_TERMINAL_ID", prod.getMASTER_TERMINAL_ID());
             myDataBase.insert("stock_register", null, contentValues);
 
             myDataBase.close();

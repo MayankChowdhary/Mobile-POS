@@ -27,7 +27,9 @@ import com.retailstreet.mobilepos.View.SalesReturnRecyclerView.SalesReturnListAd
 import com.retailstreet.mobilepos.View.dialog.ClickListeners
 import com.retailstreet.mobilepos.View.dialog.LottieAlertDialogs
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner
+import java.text.DateFormat
 import java.text.DecimalFormat
+import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.abs
 
@@ -56,6 +58,7 @@ class SalesRefundFragment : Fragment() {
     var rejectTypeGuid = " "
     var   rejectTypeName = " "
     var creditNoteNumber=""
+    var returnDate = ""
     lateinit var cashCheckBox:CheckBox
     lateinit var custSearchSelector: SearchableSpinner
     private var custGuid:String = " "
@@ -85,7 +88,6 @@ class SalesRefundFragment : Fragment() {
         salesReturnRadioGroup.setOnCheckedChangeListener { _, checkedId ->
 
             if(checkedId==R.id.sales_return_billno_radio){
-
                 inflateBillLayout(mainFrame)
             }else{
                 inflateNoBillLayout(mainFrame)
@@ -97,10 +99,17 @@ class SalesRefundFragment : Fragment() {
 
         var checkedId:Int
         returnSubmitBtn.setOnClickListener {
-
              checkedId = salesReturnRadioGroup.checkedRadioButtonId
             if(!cashCheckBox.isChecked){
                 creditNoteNumber= IDGenerator.getTimeStamp()
+                returnDate = getCreditExpMonth()
+                if(returnDate.isBlank()){
+                    returnDate = getCurrentDateAndTime()
+                }
+            }
+
+            if(returnDate.isBlank()){
+                returnDate = getCurrentDateAndTime()
             }
 
             if(custGuid.isEmpty()){
@@ -112,7 +121,6 @@ class SalesRefundFragment : Fragment() {
                 Toast.makeText(context, "Please Select Return Reason First!", Toast.LENGTH_LONG).show()
                 return@setOnClickListener
             }
-
 
 
             if(checkedId==R.id.sales_return_billno_radio){
@@ -128,7 +136,7 @@ class SalesRefundFragment : Fragment() {
                     }
                     ControllerCreditPay(custGuid, balance)
                 }
-                ControllerCustomerReturn(billNumer, rejectTypeGuid, custGuid, rejectTypeName, totalAmount, creditNoteNumber)
+                ControllerCustomerReturn(billNumer, rejectTypeGuid, custGuid, rejectTypeName, totalAmount, creditNoteNumber,returnDate)
                 inflateBillLayout(mainFrame)
             }else{
 
@@ -146,7 +154,7 @@ class SalesRefundFragment : Fragment() {
                     ControllerCreditPay(custGuid, balance)
                 }
 
-                ControllerCustomerReturn(rejectTypeGuid, custGuid, rejectTypeName, totalAmount, creditNoteNumber)
+                ControllerCustomerReturn(rejectTypeGuid, custGuid, rejectTypeName, totalAmount, creditNoteNumber, returnDate)
                 inflateNoBillLayout(mainFrame)
             }
            // salesReturnRecyclerView.adapter = null;
@@ -197,6 +205,7 @@ class SalesRefundFragment : Fragment() {
     }
 
     private fun initBillLayout(root: ViewGroup){
+        returnDate = ""
          val submitBillNo:Button  = root.findViewById(R.id.sales_return_bill_submit)
         val billNoEditText:EditText = root.findViewById(R.id.sales_return_bill_input)
         val balanceText:TextView = root.findViewById(R.id.sr_billno_balance)
@@ -289,6 +298,7 @@ class SalesRefundFragment : Fragment() {
     }
 
     private  fun initNoBillLayout(root: ViewGroup){
+        returnDate = ""
         val balanceText:TextView = root.findViewById(R.id.sr_no_bill_balance)
         salesReturnRecyclerView = root.findViewById(R.id.sales_return_recycler_view)
         val productArray: List<StringWithTag> = getProductsName();
@@ -595,4 +605,37 @@ class SalesRefundFragment : Fragment() {
         Log.d("GetIndexInvoked", "getIndex: "+0)
         return 0
     }
+
+
+    private fun getCreditExpMonth(): String {
+        Log.d("getCreditExpMonth", "Entered in func: ")
+        var result: String = "0"
+        try {
+            val mydb = requireContext().openOrCreateDatabase("MasterDB", Context.MODE_PRIVATE, null)
+            val selectQuery = "SELECT CREDIT_NOTE_VALIDITY FROM retail_store"
+            val cursor = mydb.rawQuery(selectQuery, null)
+            if (cursor.moveToFirst()) {
+                Log.d("getCreditExpMonth", "Entered in loop: ")
+
+                val vld = cursor.getString(0).trim { it <= ' ' }.toInt()
+                val cal = Calendar.getInstance()
+                cal.add(Calendar.MONTH, vld)
+                val formatter: DateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault())
+                result = formatter.format(cal.time)
+            }
+            cursor.close()
+            mydb.close()
+            Log.d("DataRetrieved", "getCreditExpMonth: $result")
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+        }
+        return result
+    }
+
+    private fun getCurrentDateAndTime(): String {
+        val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        val date = Date()
+        return formatter.format(date)
+    }
+
 }

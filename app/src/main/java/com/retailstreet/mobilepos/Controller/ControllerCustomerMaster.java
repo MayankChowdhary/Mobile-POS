@@ -465,7 +465,7 @@ public class ControllerCustomerMaster {
                     pm.setCUSTOMERID(productcursor.getString(productcursor.getColumnIndex("CUST_ID")));
                     pm.setCREATEDBY(productcursor.getString(productcursor.getColumnIndex("CREATEDBY")));
                     pm.setCREDITLIMIT(productcursor.getString(productcursor.getColumnIndex("CREDITLIMIT")));
-
+                    pm.setMASTER_TERMINAL_ID(DBRetriever.getTerminal_ID());
                     productlist.add(pm);
                 } while (productcursor.moveToNext());
             }

@@ -72,7 +72,7 @@ public class ControllerCustomerReturn {
 
     }
 
-    public ControllerCustomerReturn(String reasonGuid, String custGuid, String reasonDetail, String totalAmount, String creditNoteNum){
+    public ControllerCustomerReturn(String reasonGuid, String custGuid, String reasonDetail, String totalAmount, String creditNoteNum, String returnDate){
         context = ApplicationContextProvider.getContext();
         MASTER_TERMINAL_ID = getTerminal_ID();
         initMap();
@@ -84,7 +84,7 @@ public class ControllerCustomerReturn {
             UpdateQuantity(num,key);
         }
 
-        GenerateReturnMaster("",reasonGuid,custGuid,reasonDetail,totalAmount,creditNoteNum);
+        GenerateReturnMaster("",reasonGuid,custGuid,reasonDetail,totalAmount,creditNoteNum,returnDate);
 
 
         try {
@@ -100,7 +100,7 @@ public class ControllerCustomerReturn {
 
     }
 
-    public ControllerCustomerReturn(String billno, String reasonGuid, String custGuid, String reasonDetail, String totalAmount, String creditNoteNum){
+    public ControllerCustomerReturn(String billno, String reasonGuid, String custGuid, String reasonDetail, String totalAmount, String creditNoteNum, String returnDate){
         context = ApplicationContextProvider.getContext();
         initMap2();
         CUSTOMERRETURNGUID = IDGenerator.getUUID();
@@ -112,7 +112,7 @@ public class ControllerCustomerReturn {
             UpdateQuantity(num,stockId);
         }
 
-        GenerateReturnMaster(billno,reasonGuid,custGuid,reasonDetail,totalAmount,creditNoteNum);
+        GenerateReturnMaster(billno,reasonGuid,custGuid,reasonDetail,totalAmount,creditNoteNum,returnDate);
 
         try {
             new WorkManagerSync(7);
@@ -204,7 +204,7 @@ public class ControllerCustomerReturn {
         }
     }
 
-    private void GenerateReturnMaster(String billno, String reasonGuid, String custGuid, String reason,String amount, String creditNoteNum){
+    private void GenerateReturnMaster(String billno, String reasonGuid, String custGuid, String reason,String amount, String creditNoteNum, String returnDate){
         CUSTOMER_RETURNS_MASTER_ID= IDGenerator.getTimeStamp();
         REASONGUID = reasonGuid;
         MASTERSTOREID = getFromRetailStore("STORE_GUID");
@@ -212,7 +212,7 @@ public class ControllerCustomerReturn {
         BILLNO = billno;
         SALESDATE = getCurrentDateAndTime();
         REASONDETAILS = reason;
-        RETURN_DATE = getCurrentDateAndTime();
+        RETURN_DATE = returnDate;
         ISPARTIALRETURN = "1";
         AMOUNTREFUNDED = amount;
         REPLACEMENTBILLNO = "";
@@ -533,6 +533,7 @@ public class ControllerCustomerReturn {
                     pm.setCUSTOMER_RETURNS_STATUS(productcursor.getString(productcursor.getColumnIndex("CUSTOMER_RETURNS_STATUS")));
                     pm.setCREATEDBYGUID(productcursor.getString(productcursor.getColumnIndex("CREATEDBYGUID")));
                     pm.setCREATEDON(productcursor.getString(productcursor.getColumnIndex("CREATEDON")));
+                    pm.setMASTER_TERMINAL_ID(DBRetriever.getTerminal_ID());
                     productlist.add(pm);
                 } while (productcursor.moveToNext());
             }

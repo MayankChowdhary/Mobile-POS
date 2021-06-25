@@ -406,6 +406,7 @@ public class ControllerCreditPay {
             Log.d("DataRetrieved", "getFromRetailStore: "+result);
         } catch (Exception e) {
             e.printStackTrace();
+            e.printStackTrace();
         }
         return result;
 
@@ -462,6 +463,8 @@ public class ControllerCreditPay {
         return result;
 
     }
+
+
 
 }
 

@@ -202,7 +202,7 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
         Log.d("CustGuid Received", "onViewCreated: "+customerId);
 
         getPayModeID();
-       pendingAmountTextView = view.findViewById(R.id.pending_amount_value);
+        pendingAmountTextView = view.findViewById(R.id.pending_amount_value);
         pendingAmountTextView.setText(amountToPay);
         pendingAmount = Double.parseDouble(amountToPay);
 
@@ -494,7 +494,6 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
         received_amnt.addTextChangedListener(new TextWatcher() {
             @Override
             public void afterTextChanged(Editable s) {
-
                 paidByCash = 0;
                 payModeData.remove("CA");
                 if(paidByAdvance>0.00){
@@ -523,23 +522,31 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
                         Vibration.Companion.vibrate(300);
                     }else {
                         paidByCash = received;
-                        setPendingAmount();
                         double payCash=0.00;
+
+
+
                         if(!isCreditPay) {
                             payCash = received <= pendingAmount ? received : received - pendingAmount;
+
                         }else {
                             if(received<=pendingAmount){
                                 payCash = received;
                             }else if(received>pendingAmount) {
                                 payCash = pendingAmount;
                             }
+                            Log.d("received", "afterTextChanged: "+received);
+                            Log.d("pending", "afterTextChanged: "+pendingAmount);
+                            Log.d("PayDataAdded", "afterTextChanged: "+payCash);
                         }
                         if(paidByAdvance>0.00){
                             payModeData.put("CA",new String[]{payModeId.get("CA"),"",String.valueOf(payCash+paidByAdvance),"","",""});
 
                         }else {
                             payModeData.put("CA", new String[]{payModeId.get("CA"), "", String.valueOf(payCash), "", "", ""});
+
                         }
+                        setPendingAmount();
                     }
 
                 } catch (NumberFormatException e) {

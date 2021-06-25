@@ -13,6 +13,7 @@ import androidx.work.WorkerParameters;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.retailstreet.mobilepos.Controller.DBRetriever;
 import com.retailstreet.mobilepos.Model.SyncResponse;
 import com.retailstreet.mobilepos.Model.VendorSync;
 import com.retailstreet.mobilepos.Utils.ApiInterface;
@@ -114,7 +115,7 @@ public class VendorMasterUploader extends Worker {
             SQLiteDatabase db = ApplicationContextProvider.getContext().openOrCreateDatabase(DBNAME,MODE_PRIVATE, null);
             Cursor productcursor = db.rawQuery(" select distinct a.DSTR_ID,a.VENDOR_GUID,a.DSTR_NM,a.VENDOR_CATEGORY,a.VENDOR_STREET," +
                     "a.ADD_1,a.CITY,a.DSTR_CNTCT_NM,a.MOBILE,a.EMAIL,a.GST,a.PAN," +
-                    "a.ZIP,a.TELE,a.MASTERCOUNTRYID,a.DSTR_INV,a.VENDORSTATE,a.PAYMENTTERMS,a.VENDOR_STATUS,a.POS_USER from retail_str_dstr a where ISSYNCED='0' ", null);
+                    "a.ZIP,a.TELE,a.MASTERCOUNTRYID,a.DSTR_INV,a.VENDORSTATE,a.PAYMENTTERMS,a.VENDOR_STATUS,a.POS_USER, a.REGULAR_VENDOR from retail_str_dstr a where ISSYNCED='0' ", null);
 
             if (productcursor.moveToFirst()) {
                 do {
@@ -144,7 +145,8 @@ public class VendorMasterUploader extends Worker {
                     pm.setISINVENTORY(productcursor.getString(productcursor.getColumnIndex("DSTR_INV")));//DSTR_INV
                     pm.setVENDORSTATE(productcursor.getString(productcursor.getColumnIndex("VENDORSTATE")));
                     pm.setPAYMENTTERMS(productcursor.getString(productcursor.getColumnIndex("PAYMENTTERMS")));
-
+                    pm.setREGULAR_VENDOR(productcursor.getString(productcursor.getColumnIndex("REGULAR_VENDOR")));
+                    pm.setMASTER_TERMINAL_ID(DBRetriever.getTerminal_ID());
                     productlist.add(pm);
                 } while (productcursor.moveToNext());
             }

@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
+import com.retailstreet.mobilepos.Controller.DBRetriever;
 import com.retailstreet.mobilepos.Model.GRNDetailsSync;
 import com.retailstreet.mobilepos.Model.GRNMasterSync;
 import com.retailstreet.mobilepos.Model.SyncResponse;
@@ -70,6 +71,7 @@ public class GRNUploader extends Worker {
                     jsonObject.put("GRANDAMOUNT", prod.getGRANDAMOUNT());
                     jsonObject.put("INVOICEDISCOUNT", prod.getINVOICEDISCOUNT());
                     jsonObject.put("USERGUID", getFromGroupUserMaster("USER_GUID"));
+                    jsonObject.put("MASTER_TERMINAL_ID", prod.getMASTER_TERMINAL_ID());
 
 
 
@@ -223,6 +225,7 @@ public class GRNUploader extends Worker {
                     pm.setGRNTYPE(productcursor.getString(productcursor.getColumnIndex("GRNTYPE")));
                     pm.setGRANDAMOUNT(productcursor.getString(productcursor.getColumnIndex("GRANDAMOUNT")));
                     pm.setINVOICEDISCOUNT(productcursor.getString(productcursor.getColumnIndex("INVOICEDISCOUNT")));
+                    pm.setMASTER_TERMINAL_ID(DBRetriever.getTerminal_ID());
                     productlist.add(pm);
                 } while (productcursor.moveToNext());
             }
