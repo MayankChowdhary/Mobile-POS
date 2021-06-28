@@ -71,7 +71,7 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
     BillPreviewDialog dialogFragment;
     private String billNumber = new BillGenerator().getBillNumber();
     private String amountToPay;
-    private String customerId;
+    private String customerId=" ";
     private EditText received_amnt;
     private String deliveryGuid;
     private TextView pendingAmountTextView;
@@ -140,6 +140,7 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
     boolean CARD_MACHINE = true;
     boolean IS_CREDIT_ALLOWED = true;
     boolean IS_MULTI_CURR = false;
+    boolean ADVANCE_PAY = false;
 
     ControllerStoreConfig config = new  ControllerStoreConfig();
     ControllerStoreParams params = new ControllerStoreParams();
@@ -189,10 +190,13 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
                 amountToPay= String.valueOf(Double.parseDouble(amountToPay) - advance);
                 paidByAdvance = advance;
                 newAdvance = "0.00";
+                ADVANCE_PAY = true;
             }else if(advance>=Double.parseDouble(amountToPay)){
-                amountToPay = "0.00";
                 paidByAdvance = Double.parseDouble(amountToPay);
                 newAdvance = String.valueOf( advance - Double.parseDouble(amountToPay));
+                amountToPay = "0.00";
+                ADVANCE_PAY = true;
+
             }
 
         }
@@ -290,8 +294,9 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
                 EmptyCart();
             }
 
-            if(!isCreditPay && Double.parseDouble(advance_amount)>0.00) {
+            if(!isCreditPay && !customerId.trim().isEmpty() && ADVANCE_PAY) {
                 updateCustomerAdvance(newAdvance,customerId);
+                Log.d("AdvanceUpdate", "onViewCreated: Updated!"+newAdvance);
             }
 
             if(isCreditPay){
@@ -496,9 +501,7 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
             public void afterTextChanged(Editable s) {
                 paidByCash = 0;
                 payModeData.remove("CA");
-                if(paidByAdvance>0.00){
-                    payModeData.put("CA",new String[]{payModeId.get("CA"),"",String.valueOf(paidByAdvance),"","",""});
-                }
+
 
                 setPendingAmount();
                 if(s.toString().trim().isEmpty()){
@@ -521,31 +524,16 @@ public class PaymentFragment extends Fragment implements View.OnClickListener {
                         Toast.makeText(getContext(), "Incorrect Amount!", Toast.LENGTH_LONG).show();
                         Vibration.Companion.vibrate(300);
                     }else {
-                        paidByCash = received;
                         double payCash=0.00;
 
+                            payCash = received <= pendingAmount ? received :  pendingAmount;
 
-
-                        if(!isCreditPay) {
-                            payCash = received <= pendingAmount ? received : received - pendingAmount;
-
-                        }else {
-                            if(received<=pendingAmount){
-                                payCash = received;
-                            }else if(received>pendingAmount) {
-                                payCash = pendingAmount;
-                            }
                             Log.d("received", "afterTextChanged: "+received);
                             Log.d("pending", "afterTextChanged: "+pendingAmount);
                             Log.d("PayDataAdded", "afterTextChanged: "+payCash);
-                        }
-                        if(paidByAdvance>0.00){
-                            payModeData.put("CA",new String[]{payModeId.get("CA"),"",String.valueOf(payCash+paidByAdvance),"","",""});
 
-                        }else {
                             payModeData.put("CA", new String[]{payModeId.get("CA"), "", String.valueOf(payCash), "", "", ""});
-
-                        }
+                           paidByCash = received;
                         setPendingAmount();
                     }
 

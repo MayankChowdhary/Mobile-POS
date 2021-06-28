@@ -96,7 +96,7 @@ class SalesReportDetailsFragment : Fragment() {
                     val tv = TextView(context)
                     tv.layoutParams = lparams
                     tv.setTextColor(color);
-                    tv.text = getPayMode(key) + "\n" + billPayData[key] + " ₹"
+                    tv.text = getPayMode(key) + "\n" + billPayData[key]
                     payModeLayout!!.addView(tv)
                 }
 
@@ -105,7 +105,7 @@ class SalesReportDetailsFragment : Fragment() {
                     val tv = TextView(context)
                     tv.layoutParams = lparams
                     tv.setTextColor(color);
-                    tv.text = key+ "\n" + PayLedgerData[key] + " ₹"
+                    tv.text = key+ "\n" + PayLedgerData[key]
                     payModeLayout!!.addView(tv)
                 }
 

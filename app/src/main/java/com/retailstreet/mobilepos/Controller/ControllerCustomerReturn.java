@@ -114,6 +114,8 @@ public class ControllerCustomerReturn {
 
         GenerateReturnMaster(billno,reasonGuid,custGuid,reasonDetail,totalAmount,creditNoteNum,returnDate);
 
+        SalesReturn_UpdateorDelete(getSalesReturn(billno),billno);
+
         try {
             new WorkManagerSync(7);
         } catch (Exception e) {
@@ -603,7 +605,63 @@ public class ControllerCustomerReturn {
         return returnval;
     }
 
+
+    public ArrayList<SalesReturnManage> getSalesReturn(String invoiceno) {
+
+        ArrayList<SalesReturnManage> salesreturnlist = new ArrayList<SalesReturnManage>();
+        try {
+            SQLiteDatabase db  = context.openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
+            Cursor res = db.rawQuery("select distinct c.PROD_NM,a.BILLNO,a.MASTERCUSTOMERGUID,d.INTERNET_PRICE,d.VENDOR_NAME,d.WHOLE_SPRICE,d.SPEC_PRICE,a.SALEDATE," +
+                    "b.ITEM_GUID,a.NETDISCOUNT,a.BALANCE_CASH,a.TOTAL_AMOUNT,b.TOTALVALUE,b.QTY,b.MRP,d.EXP_DATE,b.CGST,b.SGST,b.TOTALGST, " +
+                    "b.DISCOUNT_VALUE,c.UOM,c.BARCODE from retail_str_sales_master a LEFT JOIN retail_str_sales_detail b ON a.BILLNO =b.BILLNO" +
+                    " LEFT JOIN retail_store_prod_com c ON b.ITEM_GUID =c.ITEM_GUID  LEFT JOIN retail_str_stock_master d ON b.ITEM_GUID =d.ITEM_GUID  where"
+                    + " a.BILLNO = '" + invoiceno + "' and c.ISPRODUCTRETURNABLE='YES' GROUP BY b.MRP ", null);
+
+            if (res.moveToFirst()) {
+                do {//,UOM,TOTAL,PROD_NM,EXP_DATE,LINE_DISC
+                    SalesReturnManage salesreturndetail = new SalesReturnManage();
+                    salesreturndetail.setSaleproductname(res.getString(res.getColumnIndex("PROD_NM")));
+                    salesreturndetail.setBarcode(res.getString(res.getColumnIndex("BARCODE")));
+                    salesreturndetail.setSaleProdid(res.getString(res.getColumnIndex("ITEM_GUID")));
+                    salesreturndetail.setExp_Date(res.getString(res.getColumnIndex("EXP_DATE")));
+                    salesreturndetail.setCustomerguid(res.getString(res.getColumnIndex("MASTERCUSTOMERGUID")));
+                    salesreturndetail.setSaleDate(res.getString(res.getColumnIndex("SALEDATE")));
+                    salesreturndetail.setBALANCE_CASH(res.getFloat(res.getColumnIndex("BALANCE_CASH")));
+
+                    salesreturndetail.setSalemrp(res.getString(res.getColumnIndex("MRP")));
+                    salesreturndetail.setSaleuom(res.getString(res.getColumnIndex("UOM")));
+                    salesreturndetail.setSalediscoumt(res.getString(res.getColumnIndex("DISCOUNT_VALUE")));
+                    salesreturndetail.setDiscount(res.getString(res.getColumnIndex("NETDISCOUNT")));
+                    salesreturndetail.setSalereturn_Linelevel_discount(res.getFloat(res.getColumnIndex("DISCOUNT_VALUE")) / res.getFloat(res.getColumnIndex("QTY")));
+                    salesreturndetail.setSaleqty(res.getDouble(res.getColumnIndex("QTY")));
+                    salesreturndetail.setSalestockqty(res.getFloat(res.getColumnIndex("QTY")));
+                    salesreturndetail.setSalereturn_qty(res.getFloat(res.getColumnIndex("QTY")));
+                    salesreturndetail.setSalesellingprice(res.getFloat(res.getColumnIndex("TOTALVALUE")));
+                    salesreturndetail.setSalereturn_sprice(res.getFloat(res.getColumnIndex("TOTALVALUE")) / res.getFloat(res.getColumnIndex("QTY")));
+                    salesreturndetail.setSaletotal(res.getFloat(res.getColumnIndex("TOTAL_AMOUNT")));
+                    salesreturndetail.setSalereturn_total(res.getFloat(res.getColumnIndex("TOTALVALUE")));
+                    salesreturndetail.setCGST(res.getFloat(res.getColumnIndex("CGST")));
+                    salesreturndetail.setSGST(res.getFloat(res.getColumnIndex("SGST")));
+                    salesreturndetail.setGST(res.getFloat(res.getColumnIndex("TOTALGST")));
+                    salesreturndetail.setVendorname(res.getString(res.getColumnIndex("VENDOR_NAME")));
+                    salesreturndetail.setWholesaleprice(res.getString(res.getColumnIndex("WHOLE_SPRICE")));
+                    salesreturndetail.setSpecialprice(res.getString(res.getColumnIndex("SPEC_PRICE")));
+                    salesreturndetail.setInternetprice(res.getString(res.getColumnIndex("INTERNET_PRICE")));
+                    salesreturnlist.add(salesreturndetail);
+                }
+                while (res.moveToNext());
+            }
+
+        } catch (IndexOutOfBoundsException e) {
+            e.printStackTrace();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
+        return salesreturnlist;
+    }
+
     public void SalesReturn_UpdateorDelete(ArrayList<SalesReturnManage> list, String billno) {
+
         SQLiteDatabase db  = context.openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
         ContentValues values = new ContentValues();
         DecimalFormat f = new DecimalFormat("##.00");
@@ -623,18 +681,7 @@ public class ControllerCustomerReturn {
                 db.delete("retail_str_sales_detail", "ITEM_GUID = ?  and " + "BILLNO " +
                         " = ?  ", new String[]{prod.getSaleProdid(), billno});
             } else {
-            /*Float remaingqty = prod.getSalestockqty() - prod.getSalereturn_qty();
-            DetailGST = prod.getGST();
-            float oneItemGST = DetailGST / prod.getSalestockqty();
-            float newDetailGST = oneItemGST * remaingqty;
-            Float oneitemdisc= Float.parseFloat(prod.getSalediscoumt())/prod.getSalestockqty();
 
-            TotalMasterGST +=newDetailGST;
-            TotalMasterDiscount +=oneitemdisc*remaingqty;
-            MasterTotalValue =(prod.getSaletotal()-prod.getSalereturn_total());
-            MasterBalance= prod.getBALANCE_CASH()-MasterTotalValue;
-            Log.e("Rc Doing ", "Cal "+TotalMasterGST+"  "+TotalMasterDiscount+"  "+MasterTotalValue+"  "+MasterBalance);
-            */
                 values.put("QTY", prod.getSalestockqty() - prod.getSalereturn_qty());
                 Log.d("R TV & NV", String.valueOf((prod.getSalereturn_sprice() * remaingqty)) + "  " + ((prod.getSalereturn_sprice() * remaingqty) - newDetailGST));
                 Detail_return_total += prod.getSalereturn_total();
@@ -668,6 +715,8 @@ public class ControllerCustomerReturn {
                 " = ?  ", new String[]{billno});
 
     }
+
+
     private String getTerminal_ID(){
         String result= null;
         try {

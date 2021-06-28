@@ -48,7 +48,7 @@ class CustomerLedgerFragment : Fragment() {
         custGuid = myArgs.custGuid
         getLedgerDetails(custGuid,getFromMasterCustomer(custGuid,"NAME"))
 
-        LegacyTableView.insertLegacyTitle("NAME", "DATE", "PAYMODE","ADVANCE AMOUNT", "CREDIT AMOUNT","DEBIT AMOUNT")
+        LegacyTableView.insertLegacyTitle("NAME", "DATE", "PAYMODE","ADVANCE AMOUNT","ADVANCE ADJUSTMENT", "CREDIT AMOUNT","DEBIT AMOUNT")
         //set table contents as string arrays
         //set table contents as string arrays
 
@@ -96,7 +96,7 @@ class CustomerLedgerFragment : Fragment() {
 
     private fun getLedgerDetails(custGuid: String, custName: String) {
         val mydb = requireActivity().openOrCreateDatabase("MasterDB", Context.MODE_PRIVATE, null)
-        val query = "select   ACTIONDATE, MASTERPAYMODEGUID, CREDITAMOUNT,DEBITAMOUNT,ADDITIONALPARAM6 from customerLedger Where CUSTOMERGUID = '$custGuid'";
+        val query = "select   ACTIONDATE, MASTERPAYMODEGUID, CREDITAMOUNT,DEBITAMOUNT,ADDITIONALPARAM6,ADDITIONALPARAM2 from customerLedger Where CUSTOMERGUID = '$custGuid'";
         val cursor = mydb.rawQuery(query, null)
         if (cursor.moveToFirst()) {
             while (!cursor.isAfterLast) {
@@ -104,8 +104,9 @@ class CustomerLedgerFragment : Fragment() {
                 val paymode:String? = getFromPayMode(cursor.getString(1))
                 val creditAmount = cursor.getString(2)
                 val advanceAmount = cursor.getString(4)
+                val advanceAdjst = cursor.getString(5)
                 val debitAmount = cursor.getString(3)
-                LegacyTableView.insertLegacyContent(custName, date, paymode,advanceAmount, creditAmount,debitAmount);
+                LegacyTableView.insertLegacyContent(custName, date, paymode,advanceAmount,advanceAdjst, creditAmount,debitAmount);
                 cursor.moveToNext()
             }
         }

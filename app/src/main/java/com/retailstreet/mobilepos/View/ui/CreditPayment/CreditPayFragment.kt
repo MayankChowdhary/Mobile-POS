@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import com.retailstreet.mobilepos.R
+import com.retailstreet.mobilepos.Utils.DecimalRounder
 import com.retailstreet.mobilepos.Utils.StringWithTag
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner
 import kotlin.math.abs
@@ -103,7 +104,7 @@ class CreditPayFragment : Fragment() {
                     custNameTv.text = custNameMob.string
                     custMobileTv.text = custNameMob.tag
                     custBalance = getCustBalance(custGuid)
-                    custBalance = abs(custBalance.toDouble()).toString()
+                    custBalance = DecimalRounder.roundDecimal(2,abs(custBalance.toDouble()).toString())
                     custBalanceTv.text = custBalance
                 }else{
 

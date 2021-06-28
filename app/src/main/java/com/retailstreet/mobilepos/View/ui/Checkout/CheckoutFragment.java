@@ -149,7 +149,6 @@ public class CheckoutFragment extends Fragment {
                    }
                }
 
-
                 CheckoutFragmentDirections.ActionNavCheckoutToPayment actionNavCheckoutToPayment= CheckoutFragmentDirections.actionNavCheckoutToPayment(totalAmount,customerId,DeliveryGuidString,false,creditBalance,addDiscount);
                 Navigation.findNavController(requireActivity(),R.id.nav_host_fragment).navigate(actionNavCheckoutToPayment);
 
@@ -175,7 +174,7 @@ public class CheckoutFragment extends Fragment {
                 spinnerSelected = (StringWithTag) parent.getItemAtPosition(pos);
 
                 customerId = spinnerSelected.tag;
-                creditBalance = getCustBalance(customerId);
+                creditBalance = DecimalRounder.roundDecimal(2,getCustBalance(customerId));
                 custGst = getCustGst(customerId,storeGST);
                creditBalance = String.valueOf( Math.abs(Double.parseDouble(creditBalance)));
                addressText.setText(getCustAddress(getCustID(customerId)));
