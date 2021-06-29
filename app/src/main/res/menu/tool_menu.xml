@@ -13,11 +13,18 @@
         app:showAsAction="always"
         android:visible="false" />
     <item
+        android:id="@+id/updateCust"
+        android:icon="@drawable/update_user"
+        android:title="Update Customer"
+        app:showAsAction="always"
+        android:visible="false" />
+    <item
         android:id="@+id/addCust"
-        android:icon="@drawable/add_customer"
+        android:icon="@drawable/add_user"
         android:title="Add Customer"
         app:showAsAction="always"
         android:visible="false" />
+
     <item
         android:id="@+id/appSearchAuto"
         android:icon="@android:drawable/ic_menu_search"

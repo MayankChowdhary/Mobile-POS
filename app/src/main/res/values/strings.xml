@@ -27,6 +27,11 @@
         <item>FEMALE</item>
         <item>OTHERS</item>
     </string-array>
+
+    <string-array name="discOptions">
+        <item>BY AMOUNT</item>
+        <item>BY PERCENTAGE</item>
+    </string-array>
     <string-array name="custCatType">
         <item>BRONZE</item>
         <item>SILVER</item>

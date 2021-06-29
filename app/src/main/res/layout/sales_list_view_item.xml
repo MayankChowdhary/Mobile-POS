@@ -115,10 +115,10 @@
         android:layout_height="match_parent"
         android:gravity="center_vertical"
         android:orientation="vertical"
-        android:layout_marginEnd="@dimen/_6sdp"
+        android:layout_marginEnd="0dp"
         android:layout_marginStart="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/edit_sales"
+        app:layout_constraintEnd_toStartOf="@+id/sales_qty"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -129,7 +129,7 @@
             android:layout_weight="1"
             android:text="listItems"
             android:ellipsize="end"
-            android:maxLines="2"
+            android:maxLines="1"
             android:textAlignment="viewStart"
             android:textColor="?colorOnSecondary"
             android:textSize="@dimen/_12ssp" />
@@ -141,6 +141,8 @@
             android:layout_weight="1"
             android:layout_marginTop="4dp"
             android:text="listItems"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:textColor="?colorOnBackground"
             android:textAlignment="viewStart"
             android:textSize="@dimen/_10ssp" />
@@ -152,6 +154,10 @@
             android:layout_weight="1"
             android:layout_marginTop="4dp"
             android:text="listItemsIV"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="1"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
             android:textColor="?colorOnBackground"
             android:textAlignment="viewStart"
             android:textSize="@dimen/_10ssp"

@@ -27,7 +27,6 @@ import com.mikepenz.actionitembadge.library.ActionItemBadge;
 import com.mikepenz.iconics.typeface.library.fontawesome.FontAwesome;
 import com.retailstreet.mobilepos.Controller.ControllerStoreConfig;
 import com.retailstreet.mobilepos.R;
-import com.retailstreet.mobilepos.Utils.DecimalRounder;
 import com.retailstreet.mobilepos.View.ApplicationContextProvider;
 import com.retailstreet.mobilepos.View.ui.Sales.SalesFragmentDirections;
 
@@ -53,7 +52,7 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
 
     public SalesListAdapter(Context context, Cursor cursor, Activity myParentActivity, UpdateRecyclerView updateRecyclerViews){
         super(context,cursor);
-        this.myParentActivity = myParentActivity;
+        SalesListAdapter.myParentActivity = myParentActivity;
         this.context=context;
         isIndia = config.getIsIndia();
         updateRecyclerView = updateRecyclerViews;
@@ -85,28 +84,30 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
 
         public void setMyListItem(Cursor cursor) {
             this.myListItem = SalesListItem.fromCursor(cursor);
-            String mrp ="MRP: "+ myListItem.getProduct_detail_2();
+            String mrp="";
             String sp ="Price: "+myListItem.getProduct_detail_4();
             double discount = Double.parseDouble(myListItem.getProduct_detail_3());
-            String discountString = "Disc: "+new DecimalFormat("#0.00").format(Double.parseDouble(myListItem.getProduct_detail_3()))+" %";
+            String discountString = "Disc: "+new DecimalFormat("#0.00").format(Double.parseDouble(myListItem.getProduct_detail_3()))+"%";
             qty = (int)Double.parseDouble(myListItem.getQty());
-
+            String vendor_NM = myListItem.getVendorNM();
             if(discount==0){
                 discountString = "";
             }
 
+            if(isMRPVisible){
+                mrp ="MRP: "+ myListItem.getProduct_detail_2();
+            }else {
+                mrp="";
+            }
 
             productTitle.setText(myListItem.getName());
-            product_detail_2.setText(mrp);
-            product_detail_4.setText(sp+"   "+discountString);
+            product_detail_2.setText(vendor_NM);
+            product_detail_4.setText(sp+" "+mrp+" "+discountString);
+            product_detail_4.setSelected(true);
             product_detail_V.setText(myListItem.getProduct_detail_v());
             sales_qty.setText("Avail: "+qty);
 
-            if(isMRPVisible){
-                product_detail_2.setVisibility(View.VISIBLE);
-            }else {
-                product_detail_2.setVisibility(View.GONE);
-            }
+
 
             if(isIndia){
                 product_detail_V.setVisibility(View.VISIBLE);

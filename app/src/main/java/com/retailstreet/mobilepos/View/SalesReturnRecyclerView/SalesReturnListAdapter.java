@@ -51,7 +51,6 @@ public class SalesReturnListAdapter extends CustomRecyclerViewAdapter2<SalesRetu
         myParentLayout = parentLayout;
         myActivity = activity;
         this.context =context;
-        //ControllerCart.printCart();
         totalItems_view = myParentLayout.findViewById(R.id.total_item);
         totalPrice_view = myParentLayout.findViewById(R.id.total_rupees);
         returnSubmitView = myParentLayout.findViewById(R.id.return_submit_layout);

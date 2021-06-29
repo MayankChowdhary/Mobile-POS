@@ -16,6 +16,7 @@ import com.retailstreet.mobilepos.Controller.ControllerStockMaster
 import com.retailstreet.mobilepos.Controller.ControllerStoreConfig
 import com.retailstreet.mobilepos.R
 import com.retailstreet.mobilepos.Utils.StringWithTag
+import com.retailstreet.mobilepos.Utils.Vibration
 import com.retailstreet.mobilepos.View.dialog.ClickListeners
 import com.retailstreet.mobilepos.View.dialog.LottieAlertDialogs
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner
@@ -26,6 +27,7 @@ import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
+
 
 /**
  * Created by Mayank Choudhary on 07-05-2021.
@@ -83,6 +85,8 @@ class StockUpdateFragment : Fragment() , DatePickerDialog.OnDateSetListener {
         val submitStockUpdate: Button = view.findViewById(R.id.submit_update_stock)
         val cgstLayout:LinearLayout = view.findViewById(R.id.su_cgst_layout)
         val sgstLayout:LinearLayout = view.findViewById(R.id.su_sgst_layout)
+        val discountEditText:EditText = view.findViewById(R.id.su_disc_value)
+
 
         if(!isIndia){
 
@@ -101,6 +105,7 @@ class StockUpdateFragment : Fragment() , DatePickerDialog.OnDateSetListener {
         var sgst = " "
         var vendorGuid =" "
         var vendorName = " "
+        var discValue = " "
 
 
         val stockNameArray:List<StringWithTag> = getProductName()
@@ -132,6 +137,7 @@ class StockUpdateFragment : Fragment() , DatePickerDialog.OnDateSetListener {
              totalEdtText.setText("")
              cgstEdtText.setText("")
              sgstEdtText.setText("")
+            discountEditText.setText("0")
 
             val expiryItem = arrayOf("DD/MM/YYYY")
             val expiryAdapter = ArrayAdapter(requireContext(), R.layout.spinner_layout_centre, expiryItem)
@@ -184,6 +190,7 @@ class StockUpdateFragment : Fragment() , DatePickerDialog.OnDateSetListener {
                     cgstEdtText.isEnabled=false
                     sgstEdtText.setText(StockData[10])
                     sgstEdtText.isEnabled=false
+                    discountEditText.setText(StockData[11])
 
                     try {
                         Log.d("dateReceived", "onItemSelected: " + StockData[4])
@@ -293,16 +300,26 @@ class StockUpdateFragment : Fragment() , DatePickerDialog.OnDateSetListener {
              total = totalEdtText.text.toString()
              cgst = cgstEdtText.text.toString()
              sgst = sgstEdtText.text.toString()
+             discValue = discountEditText.text.toString().trim()
 
-            val allStringsArray: Array<String> = arrayOf(barcode,expiryDate,mrp,vendorGuid,pprice, sprice,quantity,cgst,sgst);
+
+
+            val allStringsArray: Array<String> = arrayOf(barcode,expiryDate,mrp,vendorGuid,pprice, sprice,quantity,cgst,sgst,discValue);
 
             if(!validateStrings(allStringsArray)){
 
                 Toast.makeText(context, "Please fill up all Mandatory (*) fields first!", Toast.LENGTH_LONG).show();
+                Vibration.vibrate(300)
                 return@setOnClickListener
             }
 
-            ControllerStockMaster(context).updateStockMaster(stockId,extProdId,barcode,expiryDate,sprice,pprice,quantity,mrp)
+            if(!percentValidation(discValue)) {
+                Toast.makeText(context, "Please Enter Discount between 0-100", Toast.LENGTH_LONG).show();
+                Vibration.vibrate(300)
+                return@setOnClickListener
+            }
+
+            ControllerStockMaster(context).updateStockMaster(stockId,extProdId,barcode,expiryDate,sprice,pprice,quantity,mrp,discValue)
             ControllerStockMaster(context).generateStockRegister(stockId,quantity)
             val alertDialog = LottieAlertDialogs.Builder(context, DialogTypes.TYPE_SUCCESS)
                     .setTitle("Stock Updated")
@@ -417,11 +434,11 @@ private fun validateStrings(fields: Array<String>): Boolean {
 
 
     private fun getFromStockMaster(stockId: String): Array<String> {
-        val viewData: Array<String> = arrayOf(" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ")
+        val viewData: Array<String> = arrayOf(" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "," ")
         try {
 
             val mydb = requireContext().openOrCreateDatabase("MasterDB", Context.MODE_PRIVATE, null)
-            val selectQuery = "SELECT VENDOR_GUID, PROD_NM, EXTERNALPRODUCTID, BARCODE, EXP_DATE, MRP,S_PRICE,P_PRICE,QTY,CGST,SGST FROM retail_str_stock_master where STOCK_ID ='$stockId'"
+            val selectQuery = "SELECT VENDOR_GUID, PROD_NM, EXTERNALPRODUCTID, BARCODE, EXP_DATE, MRP,S_PRICE,P_PRICE,QTY,CGST,SGST,SALESDISCOUNTBYPERCENTAGE FROM retail_str_stock_master where STOCK_ID ='$stockId'"
             val cursor = mydb.rawQuery(selectQuery, null)
             if (cursor.moveToFirst()) {
 
@@ -436,6 +453,7 @@ private fun validateStrings(fields: Array<String>): Boolean {
                 viewData[8]= (if(cursor.getString(8).isBlank()) "0.00" else cursor.getString(8))
                 viewData[9]= (if(cursor.getString(9).isBlank()) "0.00" else cursor.getString(9))
                 viewData[10]= (if(cursor.getString(10).isBlank()) "0.00" else cursor.getString(10))
+                viewData[11]= (if(cursor.getString(11).isBlank()) "0.00" else cursor.getString(11))
 
             }
             cursor.close()
@@ -447,7 +465,20 @@ private fun validateStrings(fields: Array<String>): Boolean {
         return viewData
     }
 
+ private fun percentValidation(value:String):Boolean{
+     try {
+         val valuex:Int = value.trim().toInt()
+         if(valuex in 0..100){
 
+             return true
+         }
+     } catch (e: Exception) {
+         e.printStackTrace()
+     }
+
+     return false;
+
+ }
 
 
 }

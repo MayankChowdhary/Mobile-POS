@@ -21,6 +21,15 @@ public class SalesListItem {
     private String product_detail_v;
     private String Qty;
     private String itemGuid;
+    private String vendorNM;
+
+    public String getVendorNM() {
+        return vendorNM;
+    }
+
+    public void setVendorNM(String vendorNM) {
+        this.vendorNM = vendorNM;
+    }
 
     public String getItemGuid() {
         return itemGuid;
@@ -128,6 +137,7 @@ public class SalesListItem {
         salesListItem.setCgst(cursor.getString(20));
         salesListItem.setQty(cursor.getString(3));
         salesListItem.setItemGuid(cursor.getString(3));
+        salesListItem.setVendorNM(cursor.getString(36));
         return salesListItem;
 
     }

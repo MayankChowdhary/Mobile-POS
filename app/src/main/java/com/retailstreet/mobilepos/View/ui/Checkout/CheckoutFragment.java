@@ -42,6 +42,7 @@ import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -64,6 +65,7 @@ public class CheckoutFragment extends Fragment {
     private TextView grandTotalView;
     private Button payement;
     private  List<StringWithTag> customerNames;
+    private  List<String> discOptionArray;
     private  String customerId=" ";
     private  String DeliveryGuidString=" ";
     private  List<StringWithTag> deliveryOptionsArray;
@@ -75,6 +77,7 @@ public class CheckoutFragment extends Fragment {
     private boolean isIndia;
     private String custGst="";
     private String storeGST="";
+    private int discOptIndex=0;
     ControllerStoreConfig config = new ControllerStoreConfig();
 
     String totalItems;
@@ -111,6 +114,8 @@ public class CheckoutFragment extends Fragment {
         addressText = root.findViewById(R.id.addr_text);
         isIndia = config.getIsIndia();
         storeGST = getFromRetailStore("GSTIN_NUMBER");
+
+
 
         LinearLayout gstLayout = root.findViewById(R.id.item_layout_4);
         LinearLayout amntB4Tax = root.findViewById(R.id.item_layout_2);
@@ -159,6 +164,26 @@ public class CheckoutFragment extends Fragment {
 
         SearchableSpinner spinner = root.findViewById(R.id.customer_selector);
         Spinner deliveryOptions = root.findViewById(R.id.deliveryOptSpinner);
+        Spinner discOptions = root.findViewById(R.id.co_disc_selector);
+
+        discOptionArray = Arrays.asList( "BY AMOUNT", "BY PERCENTAGE");
+        ArrayAdapter<String> discAdapter = new ArrayAdapter<> (getActivity(), android.R.layout.simple_spinner_item, discOptionArray);
+        discAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        discOptions.setAdapter(discAdapter);
+
+        discOptions.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                discOptIndex = position;
+                addDiscEditText.setText("");
+                Log.d("DiscountSelected", "onItemSelected: Pos = "+position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         customerNames = getSpinnerItems();
         ArrayAdapter<StringWithTag> adap = new ArrayAdapter<StringWithTag> (getActivity(), R.layout.spinner_layout, customerNames);
@@ -247,8 +272,8 @@ public class CheckoutFragment extends Fragment {
                 }
                 try {
                     if( Double.parseDouble(s.toString())<Double.parseDouble(grand)) {
-                        addDiscount = s.toString();
-                        totalAmount = String.valueOf(Double.parseDouble(totalAmount)-Double.parseDouble(s.toString()));
+                        addDiscount = getDiscValue(s.toString());
+                        totalAmount = DecimalRounder.roundDecimal(2,Double.parseDouble(totalAmount)-Double.parseDouble(addDiscount));
                     }else {
                         totalAmount = grand;
                         addDiscount = "0.00";
@@ -319,6 +344,10 @@ public class CheckoutFragment extends Fragment {
         mAddCust.setVisible(true);
         mAddCust.getIcon().setTint(Color.parseColor("#ffffff"));
 
+        MenuItem mUpdateCust = menu.findItem(R.id.updateCust);
+        mUpdateCust.setVisible(true);
+        mUpdateCust.getIcon().setTint(Color.parseColor("#ffffff"));
+
     }
 
     @Override
@@ -326,7 +355,10 @@ public class CheckoutFragment extends Fragment {
         if (item.getItemId() == R.id.addCust) {
             Navigation.findNavController(requireActivity(),R.id.nav_host_fragment).navigate(R.id.action_nav_checkout_to_nav_customer);
             return true;
-        }else {
+        }else if(item.getItemId() == R.id.updateCust){
+            Navigation.findNavController(requireActivity(),R.id.nav_host_fragment).navigate(R.id.action_nav_checkout_to_nav_customer_update);
+            return true;
+        } else {
             return super.onOptionsItemSelected(item);
         }
 
@@ -693,5 +725,25 @@ public class CheckoutFragment extends Fragment {
 
     public String getFirstTwo(String str) {
         return str.length() < 2 ? str : str.substring(0, 2);
+    }
+
+
+    public String getDiscValue(String raw){
+        try {
+            Double value = Double.parseDouble(raw.trim());
+            Double totals = Double.parseDouble(grand);
+                if(discOptIndex==0){
+                    Log.d("Disc1", "getDiscValue: "+raw);
+                    return raw;
+                }else if(discOptIndex==1) {
+                    Double result = (totals*value)/100;
+                    Log.d("Disc1", "getDiscValue: "+result);
+                    return  DecimalRounder.roundDecimal(2,result);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        return raw;
     }
 }
