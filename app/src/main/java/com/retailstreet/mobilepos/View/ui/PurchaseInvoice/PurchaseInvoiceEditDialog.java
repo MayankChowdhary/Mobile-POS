@@ -21,6 +21,7 @@ import androidx.fragment.app.DialogFragment;
 import com.google.android.material.textfield.TextInputEditText;
 import com.retailstreet.mobilepos.Controller.ControllerStoreConfig;
 import com.retailstreet.mobilepos.R;
+import com.retailstreet.mobilepos.Utils.DecimalRounder;
 import com.retailstreet.mobilepos.Utils.Vibration;
 import com.retailstreet.mobilepos.View.ApplicationContextProvider;
 import com.tsongkha.spinnerdatepicker.DatePicker;
@@ -184,19 +185,19 @@ public class PurchaseInvoiceEditDialog extends DialogFragment implements DatePic
 
                         }
                         if(!Objects.requireNonNull(mrpEditText.getText()).toString().isEmpty()) {
-                            data = mrpEditText.getText().toString().trim();
+                            data = DecimalRounder.roundMRP(mrpEditText.getText().toString().trim());
                             mydb.execSQL("UPDATE tmp_purchase_invoice SET MRP = '" + data + "' WHERE  ITEM_GUID = '" + cellId + "'");
 
 
                         }
                         if(!Objects.requireNonNull(sPrice.getText()).toString().isEmpty()) {
-                            data = sPrice.getText().toString().trim();
+                            data = DecimalRounder.roundSPrice(sPrice.getText().toString().trim());
                             mydb.execSQL("UPDATE tmp_purchase_invoice SET S_PRICE = '" + data + "' WHERE  ITEM_GUID = '" + cellId + "'");
 
 
                         }
                         if(!Objects.requireNonNull(editPprice.getText()).toString().isEmpty()) {
-                            data = editPprice.getText().toString().trim();
+                            data = DecimalRounder.roundPPrice(editPprice.getText().toString().trim());
                             mydb.execSQL("UPDATE tmp_purchase_invoice SET P_PRICE = '" + data + "' WHERE  ITEM_GUID = '" + cellId + "'");
                             mydb.execSQL("UPDATE tmp_purchase_invoice SET TOTAL = (CAST(P_PRICE AS REAL)* CAST(QTY AS REAL))- CAST(DISC AS REAL) WHERE ITEM_GUID = '" + cellId + "'");
 
@@ -205,7 +206,7 @@ public class PurchaseInvoiceEditDialog extends DialogFragment implements DatePic
                         }
 
                         if(!Objects.requireNonNull(quantity.getText()).toString().isEmpty()) {
-                            data = quantity.getText().toString().trim();
+                            data = DecimalRounder.roundDecimal(2,quantity.getText().toString().trim());
                             mydb.execSQL("UPDATE tmp_purchase_invoice SET QTY = '" + data + "' WHERE  ITEM_GUID = '" + cellId + "'");
                             mydb.execSQL("UPDATE tmp_purchase_invoice SET TOTAL = (CAST(P_PRICE AS REAL)* CAST(QTY AS REAL))-  CAST(DISC AS REAL) WHERE ITEM_GUID = '" + cellId + "'");
 
@@ -220,7 +221,7 @@ public class PurchaseInvoiceEditDialog extends DialogFragment implements DatePic
 
                         }
                         if(!Objects.requireNonNull(editDiscount.getText()).toString().isEmpty()) {
-                            data = editDiscount.getText().toString().trim();
+                            data = DecimalRounder.roundSPrice(editDiscount.getText().toString().trim());
                             if (getTotal(cellId) < Double.parseDouble(data)) {
                                 Toast.makeText(getActivity(), "Enter P.Price And Quantity first!", Toast.LENGTH_LONG).show();
                                 Vibration.Companion.vibrate(300);

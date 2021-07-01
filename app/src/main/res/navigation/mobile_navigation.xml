@@ -161,7 +161,11 @@
         android:id="@+id/nav_customer_update"
         android:name="com.retailstreet.mobilepos.View.ui.CustomerUpdate.CustomerUpdateFragment"
         android:label="Update Customer"
-        tools:layout="@layout/fragment_customer_update" />
+        tools:layout="@layout/fragment_customer_update" >
+        <argument
+            android:name="custId"
+            app:argType="string" />
+    </fragment>
     <fragment
         android:id="@+id/nav_sales_refund"
         android:name="com.retailstreet.mobilepos.View.ui.SalesRefund.SalesRefundFragment"

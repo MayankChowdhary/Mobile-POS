@@ -327,7 +327,9 @@ public class MainDrawerActivity extends AppCompatActivity  {
                         Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_nav_customer);
                         drawer.closeDrawer(GravityCompat.START);
                     }else if (groupPosition==3 && childPosition==2) {
-                        Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_nav_customer_update);
+
+                        HomeFragmentDirections.ActionNavHomeToNavCustomerUpdate actionCustomerUpdate = HomeFragmentDirections.actionNavHomeToNavCustomerUpdate("");
+                        Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(actionCustomerUpdate);
                         drawer.closeDrawer(GravityCompat.START);
                     }else if (groupPosition==4 && childPosition==0) {
                         Navigation.findNavController(MainDrawerActivity.this,R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_nav_dayopen);

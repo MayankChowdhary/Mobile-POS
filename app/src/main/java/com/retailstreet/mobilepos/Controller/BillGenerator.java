@@ -17,6 +17,7 @@ import com.retailstreet.mobilepos.Utils.WorkManagerSync;
 import com.retailstreet.mobilepos.View.ApplicationContextProvider;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -35,7 +36,9 @@ import static com.retailstreet.mobilepos.Utils.Constants.DBNAME;
 
 public class BillGenerator {
     Context context;
-    boolean IS_SMS_ENABLED = new ControllerStoreConfig().getSMSVisibility();
+     boolean VENDOR_VISIBILITY = true;
+    boolean IS_SMS_ENABLED = true;
+    ControllerStoreConfig config =   new ControllerStoreConfig();
 
     private static Set<String> smsSetFromPrefs = new HashSet<>();
      HashMap<String, String> orderList = new HashMap<>();
@@ -121,10 +124,14 @@ public class BillGenerator {
         public  BillGenerator(){
             context = ApplicationContextProvider.getContext();
             MASTER_TERMINAL_ID = getTerminal_ID();
+            IS_SMS_ENABLED = config.getSMSVisibility();
+            VENDOR_VISIBILITY = config.getVendorVisibility();
         }
 
     public BillGenerator( String customerID, String receivedCash,String balanceCash, String deliveryTypeGuid, HashMap<String , String[]> payModeData, String additionDisc, String redeemNumber,double advanceAmount, String billnum) {
         context = ApplicationContextProvider.getContext();
+        IS_SMS_ENABLED = config.getSMSVisibility();
+        VENDOR_VISIBILITY = config.getVendorVisibility();
         MASTER_TERMINAL_ID = getTerminal_ID();
         GetSetFromPrefs();
         initMap();
@@ -147,6 +154,8 @@ public class BillGenerator {
             Boolean isCreditBill =  payModeData.containsKey("RX");
             GenerateBillDetails(key,count,isCreditBill);
             setNewQuantity(key);
+
+
         }
 
        GenerateBillMaster(customerID, additionDisc);
@@ -531,7 +540,7 @@ public class BillGenerator {
         double total = 0; // Your default if none is found
         try {
             SQLiteDatabase mydb  = context.openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
-            String query = "select SGST,S_PRICE, count from cart WHERE STOCK_ID = "+stockID;
+            String query = "select SGST,S_PRICE, count from cart WHERE STOCK_ID = '"+stockID+"'";
             Cursor result = mydb.rawQuery( query, null );
 
             if(result==null)
@@ -561,7 +570,7 @@ public class BillGenerator {
         double total = 0; // Your default if none is found
         try {
             SQLiteDatabase  mydb  = context.openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
-            String query = "select CGST,S_PRICE, count from cart WHERE STOCK_ID = "+stockID;
+            String query = "select CGST,S_PRICE, count from cart WHERE STOCK_ID = '"+stockID+"'";
             Cursor result = mydb.rawQuery( query, null );
             if(result==null)
                 return "0";
@@ -589,7 +598,7 @@ public class BillGenerator {
         double total = 0; // Your default if none is found
         try {
             SQLiteDatabase mydb  = context.openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
-            String query = "select S_PRICE, count from cart WHERE STOCK_ID = "+stockID;
+            String query = "select S_PRICE, count from cart WHERE STOCK_ID = '"+stockID+"'";
             Cursor result = mydb.rawQuery( query, null );
 
             if(result==null)
@@ -808,24 +817,31 @@ public class BillGenerator {
 
     private void setNewQuantity(String StockId) {
         try {
-            String newQty = "";
+            //String newQty = "";
             SQLiteDatabase mydb = context.openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
-            Cursor cursor = mydb.rawQuery("SELECT count, QTY FROM cart where STOCK_ID ='" + StockId + "'", null);
+            Cursor cursor = mydb.rawQuery("SELECT count, QTY, MRP,S_PRICE FROM cart where STOCK_ID ='" + StockId + "'", null);
             if (cursor.moveToFirst()) {
                 String cnt = cursor.getString(0);
                 String qty = cursor.getString(1);
-                newQty = String.valueOf(Double.parseDouble(qty) - Double.parseDouble(cnt));
+                String mrp = getFromStockMaster(StockId,"MRP");
+                //String sprice = cursor.getString(3);
+                String prodid = getFromStockMaster(StockId,"ITEM_GUID");
+                String barcode = getFromStockMaster(StockId,"BARCODE");
+                String expdate = getFromStockMaster(StockId,"EXP_DATE");
+                String vendor_name = getFromStockMaster(StockId,"VENDOR_NAME");
+                updateStockQty(qty,cnt,mrp,prodid,barcode,expdate,vendor_name);
+                //newQty = String.valueOf(Double.parseDouble(qty) - Double.parseDouble(cnt));
 
             }
             cursor.close();
             mydb.close();
-            UpdateQuantity(newQty, StockId);
+            //UpdateQuantity(newQty, StockId);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void UpdateQuantity(String quantity, String stockID){
+    /*public void UpdateQuantity(String quantity, String stockID){
         try {
 
             String query = "Update retail_str_stock_master Set QTY = '"+quantity+"', ISSYNCED = '0' where STOCK_ID = '"+stockID+"'";
@@ -837,7 +853,7 @@ public class BillGenerator {
             e.printStackTrace();
         }
 
-    }
+    }*/
 
 
 
@@ -929,5 +945,105 @@ public class BillGenerator {
         }
         return result;
 
+    }
+
+
+
+
+
+    public void updateStockQty(String stock_qty, String saleQty, String mrp, String prodid, String barcode, String expiry, String vendorname) {
+        String bussinesstype = getFromRetailStore("BUSINESSTYPE");
+        SQLiteDatabase  db  = context.openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
+        Log.d("receivedQtyUpData", "updateStockQty: MRP: "+mrp);
+        Log.d("receivedQtyUpData", "updateStockQty: ITEM_GUID: "+prodid);
+        Log.d("receivedQtyUpData", "updateStockQty: BARCODE: "+barcode);
+        Log.d("receivedQtyUpData", "updateStockQty: VENORNM: "+vendorname);
+        float newstock = 0;
+        boolean returnval = true;
+        int sqlUpdateRetval;
+
+            ContentValues contentValues = new ContentValues();
+
+            if (VENDOR_VISIBILITY){
+                float stockQuantity = Float.parseFloat(stock_qty);
+                float saleQuantity = Float.parseFloat(saleQty);;
+                newstock = stockQuantity - saleQuantity;
+                contentValues.put("QTY", newstock);
+                contentValues.put("ISSYNCED", "0");
+                if (bussinesstype.matches("FMCG")) {
+                    sqlUpdateRetval = db.update("retail_str_stock_master", contentValues, "ITEM_GUID = ? AND BARCODE =?  AND VENDOR_NAME = ?   AND MRP = ? ", new String[]{prodid, barcode, vendorname, mrp});
+                } else {
+                    sqlUpdateRetval = db.update("retail_str_stock_master", contentValues, "ITEM_GUID = ? AND BARCODE =?  AND VENDOR_NAME = ?   AND MRP = ?  AND EXP_DATE = ?", new String[]{prodid, barcode, vendorname, mrp, expiry});
+                }
+
+                Log.d("UpdatedFirstLevelQTY", "updateStockQty: ");
+            }
+            else{
+                ArrayList<String> VendorNM =GetVendorNmForStock(prodid,mrp);
+                float vendorstock =0.0f;
+                String getVendorCondition="";
+                String VendorNm="";
+                for(int i=0;i<VendorNM.size();i++){
+                    VendorNm=VendorNM.get(i);
+                    getVendorCondition = GetRegularVendorOrNot(VendorNM.get(i));
+                    Log.e("getVendorCondition ",VendorNM.get(i) +" "+getVendorCondition);
+                    if (getVendorCondition.matches("N")) {
+                        break;
+                    }
+                }
+                vendorstock=GetStockOfVendorCondition(prodid,mrp,VendorNm,getVendorCondition);
+                Log.e("vendorstock ",""+vendorstock);
+                float saleQuantity = Float.parseFloat(saleQty);
+                newstock = vendorstock - saleQuantity;
+                contentValues.put("QTY", newstock);
+                contentValues.put("ISSYNCED", "0");
+                if (bussinesstype.matches("FMCG")) {
+                    sqlUpdateRetval = db.update("retail_str_stock_master", contentValues, "ITEM_GUID = ? AND BARCODE =?  AND VENDOR_NAME = ?   AND MRP = ? ", new String[]{prodid, barcode,VendorNm, mrp});
+                } else {
+                    sqlUpdateRetval = db.update("retail_str_stock_master", contentValues, "ITEM_GUID = ? AND BARCODE =?  AND VENDOR_NAME = ?   AND MRP = ?  AND EXP_DATE = ?", new String[]{prodid, barcode, VendorNm, mrp, expiry});
+                }
+            }
+
+            if (sqlUpdateRetval < 1) {
+                returnval = false;
+            }
+        db.close();
+    }
+
+
+    private float GetStockOfVendorCondition(String ItemGUID,String MRP, String VENDOR_NAME, String getVendorCondition) {
+        float getstock = 0.0f;
+        SQLiteDatabase  db  = context.openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
+        String Query = ("select QTY from retail_str_stock_master a INNER JOIN retail_str_dstr b ON a.VENDOR_NAME = b.DSTR_NM where "
+                + "a.VENDOR_NAME  ='" + VENDOR_NAME + "' and  b.REGULAR_VENDOR ='"+getVendorCondition+"' and a.ITEM_GUID='"+ ItemGUID +"' and a.MRP='"+MRP+"'");
+        Cursor cursor = db.rawQuery(Query, null);
+        if (cursor.moveToFirst()) {
+            getstock = cursor.getFloat(cursor.getColumnIndex("QTY"));
+        }
+        return getstock;
+    }
+
+
+    private ArrayList<String> GetVendorNmForStock(String prodid, String MRP) {
+        ArrayList<String> VendorNmlist = new ArrayList<String>();
+        SQLiteDatabase  db  = context.openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
+        Cursor cursor = db.rawQuery("select distinct VENDOR_NAME from retail_str_stock_master where ITEM_GUID = '" +prodid + "' and MRP ='"+MRP+"' and QTY > 0.1 ", null);
+        if (cursor.moveToFirst()) {
+            do {
+                VendorNmlist.add(cursor.getString(cursor.getColumnIndex("VENDOR_NAME")));
+            } while (cursor.moveToNext());
+        }
+        return VendorNmlist;
+    }
+
+    public String GetRegularVendorOrNot(String VendorName) {
+        String getuomguid = null;
+        SQLiteDatabase  db  = context.openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
+        String Query = ("select REGULAR_VENDOR from retail_str_dstr where " + "DSTR_NM  ='" + VendorName + "' ");
+        Cursor cursor = db.rawQuery(Query, null);
+        if (cursor.moveToFirst()) {
+            getuomguid = cursor.getString(cursor.getColumnIndex("REGULAR_VENDOR"));
+        }
+        return getuomguid;
     }
 }

@@ -66,7 +66,7 @@ class StockUpdateFragment : Fragment() , DatePickerDialog.OnDateSetListener {
         super.onViewCreated(view, savedInstanceState)
         val myArgs: StockUpdateFragmentArgs = StockUpdateFragmentArgs.fromBundle(requireArguments())
         stockId = myArgs.stockId
-        if(stockId.isNotEmpty()){
+        if(stockId.isNotBlank()){
             argEnabled=true
             isfromSales=true
         }

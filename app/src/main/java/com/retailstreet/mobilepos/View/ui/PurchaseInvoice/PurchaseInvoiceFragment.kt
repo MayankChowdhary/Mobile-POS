@@ -402,12 +402,12 @@ class PurchaseInvoiceFragment : Fragment() , TableViewInterface, PurchaseInvoice
         val list: MutableList<StringWithTag> = ArrayList()
         list.add(StringWithTag("SELECT VENDOR", ""))
         val mydb = requireActivity().openOrCreateDatabase("MasterDB", Context.MODE_PRIVATE, null)
-        val query:String = "select VENDOR_GUID, MOBILE, DSTR_NM from retail_str_dstr";
+        val query:String = "select VENDOR_GUID, DSTR_NM from retail_str_dstr";
         val cursor = mydb.rawQuery(query, null)
         if (cursor.moveToFirst()) {
             while (!cursor.isAfterLast) {
                 val id = cursor.getString(0)
-                val name = cursor.getString(2) +" - "+ cursor.getString(1)
+                val name = cursor.getString(1)
                 list.add(StringWithTag(name, id))
                 cursor.moveToNext()
             }

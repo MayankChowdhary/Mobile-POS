@@ -48,6 +48,7 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
      public static boolean isIndia;
      public static boolean isNegativeStock = true;
      ControllerStoreConfig config = new ControllerStoreConfig();
+        private static boolean VENDOR_VISIBILITY = true;
 
 
     public SalesListAdapter(Context context, Cursor cursor, Activity myParentActivity, UpdateRecyclerView updateRecyclerViews){
@@ -58,6 +59,7 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
         updateRecyclerView = updateRecyclerViews;
         isMRPVisible = config.getMRPVisibility();
         isNegativeStock = config.getNegativeStockVis();
+        VENDOR_VISIBILITY =config.getVendorVisibility();
         //SQLiteDbInspector.PrintTableSchema(ApplicationContextProvider.getContext(),"MasterDB");
        // EmptyCart();
        initMap();
@@ -108,6 +110,11 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
             sales_qty.setText("Avail: "+qty);
 
 
+            if(VENDOR_VISIBILITY){
+                product_detail_2.setVisibility(View.VISIBLE);
+            }else {
+                product_detail_2.setVisibility(View.GONE);
+            }
 
             if(isIndia){
                 product_detail_V.setVisibility(View.VISIBLE);
@@ -335,7 +342,7 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
         } catch (SQLException e) {
             try {
                 SQLiteDatabase db = ApplicationContextProvider.getContext().openOrCreateDatabase("MasterDB", Context.MODE_PRIVATE, null);
-                String strSQL = "UPDATE cart SET count = "+count+" WHERE STOCK_ID = "+ id;
+                String strSQL = "UPDATE cart SET count = '"+count+"' WHERE STOCK_ID = '"+ id+"'";
                 db.execSQL(strSQL);
                 db.close();
             } catch (SQLException sqlException) {
@@ -346,7 +353,7 @@ public class SalesListAdapter extends CustomRecyclerViewAdapter<SalesListAdapter
     public static void deletefromCart(String key){
         try {
             SQLiteDatabase  db = ApplicationContextProvider.getContext().openOrCreateDatabase("MasterDB", Context.MODE_PRIVATE, null);
-            db.delete("cart", "STOCK_ID" + "=" + key, null);
+            db.delete("cart", "STOCK_ID" + "= '" + key +"'", null);
             db.close();
         } catch (Exception e) {
             e.printStackTrace();

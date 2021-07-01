@@ -66,9 +66,8 @@ public class CheckoutFragment extends Fragment {
     private Button payement;
     private  List<StringWithTag> customerNames;
     private  List<String> discOptionArray;
-    private  String customerId=" ";
+    private  String customerId="";
     private  String DeliveryGuidString=" ";
-    private  List<StringWithTag> deliveryOptionsArray;
     private ConstraintLayout addressLayout;
     private  Button change_add;
     private EditText addDiscEditText;
@@ -224,7 +223,7 @@ public class CheckoutFragment extends Fragment {
 
         // Create the instance of ArrayAdapter
         // having the list of courses
-        deliveryOptionsArray = getDeliveryOptions();
+        List<StringWithTag> deliveryOptionsArray = getDeliveryOptions();
         ArrayAdapter<StringWithTag> deladapt = new ArrayAdapter<StringWithTag> (getActivity(), R.layout.spinner_layout, deliveryOptionsArray);
         deladapt.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         deliveryOptions.setAdapter(deladapt);
@@ -356,7 +355,8 @@ public class CheckoutFragment extends Fragment {
             Navigation.findNavController(requireActivity(),R.id.nav_host_fragment).navigate(R.id.action_nav_checkout_to_nav_customer);
             return true;
         }else if(item.getItemId() == R.id.updateCust){
-            Navigation.findNavController(requireActivity(),R.id.nav_host_fragment).navigate(R.id.action_nav_checkout_to_nav_customer_update);
+            CheckoutFragmentDirections.ActionNavCheckoutToNavCustomerUpdate actionCustomerUpdate =CheckoutFragmentDirections.actionNavCheckoutToNavCustomerUpdate(customerId);
+            Navigation.findNavController(requireActivity(),R.id.nav_host_fragment).navigate(actionCustomerUpdate);
             return true;
         } else {
             return super.onOptionsItemSelected(item);
@@ -539,48 +539,58 @@ public class CheckoutFragment extends Fragment {
     }
 
     public String getSGST(String stockID){
-        SQLiteDatabase mydb  = requireContext().openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
-        String query = "select SGST,S_PRICE, count from cart WHERE STOCK_ID = "+stockID;
-        Cursor result = mydb.rawQuery( query, null );
+        double total = 0; // Your default if none is found
+        try {
+            SQLiteDatabase mydb  = requireContext().openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
+            String query = "select SGST,S_PRICE, count from cart WHERE STOCK_ID = '"+stockID+"'";
+            Cursor result = mydb.rawQuery( query, null );
 
-        if(result==null)
-            return "0";
+            if(result==null)
+                return "0";
 
-        double total = 0.0; // Your default if none is found
-        for (result.moveToFirst(); !result.isAfterLast(); result.moveToNext()) {
+            total = 0.0;
+            for (result.moveToFirst(); !result.isAfterLast(); result.moveToNext()) {
 
-            double itemSgst = Double.parseDouble(result.getString(0));
-            double itemPrice = Double.parseDouble(result.getString(1));
-            double sgstForone= ((itemSgst*itemPrice)/100);
-            int itemcount= Integer.parseInt(result.getString(2));
-            total = sgstForone*itemcount;
+                double itemSgst = Double.parseDouble(result.getString(0));
+                double itemPrice = Double.parseDouble(result.getString(1));
+                double sgstForone= ((itemSgst*itemPrice)/100);
+                int itemcount= Integer.parseInt(result.getString(2));
+                total = sgstForone*itemcount;
 
+            }
+            result.close();
+            mydb.close();
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
         }
-        result.close();
-        mydb.close();
         return String.valueOf(total);
     }
 
     public  String getCGST( String stockID){
-        SQLiteDatabase  mydb  = requireContext().openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
-        String query = "select CGST,S_PRICE, count from cart WHERE STOCK_ID = "+stockID;
-        Cursor result = mydb.rawQuery( query, null );
+        double total = 0; // Your default if none is found
+        try {
+            SQLiteDatabase  mydb  = requireContext().openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
+            String query = "select CGST,S_PRICE, count from cart WHERE STOCK_ID = '"+stockID+"'";
+            Cursor result = mydb.rawQuery( query, null );
 
-        if(result==null)
-            return "0";
+            if(result==null)
+                return "0";
 
-        double total = 0.0; // Your default if none is found
-        for (result.moveToFirst(); !result.isAfterLast(); result.moveToNext()) {
+            total = 0.0;
+            for (result.moveToFirst(); !result.isAfterLast(); result.moveToNext()) {
 
-            double itemSgst = Double.parseDouble(result.getString(0));
-            double itemPrice = Double.parseDouble(result.getString(1));
-            double sgstForone= ((itemSgst*itemPrice)/100);
-            int itemcount= Integer.parseInt(result.getString(2));
-            total = sgstForone*itemcount;
+                double itemSgst = Double.parseDouble(result.getString(0));
+                double itemPrice = Double.parseDouble(result.getString(1));
+                double sgstForone= ((itemSgst*itemPrice)/100);
+                int itemcount= Integer.parseInt(result.getString(2));
+                total = sgstForone*itemcount;
 
+            }
+            result.close();
+            mydb.close();
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
         }
-        result.close();
-        mydb.close();
         return String.valueOf(total);
 
     }

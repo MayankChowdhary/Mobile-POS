@@ -70,6 +70,7 @@ class VendorInfoFragment : Fragment() {
         val distActiveEditText: EditText = view.findViewById(R.id.vu_active_value)
         val gstLayout:LinearLayout = view.findViewById(R.id.vu_gst_title_layout)
         val panLayout:LinearLayout = view.findViewById(R.id.vu_pan_title_layout)
+        val regularEditText:EditText = view.findViewById(R.id.vu_regular_value)
 
         if(!isIndia){
 
@@ -95,6 +96,7 @@ class VendorInfoFragment : Fragment() {
             distGstEditText.setText("")
             distPanEditText.setText("")
             distActiveEditText.setText("")
+            regularEditText.setText("")
 
 
         }
@@ -135,6 +137,7 @@ class VendorInfoFragment : Fragment() {
                     distGstEditText.setText(vendorData[11])
                     distPanEditText.setText(vendorData[12])
                     distActiveEditText.setText(vendorData[13])
+                    regularEditText.setText(vendorData[14])
                 }
 
             }
@@ -179,11 +182,11 @@ class VendorInfoFragment : Fragment() {
 
 
     private fun getFromMasterVendor(distId: String): Array<String> {
-        val viewData: Array<String> = arrayOf(" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ")
+        val viewData: Array<String> = arrayOf(" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "," ")
         try {
 
             val mydb = requireContext().openOrCreateDatabase("MasterDB", Context.MODE_PRIVATE, null)
-            val selectQuery = "SELECT DSTR_NM, DSTR_CNTCT_NM, ADD_1, TELE, EMAIL, CITY,VENDORSTATE,ZIP,MASTERCOUNTRYID,MOBILE,DSTR_INV,GST,PAN,VENDOR_STATUS FROM retail_str_dstr where DSTR_ID ='$distId'"
+            val selectQuery = "SELECT DSTR_NM, DSTR_CNTCT_NM, ADD_1, TELE, EMAIL, CITY,VENDORSTATE,ZIP,MASTERCOUNTRYID,MOBILE,DSTR_INV,GST,PAN,VENDOR_STATUS, REGULAR_VENDOR FROM retail_str_dstr where DSTR_ID ='$distId'"
             val cursor = mydb.rawQuery(selectQuery, null)
             if (cursor.moveToFirst()) {
 
@@ -201,6 +204,7 @@ class VendorInfoFragment : Fragment() {
                 viewData[11]= (if(cursor.getString(11).isBlank()) " " else cursor.getString(11))
                 viewData[12]= (if(cursor.getString(12).isBlank()) " " else cursor.getString(12))
                 viewData[13]= (if(cursor.getString(13).isBlank()) " " else cursor.getString(13))
+                viewData[14]= (if(cursor.getString(14).isBlank()) " " else cursor.getString(14))
 
             }
             cursor.close()

@@ -15,6 +15,7 @@ import com.labters.lottiealertdialoglibrary.DialogTypes
 import com.retailstreet.mobilepos.Controller.ControllerProductMaster
 import com.retailstreet.mobilepos.Controller.ControllerStoreConfig
 import com.retailstreet.mobilepos.R
+import com.retailstreet.mobilepos.Utils.DecimalRounder
 import com.retailstreet.mobilepos.Utils.IDGenerator
 import com.retailstreet.mobilepos.Utils.StringWithTag
 import com.retailstreet.mobilepos.Utils.Vibration
@@ -383,13 +384,13 @@ class ProductsFragment : Fragment() , DatePickerDialog.OnDateSetListener {
             extProdId = ext_prod_id_editext.text.toString()
             batchNum = batch_num_edittext.text.toString()
             barCode = barcode_edittext.text.toString()
-            mrp = mrp_edittext.text.toString()
-            sPrice = sprice_edittext.text.toString()
-            pPrice = pprice_edittext.text.toString()
-            specialPrice = special_price_edittext.text.toString()
-            wholePrice = whole_price_edittext.text.toString()
-            internetPrice = internet_price_edittext.text.toString()
-            stockQuantity = stock_qty_edittext.text.toString()
+            mrp = DecimalRounder.roundMRP(mrp_edittext.text.toString())
+            sPrice = DecimalRounder.roundSPrice(sprice_edittext.text.toString())
+            pPrice = DecimalRounder.roundPPrice(pprice_edittext.text.toString())
+            specialPrice = DecimalRounder.roundSPrice(special_price_edittext.text.toString())
+            wholePrice = DecimalRounder.roundSPrice(whole_price_edittext.text.toString())
+            internetPrice = DecimalRounder.roundSPrice(internet_price_edittext.text.toString())
+            stockQuantity = DecimalRounder.roundDecimal(2,stock_qty_edittext.text.toString())
             cess1 = cess1_edittext.text.toString()
             cess2 = cess2_edittext.text.toString()
             minQty= min_qty_edittext.text.toString()

@@ -34,6 +34,8 @@ public class ControllerStockMaster extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "MasterDB";
     private static final String TABLE_NAME = "retail_str_stock_master";
+    private ControllerStoreConfig config;
+    private static boolean VENDOR_VISIBILITY = true;
     
         String STOCK_ID ;
         String STORE_GUID ;
@@ -81,6 +83,8 @@ public class ControllerStockMaster extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         this.context =context;
         MASTER_TERMINAL_ID = getTerminal_ID();
+        config = new ControllerStoreConfig();
+        VENDOR_VISIBILITY =config.getVendorVisibility();
 
     }
 
@@ -398,7 +402,14 @@ public class ControllerStockMaster extends SQLiteOpenHelper {
             if(cursor != null && !cursor.isClosed()){
                 cursor.close();
             }
-            String query = "SELECT  * FROM " + TABLE_NAME;
+            String query;
+
+            if(VENDOR_VISIBILITY){
+                query = "SELECT  * FROM " + TABLE_NAME;
+            }else {
+                query = "SELECT STOCK_ID, STORE_GUID,  ITEM_GUID,  TOTAL(QTY),  SALE_UOMID,  UOM,  BATCH_NO,  BARCODE,  P_PRICE,  MRP,  S_PRICE,  INTERNET_PRICE,  MIN_QUANTITY,  MAX_QUANTITY,  WHOLE_SPRICE,  SPEC_PRICE,  GENERIC_NAME,  EXTERNALPRODUCTID,  GST,  SGST,  CGST,  IGST,  CESS1,  CESS2,  EXP_DATE,  PROD_NM,  ITEM_CODE,  CREATED_BY,  UPDATEDBY,  CREATED_ON,  UPDATEDON,  SALESDISCOUNTBYPERCENTAGE,  SALESDISCOUNTBYAMOUNT,  GRN_GUID,  GRNNO,  VENDOR_GUID,  VENDOR_NAME,  GRNDETAILGUID,  ISSYNCED,  MASTER_TERMINAL_ID FROM " + TABLE_NAME+" GROUP BY ITEM_GUID,MRP";
+            }
+
             db = getReadableDatabase();          //Opens database in writable mode.
             cursor = db.rawQuery(query, null);
            if(cursor.moveToFirst()){
@@ -417,7 +428,15 @@ public class ControllerStockMaster extends SQLiteOpenHelper {
             if(cursor != null){
                 cursor.close();
             }
-            String query = "SELECT  * FROM " + TABLE_NAME+" WHERE "+ column+" LIKE "+"'%"+pattern+"%'";
+            String query;
+
+            if(VENDOR_VISIBILITY){
+                query = "SELECT  * FROM " + TABLE_NAME+" WHERE "+ column+" LIKE "+"'%"+pattern+"%'";
+            }else {
+                query = "SELECT  STOCK_ID, STORE_GUID,  ITEM_GUID,  TOTAL(QTY),  SALE_UOMID,  UOM,  BATCH_NO,  BARCODE,  P_PRICE,  MRP,  S_PRICE,  INTERNET_PRICE,  MIN_QUANTITY,  MAX_QUANTITY,  WHOLE_SPRICE,  SPEC_PRICE,  GENERIC_NAME,  EXTERNALPRODUCTID,  GST,  SGST,  CGST,  IGST,  CESS1,  CESS2,  EXP_DATE,  PROD_NM,  ITEM_CODE,  CREATED_BY,  UPDATEDBY,  CREATED_ON,  UPDATEDON,  SALESDISCOUNTBYPERCENTAGE,  SALESDISCOUNTBYAMOUNT,  GRN_GUID,  GRNNO,  VENDOR_GUID,  VENDOR_NAME,  GRNDETAILGUID,  ISSYNCED,  MASTER_TERMINAL_ID FROM " + TABLE_NAME+" WHERE "+ column+" LIKE "+"'%"+pattern+"%' GROUP BY ITEM_GUID,MRP";
+            }
+
+
             db = getReadableDatabase();          //Opens database in writable mode.
             cursor = db.rawQuery(query, null);
             if(cursor.moveToFirst()){
@@ -635,6 +654,5 @@ public class ControllerStockMaster extends SQLiteOpenHelper {
         return result;
 
     }
-
 
 }

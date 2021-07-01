@@ -19,7 +19,6 @@ import com.retailstreet.mobilepos.Model.GRNDetails;
 import com.retailstreet.mobilepos.Model.GRNMaster;
 import com.retailstreet.mobilepos.Model.GroupUserMaster;
 import com.retailstreet.mobilepos.Model.HSNMaster;
-import com.retailstreet.mobilepos.Model.InvoiceSyncResponse;
 import com.retailstreet.mobilepos.Model.LicenceModulePojo;
 import com.retailstreet.mobilepos.Model.MasterCategory;
 import com.retailstreet.mobilepos.Model.MasterCustomerType;
@@ -29,6 +28,7 @@ import com.retailstreet.mobilepos.Model.MasterUOM;
 import com.retailstreet.mobilepos.Model.PaymentModeMaster;
 import com.retailstreet.mobilepos.Model.ProductMaster;
 import com.retailstreet.mobilepos.Model.RetailStore;
+import com.retailstreet.mobilepos.Model.SMS_SYNC;
 import com.retailstreet.mobilepos.Model.ShiftMaster;
 import com.retailstreet.mobilepos.Model.ShiftTrans;
 import com.retailstreet.mobilepos.Model.StockMaster;
@@ -254,7 +254,7 @@ public interface ApiInterface {
     Call<SyncResponse> UploadCustomerRecords(@Header("Authorization")String Authorization, @Body RequestBody body);
 
     @POST("ApiTest/Invoice")
-    Call<List<InvoiceSyncResponse>> UploadSaleRecordsSMS(@Body RequestBody body);
+    Call<SMS_SYNC> UploadSaleRecordsSMS(@Body RequestBody body);
 
     @POST("APIMANAGER/api/PullPOSRegualarSync/PushCustomerReturns")
     Call<SyncResponse> UploadSalesReturnRecords(@Header("Authorization")String Authorization, @Body RequestBody body);

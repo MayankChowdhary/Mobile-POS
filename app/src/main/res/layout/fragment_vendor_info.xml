@@ -140,8 +140,10 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:ems="15"
+                        android:maxLines ="4"
                         android:includeFontPadding="false"
-                        android:inputType="text"
+                        android:inputType="text|textMultiLine"
+                        android:scrollHorizontally="false"
                         android:textColor="?colorOnSurface" />
                 </LinearLayout>
 
@@ -454,6 +456,32 @@
 
                     <EditText
                         android:id="@+id/vu_active_value"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:ems="15"
+                        android:includeFontPadding="false"
+                        android:inputType="text"
+                        android:textColor="?colorOnSurface" />
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/vu_regular_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_6sdp"
+                    android:layout_marginBottom="0dp"
+                    android:orientation="vertical">
+                    <TextView
+                        android:id="@+id/vu_regular_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="start"
+                        android:text="Regular Vendor "
+                        android:textColor="?colorOnBackground"
+                        android:textSize="@dimen/_14ssp" />
+                    <EditText
+                        android:id="@+id/vu_regular_value"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"

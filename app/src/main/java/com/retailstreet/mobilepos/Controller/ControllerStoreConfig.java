@@ -338,6 +338,27 @@ public class ControllerStoreConfig {
     }
 
 
+    public  boolean getVendorVisibility(){
+        boolean isEnabled = true;
+        try {
+            SQLiteDatabase mydb  = context.openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
+            String selectQuery = "SELECT PARAM1 FROM store_configuration";
+            Cursor cursor = mydb.rawQuery(selectQuery, null);
+            if (cursor.moveToFirst()) {
+                String result= cursor.getString(0);
+                if(result.trim().equals("N")|| result.trim().equals("0")){
+                    isEnabled = false;
+                }
+            }
+            cursor.close();
+            mydb.close();
+            Log.d("DataRetrieved", "getVendorVisibility: "+ isEnabled);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return isEnabled;
+    }
+
     public  int getMrpDecimal(){
         int decimal = 2;
         try {

@@ -17,6 +17,7 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.Navigation
 import com.labters.lottiealertdialoglibrary.DialogTypes
 import com.retailstreet.mobilepos.Controller.ControllerCreditPay
 import com.retailstreet.mobilepos.Controller.ControllerCustomerMaster
@@ -41,6 +42,9 @@ class CustomerUpdateFragment : Fragment() {
 
     private lateinit var viewModel: CustomerUpdateViewModel
     private var isIndia:Boolean = true
+    private var argEnabled= false
+    private var isfromSales = false
+    var custId = " "
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -56,6 +60,15 @@ class CustomerUpdateFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val myArgs: CustomerUpdateFragmentArgs = CustomerUpdateFragmentArgs.fromBundle(requireArguments())
+        custId = myArgs.custId
+        if(custId.isNotBlank()){
+            custId = getcustPrimaryid(custId)
+            argEnabled=true
+            isfromSales=true
+        }
+
+
         isIndia = ControllerStoreConfig().isIndia
         val custNameEdtText: EditText = view.findViewById(R.id.cu_name__value)
         val custMobileEdtText: EditText = view.findViewById(R.id.cu_mobile_value)
@@ -86,7 +99,6 @@ class CustomerUpdateFragment : Fragment() {
         var custType= " "
         var custCreditType= " "
         var custTypeGuid= " "
-        var custId = " "
         var custGuid = " "
         var custAdvance = " "
         var custCreditLImit = " "
@@ -136,9 +148,15 @@ class CustomerUpdateFragment : Fragment() {
         custSearchSelector.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, views: View?, position: Int, id: Long) {
                 val custSelected = parent.getItemAtPosition(position) as StringWithTag
-                 custId = custSelected.tag
-                Log.d("GenderSelected", "onItemSelected: Tag= $custId")
+                Log.d("CustomerSelected", "onItemSelected: Tag= $custId")
 
+                if(argEnabled){
+                    custSearchSelector.setSelection(getIndexCust(custSearchSelector, custId))
+                    argEnabled=false
+                    return
+                }else{
+                    custId = custSelected.tag
+                }
                 if (custId.isBlank()){
                     enableDisableView(view, false, search)
                     doViewsEmpty()
@@ -267,7 +285,11 @@ class CustomerUpdateFragment : Fragment() {
                     .setPositiveListener(object : ClickListeners {
                         override fun onClick(dialog: LottieAlertDialogs) {
                             dialog.dismiss()
-                            doViewsEmpty()
+                            if(isfromSales){
+                                Navigation.findNavController(requireActivity(), R.id.nav_host_fragment).navigateUp()
+                            }else {
+                                custSearchSelector.setSelection(0)
+                            }
                         }
 
                     })
@@ -375,6 +397,15 @@ class CustomerUpdateFragment : Fragment() {
         return 0
     }
 
+    private fun getIndexCust(spinner: Spinner, myString: String): Int {
+        for (i in 0 until spinner.count) {
+            if ((spinner.getItemAtPosition(i) as StringWithTag).tag.equals(myString, ignoreCase = true)) {
+                return i
+            }
+        }
+        return 0
+    }
+
     private fun validateStrings(fields: Array<String>): Boolean {
         for (i in fields.indices) {
             val currentField = fields[i]
@@ -401,5 +432,25 @@ class CustomerUpdateFragment : Fragment() {
             Toast.makeText(context, "Advance Update Failed!", Toast.LENGTH_LONG).show();
 
         }
+    }
+
+    private fun getcustPrimaryid(custId: String): String {
+        var result: String = ""
+        try {
+            val mydb = requireContext().openOrCreateDatabase("MasterDB", Context.MODE_PRIVATE, null)
+            result = ""
+            val selectQuery =
+                "SELECT CUST_ID FROM retail_cust where CUSTOMERGUID  ='$custId'"
+            val cursor = mydb.rawQuery(selectQuery, null)
+            if (cursor.moveToFirst()) {
+                result = cursor.getString(0)
+            }
+            cursor.close()
+            mydb.close()
+            Log.d("DataRetrieved", "getFromCustomerMaster: $result")
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+        }
+        return result
     }
 }

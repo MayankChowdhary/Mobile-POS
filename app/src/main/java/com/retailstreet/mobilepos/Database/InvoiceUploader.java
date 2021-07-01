@@ -17,7 +17,7 @@ import com.retailstreet.mobilepos.Controller.InvoiceGenerator;
 import com.retailstreet.mobilepos.Model.BillDetail;
 import com.retailstreet.mobilepos.Model.BillMasterUpload;
 import com.retailstreet.mobilepos.Model.BillPayInvoice;
-import com.retailstreet.mobilepos.Model.InvoiceSyncResponse;
+import com.retailstreet.mobilepos.Model.SMS_SYNC;
 import com.retailstreet.mobilepos.Utils.ApiInterface;
 import com.retailstreet.mobilepos.Utils.RetroSync;
 
@@ -26,7 +26,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import okhttp3.RequestBody;
@@ -75,6 +74,7 @@ public class InvoiceUploader extends Worker {
                 JSONArray jsonArray = new JSONArray();
                 for (BillMasterUpload prod : GetBillMasterToSync) {
                     JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("BillType", "Sales Bill for Invoice");
                     jsonObject.put("STORENAME", getFromRetailStore("STR_NM"));
                     jsonObject.put("STOREADDRESS",  getFromRetailStore("ADD_1"));
                     jsonObject.put("STORECITY", getFromRetailStore("CTY"));
@@ -137,37 +137,19 @@ public class InvoiceUploader extends Worker {
         private void UploadRecord(JSONArray jsonArray) {
             ApiInterface apiService = RetroSync.getClient().create(ApiInterface.class);
             RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), jsonArray.toString());
-            Call<List<InvoiceSyncResponse>> call = apiService.UploadSaleRecordsSMS(body);
-            call.enqueue(new Callback<List<InvoiceSyncResponse>>() {
+            Call<SMS_SYNC> call = apiService.UploadSaleRecordsSMS(body);
+            call.enqueue(new Callback<SMS_SYNC>() {
                 @Override
-                public void onResponse(Call<List<InvoiceSyncResponse>> call, Response<List<InvoiceSyncResponse>> response) {
+                public void onResponse(Call<SMS_SYNC> call, Response<SMS_SYNC> response) {
                     try {
                         //  progressDialog.dismiss();
-                        Log.d("Rc salesSMS:- ",response.raw().toString());
+                        Log.d("Rc salesSMS:- ", response.raw().toString());
                         if (response.isSuccessful()) {
-                            Log.d("Rc Response for sales :", "SMS " + (response.body() != null ? response.body().get(0).getMessage() : null));
+                            Log.d("Rc Response for sales :", "SMS " + (response.body() != null ? response.body().getData() : null));
                             smsSetFromPrefs.remove(Bill_No);
-                            Log.d("SMSNoRemoved", "onResponse: "+Bill_No);
+                            Log.d("SMSNoRemoved", "onResponse: " + Bill_No);
                             SaveSetsInPrefs();
-
-                            String code = "";
-                            if (response.body().toString().length() > 4) {
-                                code = response.body().toString().substring(1, 5);
-                                Log.d("SMSCodeExtracted", "CODE: " + code);
-                            }
-
-                            if (code != null && code.contains("1025")) {
-                                Toast.makeText(context, "SMS Failed! Insufficient Amount", Toast.LENGTH_SHORT).show();
-
-                            } else if (code != null && code.contains("1706")){
-                                Toast.makeText(context, "SMS Failed! Wrong Number", Toast.LENGTH_SHORT).show();
-
-                            }else {
-                                Toast.makeText(context,"SMS Successfully Synced!",Toast.LENGTH_SHORT).show();
-
-                            }
-
-
+                            Toast.makeText(context, "SMS Successfully Synced!", Toast.LENGTH_SHORT).show();
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -176,7 +158,7 @@ public class InvoiceUploader extends Worker {
                 }
 
                 @Override
-                public void onFailure(Call<List<InvoiceSyncResponse>> call, Throwable t) {
+                public void onFailure(Call<SMS_SYNC> call, Throwable t) {
                     //  progressDialog.dismiss();
                     Log.e("In sales sms Error", t.getMessage());
                 }
