@@ -104,7 +104,7 @@ public class MainDrawerActivity extends AppCompatActivity  {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_sales, R.id.nav_dayopen, R.id.nav_dayclose, R.id.nav_products, R.id.nav_customer, R.id.nav_customer_update, R.id.nav_sales_refund, R.id.nav_credit_pay, R.id.nav_home, R.id.nav_sales_report,R.id.nav_vendor_update,R.id.nav_stock_update,R.id.nav_purchase_Invoice,R.id.nav_vendor_Payment,R.id.nav_vi_payment_fragment,R.id.nav_vendor_return,R.id.nav_vendor_reports,R.id.nav_sales_return_report,R.id.nav_vendor_addition)
+                R.id.nav_sales, R.id.nav_dayopen, R.id.nav_dayclose, R.id.nav_products, R.id.nav_customer, R.id.nav_customer_update, R.id.nav_sales_refund, R.id.nav_credit_pay, R.id.nav_home, R.id.nav_sales_report,R.id.nav_vendor_update,R.id.nav_stock_update,R.id.nav_purchase_Invoice,R.id.nav_vendor_Payment,R.id.nav_vi_payment_fragment,R.id.nav_vendor_return,R.id.nav_vendor_reports,R.id.nav_sales_return_report,R.id.nav_vendor_addition,R.id.nav_vendor_pay_report,R.id.nav_summery)
                 .setOpenableLayout(drawer)
                 .build();
 
@@ -213,11 +213,13 @@ public class MainDrawerActivity extends AppCompatActivity  {
         childModelsList = new ArrayList<>();
         menuModel = new MenuModel("Reports", true, true, R.drawable.reports); //Menu of Python Tutorials
         headerList.add(menuModel);
-        childModel = new MenuModel("Sales Reports", false, false,  R.drawable.sales_report);
+        childModel = new MenuModel("Sales Report", false, false,  R.drawable.sales_report);
         childModelsList.add(childModel);
-        childModel = new MenuModel("Vendor Reports", false, false,  R.drawable.vendor_report);
+        childModel = new MenuModel("Vendor Report", false, false,  R.drawable.vendor_report);
         childModelsList.add(childModel);
-        childModel = new MenuModel("Sales Return", false, false,  R.drawable.sr_report);
+        childModel = new MenuModel("Sales Return Report", false, false,  R.drawable.sr_report);
+        childModelsList.add(childModel);
+        childModel = new MenuModel("Vendor Pay Report", false, false,  R.drawable.vendor_pay_report);
         childModelsList.add(childModel);
         childModel = new MenuModel("All Summery", false, false,  R.drawable.summery);
         childModelsList.add(childModel);
@@ -369,6 +371,14 @@ public class MainDrawerActivity extends AppCompatActivity  {
                             Toast.makeText(getApplicationContext(),"Permission denied!",Toast.LENGTH_LONG).show();
                      }
                     }else if (groupPosition==5 && childPosition==3) {
+                        if(ALL_REPORTS_VISIBILITY) {
+                            Navigation.findNavController(MainDrawerActivity.this, R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_nav_vendor_pay_report);
+                            drawer.closeDrawer(GravityCompat.START);
+                        }else {
+                            Vibration.Companion.vibrate(400);
+                            Toast.makeText(getApplicationContext(),"Permission denied!",Toast.LENGTH_LONG).show();
+                        }
+                    } else if (groupPosition==5 && childPosition==4) {
                         if(SUMMERY_UNLOCKED || LOCK_PASSWORD.isEmpty()) {
                             Navigation.findNavController(MainDrawerActivity.this, R.id.nav_host_fragment).navigate(R.id.action_nav_home_to_summeryFragment);
                             drawer.closeDrawer(GravityCompat.START);
