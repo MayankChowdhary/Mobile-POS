@@ -71,29 +71,29 @@ public interface ApiInterface {
     @GET("/APIMANAGER/api/CloudtoDevice/GetBankDetails/{StoreId}")//1
     Call<List<BankDetails>> loadBankMaster(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId);
 
-    @GET("/APIMANAGER/api/CloudtoDevice/GetBillMaster/{StoreId}")//2
-    Call<List<BillMaster>> loadBillMaster(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId);
+    @GET("/APIMANAGER/api/CloudtoDevice/GetBillMaster/{StoreId}/{TerminalName}")//2
+    Call<List<BillMaster>> loadBillMaster(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId, @Path("TerminalName") String TerminalName);
 
-    @GET("/APIMANAGER/api/CloudtoDevice/GetBillDetails/{StoreId}")//3
-    Call<List<BillDetail>> loadBillDetail(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId);
+    @GET("/APIMANAGER/api/CloudtoDevice/GetBillDetails/{StoreId}/{TerminalName}")//3
+    Call<List<BillDetail>> loadBillDetail(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId, @Path("TerminalName") String TerminalName);
 
-    @GET("/APIMANAGER/api/CloudtoDevice/GetBillPayDetail/{StoreId}")//4
-    Call<List<BillPayDetail>> loadBillPayDetail(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId);
+    @GET("/APIMANAGER/api/CloudtoDevice/GetBillPayDetail/{StoreId}/{TerminalName}")//4
+    Call<List<BillPayDetail>> loadBillPayDetail(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId, @Path("TerminalName") String TerminalName);
 
     /*@GET("/APIMANAGER/api/CloudtoDevice/GetBillTaxDetail/{StoreId}")//5
     Call<List<BillTaxDetail>> loadBillTaxDetail(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId);*/
 
 
-    @GET("/APIMANAGER/api/CloudtoDevice/GetCustomerLedger/{StoreId}")//8
-    Call<List<CustomerLedger>> loadCustomerLedger(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId);
+    @GET("/APIMANAGER/api/CloudtoDevice/GetCustomerLedger/{StoreId}/{TerminalName}")//8
+    Call<List<CustomerLedger>> loadCustomerLedger(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId, @Path("TerminalName") String TerminalName);
 
 
-    @GET("/APIMANAGER/api/CloudtoDevice/GetCustomerReturnDetail/{StoreId}")//9
-    Call<List<CustomerReturnDetails>> loadCustomerReturnDetail(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId);
+    @GET("/APIMANAGER/api/CloudtoDevice/GetCustomerReturnDetail/{StoreId}/{TerminalName}")//9
+    Call<List<CustomerReturnDetails>> loadCustomerReturnDetail(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId, @Path("TerminalName") String TerminalName);
 
 
-    @GET("/APIMANAGER/api/CloudtoDevice/GetCustomerReturnMaster/{StoreId}")//10
-    Call<List<CustomerReturnMaster>> loadCustomerReturnMaster(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId);
+    @GET("/APIMANAGER/api/CloudtoDevice/GetCustomerReturnMaster/{StoreId}/{TerminalName}")//10
+    Call<List<CustomerReturnMaster>> loadCustomerReturnMaster(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId, @Path("TerminalName") String TerminalName);
 
     /*@GET("/APIMANAGER/api/CloudtoDevice/GetDrDiscription/{StoreId}")//11
     Call<List<DrDiscription>> loadDrDiscription(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId);*/
@@ -101,8 +101,8 @@ public interface ApiInterface {
     /*@GET("/APIMANAGER/api/CloudtoDevice/GetDrSpeciality/{StoreId}")//12
     Call<List<DrSpeciality>> loadDrSpeciality(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId);*/
 
-    @GET("/APIMANAGER/api/CloudtoDevice/GetGrnDetail/{StoreId}")//13
-    Call<List<GRNDetails>> loadGrnDetail(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId);
+    @GET("/APIMANAGER/api/CloudtoDevice/GetGrnDetail/{StoreId}/{TerminalName}")//13
+    Call<List<GRNDetails>> loadGrnDetail(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId, @Path("TerminalName") String TerminalName);
 
 
     @GET("/APIMANAGER/api/CloudtoDevice/GetGrnMaster/{StoreId}")//14

@@ -141,13 +141,13 @@ public class CheckoutFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-               String  discTemp =addDiscEditText.getText().toString().trim();
+               String  discTemp = getDiscValue(addDiscEditText.getText().toString().trim());
 
                if(!discTemp.isEmpty()){
 
                    if(Double.parseDouble(discTemp) != Double.parseDouble(addDiscount)){
 
-                       Toast.makeText(getContext(),"Incorrect Addition Discount",Toast.LENGTH_LONG).show();
+                       Toast.makeText(getContext(),"Incorrect Additional Discount",Toast.LENGTH_LONG).show();
                        Vibration.Companion.vibrate(300);
                        return;
                    }
@@ -746,9 +746,16 @@ public class CheckoutFragment extends Fragment {
                     Log.d("Disc1", "getDiscValue: "+raw);
                     return raw;
                 }else if(discOptIndex==1) {
+                    if(value>0 && value<100){
                     Double result = (totals*value)/100;
                     Log.d("Disc1", "getDiscValue: "+result);
                     return  DecimalRounder.roundDecimal(2,result);
+                    }else {
+                        Toast.makeText(requireContext(),"Incorrect Discount Percent",Toast.LENGTH_SHORT).show();
+                        Vibration.Companion.vibrate(300);
+                        return "0";
+                    }
+
                 }
             } catch (Exception e) {
                 e.printStackTrace();
