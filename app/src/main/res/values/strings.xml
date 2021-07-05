@@ -28,6 +28,16 @@
         <item>OTHERS</item>
     </string-array>
 
+    <string-array name="vendorPayType">
+        <item>VENDOR</item>
+        <item>UTILITY</item>
+    </string-array>
+    <string-array name="vendorPayMode">
+        <item>ALL</item>
+        <item>CASH</item>
+        <item>CHEQUE</item>
+    </string-array>
+
     <string-array name="discOptions">
         <item>BY AMOUNT</item>
         <item>BY PERCENTAGE</item>

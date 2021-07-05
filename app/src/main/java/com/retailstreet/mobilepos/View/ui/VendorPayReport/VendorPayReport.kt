@@ -40,7 +40,9 @@ class VendorPayReport : Fragment() , TableViewInterface {
     private var vendorGuid:String = ""
     lateinit var mSearchView:MaterialSearchView;
     private lateinit var SUGGESTIONS: ArrayList<String>
-    private var mAdapter: android.widget.SimpleCursorAdapter? = null
+    private var resetting:Boolean = false
+    lateinit var payTypeSelector: Spinner
+    lateinit var payModeSelector: Spinner
 
     // value vendorPayType = 0 for Vendor Payment and 1 for Utility payment
     private var vendorPayType:String = "VENDOR PAYMENTS"
@@ -70,6 +72,65 @@ class VendorPayReport : Fragment() , TableViewInterface {
         mSearchView.visibility=View.GONE
 
 
+        val searchVendorView:ImageButton = view.findViewById(R.id.vpr_search)
+
+        searchVendorView.setOnClickListener {
+
+            mSearchView.visibility = View.VISIBLE
+            mSearchView.showSearch(true)
+            mSearchView.setSuggestions(SUGGESTIONS.toTypedArray())
+
+        }
+
+        val payTypeArray:Array<String> = arrayOf("Vendor","Utility")
+         payTypeSelector = view.findViewById(R.id.vpr_vendor_pay_type)
+        val payTypeAdapter: ArrayAdapter<String> = context?.let { ArrayAdapter(it, R.layout.spinner_item_action_bar,payTypeArray) }!!
+        payTypeAdapter.setDropDownViewResource(R.layout.spinner_layout_actionbar)
+        payTypeSelector.adapter = payTypeAdapter
+
+        val payModeArray:Array<String> = arrayOf("All","Cash","Cheque")
+         payModeSelector = view.findViewById(R.id.vpr_vendor_pay_mode)
+        val payModeAdapter: ArrayAdapter<String> = context?.let { ArrayAdapter(it, R.layout.spinner_item_action_bar,payModeArray) }!!
+        payModeAdapter.setDropDownViewResource(R.layout.spinner_layout_actionbar)
+        payModeSelector.adapter = payModeAdapter
+
+
+        payTypeSelector.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                vendorPayType = if(position==1){
+                    "UTILITY PAYMENTS"
+                }else{
+                    "VENDOR PAYMENTS"
+                }
+
+                if(!resetting)
+                changeFilter(filterType)
+                Log.d("payTypeSelector", "onItemSelected: Tag= $vendorPayType")
+            }
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
+
+        payModeSelector.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                vendorPayMode = when (position) {
+                    1 -> {
+                        "CA"
+                    }
+                    2 -> {
+                        "CX"
+                    }
+                    else -> {
+                        "C%"
+                    }
+                }
+
+                if(!resetting)
+                changeFilter(filterType)
+                Log.d("payTypeSelector", "onItemSelected: Tag= $vendorPayMode")
+            }
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
+
         /* val myArgs = SalesReportFragmentArgs.fromBundle(requireArguments())
          custGuid = myArgs.custGuid*/
 
@@ -93,8 +154,8 @@ class VendorPayReport : Fragment() , TableViewInterface {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
-        val mSearch = menu.findItem(R.id.appSearchAuto)
-        mSearch.isVisible = true
+       /* val mSearch = menu.findItem(R.id.appSearchAuto)
+        mSearch.isVisible = true*/
         val item: MenuItem = menu.findItem(R.id.filterSpinner)
         item.isVisible = true
         spinner = item.actionView as Spinner
@@ -128,9 +189,11 @@ class VendorPayReport : Fragment() , TableViewInterface {
                     }
 
                 }else if(position==3){
+                    resetting = true
                     vendorGuid=""
-                    vendorPayType = "VENDOR PAYMENTS"
-                    vendorPayMode =  "C%"
+                    payTypeSelector.setSelection(0)
+                    payModeSelector.setSelection(0)
+                    resetting=false
                     spinner.setSelection(0)
                 } else{
                     changeFilter(position)
@@ -143,7 +206,7 @@ class VendorPayReport : Fragment() , TableViewInterface {
         initializeTableView(mTableView)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    /*override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
         return if (item.itemId == R.id.appSearchAuto) {
             mSearchView.visibility = View.VISIBLE
@@ -155,7 +218,8 @@ class VendorPayReport : Fragment() , TableViewInterface {
         }else
             super.onOptionsItemSelected(item)
 
-    }
+    }*/
+
 
     override fun onPrepareOptionsMenu(menu: android.view.Menu) {
         super.onPrepareOptionsMenu(menu)
