@@ -1,6 +1,8 @@
 package com.retailstreet.mobilepos.Utils;
 
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -19,6 +21,7 @@ import com.retailstreet.mobilepos.Database.CustomerMasterUploader;
 import com.retailstreet.mobilepos.Database.CustomerReturnUploader;
 import com.retailstreet.mobilepos.Database.GRNUploader;
 import com.retailstreet.mobilepos.Database.InvoiceUploader;
+import com.retailstreet.mobilepos.Database.InvoiceUploaderForeign;
 import com.retailstreet.mobilepos.Database.ProductMasterUploader;
 import com.retailstreet.mobilepos.Database.SalesDataUploader;
 import com.retailstreet.mobilepos.Database.ShiftTransDataUploader;
@@ -32,6 +35,8 @@ import com.retailstreet.mobilepos.View.ApplicationContextProvider;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Created by Mayank Choudhary on 07-05-2021.
@@ -147,12 +152,29 @@ public class WorkManagerSync {
 
             for (String item: smsSetFromPrefs) {
                 Log.d("IteratingSMSBuilder", "WorkManagerSync: "+item);
-                final OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(InvoiceUploader.class)
-                        .setConstraints(constraints)
-                        .setInputData(new Data.Builder().putString("BillNo",item).build())
-                        .setInitialDelay(3, TimeUnit.SECONDS)
-                        .addTag("INVOICE_SYNC_REQUEST")
-                        .build();
+
+
+                final OneTimeWorkRequest workRequest;
+
+                if(getCountryCode().equals("91")) {
+                    workRequest = new OneTimeWorkRequest.Builder(InvoiceUploader.class)
+                            .setConstraints(constraints)
+                            .setInputData(new Data.Builder().putString("BillNo", item).build())
+                            .setInitialDelay(3, TimeUnit.SECONDS)
+                            .addTag("INVOICE_SYNC_REQUEST")
+                            .build();
+                }else {
+
+                    workRequest = new OneTimeWorkRequest.Builder(InvoiceUploaderForeign.class)
+                            .setConstraints(constraints)
+                            .setInputData(new Data.Builder().putString("BillNo", item).build())
+                            .setInitialDelay(3, TimeUnit.SECONDS)
+                            .addTag("INVOICE_SYNC_REQUEST")
+                            .build();
+                }
+
+
+
                 mWorkManager.enqueueUniqueWork(
                         "INVOICE_SYNC",
                         ExistingWorkPolicy.APPEND_OR_REPLACE,
@@ -272,6 +294,27 @@ public class WorkManagerSync {
                     VendorSyncWork //work request
             );
         }
+
+    }
+
+    private String getCountryCode(){
+        String result= null;
+        try {
+            SQLiteDatabase mydb  = ApplicationContextProvider.getContext().openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
+            result = "";
+            String selectQuery = "SELECT STR_CTR FROM retail_store ";
+            Cursor cursor = mydb.rawQuery(selectQuery, null);
+            if (cursor.moveToFirst()) {
+
+                result= cursor.getString(0).trim();
+            }
+            cursor.close();
+            mydb.close();
+            Log.d("DataRetrieved", "getFromRetailStore: "+result);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
 
     }
 }

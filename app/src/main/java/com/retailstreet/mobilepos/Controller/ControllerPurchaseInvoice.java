@@ -541,17 +541,18 @@ public class ControllerPurchaseInvoice {
 
     private String  isNewStockItem(String guid,String VENDOR, String BARCODE, String MRP, String PROD) {
         String isNewItem = "";
+        Log.d("PrintingStockMatcher", "Received: Vendor: "+VENDOR+" Barcode: "+BARCODE+" MRP: "+MRP+" Prod: "+PROD);
 
         try {
             SQLiteDatabase mydb = context.openOrCreateDatabase("MasterDB", MODE_PRIVATE, null);
-            Cursor cursor = mydb.rawQuery("SELECT VENDOR_NAME,BARCODE,MRP,PROD_NM,STOCK_ID FROM retail_str_stock_master WHERE ITEM_GUID= '" + guid + "'", null);
+            Cursor cursor = mydb.rawQuery("SELECT VENDOR_GUID,BARCODE,MRP,PROD_NM,STOCK_ID FROM retail_str_stock_master WHERE ITEM_GUID= '" + guid + "'", null);
             if (cursor.moveToFirst()) {
                 while (!cursor.isAfterLast()) {
-                    String vendor = cursor.getString(0);
-                    String barcode = cursor.getString(1);
-                    String mrp = cursor.getString(2);
-                    String prod = cursor.getString(3);
-                    String stockid = cursor.getString(4);
+                    String vendor = cursor.getString(0).trim();
+                    String barcode = cursor.getString(1).trim();
+                    String mrp = cursor.getString(2).trim();
+                    String prod = cursor.getString(3).trim();
+                    String stockid = cursor.getString(4).trim();
 
                     Log.d("PrintingStockMatcher", "Fetched: Vendor: "+vendor+" Barcode: "+barcode+" MRP: "+mrp+" Prod: "+prod);
 

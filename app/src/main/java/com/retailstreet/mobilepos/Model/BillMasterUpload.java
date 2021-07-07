@@ -34,17 +34,19 @@ public class BillMasterUpload {
     String BALANCE_CASH;
     String ROUND_OFF;
     String NETDISCOUNT;
+    String ORDER_STATUS;
 
     public BillMasterUpload(){
 
     }
-    public BillMasterUpload(String BID, String ORG_GUID , String STORE_GUID,String TERMINAL_GUID, String SHIFTID, String BILLNO, String SALEDATE, String SALETIME, String USER_GUID, String CUST_MOBILENO, String NETVALUE, String TAXVALUE, String TOTAL_AMOUNT, String DEL_TYPE, String BILL_PRINT, String TOTAL_BILL_AMOUNT, String NO_OF_ITEMS, String BILL_STATUS, String MASTERCUSTOMER_GUID, String RECEIVED_CASH, String BALANCE_CASH, String ROUND_OFF, String NETDISCOUNT){
-        this.BID =BID;
-        this.ORG_GUID=ORG_GUID;
+
+    public BillMasterUpload(String BID, String ORG_GUID, String STORE_GUID, String TERMINAL_GUID, String SHIFTID, String BILLNO, String SALEDATE, String SALETIME, String USER_GUID, String CUST_MOBILENO, String NETVALUE, String TAXVALUE, String TOTAL_AMOUNT, String DEL_TYPE, String BILL_PRINT, String TOTAL_BILL_AMOUNT, String NO_OF_ITEMS, String BILL_STATUS, String MASTERCUSTOMER_GUID, String RECEIVED_CASH, String BALANCE_CASH, String ROUND_OFF, String NETDISCOUNT, String ORDER_STATUS) {
+        this.BID = BID;
+        this.ORG_GUID = ORG_GUID;
         this.STORE_GUID = STORE_GUID;
-        this.TERMINAL_GUID =TERMINAL_GUID;
-        this.SHIFTID= SHIFTID;
-        this.BILLNO=BILLNO;
+        this.TERMINAL_GUID = TERMINAL_GUID;
+        this.SHIFTID = SHIFTID;
+        this.BILLNO = BILLNO;
         this.SALEDATE = SALEDATE;
         this.SALETIME = SALETIME;
         this.USER_GUID = USER_GUID;
@@ -62,6 +64,15 @@ public class BillMasterUpload {
         this.BALANCE_CASH = BALANCE_CASH;
         this.ROUND_OFF = ROUND_OFF;
         this.NETDISCOUNT = NETDISCOUNT;
+        this.ORDER_STATUS = ORDER_STATUS;
+    }
+
+    public String getORDER_STATUS() {
+        return ORDER_STATUS;
+    }
+
+    public void setORDER_STATUS(String ORDER_STATUS) {
+        this.ORDER_STATUS = ORDER_STATUS;
     }
 
     public String getBID() {

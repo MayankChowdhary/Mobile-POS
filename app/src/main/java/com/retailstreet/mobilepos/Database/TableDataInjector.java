@@ -76,7 +76,7 @@ public class TableDataInjector {
     Activity activity;
     String dbname = "MasterDB";
     private Context context;
-    String baseUrl = "http://99retailstreet.com:8080/";
+    //String baseUrl = "http://99retailstreet.com:8080/";
     String storeId;
     String terminal_id;
     private static DBReadyCallback dbReadyCallback;
@@ -265,7 +265,7 @@ public class TableDataInjector {
     public void getRetailCustList() {
         try {
             ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
-            Call<List<CustomerMaster>> call = apiService.loadMasterCustomer(Constants.Authorization, storeId);
+            Call<List<CustomerMaster>> call = apiService.loadMasterCustomer(Constants.Authorization, storeId,terminal_id);
             call.enqueue(new CallbackWithRetry<List<CustomerMaster>>() {
                 @Override
                 public void onResponse(Call<List<CustomerMaster>> call, Response<List<CustomerMaster>> response) {
@@ -307,7 +307,7 @@ public class TableDataInjector {
     public void getProductMasterList() {
         try {
             ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
-            Call<List<ProductMaster>> call = apiService.loadProductMaster(Constants.Authorization, storeId);
+            Call<List<ProductMaster>> call = apiService.loadProductMaster(Constants.Authorization, storeId,terminal_id);
             call.enqueue(new CallbackWithRetry<List<ProductMaster>>() {
                 @Override
                 public void onResponse(Call<List<ProductMaster>> call, Response<List<ProductMaster>> response) {
@@ -349,7 +349,7 @@ public class TableDataInjector {
         try {
 
             ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
-            Call<List<StockMaster>> call = apiService.loadStockMaster(Constants.Authorization, storeId);
+            Call<List<StockMaster>> call = apiService.loadStockMaster(Constants.Authorization, storeId,terminal_id);
             call.enqueue(new CallbackWithRetry<List<StockMaster>>() {
                 @Override
                 public void onResponse(Call<List<StockMaster>> call, Response<List<StockMaster>> response) {
@@ -432,7 +432,7 @@ public class TableDataInjector {
     public void getRetailStore() {
         try {
             ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
-            Call<List<RetailStore>> call = apiService.loadRetailStore(Constants.Authorization, storeId);
+            Call<List<RetailStore>> call = apiService.loadRetailStore(Constants.Authorization, storeId, terminal_id);
             call.enqueue(new CallbackWithRetry<List<RetailStore>>() {
                 @Override
                 public void onResponse(Call<List<RetailStore>> call, Response<List<RetailStore>> response) {
@@ -759,7 +759,7 @@ public class TableDataInjector {
     public void getMasterCategory() {
         try {
             ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
-            Call<List<MasterCategory>> call = apiService.loadMasterCategory(Constants.Authorization, storeId);
+            Call<List<MasterCategory>> call = apiService.loadMasterCategory(Constants.Authorization, storeId,terminal_id);
             call.enqueue(new CallbackWithRetry<List<MasterCategory>>() {
                 @Override
                 public void onResponse(Call<List<MasterCategory>> call, Response<List<MasterCategory>> response) {
@@ -800,7 +800,7 @@ public class TableDataInjector {
     public void getMasterSubCategory() {
         try {
             ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
-            Call<List<MasterSubcategory>> call = apiService.loadMasterSubCategory(Constants.Authorization, storeId);
+            Call<List<MasterSubcategory>> call = apiService.loadMasterSubCategory(Constants.Authorization, storeId,terminal_id);
             call.enqueue(new CallbackWithRetry<List<MasterSubcategory>>() {
                 @Override
                 public void onResponse(Call<List<MasterSubcategory>> call, Response<List<MasterSubcategory>> response) {
@@ -842,7 +842,7 @@ public class TableDataInjector {
     public void getHsnMaster() {
         try {
             ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
-            Call<List<HSNMaster>> call = apiService.loadHsnMaster(Constants.Authorization, storeId);
+            Call<List<HSNMaster>> call = apiService.loadHsnMaster(Constants.Authorization, storeId,terminal_id);
             call.enqueue(new CallbackWithRetry<List<HSNMaster>>() {
                 @Override
                 public void onResponse(Call<List<HSNMaster>> call, Response<List<HSNMaster>> response) {
@@ -884,7 +884,7 @@ public class TableDataInjector {
     public void getVendorMaster() {
         try {
             ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
-            Call<List<VendorMaster>> call = apiService.loadVendorMaster(Constants.Authorization, storeId);
+            Call<List<VendorMaster>> call = apiService.loadVendorMaster(Constants.Authorization, storeId, terminal_id);
             call.enqueue(new CallbackWithRetry<List<VendorMaster>>() {
                 @Override
                 public void onResponse(Call<List<VendorMaster>> call, Response<List<VendorMaster>> response) {
@@ -1008,7 +1008,7 @@ public class TableDataInjector {
     public void getCustomerAddress() {
         try {
             ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
-            Call<List<CustomerAddress>> call = apiService.loadMasterCustomerAddress(Constants.Authorization, storeId);
+            Call<List<CustomerAddress>> call = apiService.loadMasterCustomerAddress(Constants.Authorization, storeId,terminal_id);
             call.enqueue(new CallbackWithRetry<List<CustomerAddress>>() {
                 @Override
                 public void onResponse(Call<List<CustomerAddress>> call, Response<List<CustomerAddress>> response) {
@@ -1094,7 +1094,7 @@ public class TableDataInjector {
     public void getBankMaster() {
         try {
             ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
-            Call<List<BankDetails>> call = apiService.loadBankMaster(Constants.Authorization, storeId);
+            Call<List<BankDetails>> call = apiService.loadBankMaster(Constants.Authorization, storeId,terminal_id);
 
             call.enqueue(new CallbackWithRetry<List<BankDetails>>() {
                 @Override
@@ -1137,7 +1137,7 @@ public class TableDataInjector {
     public void getStoreConfig() {
         try {
             ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
-            Call<List<StoreConfiguration>> call = apiService.loadStoreConfiguration(Constants.Authorization, storeId);
+            Call<List<StoreConfiguration>> call = apiService.loadStoreConfiguration(Constants.Authorization, storeId,terminal_id);
             call.enqueue(new CallbackWithRetry<List<StoreConfiguration>>() {
                 @Override
                 public void onResponse(Call<List<StoreConfiguration>> call, Response<List<StoreConfiguration>> response) {
@@ -1264,7 +1264,7 @@ public class TableDataInjector {
     public void getCustomerReject() {
         try {
             ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
-            Call<List<CustomerReject>> call = apiService.loadRetailStoreCustReject(Constants.Authorization, storeId);
+            Call<List<CustomerReject>> call = apiService.loadRetailStoreCustReject(Constants.Authorization, storeId,terminal_id);
             call.enqueue(new CallbackWithRetry<List<CustomerReject>>() {
                 @Override
                 public void onResponse(Call<List<CustomerReject>> call, Response<List<CustomerReject>> response) {
@@ -1306,7 +1306,7 @@ public class TableDataInjector {
     public void getCustomerCredit() {
         try {
             ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
-            Call<List<CustomerCredit>> call = apiService.loadRetailCreditCust(Constants.Authorization, storeId);
+            Call<List<CustomerCredit>> call = apiService.loadRetailCreditCust(Constants.Authorization, storeId,terminal_id);
             call.enqueue(new CallbackWithRetry<List<CustomerCredit>>() {
                 @Override
                 public void onResponse(Call<List<CustomerCredit>> call, Response<List<CustomerCredit>> response) {
@@ -1348,7 +1348,7 @@ public class TableDataInjector {
     public void getCreditBillDetails() {
         try {
             ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
-            Call<List<CreditBillDetails>> call = apiService.loadRetailCreditBillDetails(Constants.Authorization, storeId);
+            Call<List<CreditBillDetails>> call = apiService.loadRetailCreditBillDetails(Constants.Authorization, storeId,terminal_id);
             call.enqueue(new CallbackWithRetry<List<CreditBillDetails>>() {
                 @Override
                 public void onResponse(Call<List<CreditBillDetails>> call, Response<List<CreditBillDetails>> response) {
@@ -1431,7 +1431,7 @@ public class TableDataInjector {
     public void getStockRegister() {
         try {
             ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
-            Call<List<StockRegister>> call = apiService.loadStockRegister(Constants.Authorization, storeId);
+            Call<List<StockRegister>> call = apiService.loadStockRegister(Constants.Authorization, storeId, terminal_id);
             call.enqueue(new CallbackWithRetry<List<StockRegister>>() {
                 @Override
                 public void onResponse(Call<List<StockRegister>> call, Response<List<StockRegister>> response) {
@@ -1514,7 +1514,7 @@ public class TableDataInjector {
     public void getGrnMasters() {
         try {
             ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
-            Call<List<GRNMaster>> call = apiService.loadGrnMaster(Constants.Authorization, storeId);
+            Call<List<GRNMaster>> call = apiService.loadGrnMaster(Constants.Authorization, storeId,terminal_id);
 
             call.enqueue(new CallbackWithRetry<List<GRNMaster>>() {
                 @Override
@@ -1557,7 +1557,7 @@ public class TableDataInjector {
     public void getVendorPayDetails() {
         try {
             ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
-            Call<List<VendorPayDetail>> call = apiService.loadVendorPayDetail(Constants.Authorization, storeId);
+            Call<List<VendorPayDetail>> call = apiService.loadVendorPayDetail(Constants.Authorization, storeId, terminal_id);
             call.enqueue(new CallbackWithRetry<List<VendorPayDetail>>() {
                 @Override
                 public void onResponse(Call<List<VendorPayDetail>> call, Response<List<VendorPayDetail>> response) {
@@ -1599,7 +1599,7 @@ public class TableDataInjector {
     public void getVendorPayMaster() {
         try {
             ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
-            Call<List<VendorPayMaster>> call = apiService.loadVendorPayMaster(Constants.Authorization, storeId);
+            Call<List<VendorPayMaster>> call = apiService.loadVendorPayMaster(Constants.Authorization, storeId, terminal_id);
             call.enqueue(new CallbackWithRetry<List<VendorPayMaster>>() {
                 @Override
                 public void onResponse(Call<List<VendorPayMaster>> call, Response<List<VendorPayMaster>> response) {
@@ -1640,7 +1640,7 @@ public class TableDataInjector {
     public void getVendorRejectReason() {
         try {
             ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
-            Call<List<VendorRejectReason>> call = apiService.loadRetailStoreVendReject(Constants.Authorization, storeId);
+            Call<List<VendorRejectReason>> call = apiService.loadRetailStoreVendReject(Constants.Authorization, storeId,terminal_id);
             call.enqueue(new CallbackWithRetry<List<VendorRejectReason>>() {
                 @Override
                 public void onResponse(Call<List<VendorRejectReason>> call, Response<List<VendorRejectReason>> response) {
@@ -1681,7 +1681,7 @@ public class TableDataInjector {
     public void getVendorDetailReturn() {
         try {
             ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
-            Call<List<VendorDetailReturn>> call = apiService.loadVendorReturnDetail(Constants.Authorization, storeId);
+            Call<List<VendorDetailReturn>> call = apiService.loadVendorReturnDetail(Constants.Authorization, storeId, terminal_id);
             call.enqueue(new CallbackWithRetry<List<VendorDetailReturn>>() {
                 @Override
                 public void onResponse(Call<List<VendorDetailReturn>> call, Response<List<VendorDetailReturn>> response) {
@@ -1723,7 +1723,7 @@ public class TableDataInjector {
     public void getVendorMasterReturn() {
         try {
             ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
-            Call<List<VendorMasterReturn>> call = apiService.loadVendorReturnMaster(Constants.Authorization, storeId);
+            Call<List<VendorMasterReturn>> call = apiService.loadVendorReturnMaster(Constants.Authorization, storeId, terminal_id);
             call.enqueue(new CallbackWithRetry<List<VendorMasterReturn>>() {
                 @Override
                 public void onResponse(Call<List<VendorMasterReturn>> call, Response<List<VendorMasterReturn>> response) {
@@ -1764,7 +1764,7 @@ public class TableDataInjector {
     public void getStoreParameter() {
         try {
             ApiInterface apiService = RetroSync.getSyncBase().create(ApiInterface.class);
-            Call<List<StoreParameter>> call = apiService.loadStoreParameter(Constants.Authorization, storeId);
+            Call<List<StoreParameter>> call = apiService.loadStoreParameter(Constants.Authorization, storeId, terminal_id);
             call.enqueue(new CallbackWithRetry<List<StoreParameter>>() {
                 @Override
                 public void onResponse(Call<List<StoreParameter>> call, Response<List<StoreParameter>> response) {
@@ -3198,7 +3198,7 @@ public class TableDataInjector {
                 contentValues.put("ROUND_OFF", prod.getROUND_OFF());
                 contentValues.put("NETDISCOUNT", prod.getNETDISCOUNT());
                 contentValues.put("BILLMASTERGUID", prod.getBILLMASTERGUID());
-
+                contentValues.put("ORDER_STATUS", prod.getORDER_STATUS());
 
                 myDataBase.insert("retail_str_sales_master", null, contentValues);
 

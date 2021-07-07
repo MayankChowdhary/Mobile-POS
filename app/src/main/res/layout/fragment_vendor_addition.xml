@@ -354,6 +354,7 @@
                         android:layout_weight="1"
                         android:ems="15"
                         android:includeFontPadding="false"
+                        android:maxLength="10"
                         android:inputType="number"
                         android:textColor="?colorOnSurface" />
                 </LinearLayout>

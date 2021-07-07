@@ -76,6 +76,7 @@ public class SalesDataUploader extends Worker {
                     jsonObject.put("TAXVALUE", prod.getTAXVALUE());
                     jsonObject.put("TOTAL_AMOUNT", prod.getTOTAL_AMOUNT());
                     jsonObject.put("DEL_TYPE", prod.getDEL_TYPE());
+                    jsonObject.put("ORDER_STATUS", prod.getORDER_STATUS());
                     if(prod.getBILL_PRINT().matches("1"))
                         jsonObject.put("BILL_PRINT","Y");
                     else

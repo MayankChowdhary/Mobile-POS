@@ -62,14 +62,14 @@ import retrofit2.http.Path;
 
 public interface ApiInterface {
 
-    @GET("/APIMANAGER/api/CloudtoDevice/GetRetailStore/{StoreId}")//1
-    Call<List<RetailStore>> loadRetailStore(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId);
+    @GET("/APIMANAGER/api/CloudtoDevice/GetRetailStore/{StoreId}/{TerminalName}")//1
+    Call<List<RetailStore>> loadRetailStore(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId, @Path("TerminalName") String TerminalName);
 
-    @GET("/APIMANAGER/api/CloudtoDevice/GetStockRegister/{StoreId}")//1
-    Call<List<StockRegister>> loadStockRegister(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId);
+    @GET("/APIMANAGER/api/CloudtoDevice/GetStockRegister/{StoreId}/{TerminalName}")//1
+    Call<List<StockRegister>> loadStockRegister(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId, @Path("TerminalName") String TerminalName);
 
-    @GET("/APIMANAGER/api/CloudtoDevice/GetBankDetails/{StoreId}")//1
-    Call<List<BankDetails>> loadBankMaster(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId);
+    @GET("/APIMANAGER/api/CloudtoDevice/GetBankDetails/{StoreId}/{TerminalName}")//1
+    Call<List<BankDetails>> loadBankMaster(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId,@Path("TerminalName") String TerminalName);
 
     @GET("/APIMANAGER/api/CloudtoDevice/GetBillMaster/{StoreId}/{TerminalName}")//2
     Call<List<BillMaster>> loadBillMaster(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId, @Path("TerminalName") String TerminalName);
@@ -105,26 +105,26 @@ public interface ApiInterface {
     Call<List<GRNDetails>> loadGrnDetail(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId, @Path("TerminalName") String TerminalName);
 
 
-    @GET("/APIMANAGER/api/CloudtoDevice/GetGrnMaster/{StoreId}")//14
-    Call<List<GRNMaster>> loadGrnMaster(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId);
+    @GET("/APIMANAGER/api/CloudtoDevice/GetGrnMaster/{StoreId}/{TerminalName}")//14
+    Call<List<GRNMaster>> loadGrnMaster(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId, @Path("TerminalName") String TerminalName);
 
     @GET("/APIMANAGER/api/CloudtoDevice/GetGroupUserMaster/{StoreId}/{TerminalName}")//15
     Call<List<GroupUserMaster>> loadGroupUserMaster(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId, @Path("TerminalName") String TerminalName);
 
-    @GET("/APIMANAGER/api/CloudtoDevice/GetHSNMaster/{StoreId}")//16
-    Call<List<HSNMaster>> loadHsnMaster(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId);
+    @GET("/APIMANAGER/api/CloudtoDevice/GetHSNMaster/{StoreId}/{TerminalName}")//16
+    Call<List<HSNMaster>> loadHsnMaster(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId, @Path("TerminalName") String TerminalName);
 
-    @GET("/APIMANAGER/api/CloudtoDevice/GetMasterCategory/{StoreId}")//17
-    Call<List<MasterCategory>> loadMasterCategory(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId);
+    @GET("/APIMANAGER/api/CloudtoDevice/GetMasterCategory/{StoreId}/{TerminalName}")//17
+    Call<List<MasterCategory>> loadMasterCategory(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId, @Path("TerminalName") String TerminalName);
 
     /*@GET("/APIMANAGER/api/CloudtoDevice/GetMasterCountry/{StoreId}")//18
     Call<List<MasterCountry>> loadMasterCountry(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId);*/
 
-    @GET("/APIMANAGER/api/CloudtoDevice/GetMasterCustomer/{StoreId}")//19
-    Call<List<CustomerMaster>> loadMasterCustomer(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId);
+    @GET("/APIMANAGER/api/CloudtoDevice/GetMasterCustomer/{StoreId}/{TerminalName}")//19
+    Call<List<CustomerMaster>> loadMasterCustomer(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId, @Path("TerminalName") String TerminalName);
 
-    @GET("/APIMANAGER/api/CloudtoDevice/GetMasterCustomerAddress/{StoreId}")//20
-    Call<List<CustomerAddress>> loadMasterCustomerAddress(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId);
+    @GET("/APIMANAGER/api/CloudtoDevice/GetMasterCustomerAddress/{StoreId}/{TerminalName}")//20
+    Call<List<CustomerAddress>> loadMasterCustomerAddress(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId, @Path("TerminalName") String TerminalName);
 
     @GET("/APIMANAGER/api/CloudtoDevice/GetMasterCustomerType/{StoreId}")//21
     Call<List<MasterCustomerType>> loadMasterCustomerType(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId);
@@ -145,8 +145,8 @@ public interface ApiInterface {
    /* @GET("/APIMANAGER/api/CloudtoDevice/GetMasterStoreTopProductsMapping/{StoreId}")//26
     Call<List<MasterStoreTopProductsMapping>> loadMasterStoreTopProductsMapping(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId);*/
 
-    @GET("/APIMANAGER/api/CloudtoDevice/GetMasterSubCategory/{StoreId}")//27
-    Call<List<MasterSubcategory>> loadMasterSubCategory(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId);
+    @GET("/APIMANAGER/api/CloudtoDevice/GetMasterSubCategory/{StoreId}/{TerminalName}")//27
+    Call<List<MasterSubcategory>> loadMasterSubCategory(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId, @Path("TerminalName") String TerminalName);
 
     /*@GET("/APIMANAGER/api/CloudtoDevice/GetMasterTable/{StoreId}")//28//pending
     Call<List<MasterTable>> loadMasterTable(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId);
@@ -154,23 +154,23 @@ public interface ApiInterface {
     @GET("/APIMANAGER/api/CloudtoDevice/GetMasterTicket/{StoreId}")//29
     Call<List<MasterTicket>> loadMasterTicket(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId);
 */
-    @GET("/APIMANAGER/api/CloudtoDevice/GetProductMaster/{StoreId}")//30
-    Call<List<ProductMaster>> loadProductMaster(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId);
+    @GET("/APIMANAGER/api/CloudtoDevice/GetProductMaster/{StoreId}/{TerminalName}")//30
+    Call<List<ProductMaster>> loadProductMaster(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId, @Path("TerminalName") String TerminalName);
 
-    @GET("/APIMANAGER/api/CloudtoDevice/GetRetailCreditBillDetails/{StoreId}")//31
-    Call<List<CreditBillDetails>> loadRetailCreditBillDetails(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId);
+    @GET("/APIMANAGER/api/CloudtoDevice/GetRetailCreditBillDetails/{StoreId}/{TerminalName}")//31
+    Call<List<CreditBillDetails>> loadRetailCreditBillDetails(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId, @Path("TerminalName") String TerminalName);
 
-    @GET("/APIMANAGER/api/CloudtoDevice/GetRetailCreditCust/{StoreId}")//32
-    Call<List<CustomerCredit>> loadRetailCreditCust(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId);
+    @GET("/APIMANAGER/api/CloudtoDevice/GetRetailCreditCust/{StoreId}/{TerminalName}")//32
+    Call<List<CustomerCredit>> loadRetailCreditCust(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId, @Path("TerminalName") String TerminalName);
 
    /* @GET("/APIMANAGER/api/CloudtoDevice/GetEmployeeData/{StoreId}")//33
     Call<List<RetailEmployee>> loadRetailEmployee(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId);*/
 
-    @GET("/APIMANAGER/api/CloudtoDevice/GetRetailStoreCustReject/{StoreId}")//34
-    Call<List<CustomerReject>> loadRetailStoreCustReject(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId);
+    @GET("/APIMANAGER/api/CloudtoDevice/GetRetailStoreCustReject/{StoreId}/{TerminalName}")//34
+    Call<List<CustomerReject>> loadRetailStoreCustReject(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId,@Path("TerminalName") String TerminalName);
 
-    @GET("/APIMANAGER/api/CloudtoDevice/GetRetailStoreVendReject/{StoreId}")//35
-    Call<List<VendorRejectReason>> loadRetailStoreVendReject(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId);
+    @GET("/APIMANAGER/api/CloudtoDevice/GetRetailStoreVendReject/{StoreId}/{TerminalName}")//35
+    Call<List<VendorRejectReason>> loadRetailStoreVendReject(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId,@Path("TerminalName") String TerminalName);
 
   /*  @GET("/APIMANAGER/api/CloudtoDevice/GetRoleScreenMapping/{StoreId}")//36
     Call<List<>> loadRetailEmployee(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId);
@@ -182,14 +182,14 @@ public interface ApiInterface {
     @GET("/APIMANAGER/api/CloudtoDevice/GetShiftTransactions/{StoreId}/{TerminalName}")//38
     Call<List<ShiftTrans>> loadShifttrans(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId,@Path("TerminalName") String TerminalName);
 
-    @GET("/APIMANAGER/api/CloudtoDevice/GetStockMaster/{StoreId}")//39
-    Call<List<StockMaster>> loadStockMaster(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId);
+    @GET("/APIMANAGER/api/CloudtoDevice/GetStockMaster/{StoreId}/{TerminalName}")//39
+    Call<List<StockMaster>> loadStockMaster(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId,@Path("TerminalName") String TerminalName);
 
-    @GET("/APIMANAGER/api/CloudtoDevice/GetStoreConfiguration/{StoreId}")//40
-    Call<List<StoreConfiguration>> loadStoreConfiguration(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId);
+    @GET("/APIMANAGER/api/CloudtoDevice/GetStoreConfiguration/{StoreId}/{TerminalName}")//40
+    Call<List<StoreConfiguration>> loadStoreConfiguration(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId,@Path("TerminalName") String TerminalName);
 
-    @GET("/APIMANAGER/api/CloudtoDevice/GetStoreParameter/{StoreId}")//41
-    Call<List<StoreParameter>> loadStoreParameter(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId);
+    @GET("/APIMANAGER/api/CloudtoDevice/GetStoreParameter/{StoreId}/{TerminalName}")//41
+    Call<List<StoreParameter>> loadStoreParameter(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId, @Path("TerminalName") String TerminalName);
 
    /* @GET("/APIMANAGER/api/CloudtoDevice/GetTaxDetail/{StoreId}")//42
     Call<List<TaxDetail>> loadTaxDetail(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId);
@@ -207,20 +207,20 @@ public interface ApiInterface {
     @GET("/APIMANAGER/api/CloudtoDevice/GetUoMMaster/{StoreId}")//46GetUoMMaster
     Call<List<MasterUOM>> loadUomMaster(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId);
 
-    @GET("/APIMANAGER/api/CloudtoDevice/GetMasterVendor/{StoreId}")//47
-    Call<List<VendorMaster>> loadVendorMaster(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId);
+    @GET("/APIMANAGER/api/CloudtoDevice/GetMasterVendor/{StoreId}/{TerminalName}")//47
+    Call<List<VendorMaster>> loadVendorMaster(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId, @Path("TerminalName") String TerminalName);
 
-    @GET("/APIMANAGER/api/CloudtoDevice/GetVendorPayDetail/{StoreId}")//48
-    Call<List<VendorPayDetail>> loadVendorPayDetail(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId);
+    @GET("/APIMANAGER/api/CloudtoDevice/GetVendorPayDetail/{StoreId}/{TerminalName}")//48
+    Call<List<VendorPayDetail>> loadVendorPayDetail(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId, @Path("TerminalName") String TerminalName);
 
-    @GET("/APIMANAGER/api/CloudtoDevice/GetVendorPayMaster/{StoreId}")//49
-    Call<List<VendorPayMaster>> loadVendorPayMaster(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId);
+    @GET("/APIMANAGER/api/CloudtoDevice/GetVendorPayMaster/{StoreId}/{TerminalName}")//49
+    Call<List<VendorPayMaster>> loadVendorPayMaster(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId, @Path("TerminalName") String TerminalName);
 
-    @GET("/APIMANAGER/api/CloudtoDevice/GetVendorReturnDetail/{StoreId}")//50
-    Call<List<VendorDetailReturn>> loadVendorReturnDetail(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId);
+    @GET("/APIMANAGER/api/CloudtoDevice/GetVendorReturnDetail/{StoreId}/{TerminalName}")//50
+    Call<List<VendorDetailReturn>> loadVendorReturnDetail(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId, @Path("TerminalName") String TerminalName);
 
-    @GET("/APIMANAGER/api/CloudtoDevice/GetVendorReturnMaster/{StoreId}")//51
-    Call<List<VendorMasterReturn>> loadVendorReturnMaster(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId);
+    @GET("/APIMANAGER/api/CloudtoDevice/GetVendorReturnMaster/{StoreId}/{TerminalName}")//51
+    Call<List<VendorMasterReturn>> loadVendorReturnMaster(@Header("Authorization") String Authorization, @Path("StoreId") String StoreId, @Path("TerminalName") String TerminalName);
 
 
 

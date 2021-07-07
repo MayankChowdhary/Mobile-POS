@@ -126,9 +126,9 @@ public class  DecimalRounder {
    public static String grandRoundOff(double value){
        grandRoundoff = config.getIsRoundOff();
        if(grandRoundoff) {
-         return new DecimalFormat("#0.##").format(value);
+         return new DecimalFormat("#0.00").format(value);
        }else {
-           return new DecimalFormat("#0.00").format(value);
+           return new DecimalFormat("#0.##").format(value);
        }
 
    }

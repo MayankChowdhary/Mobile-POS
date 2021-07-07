@@ -30,10 +30,10 @@ public class ControllerBillMaster {
         context = ApplicationContextProvider.getContext();
     }
 
-    public void createBillMasterData(String BILLMASTERID, String BILLNO, String SALEDATETIME, String SALEDATE, String SALETIME, String MASTERCUSTOMERGUID, String MASTERSTOREGUID, String MASTERTERMINALGUID, String MASTERSHIFTGUID, String USER_GUID, String CUST_MOBILENO, String NETVALUE, String TAXVALUE, String TOTAL_AMOUNT, String DELIVERY_TYPE_GUID, String BILL_PRINT, String TOTAL_BILL_AMOUNT, String NO_OF_ITEMS, String BILLSTATUS, String ISSYNCED, String RECEIVED_CASH, String BALANCE_CASH, String ROUND_OFF, String NETDISCOUNT,String BillmasterrGuid) {
+    public void createBillMasterData(String BILLMASTERID, String BILLNO, String SALEDATETIME, String SALEDATE, String SALETIME, String MASTERCUSTOMERGUID, String MASTERSTOREGUID, String MASTERTERMINALGUID, String MASTERSHIFTGUID, String USER_GUID, String CUST_MOBILENO, String NETVALUE, String TAXVALUE, String TOTAL_AMOUNT, String DELIVERY_TYPE_GUID, String BILL_PRINT, String TOTAL_BILL_AMOUNT, String NO_OF_ITEMS, String BILLSTATUS, String ISSYNCED, String RECEIVED_CASH, String BALANCE_CASH, String ROUND_OFF, String NETDISCOUNT,String BillmasterrGuid, String ORDER_STATUS) {
 
 
-        BillMaster billMaster = new BillMaster(BILLMASTERID, BILLNO, SALEDATETIME, SALEDATE, SALETIME, MASTERCUSTOMERGUID, MASTERSTOREGUID, MASTERTERMINALGUID, MASTERSHIFTGUID, USER_GUID, CUST_MOBILENO, NETVALUE, TAXVALUE, TOTAL_AMOUNT, DELIVERY_TYPE_GUID, BILL_PRINT, TOTAL_BILL_AMOUNT, NO_OF_ITEMS, BILLSTATUS, ISSYNCED, RECEIVED_CASH, BALANCE_CASH, ROUND_OFF, NETDISCOUNT,BillmasterrGuid);
+        BillMaster billMaster = new BillMaster(BILLMASTERID, BILLNO, SALEDATETIME, SALEDATE, SALETIME, MASTERCUSTOMERGUID, MASTERSTOREGUID, MASTERTERMINALGUID, MASTERSHIFTGUID, USER_GUID, CUST_MOBILENO, NETVALUE, TAXVALUE, TOTAL_AMOUNT, DELIVERY_TYPE_GUID, BILL_PRINT, TOTAL_BILL_AMOUNT, NO_OF_ITEMS, BILLSTATUS, ISSYNCED, RECEIVED_CASH, BALANCE_CASH, ROUND_OFF, NETDISCOUNT,BillmasterrGuid, ORDER_STATUS);
         InsertBillMaster(billMaster);
     }
 
@@ -68,6 +68,7 @@ public class ControllerBillMaster {
         contentValues.put("ROUND_OFF", billMaster.getROUND_OFF());
         contentValues.put("NETDISCOUNT", billMaster.getNETDISCOUNT());
         contentValues.put("BILLMASTERGUID", billMaster.getBILLMASTERGUID());
+        contentValues.put("ORDER_STATUS", billMaster.getORDER_STATUS());
         myDataBase.insert("retail_str_sales_master", null, contentValues);
         myDataBase.close(); // Closing database connection
     }
@@ -107,6 +108,7 @@ public class ControllerBillMaster {
                 billMasterUpload.setBALANCE_CASH(cursor.getString(21));
                 billMasterUpload.setROUND_OFF(cursor.getString(22));
                 billMasterUpload.setNETDISCOUNT(cursor.getString(23));
+                billMasterUpload.setORDER_STATUS(cursor.getString(cursor.getColumnIndex("ORDER_STATUS")));
                billMasterUpload.setORG_GUID(ORGGUID);
 
                 billMasters.add(billMasterUpload);
